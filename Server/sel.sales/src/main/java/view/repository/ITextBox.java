@@ -1,5 +1,5 @@
 package view.repository;
 
-public interface ITextBox extends IUIComponent {
+public interface ITextBox extends IEventShooterUIComponent, HasText {
 
 }

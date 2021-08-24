@@ -1,31 +1,33 @@
 package view;
 
-import view.repository.IButton;
-import view.repository.ILayout;
-import view.repository.IInnerFrame;
-import view.repository.IRootComponent;
-import view.repository.ITextBox;
-import view.repository.IUIComponent;
 import view.repository.UIComponentFactory;
+import controller.IController;
+import view.repository.UIButton;
+import view.repository.UIComponent;
+import view.repository.UIInnerFrame;
+import view.repository.UILayout;
+import view.repository.UIRootComponent;
+import view.repository.UITextBox;
 
 public class DummyView extends View {
 	
-	IRootComponent mainWindow;
-	IInnerFrame frame;
-	ILayout layout;
+	UIRootComponent mainWindow;
+	UIInnerFrame frame;
+	UILayout layout;
 	
-	ITextBox dishName;
-	ITextBox price;
+	UITextBox dishName;
+	UITextBox price;
 	
-	IButton showMenu;
-	IButton addToMenu;
-	IButton removeFromMenu;
-	IButton nextDish;
-	IButton prevDish;
+	UIButton showMenu;
+	UIButton addToMenu;
+	UIButton removeFromMenu;
+	UIButton nextDish;
+	UIButton prevDish;
 	
 	UIComponentFactory fac;
 	
-	public DummyView(UIComponentFactory fac) {
+	public DummyView(UIComponentFactory fac, IController controller) {
+		super(controller);
 		this.fac = fac;
 		
 		this.mainWindow = this.initMainWindow();
@@ -41,34 +43,38 @@ public class DummyView extends View {
 		this.nextDish = this.initNextDish(this.layout);
 		this.prevDish = this.initPrevDish(this.layout);
 	}
-	protected IRootComponent initMainWindow() {
+	protected UIRootComponent initMainWindow() {
 		return this.fac.createRootComponent(1000, 1000, "stage");
 	}
-	protected ILayout initWindow() {
+	protected UILayout initWindow() {
 		return this.fac.createLayout(0, 0, 1000, 1000);
 	}
-	protected IInnerFrame initFrame(IUIComponent parent) {
+	protected UIInnerFrame initFrame(UIComponent parent) {
 		return this.fac.createInnerFrame(800, 800, "scene", parent);
 	}
-	protected ITextBox initDishName(IUIComponent parent) {
+	protected UITextBox initDishName(UIComponent parent) {
 		return this.fac.createTextBox(100, 100, 200, 100, "dishName", parent);
 	}
-	protected ITextBox initPrice(IUIComponent parent) {
-		return this.fac.createTextBox(400, 100, 200, 100, "price", parent);
+	protected UITextBox initPrice(UIComponent parent) {
+		UITextBox textBox = this.fac.createTextBox(400, 100, 200, 100, "price", parent);
+		return textBox;
 	}
-	protected IButton initShowMenu(IUIComponent parent) {
-		return this.fac.createButton(400, 400, 200, 100, "showMenu", parent);
+	protected UIButton initShowMenu(UIComponent parent) {
+		UIButton button = this.fac.createButton(400, 400, 200, 100, "showMenu", parent);
+		button.addClickListener(new DummyListener(button, this.getController()));
+		return button;
 	}
-	protected IButton initAddToMenu(IUIComponent parent) {
-		return this.fac.createButton(400, 500, 200, 100, "addToMenu", parent);
+	protected UIButton initAddToMenu(UIComponent parent) {
+		UIButton button = this.fac.createButton(400, 500, 200, 100, "addToMenu", parent);
+		return button;
 	}
-	protected IButton initRemoveFromMenu(IUIComponent parent) {
+	protected UIButton initRemoveFromMenu(UIComponent parent) {
 		return this.fac.createButton(400, 600, 200, 100, "removeFromMenu", parent);
 	}
-	protected IButton initNextDish(IUIComponent parent) {
+	protected UIButton initNextDish(UIComponent parent) {
 		return this.fac.createButton(200, 500, 200, 100, "nextDish", parent);
 	}
-	protected IButton initPrevDish(IUIComponent parent) {
+	protected UIButton initPrevDish(UIComponent parent) {
 		return this.fac.createButton(600, 500, 200, 100, "prevDish", parent);
 	}
 	

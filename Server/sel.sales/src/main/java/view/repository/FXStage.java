@@ -12,6 +12,6 @@ public class FXStage extends Stage implements IRootComponent, FXComponent {
 	}
 	
 	public void setInnerFrame(IInnerFrame scene) {
-		this.setScene((Scene) scene);
+		this.setScene((Scene) scene.getComponent());
 	}
 }

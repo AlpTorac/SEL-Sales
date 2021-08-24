@@ -1,15 +1,19 @@
 package controller;
 
-import java.util.HashMap;
-
 public abstract class Controller implements IController {
-	private HashMap<BusinessEvent, IEventHandler> eventToHandlerMap = new HashMap<BusinessEvent, IEventHandler>();
+	private IBusinessEventManager eventManager;
 	
-	public void addEventToHandlerMapping(BusinessEvent event, IEventHandler handler) {
-		this.eventToHandlerMap.put(event, handler);
+	public Controller() {
+		this.eventManager = this.initEventManager();
 	}
 	
-	public IEventHandler getHandler(BusinessEvent event) {
-		return this.eventToHandlerMap.get(event);
+	public void addBusinessEventMapping(BusinessEvent event, IBusinessEventHandler handler) {
+		this.eventManager.addBusinessEventToHandlerMapping(event, handler);
 	}
+	
+	public void handleBusinessEvent(BusinessEvent event, Object[] args) {
+		this.eventManager.getHandler(event).handleBusinessEvent(args);
+	}
+	
+	protected abstract IBusinessEventManager initEventManager();
 }

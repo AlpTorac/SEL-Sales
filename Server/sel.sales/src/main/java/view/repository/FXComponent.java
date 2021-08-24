@@ -5,6 +5,10 @@ import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 
 public interface FXComponent extends IUIComponent {
+	default public FXComponent getComponent() {
+		return this;
+	}
+	
 	default public void attachTo(IUIComponent parent) {
 		((Pane) parent).getChildren().add((Node) this);
 	}
