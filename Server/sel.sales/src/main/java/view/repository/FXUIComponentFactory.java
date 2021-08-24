@@ -5,7 +5,7 @@ import javafx.scene.layout.Pane;
 
 public class FXUIComponentFactory implements UIComponentFactory {
 	
-	public FXStage createStage(double width, double height, String name) {
+	public FXStage createRootComponent(double width, double height, String name) {
 		return new FXStage(width, height, name);
 	}
 
@@ -17,11 +17,11 @@ public class FXUIComponentFactory implements UIComponentFactory {
 		return new FXTextBox(x, y, width, height, name, (Parent) parent);
 	}
 
-	public FXScene createScene(double width, double height, String name, IUIComponent parent) {
+	public FXScene createInnerFrame(double width, double height, String name, IUIComponent parent) {
 		return new FXScene(width, height, name, (Pane) parent);
 	}
 
-	public IPane createPane(double x, double y, double width, double height) {
+	public FXPane createLayout(double x, double y, double width, double height) {
 		return new FXPane(x, y, width, height);
 	}
 

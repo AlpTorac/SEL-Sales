@@ -3,7 +3,7 @@ package view.repository;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 
-public class FXPane extends Pane implements IPane, FXComponent {
+public class FXPane extends Pane implements ILayout, FXComponent {
 	FXPane(double x, double y, double width, double height) {
 		super();
 		this.setLayoutX(x);

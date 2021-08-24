@@ -1,18 +1,18 @@
 package view;
 
 import view.repository.IButton;
-import view.repository.IPane;
-import view.repository.IScene;
-import view.repository.IStage;
+import view.repository.ILayout;
+import view.repository.IInnerFrame;
+import view.repository.IRootComponent;
 import view.repository.ITextBox;
 import view.repository.IUIComponent;
 import view.repository.UIComponentFactory;
 
 public class DummyView extends View {
 	
-	IStage mainWindow;
-	IScene frame;
-	IPane window;
+	IRootComponent mainWindow;
+	IInnerFrame frame;
+	ILayout layout;
 	
 	ITextBox dishName;
 	ITextBox price;
@@ -25,30 +25,30 @@ public class DummyView extends View {
 	
 	UIComponentFactory fac;
 	
-	protected DummyView(UIComponentFactory fac) {
+	public DummyView(UIComponentFactory fac) {
 		this.fac = fac;
 		
 		this.mainWindow = this.initMainWindow();
-		this.window = this.initWindow();
-		this.frame = this.initFrame(this.window);
+		this.layout = this.initWindow();
+		this.frame = this.initFrame(this.layout);
 		
-		this.dishName = this.initDishName(this.window);
-		this.price = this.initPrice(this.window);
+		this.dishName = this.initDishName(this.layout);
+		this.price = this.initPrice(this.layout);
 		
-		this.showMenu = this.initShowMenu(this.window);
-		this.addToMenu = this.initAddToMenu(this.window);
-		this.removeFromMenu = this.initRemoveFromMenu(this.window);
-		this.nextDish = this.initNextDish(this.window);
-		this.prevDish = this.initPrevDish(this.window);
+		this.showMenu = this.initShowMenu(this.layout);
+		this.addToMenu = this.initAddToMenu(this.layout);
+		this.removeFromMenu = this.initRemoveFromMenu(this.layout);
+		this.nextDish = this.initNextDish(this.layout);
+		this.prevDish = this.initPrevDish(this.layout);
 	}
-	protected IStage initMainWindow() {
-		return this.fac.createStage(1000, 1000, "stage");
+	protected IRootComponent initMainWindow() {
+		return this.fac.createRootComponent(1000, 1000, "stage");
 	}
-	protected IPane initWindow() {
-		return this.fac.createPane(0, 0, 1000, 1000);
+	protected ILayout initWindow() {
+		return this.fac.createLayout(0, 0, 1000, 1000);
 	}
-	protected IScene initFrame(IUIComponent parent) {
-		return this.fac.createScene(800, 800, "scene", parent);
+	protected IInnerFrame initFrame(IUIComponent parent) {
+		return this.fac.createInnerFrame(800, 800, "scene", parent);
 	}
 	protected ITextBox initDishName(IUIComponent parent) {
 		return this.fac.createTextBox(100, 100, 200, 100, "dishName", parent);
@@ -73,8 +73,7 @@ public class DummyView extends View {
 	}
 	
 	public void show() {
-		
-		this.mainWindow.setScene(frame);
+		this.mainWindow.setInnerFrame(frame);
 		this.mainWindow.show();
 	}
 }

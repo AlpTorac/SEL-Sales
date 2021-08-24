@@ -3,7 +3,7 @@ package view.repository;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class FXStage extends Stage implements IStage, FXComponent {
+public class FXStage extends Stage implements IRootComponent, FXComponent {
 	FXStage(double width, double height, String name) {
 		super();
 		this.setTitle(name);
@@ -11,7 +11,7 @@ public class FXStage extends Stage implements IStage, FXComponent {
 		this.setHeight(height);
 	}
 	
-	public void setScene(IScene scene) {
+	public void setInnerFrame(IInnerFrame scene) {
 		this.setScene((Scene) scene);
 	}
 }

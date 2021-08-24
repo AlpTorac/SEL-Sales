@@ -1,7 +1,8 @@
-package view;
+package entrypoint;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import view.DummyView;
 import view.repository.FXUIComponentFactory;
 
 public class MainApp extends Application {
