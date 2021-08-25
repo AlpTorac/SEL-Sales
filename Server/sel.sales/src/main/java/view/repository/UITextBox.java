@@ -8,9 +8,4 @@ public class UITextBox extends EventShooterUIComponent implements ITextBox {
 	public ITextBox getComponent() {
 		return (ITextBox) super.getComponent();
 	}
-
-	@Override
-	public void setCaption(String caption) {
-		this.getComponent().setCaption(caption);
-	}
 }

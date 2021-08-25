@@ -8,8 +8,4 @@ public class UIButton extends EventShooterUIComponent implements IButton {
 	public IButton getComponent() {
 		return (IButton) super.getComponent();
 	}
-	
-	public void setCaption(String caption) {
-		this.getComponent().setCaption(caption);
-	}
 }

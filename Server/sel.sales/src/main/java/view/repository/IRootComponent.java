@@ -1,5 +1,5 @@
 package view.repository;
 
-public interface IRootComponent extends IUIComponent {
+public interface IRootComponent extends IUIComponent, ISizable {
 	public void setInnerFrame(IInnerFrame scene);
 }

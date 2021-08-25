@@ -10,16 +10,6 @@ public abstract class UIComponent implements IUIComponent {
 	UIComponent(IUIComponent component) {
 		this.component = component;
 	}
-	
-	@Override
-	public void attachTo(IUIComponent parent) {
-		this.component.attachTo(parent);
-	}
-
-	@Override
-	public void dettach() {
-		this.component.dettach();
-	}
 
 	@Override
 	public void show() {

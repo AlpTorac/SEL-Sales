@@ -3,7 +3,7 @@ package entrypoint;
 import controller.DummyController;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import view.DummyView;
+import view.MainView;
 import view.repository.FXUIComponentFactory;
 
 public class MainApp extends Application {
@@ -14,7 +14,7 @@ public class MainApp extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		DummyController controller = new DummyController();
-		DummyView view = new DummyView(new FXUIComponentFactory(), controller);
+		MainView view = new MainView(new FXUIComponentFactory(), controller);
 		view.show();
 	}
 }

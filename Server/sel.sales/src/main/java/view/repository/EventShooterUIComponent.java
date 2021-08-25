@@ -11,16 +11,13 @@ public abstract class EventShooterUIComponent extends UIComponent implements IEv
 		return (IEventShooterUIComponent) super.getComponent();
 	}
 	
-	@Override
 	public void addClickListener(ClickEventListener l) {
 		this.addEditPart(l);
 		this.getComponent().addClickListener(l);
 	}
 	
-	@Override
 	public void removeClickListener(ClickEventListener l) {
 		this.removeEditPart(l);
 		this.getComponent().removeClickListener(l);
 	}
-
 }

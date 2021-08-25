@@ -1,5 +1,5 @@
 package view.repository;
 
-public interface IButton extends IEventShooterUIComponent, HasText {
+public interface IButton extends IEventShooterUIComponent, HasText, ISizable {
 	
 }

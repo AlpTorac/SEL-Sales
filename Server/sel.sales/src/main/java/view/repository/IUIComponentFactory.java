@@ -1,14 +1,73 @@
 package view.repository;
 
 public interface IUIComponentFactory {
-	public IRootComponent createRootComponent(double width, double height, String name);
-	public IButton createButton(double x, double y, double width, double height, String name, IUIComponent parent);
-	public ITextBox createTextBox(double x, double y, double width, double height, String name, IUIComponent parent);
-	public IInnerFrame createInnerFrame(double width, double height, String name, IUIComponent parent);
-	default public ILayout createLayout(double x, double y, double width, double height, IUIComponent parent) {
-		ILayout pane = this.createLayout(x, y, width, height);
-		pane.attachTo(parent);
-		return pane;
-	}
-	public ILayout createLayout(double x, double y, double width, double height);
+//	default public IRootComponent createRootComponent(double width, double height) {
+//		IRootComponent c = this.createRootComponent();
+//		c.setPrefSize(width, height);
+//		return c;
+//	}
+//	default public IButton createButton(double x, double y, double width, double height, String caption, IUIComponent parent) {
+//		IButton c = this.createButton();
+//		c.setCaption(caption);
+//		c.attachTo(parent);
+//		c.setLayoutPos(x, y);
+//		c.setPrefSize(width, height);
+//		return c;
+//	}
+//	default public ITextBox createTextBox(double x, double y, double width, double height, String caption, IUIComponent parent) {
+//		ITextBox c = this.createTextBox();
+//		c.setCaption(caption);
+//		c.attachTo(parent);
+//		c.setLayoutPos(x, y);
+//		c.setPrefSize(width, height);
+//		return c;
+//	}
+//	default public IHBoxLayout createHBoxLayout(double x, double y, double width, double height) {
+//		IHBoxLayout c = this.createHBoxLayout();
+//		c.setLayoutPos(x, y);
+//		c.setPrefSize(width, height);
+//		return c;
+//	}
+//	default public IGridLayout createGridLayout(double x, double y, double width, double height) {
+//		IGridLayout c = this.createGridLayout();
+//		c.setLayoutPos(x, y);
+//		c.setPrefSize(width, height);
+//		return c;
+//	}
+//	default public <T> ITable<T> createTable(double x, double y, double width, double height, IUIComponent parent) {
+//		ITable<T> c = this.createTable();
+//		c.attachTo(parent);
+//		c.setLayoutPos(x, y);
+//		c.setPrefSize(width, height);
+//		return c;
+//	}
+//	default public IButton createButton(String name, IUIComponent parent) {
+//		IButton c = this.createButton();
+//		c.attachTo(parent);
+//		c.setCaption(name);
+//		return c;
+//	}
+//	default public ITextBox createTextBox(String name, IUIComponent parent) {
+//		ITextBox c = this.createTextBox();
+//		c.attachTo(parent);
+//		c.setCaption(name);
+//		return c;
+//	}
+//	default public <T> ITable<T> createTable(IUIComponent parent) {
+//		ITable<T> c = this.createTable();
+//		c.attachTo(parent);
+//		return c;
+//	}
+	public IRootComponent createRootComponent();
+	public IButton createButton();
+	public ITextBox createTextBox();
+	public IInnerFrame createInnerFrame(IUIComponent parent);
+	public ITable createTable();
+	public IHBoxLayout createHBoxLayout();
+	public IVBoxLayout createVBoxLayout();
+	public IGridLayout createGridLayout();
+	public IRadioButton createRadioButton();
+	public IToggleGroup createToggleGroup();
+	public IListView createListView();
+	public ILabel createLabel();
 }

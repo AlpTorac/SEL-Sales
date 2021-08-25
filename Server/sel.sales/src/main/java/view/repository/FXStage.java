@@ -3,15 +3,18 @@ package view.repository;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class FXStage extends Stage implements IRootComponent, FXComponent {
-	FXStage(double width, double height, String name) {
-		super();
-		this.setTitle(name);
-		this.setWidth(width);
-		this.setHeight(height);
-	}
-	
+public class FXStage extends Stage implements IRootComponent, IFXSizable {
 	public void setInnerFrame(IInnerFrame scene) {
 		this.setScene((Scene) scene.getComponent());
+	}
+	
+	@Override
+	public void setPrefWidth(double width) {
+		((Stage) this).setWidth(width);
+	}
+	
+	@Override
+	public void setPrefHeight(double height) {
+		((Stage) this).setHeight(height);
 	}
 }

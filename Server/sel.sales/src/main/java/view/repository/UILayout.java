@@ -1,13 +1,12 @@
 package view.repository;
 
-public class UILayout extends UIComponent implements ILayout {
+public abstract class UILayout extends UIComponent implements ILayout {
 
 	UILayout(ILayout component) {
 		super(component);
 	}
-
-	@Override
-	public void addUIComponent(IUIComponent c) {
-		((ILayout) this.getComponent()).addUIComponent(c);
+	
+	public ILayout getComponent() {
+		return (ILayout) super.getComponent();
 	}
 }

@@ -16,4 +16,6 @@ public abstract class View implements IView {
 	public void setController(IController controller) {
 		this.controller = controller;
 	}
+	
+	public abstract void show();
 }

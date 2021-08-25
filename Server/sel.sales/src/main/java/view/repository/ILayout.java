@@ -1,12 +1,7 @@
 package view.repository;
 
-import java.util.Collection;
-
-public interface ILayout extends IUIComponent {
-	public void addUIComponent(IUIComponent c);
-	default public void addUIComponents(Collection<IUIComponent> cs) {
-		for (IUIComponent c : cs) {
-			this.addUIComponent(c);
-		}
+public interface ILayout extends IUIComponent, ISizable {
+	default public void setMarigins(double top, double right, double bottom, double left) {
+		((ILayout) this.getComponent()).setMarigins(top, right, bottom, left);
 	}
 }
