@@ -6,4 +6,9 @@ public class DishMenuItemIDFactory implements IDishMenuItemIDFactory {
 		return null;
 	}
 
+	@Override
+	public DishMenuItemID createDishMenuItemID(Object id) {
+		return new DishMenuItemID(id);
+	}
+	
 }

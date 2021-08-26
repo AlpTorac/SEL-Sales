@@ -1,5 +1,9 @@
 package view;
 
-public interface IView {
+import controller.IController;
 
+public interface IView {
+	public IController getController();
+	public void setController(IController controller);
+	public void show();
 }

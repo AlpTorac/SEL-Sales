@@ -1,4 +1,4 @@
-package view;
+package dummy;
 
 //import view.repository.UIComponentFactory;
 //import controller.IController;

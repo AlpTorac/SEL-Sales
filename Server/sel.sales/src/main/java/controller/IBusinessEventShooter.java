@@ -1,5 +1,9 @@
 package controller;
 
 public interface IBusinessEventShooter {
-	public void fireBusinessEvent(IController controller);
+	default public void fireBusinessEvent(IController controller) {
+		controller.handleBusinessEvent(this.getBusinessEvent(), this.getArgs());
+	}
+	public Object[] getArgs();
+	public BusinessEvent getBusinessEvent();
 }

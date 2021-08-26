@@ -7,6 +7,10 @@ import view.repository.UIHBoxLayout;
 public class MainWindow extends UIHBoxLayout {
 	private UIComponentFactory fac;
 	
+	private MenuDesignArea menuDesignArea;
+	private OrderTrackingArea orderTrackingArea;
+	private OrderInspectionArea orderInspectionArea;
+	
 	public MainWindow(UIComponentFactory fac) {
 		super(fac.createHBoxLayout().getComponent());
 		this.fac = fac;
@@ -20,10 +24,14 @@ public class MainWindow extends UIHBoxLayout {
 	}
 	
 	private void initAreas() {
+		this.menuDesignArea = this.initMenuDesignArea();
+		this.orderTrackingArea = this.initOrderTrackingArea();
+		this.orderInspectionArea = this.initOrderInspectionArea();
+		
 		this.getComponent().addUIComponents(new ILayout[] {
-				this.initMenuDesignArea(),
-				this.initOrderTrackingArea(),
-				this.initOrderInspectionArea()
+				this.getMenuDesignArea(),
+				this.getOrderTrackingArea(),
+				this.getOrderInspectionArea()
 		});
 	}
 	
@@ -37,5 +45,17 @@ public class MainWindow extends UIHBoxLayout {
 	
 	protected OrderInspectionArea initOrderInspectionArea() {
 		return new OrderInspectionArea(this.fac);
+	}
+
+	public OrderInspectionArea getOrderInspectionArea() {
+		return orderInspectionArea;
+	}
+
+	public OrderTrackingArea getOrderTrackingArea() {
+		return orderTrackingArea;
+	}
+
+	public MenuDesignArea getMenuDesignArea() {
+		return menuDesignArea;
 	}
 }

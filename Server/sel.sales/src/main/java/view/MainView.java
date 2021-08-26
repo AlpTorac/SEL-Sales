@@ -1,10 +1,13 @@
 package view;
 
 import controller.IController;
+import entrypoint.MainApp;
+import view.repository.ClickEventListener;
 import view.repository.UIComponent;
 import view.repository.UIComponentFactory;
 import view.repository.UIInnerFrame;
 import view.repository.UIRootComponent;
+import view.composites.AddDishListener;
 import view.composites.MainWindow;
 import view.composites.MenuDesignArea;
 import view.composites.OrderInspectionArea;
@@ -12,15 +15,11 @@ import view.composites.OrderTrackingArea;
 
 public class MainView extends View {
 
-	UIRootComponent mainWindow;
-	UIInnerFrame frame;
-	MainWindow mainDisplay;
+	private UIRootComponent mainWindow;
+	private UIInnerFrame frame;
+	private MainWindow mainDisplay;
 	
-	MenuDesignArea menuDesignArea;
-	OrderTrackingArea orderTrackingArea;
-	OrderInspectionArea orderInspectionArea;
-	
-	UIComponentFactory fac;
+	private UIComponentFactory fac;
 	
 	public MainView(UIComponentFactory fac, IController controller) {
 		super(controller);
@@ -29,10 +28,7 @@ public class MainView extends View {
 		this.mainWindow = this.initMainWindow();
 		this.mainDisplay = this.initMainDisplay();
 		this.frame = this.initFrame(this.mainDisplay);
-		
-		this.menuDesignArea = this.initMenuDesignArea();
-		this.orderTrackingArea = this.initOrderTrackingArea();
-		this.orderInspectionArea = this.initOrderInspectionArea();
+		this.initListeners();
 	}
 	protected UIRootComponent initMainWindow() {
 		UIRootComponent rc = this.fac.createRootComponent();
@@ -45,14 +41,19 @@ public class MainView extends View {
 	protected UIInnerFrame initFrame(UIComponent parent) {
 		return this.fac.createInnerFrame(parent);
 	}
-	protected MenuDesignArea initMenuDesignArea() {
-		return new MenuDesignArea(this.fac);
-	}
-	protected OrderTrackingArea initOrderTrackingArea() {
-		return new OrderTrackingArea(this.fac);
-	}
-	protected OrderInspectionArea initOrderInspectionArea() {
-		return new OrderInspectionArea(this.fac);
+	protected void initListeners() {
+		MenuDesignArea mda = this.mainDisplay.getMenuDesignArea();
+		OrderTrackingArea ota = this.mainDisplay.getOrderTrackingArea();
+		OrderInspectionArea oia = this.mainDisplay.getOrderInspectionArea();
+		
+		ClickEventListener l = new AddDishListener(this.getController(),
+				mda.getDishNameBox(),
+				mda.getMenuItemIDBox(),
+				mda.getPortionBox(),
+				mda.getProductionCostBox(),
+				mda.getPriceBox()
+		);
+		mda.getAddButton().addClickListener(l);
 	}
 	public void show() {
 		this.mainWindow.setInnerFrame(frame);

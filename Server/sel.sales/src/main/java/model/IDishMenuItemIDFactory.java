@@ -1,5 +1,6 @@
 package model;
 
-interface IDishMenuItemIDFactory {
+public interface IDishMenuItemIDFactory {
 	DishMenuItemID createDishMenuItemID();
+	DishMenuItemID createDishMenuItemID(Object id);
 }

@@ -2,46 +2,87 @@ package model;
 
 import java.math.BigDecimal;
 
-public class DishMenuItem {
-	private Dish dish;
-	private BigDecimal amount;
+public class DishMenuItem implements IDishMenuItem {
+	private IDish dish;
+	private BigDecimal portionSize;
 	private BigDecimal price;
-	private DishMenuItemID id;
+	private IDishMenuItemID id;
+	private BigDecimal productionCost;
+	private IDishMenuItemIDFactory fac;
 	
-	DishMenuItem(Dish dish, double amount, double price) {
+	DishMenuItem(IDish dish, double portionSize, double price, double productionCost, Object id) {
 		this.dish = dish;
-		this.amount = BigDecimal.valueOf(amount);
+		this.portionSize = BigDecimal.valueOf(portionSize);
 		this.price = BigDecimal.valueOf(price);
+		this.productionCost = BigDecimal.valueOf(productionCost);
+		this.id = new DishMenuItemID(id);
+	}
+	DishMenuItem(IDish dish, double portionSize, double price, double productionCost, IDishMenuItemIDFactory fac) {
+		this.dish = dish;
+		this.portionSize = BigDecimal.valueOf(portionSize);
+		this.price = BigDecimal.valueOf(price);
+		this.productionCost = BigDecimal.valueOf(productionCost);
+		this.fac = fac;
+		this.id = this.fac.createDishMenuItemID();
 	}
 	
-	DishMenuItem(Dish dish, BigDecimal amount, BigDecimal price) {
+	@Override
+	public IDish getDish() {
+		return dish;
+	}
+
+	@Override
+	public void setDish(IDish dish) {
 		this.dish = dish;
-		this.amount = amount;
+	}
+
+	@Override
+	public BigDecimal getPortionSize() {
+		return portionSize;
+	}
+
+	@Override
+	public void setPortionSize(BigDecimal portionSize) {
+		this.portionSize = portionSize;
+	}
+
+	@Override
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	@Override
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
-	
-	public Dish getDish() {
-		return this.dish;
+
+	@Override
+	public IDishMenuItemID getID() {
+		return id;
 	}
-	
-	public BigDecimal getAmount() {
-		return this.amount;
+
+	@Override
+	public void setID(IDishMenuItemID id) {
+		this.id = id;
 	}
-	
-	public BigDecimal getPrice() {
-		return this.price;
+
+	@Override
+	public BigDecimal getProductionCost() {
+		return productionCost;
 	}
-	
-	public DishMenuItemID getID() {
-		return this.id;
+
+	@Override
+	public void setProductionCost(BigDecimal productionCost) {
+		this.productionCost = productionCost;
 	}
+
 	
 	@Override
 	public boolean equals(Object o) {
 		if (o == null || !(o instanceof DishMenuItem)) {
 			return false;
 		} else {
-			DishMenuItem item = (DishMenuItem) o;
+			IDishMenuItem item = (IDishMenuItem) o;
 			return this.getID().equals(item.getID());
 		}
 	}

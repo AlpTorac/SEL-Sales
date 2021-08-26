@@ -3,23 +3,26 @@ package model;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DishMenu {
+public class DishMenu implements IDishMenu {
 	
-	private Map<DishMenuItemID, DishMenuItem> dishes;
+	private Map<IDishMenuItemID, IDishMenuItem> dishes;
 	
 	DishMenu() {
-		this.dishes = new HashMap<DishMenuItemID, DishMenuItem>();
+		this.dishes = new HashMap<IDishMenuItemID, IDishMenuItem>();
 	}
 	
-	public void addMenuItem(DishMenuItem item) {
+	@Override
+	public void addMenuItem(IDishMenuItem item) {
 		this.dishes.put(item.getID(), item);
 	}
 	
-	public void removeMenuItem(DishMenuItem item) {
-		this.dishes.remove(item.getID());
+	@Override
+	public void removeMenuItem(IDishMenuItemID id) {
+		this.dishes.remove(id);
 	}
 	
-	public DishMenuItem getItem(final DishMenuItemID id) {
+	@Override
+	public IDishMenuItem getItem(IDishMenuItemID id) {
 		return this.dishes.get(id);
 	}
 	

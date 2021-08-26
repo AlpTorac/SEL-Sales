@@ -1,12 +1,13 @@
 package model;
 
-public class DishMenuItemID {
+public class DishMenuItemID implements IDishMenuItemID {
 	private Object id;
 	
 	DishMenuItemID(Object id) {
 		this.id = id;
 	}
 	
+	@Override
 	public String getID() {
 		return this.toString();
 	}
@@ -18,11 +19,11 @@ public class DishMenuItemID {
 	
 	@Override
 	public boolean equals(Object o) {
-		if (o == null || !(o instanceof DishMenuItemID)) {
+		if (o == null || !(o instanceof IDishMenuItemID)) {
 			return false;
 		}
 		
-		DishMenuItemID id = (DishMenuItemID) o;
+		IDishMenuItemID id = (IDishMenuItemID) o;
 		return this.id.equals(id);
 	}
 }

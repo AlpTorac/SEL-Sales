@@ -1,4 +1,6 @@
-package controller;
+package dummy;
+
+import controller.IBusinessEventHandler;
 
 public class DummyHandler implements IBusinessEventHandler {
 	@Override
