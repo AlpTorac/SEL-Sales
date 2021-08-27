@@ -2,7 +2,7 @@ package model;
 
 import java.math.BigDecimal;
 
-public interface IDishMenuItem {
+public interface IDishMenuItem extends Comparable<IDishMenuItem> {
 
 	IDish getDish();
 
@@ -24,4 +24,5 @@ public interface IDishMenuItem {
 
 	void setProductionCost(BigDecimal productionCost);
 
+	boolean equals(Object o);
 }

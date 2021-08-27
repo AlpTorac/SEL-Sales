@@ -1,20 +1,27 @@
 package view.repository;
 
-public interface ITable extends IUIComponent, IEventShooterUIComponent, Attachable, ISizable {
-	default public void addColumn(String title) {
-		((ITable) this.getComponent()).addColumn(title);
+public interface ITable<T> extends IUIComponent, IEventShooterUIComponent, Attachable, ISizable {
+	default public <O> void addColumn(String title, String fieldName) {
+		((ITable<?>) this.getComponent()).addColumn(title, fieldName);
 	}
-	default public void addColumns(String[] titles) {
-		for (String t : titles) {
-			this.addColumn(t);
-		}
+	
+	@SuppressWarnings("unchecked")
+	default public void addItem(T item) {
+		((ITable<T>) this.getComponent()).addItem(item);
 	}
-	default public void addItem(Object item) {
-		((ITable) this.getComponent()).addItem(item);
-	}
-	default public void addItem(Object[] item) {
-		for (Object o : item) {
+	
+	default public void addItems(T[] item) {
+		for (T o : item) {
 			this.addItem(o);
 		}
+	}
+	
+	default public void clear() {
+		((ITable<?>) this.getComponent()).clear();
+	}
+	
+	@SuppressWarnings("unchecked")
+	default public void removeItem(T item) {
+		((ITable<T>) this.getComponent()).removeItem(item);
 	}
 }

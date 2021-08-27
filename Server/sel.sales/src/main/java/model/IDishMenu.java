@@ -2,10 +2,12 @@ package model;
 
 public interface IDishMenu {
 
-	void addMenuItem(IDishMenuItem item);
+	boolean addMenuItem(IDishMenuItem item);
 
-	void removeMenuItem(IDishMenuItemID id);
+	boolean removeMenuItem(IDishMenuItemID id);
 
 	IDishMenuItem getItem(IDishMenuItemID id);
 
+	IDishMenuItem[] getAllItems();
+	
 }

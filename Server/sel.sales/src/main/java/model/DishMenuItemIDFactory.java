@@ -7,7 +7,7 @@ public class DishMenuItemIDFactory implements IDishMenuItemIDFactory {
 	}
 
 	@Override
-	public DishMenuItemID createDishMenuItemID(Object id) {
+	public DishMenuItemID createDishMenuItemID(String id) {
 		return new DishMenuItemID(id);
 	}
 	

@@ -69,13 +69,13 @@ public class OrderInspectionArea extends UIVBoxLayout {
 	
 	protected ITable initOrderDetailsTable() {
 		ITable table = this.fac.createTable();
-		table.addColumns(new String[] {
-				"Menu Item",
-				"Amount",
-				"Portions",
-				"Price/Portion",
-				"Total Item Price"
-		});
+//		table.addColumns(new String[] {
+//				"Menu Item",
+//				"Amount",
+//				"Portions",
+//				"Price/Portion",
+//				"Total Item Price"
+//		});
 		return table;
 	}
 	

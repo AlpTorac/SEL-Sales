@@ -5,19 +5,19 @@ import controller.IBusinessEventShooter;
 import controller.IController;
 import model.IDishMenuItemData;
 import model.IDishMenuItemDataFactory;
+import model.IDishMenuItemID;
 import model.IDishMenuItemIDFactory;
 import view.repository.ClickEventListener;
 import view.repository.HasText;
 
-public class AddDishListener extends ClickEventListener implements IBusinessEventShooter {
-	private IController controller;
+public class EditDishListener extends ClickEventListener implements IBusinessEventShooter {	private IController controller;
 	private HasText dishName;
 	private HasText dishID;
 	private HasText portion;
 	private HasText productionCost;
 	private HasText price;
 	
-	public AddDishListener(IController controller, HasText dishName, HasText dishID, HasText portion, HasText productionCost, HasText price) {
+	public EditDishListener(IController controller, HasText dishName, HasText dishID, HasText portion, HasText productionCost, HasText price) {
 		super();
 		this.controller = controller;
 		
@@ -27,12 +27,7 @@ public class AddDishListener extends ClickEventListener implements IBusinessEven
 		this.productionCost = productionCost;
 		this.price = price;
 	}
-
-	@Override
-	protected void clickAction() {
-		this.fireBusinessEvent(controller);
-	}
-
+	
 	@Override
 	public Object[] getArgs() {
 		IDishMenuItemDataFactory fac = this.controller.getItemDataCommunicationProtocoll();
@@ -47,22 +42,21 @@ public class AddDishListener extends ClickEventListener implements IBusinessEven
 				idFac
 		);
 		
+		IDishMenuItemID id = idFac.createDishMenuItemID(this.getDishID().getText());
+		
 		this.resetUserInput();
 		
-		return new Object[] {data};
+		return new Object[] {id, data};
 	}
-
+	
 	@Override
 	public BusinessEvent getBusinessEvent() {
-		return BusinessEvent.ADD_DISH;
+		return BusinessEvent.EDIT_DISH;
 	}
-
-	private void resetUserInput() {
-		this.getDishID().clearText();
-		this.getDishName().clearText();
-		this.getPortion().clearText();
-		this.getPrice().clearText();
-		this.getProductionCost().clearText();
+	
+	@Override
+	protected void clickAction() {
+		this.fireBusinessEvent(controller);
 	}
 	
 	private HasText getDishName() {
@@ -83,6 +77,14 @@ public class AddDishListener extends ClickEventListener implements IBusinessEven
 
 	private HasText getPrice() {
 		return price;
+	}
+	
+	private void resetUserInput() {
+		this.getDishID().clearText();
+		this.getDishName().clearText();
+		this.getPortion().clearText();
+		this.getPrice().clearText();
+		this.getProductionCost().clearText();
 	}
 
 }

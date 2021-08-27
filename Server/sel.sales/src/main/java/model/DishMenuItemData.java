@@ -5,9 +5,9 @@ public class DishMenuItemData implements IDishMenuItemData {
 	private double portionSize;
 	private double price;
 	private double productionCost;
-	private Object id;
+	private IDishMenuItemID id;
 	
-	DishMenuItemData(String dishName, double portionSize, double price, double productionCost, Object id) {
+	DishMenuItemData(String dishName, double portionSize, double price, double productionCost, IDishMenuItemID id) {
 		this.dishName = dishName;
 		this.portionSize = portionSize;
 		this.price = price;
@@ -31,7 +31,7 @@ public class DishMenuItemData implements IDishMenuItemData {
 		return productionCost;
 	}
 
-	public Object getId() {
+	public IDishMenuItemID getId() {
 		return id;
 	}
 }

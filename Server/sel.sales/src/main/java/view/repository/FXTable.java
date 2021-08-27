@@ -2,10 +2,10 @@ package view.repository;
 
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
-public class FXTable extends TableView implements FXAttachable, ITable {
+public class FXTable<T> extends TableView<T> implements FXAttachable, ITable<T> {
 	
-	@SuppressWarnings("unchecked")
 	FXTable() {
 		super();
 		super.setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
@@ -22,16 +22,30 @@ public class FXTable extends TableView implements FXAttachable, ITable {
 
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public void addColumn(String o) {
-		TableColumn col = new TableColumn(o);
-		this.getColumns().add(col);
+	public <O> void addColumn(String title, String fieldName) {
+		TableColumn<T, O> col = new TableColumn<>(title);
+//		int index = this.getColumns().size();
+//		col.setCellValueFactory((p)->{
+//	        String[] x = p.getValue();
+//	        return new SimpleStringProperty(x != null && x.length>0 ? x[index] : "<no name>");
+//	});
+		col.setCellValueFactory(new PropertyValueFactory<T, O>(fieldName));
+		super.getColumns().add(col);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public void addItem(Object item) {
-		this.getItems().add(item);
+	public void addItem(T item) {
+		super.getItems().add(item);
+	}
+	
+	@Override
+	public void clear() {
+		super.getItems().clear();
+	}
+	
+	@Override
+	public void removeItem(T item) {
+		super.getItems().remove(item);
 	}
 }

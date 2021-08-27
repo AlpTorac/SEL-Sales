@@ -1,7 +1,6 @@
 package view.composites;
 
-import entrypoint.MainApp;
-import view.repository.ClickEventListener;
+import model.IDishMenuItemData;
 import view.repository.IButton;
 import view.repository.ITable;
 import view.repository.ITextBox;
@@ -18,7 +17,7 @@ public class MenuDesignArea extends UIGridLayout {
 	private IButton addButton;
 	private IButton editButton;
 	private IButton removeButton;
-	private ITable menuItemTable;
+	private ITable<IDishMenuItemData> menuItemTable;
 	
 	private UIComponentFactory fac;
 	
@@ -50,15 +49,21 @@ public class MenuDesignArea extends UIGridLayout {
 		this.addUIComponent(this.getRemoveButton(),     	4, 2, 2, 1);
 	}
 	
-	protected ITable initMenuItemTable() {
-		ITable table = this.fac.createTable();
-		table.addColumns(new String[] {
-				"Dish Name",
-				"ID",
-				"Portion",
-				"Production Cost",
-				"Price"
-		});
+	protected ITable<IDishMenuItemData> initMenuItemTable() {
+		ITable<IDishMenuItemData> table = this.fac.createTable();
+		
+		table.addColumn("Dish Name", "DishName");
+		table.addColumn("ID", "Id");
+		table.addColumn("Portion Size", "PortionSize");
+		table.addColumn("Production Cost", "ProductionCost");
+		table.addColumn("Price", "Price");
+//		table.addColumns(new String[] {
+//				"Dish Name",
+//				"ID",
+//				"Portion",
+//				"Production Cost",
+//				"Price"
+//		});
 		return table;
 	}
 	
@@ -142,9 +147,19 @@ public class MenuDesignArea extends UIGridLayout {
 		return this.removeButton;
 	}
 
-	public ITable getMenuItemTable() {
+	public ITable<IDishMenuItemData> getMenuItemTable() {
 		return this.menuItemTable;
 	}
 	
-	
+	public void refreshMenuDisplay(IDishMenuItemData[] data) {
+		this.getMenuItemTable().clear();
+		
+//		String[][] transformedData = new String[data.length][];
+//		
+//		for (int i = 0; i < transformedData.length; i++) {
+//			transformedData[i] = data[i].allToString();
+//		}
+		
+		this.getMenuItemTable().addItems(data);
+	}
 }

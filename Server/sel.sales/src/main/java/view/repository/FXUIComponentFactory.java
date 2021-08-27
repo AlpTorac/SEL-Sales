@@ -46,9 +46,9 @@ public class FXUIComponentFactory extends UIComponentFactory {
 	}
 	
 	@Override
-	public UITable createTable() {
-		FXTable wrapee = new FXTable();
-		UITable table = new UITable(wrapee);
+	public <T> UITable<T> createTable() {
+		FXTable<T> wrapee = new FXTable<T>();
+		UITable<T> table = new UITable<T>(wrapee);
 		return table;
 	}
 	

@@ -10,12 +10,12 @@ public class DishMenuItem implements IDishMenuItem {
 	private BigDecimal productionCost;
 	private IDishMenuItemIDFactory fac;
 	
-	DishMenuItem(IDish dish, double portionSize, double price, double productionCost, Object id) {
+	DishMenuItem(IDish dish, double portionSize, double price, double productionCost, IDishMenuItemID id) {
 		this.dish = dish;
 		this.portionSize = BigDecimal.valueOf(portionSize);
 		this.price = BigDecimal.valueOf(price);
 		this.productionCost = BigDecimal.valueOf(productionCost);
-		this.id = new DishMenuItemID(id);
+		this.id = id;
 	}
 	DishMenuItem(IDish dish, double portionSize, double price, double productionCost, IDishMenuItemIDFactory fac) {
 		this.dish = dish;
@@ -75,15 +75,19 @@ public class DishMenuItem implements IDishMenuItem {
 	public void setProductionCost(BigDecimal productionCost) {
 		this.productionCost = productionCost;
 	}
-
 	
 	@Override
 	public boolean equals(Object o) {
-		if (o == null || !(o instanceof DishMenuItem)) {
+		if (o == null || !(o instanceof IDishMenuItem)) {
 			return false;
-		} else {
-			IDishMenuItem item = (IDishMenuItem) o;
-			return this.getID().equals(item.getID());
 		}
+		
+		IDishMenuItem otherItem = (IDishMenuItem) o;
+		boolean result = this.getID().equals(otherItem.getID());
+		return result;
+	}
+	@Override
+	public int compareTo(IDishMenuItem o) {
+		return this.getID().getID().compareTo(o.getID().getID());
 	}
 }

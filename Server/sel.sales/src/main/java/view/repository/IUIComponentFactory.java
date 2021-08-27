@@ -62,7 +62,7 @@ public interface IUIComponentFactory {
 	public IButton createButton();
 	public ITextBox createTextBox();
 	public IInnerFrame createInnerFrame(IUIComponent parent);
-	public ITable createTable();
+	public <T> ITable<T> createTable();
 	public IHBoxLayout createHBoxLayout();
 	public IVBoxLayout createVBoxLayout();
 	public IGridLayout createGridLayout();

@@ -11,8 +11,6 @@ import view.MainView;
 import view.repository.FXUIComponentFactory;
 
 public class MainApp extends Application {
-	public static IController controller;
-	
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -20,8 +18,9 @@ public class MainApp extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		IModel model = new Model();
-		controller = new MainController(model);
-		IView view = new MainView(new FXUIComponentFactory(), controller);
+		IController controller = new MainController(model);
+		IView view = new MainView(new FXUIComponentFactory(), controller, model);
+		view.startUp();
 		view.show();
 	}
 }

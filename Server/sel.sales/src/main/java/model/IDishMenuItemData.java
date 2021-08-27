@@ -9,5 +9,5 @@ public interface IDishMenuItemData {
 
 	public double getProductionCost();
 
-	public Object getId();
+	public IDishMenuItemID getId();
 }

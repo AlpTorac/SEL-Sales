@@ -1,20 +1,20 @@
 package model;
 
 public class DishMenuItemID implements IDishMenuItemID {
-	private Object id;
+	private String id;
 	
-	DishMenuItemID(Object id) {
+	DishMenuItemID(String id) {
 		this.id = id;
 	}
 	
 	@Override
 	public String getID() {
-		return this.toString();
+		return this.id;
 	}
 	
 	@Override
 	public String toString() {
-		return this.id.toString();
+		return this.getID();
 	}
 	
 	@Override
@@ -23,7 +23,10 @@ public class DishMenuItemID implements IDishMenuItemID {
 			return false;
 		}
 		
-		IDishMenuItemID id = (IDishMenuItemID) o;
-		return this.id.equals(id);
+		IDishMenuItemID otherID = (IDishMenuItemID) o;
+		String thisIDContent = this.getID();
+		String otherIDContent = otherID.getID();
+		boolean result = thisIDContent.equals(otherIDContent);
+		return result;
 	}
 }

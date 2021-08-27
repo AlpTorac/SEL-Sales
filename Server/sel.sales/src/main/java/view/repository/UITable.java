@@ -1,8 +1,8 @@
 package view.repository;
 
-public class UITable extends UIComponent implements ITable {
+public class UITable<T> extends UIComponent implements ITable<T> {
 
-	UITable(ITable component) {
+	UITable(ITable<T> component) {
 		super(component);
 	}
 
@@ -16,5 +16,10 @@ public class UITable extends UIComponent implements ITable {
 	public void removeClickListener(ClickEventListener l) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ITable<T> getComponent() {
+		return (ITable<T>) super.getComponent();
 	}
 }

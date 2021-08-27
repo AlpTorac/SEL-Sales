@@ -24,4 +24,8 @@ public class FXTextBox extends TextField implements ITextBox, FXAttachable {
 	public void setCaption(String caption) {
 		this.setText(caption);
 	}
+	
+	public void clearText() {
+		super.clear();
+	}
 }

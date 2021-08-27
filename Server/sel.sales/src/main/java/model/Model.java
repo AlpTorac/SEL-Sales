@@ -1,12 +1,17 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class Model implements IModel {
+	private Collection<Updatable> updatables;
 	private IDishMenu dishMenu;
 	private IDishMenuItemFactory fac;
 	private IDishMenuItemDataFactory dataFac;
 	private IDishMenuItemIDFactory idFac;
 	
 	public Model() {
+		this.updatables = new ArrayList<Updatable>();
 		this.dishMenu = new DishMenu();
 		this.fac = new DishMenuItemFactory();
 		this.dataFac = new DishMenuItemDataFactory();
@@ -14,11 +19,15 @@ public class Model implements IModel {
 	}
 	
 	public void addMenuItem(IDishMenuItemData item) {
-		this.dishMenu.addMenuItem(this.fac.createMenuItem(item));
+		if (this.dishMenu.addMenuItem(this.fac.createMenuItem(item))) {
+			this.updatables.forEach(u -> u.refreshMenu());
+		}
 	}
 
 	public void removeMenuItem(IDishMenuItemID id) {
-		this.dishMenu.removeMenuItem(id);
+		if (this.dishMenu.removeMenuItem(id)) {
+			this.updatables.forEach(u -> u.refreshMenu());
+		}
 	}
 
 	public IDishMenuItem getItem(IDishMenuItemID id) {
@@ -33,5 +42,20 @@ public class Model implements IModel {
 	@Override
 	public IDishMenuItemIDFactory getItemIDCommunicationProtocoll() {
 		return this.idFac;
+	}
+
+	@Override
+	public IDishMenuItemData[] getMenuData() {
+		IDishMenuItem[] items = this.dishMenu.getAllItems();
+		IDishMenuItemData[] data = new IDishMenuItemData[items.length];
+		for (int i = 0; i < data.length; i++) {
+			data[i] = this.dataFac.menuItemToData(items[i]);
+		}
+		return data;
+	}
+
+	@Override
+	public void subscribe(Updatable updatable) {
+		this.updatables.add(updatable);
 	}
 }

@@ -82,7 +82,7 @@ public abstract class UIComponentFactory implements IUIComponentFactory {
 	public abstract UIGridLayout createGridLayout();
 	
 	@Override
-	public abstract UITable createTable();
+	public abstract <T> UITable<T> createTable();
 	
 	@Override
 	public abstract UIRadioButton createRadioButton();
