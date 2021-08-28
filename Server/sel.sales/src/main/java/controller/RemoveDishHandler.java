@@ -1,6 +1,6 @@
 package controller;
 
-import model.IDishMenuItemID;
+import model.dish.IDishMenuItemID;
 
 public class RemoveDishHandler extends BusinessEventHandler {
 

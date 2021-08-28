@@ -3,7 +3,7 @@ package dummy;
 import controller.BusinessEvent;
 import controller.IBusinessEventShooter;
 import controller.IController;
-import view.repository.ClickEventListener;
+import view.repository.uiwrapper.ClickEventListener;
 
 public class DummyListener extends ClickEventListener implements IBusinessEventShooter {
 

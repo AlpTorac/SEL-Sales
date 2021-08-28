@@ -1,8 +1,8 @@
 package view.composites;
 
 import view.repository.ILayout;
-import view.repository.UIComponentFactory;
-import view.repository.UIHBoxLayout;
+import view.repository.uiwrapper.UIComponentFactory;
+import view.repository.uiwrapper.UIHBoxLayout;
 
 public class MainWindow extends UIHBoxLayout {
 	private UIComponentFactory fac;

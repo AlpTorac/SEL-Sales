@@ -1,11 +1,11 @@
 package controller;
 
-import model.IDishMenuItem;
-import model.IDishMenuItemID;
-import model.IDishMenuItemIDFactory;
-import model.IDishMenuItemData;
-import model.IDishMenuItemDataFactory;
 import model.IModel;
+import model.dish.IDishMenuItem;
+import model.dish.IDishMenuItemData;
+import model.dish.IDishMenuItemDataFactory;
+import model.dish.IDishMenuItemID;
+import model.dish.IDishMenuItemIDFactory;
 
 public abstract class Controller implements IController {
 	private IBusinessEventManager eventManager;

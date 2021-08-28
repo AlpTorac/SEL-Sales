@@ -1,7 +1,7 @@
 package controller;
 
-import model.IDishMenuItemData;
-import model.IDishMenuItemID;
+import model.dish.IDishMenuItemData;
+import model.dish.IDishMenuItemID;
 
 public class EditDishHandler extends BusinessEventHandler {
 	

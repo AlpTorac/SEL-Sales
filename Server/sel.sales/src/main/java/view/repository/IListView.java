@@ -1,5 +1,5 @@
 package view.repository;
 
-public interface IListView extends Attachable {
+public interface IListView<T> extends Attachable {
 
 }

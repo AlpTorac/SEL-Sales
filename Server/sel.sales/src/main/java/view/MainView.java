@@ -2,11 +2,11 @@ package view;
 
 import controller.IController;
 import model.IModel;
-import view.repository.ClickEventListener;
-import view.repository.UIComponent;
-import view.repository.UIComponentFactory;
-import view.repository.UIInnerFrame;
-import view.repository.UIRootComponent;
+import view.repository.uiwrapper.ClickEventListener;
+import view.repository.uiwrapper.UIComponent;
+import view.repository.uiwrapper.UIComponentFactory;
+import view.repository.uiwrapper.UIInnerFrame;
+import view.repository.uiwrapper.UIRootComponent;
 import view.composites.AddDishListener;
 import view.composites.EditDishListener;
 import view.composites.MainWindow;

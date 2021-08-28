@@ -1,9 +1,9 @@
 package controller;
 
-import model.IDishMenuItemData;
-import model.IDishMenuItemDataFactory;
-import model.IDishMenuItemID;
-import model.IDishMenuItemIDFactory;
+import model.dish.IDishMenuItemData;
+import model.dish.IDishMenuItemDataFactory;
+import model.dish.IDishMenuItemID;
+import model.dish.IDishMenuItemIDFactory;
 
 public interface IController {
 	void addBusinessEventMapping(BusinessEvent event, IBusinessEventHandler handler);

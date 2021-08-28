@@ -3,10 +3,10 @@ package view.composites;
 import controller.BusinessEvent;
 import controller.IBusinessEventShooter;
 import controller.IController;
-import model.IDishMenuItemID;
-import model.IDishMenuItemIDFactory;
-import view.repository.ClickEventListener;
+import model.dish.IDishMenuItemID;
+import model.dish.IDishMenuItemIDFactory;
 import view.repository.HasText;
+import view.repository.uiwrapper.ClickEventListener;
 
 public class RemoveDishListener extends ClickEventListener implements IBusinessEventShooter {
 	private IController controller;

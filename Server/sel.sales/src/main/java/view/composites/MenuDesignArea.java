@@ -1,11 +1,11 @@
 package view.composites;
 
-import model.IDishMenuItemData;
+import model.dish.IDishMenuItemData;
 import view.repository.IButton;
 import view.repository.ITable;
 import view.repository.ITextBox;
-import view.repository.UIComponentFactory;
-import view.repository.UIGridLayout;
+import view.repository.uiwrapper.UIComponentFactory;
+import view.repository.uiwrapper.UIGridLayout;
 
 public class MenuDesignArea extends UIGridLayout {
 	

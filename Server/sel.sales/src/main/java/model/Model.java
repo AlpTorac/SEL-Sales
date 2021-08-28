@@ -3,6 +3,18 @@ package model;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import model.dish.DishMenu;
+import model.dish.DishMenuItemDataFactory;
+import model.dish.DishMenuItemFactory;
+import model.dish.DishMenuItemIDFactory;
+import model.dish.IDishMenu;
+import model.dish.IDishMenuItem;
+import model.dish.IDishMenuItemData;
+import model.dish.IDishMenuItemDataFactory;
+import model.dish.IDishMenuItemFactory;
+import model.dish.IDishMenuItemID;
+import model.dish.IDishMenuItemIDFactory;
+
 public class Model implements IModel {
 	private Collection<Updatable> updatables;
 	private IDishMenu dishMenu;

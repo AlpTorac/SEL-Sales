@@ -1,13 +1,15 @@
 package view.composites;
 
+import java.math.BigDecimal;
+
 import controller.BusinessEvent;
 import controller.IBusinessEventShooter;
 import controller.IController;
-import model.IDishMenuItemData;
-import model.IDishMenuItemDataFactory;
-import model.IDishMenuItemIDFactory;
-import view.repository.ClickEventListener;
+import model.dish.IDishMenuItemData;
+import model.dish.IDishMenuItemDataFactory;
+import model.dish.IDishMenuItemIDFactory;
 import view.repository.HasText;
+import view.repository.uiwrapper.ClickEventListener;
 
 public class AddDishListener extends ClickEventListener implements IBusinessEventShooter {
 	private IController controller;
@@ -40,9 +42,9 @@ public class AddDishListener extends ClickEventListener implements IBusinessEven
 		
 		IDishMenuItemData data = fac.constructData(
 				this.getDishName().getText(),
-				Double.valueOf(this.getPortion().getText()).doubleValue(), 
-				Double.valueOf(this.getPrice().getText()).doubleValue(),
-				Double.valueOf(this.getProductionCost().getText()).doubleValue(),
+				BigDecimal.valueOf(Double.valueOf(this.getPortion().getText()).doubleValue()), 
+				BigDecimal.valueOf(Double.valueOf(this.getPrice().getText()).doubleValue()),
+				BigDecimal.valueOf(Double.valueOf(this.getProductionCost().getText()).doubleValue()),
 				this.getDishID().getText(),
 				idFac
 		);

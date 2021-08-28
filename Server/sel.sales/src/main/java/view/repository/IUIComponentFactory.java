@@ -68,6 +68,6 @@ public interface IUIComponentFactory {
 	public IGridLayout createGridLayout();
 	public IRadioButton createRadioButton();
 	public IToggleGroup createToggleGroup();
-	public IListView createListView();
+	public <T> IListView<T> createListView();
 	public ILabel createLabel();
 }

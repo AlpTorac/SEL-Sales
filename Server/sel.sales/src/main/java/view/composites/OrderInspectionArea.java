@@ -9,8 +9,8 @@ import view.repository.ITable;
 import view.repository.IToggleGroup;
 import view.repository.IUIComponent;
 import view.repository.IVBoxLayout;
-import view.repository.UIComponentFactory;
-import view.repository.UIVBoxLayout;
+import view.repository.uiwrapper.UIComponentFactory;
+import view.repository.uiwrapper.UIVBoxLayout;
 
 public class OrderInspectionArea extends UIVBoxLayout {
 	private UIComponentFactory fac;

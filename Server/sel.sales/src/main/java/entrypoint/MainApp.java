@@ -8,7 +8,7 @@ import model.IModel;
 import model.Model;
 import view.IView;
 import view.MainView;
-import view.repository.FXUIComponentFactory;
+import view.repository.uifx.FXUIComponentFactory;
 
 public class MainApp extends Application {
 	public static void main(String[] args) {
