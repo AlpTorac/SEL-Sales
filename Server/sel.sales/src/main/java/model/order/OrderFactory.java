@@ -5,7 +5,7 @@ import model.IDishMenuItemFinder;
 public class OrderFactory implements IOrderFactory {
 	private IOrderItemFactory fac;
 	
-	OrderFactory(IOrderItemFactory fac) {
+	public OrderFactory(IOrderItemFactory fac) {
 		this.fac = fac;
 	}
 	

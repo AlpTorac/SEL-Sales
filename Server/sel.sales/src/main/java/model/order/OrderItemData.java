@@ -38,7 +38,7 @@ public class OrderItemData implements IOrderItemData {
 
 	@Override
 	public BigDecimal getTotalPrice() {
-		return this.getPricePerPortion().multiply(this.getPortionSize());
+		return this.getPricePerPortion().multiply(this.getAmount());
 	}
 
 	@Override

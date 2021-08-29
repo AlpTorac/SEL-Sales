@@ -2,6 +2,7 @@ package model.order;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 
@@ -89,5 +90,10 @@ public class Order implements IOrder {
 	@Override
 	public boolean getHereOrToGo() {
 		return this.hereOrToGo;
+	}
+
+	@Override
+	public Collection<IOrderItem> getOrderItemCollection() {
+		return this.orderItems.values();
 	}
 }

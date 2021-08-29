@@ -28,7 +28,7 @@ public class OrderCollector implements IOrderCollector {
 	}
 
 	@Override
-	public IOrder getOrderItem(IOrderID id) {
+	public IOrder getOrder(IOrderID id) {
 		return this.orders.get(id);
 	}
 

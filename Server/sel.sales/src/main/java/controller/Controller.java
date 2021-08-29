@@ -37,7 +37,7 @@ public abstract class Controller implements IController {
 		this.model.removeMenuItem(id);
 	}
 	public IDishMenuItemData getItem(IDishMenuItemID id) {
-		IDishMenuItem item = this.model.getItem(id);
+		IDishMenuItem item = this.model.getMenuItem(id);
 		return this.dataFac.menuItemToData(item);
 	}
 	
@@ -46,5 +46,9 @@ public abstract class Controller implements IController {
 	}
 	public IDishMenuItemIDFactory getItemIDCommunicationProtocoll() {
 		return this.idFac;
+	}
+	
+	public void addOrder(String serialisedOrder) {
+		this.model.addOrder(serialisedOrder);
 	}
 }

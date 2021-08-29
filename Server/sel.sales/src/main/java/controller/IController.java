@@ -9,6 +9,7 @@ public interface IController {
 	void addBusinessEventMapping(BusinessEvent event, IBusinessEventHandler handler);
 	void handleBusinessEvent(BusinessEvent event, Object[] args);
 	void addMenuItem(IDishMenuItemData args);
+	void addOrder(String serialisedOrder);
 	void removeMenuItem(IDishMenuItemID id);
 	IDishMenuItemData getItem(IDishMenuItemID id);
 	IDishMenuItemDataFactory getItemDataCommunicationProtocoll();

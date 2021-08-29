@@ -14,6 +14,17 @@ import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemFactory;
 import model.dish.IDishMenuItemID;
 import model.dish.IDishMenuItemIDFactory;
+import model.order.IOrder;
+import model.order.IOrderCollector;
+import model.order.IOrderData;
+import model.order.IOrderDataFactory;
+import model.order.IOrderDeserialiser;
+import model.order.IOrderID;
+import model.order.IOrderItemDataFactory;
+import model.order.OrderCollector;
+import model.order.OrderDataFactory;
+import model.order.OrderItemDataFactory;
+import model.order.StandardOrderDeserialiser;
 
 public class Model implements IModel {
 	private Collection<Updatable> updatables;
@@ -22,12 +33,24 @@ public class Model implements IModel {
 	private IDishMenuItemDataFactory dataFac;
 	private IDishMenuItemIDFactory idFac;
 	
+	private IOrderDataFactory orderDataFac;
+	private IOrderItemDataFactory orderItemDataFac;
+	private IOrderCollector orderCollector;
+	private IOrderDeserialiser orderDeserialiser;
+	private IDishMenuItemFinder finder;
+	
 	public Model() {
 		this.updatables = new ArrayList<Updatable>();
 		this.dishMenu = new DishMenu();
 		this.fac = new DishMenuItemFactory();
 		this.dataFac = new DishMenuItemDataFactory();
 		this.idFac = new DishMenuItemIDFactory();
+
+		this.orderDataFac = new OrderDataFactory();
+		this.orderItemDataFac = new OrderItemDataFactory();
+		this.orderCollector = new OrderCollector();
+		this.finder = new DishMenuItemFinder(this.dishMenu);
+		this.orderDeserialiser = new StandardOrderDeserialiser(this.finder, this.dataFac, this.idFac);
 	}
 	
 	public void addMenuItem(IDishMenuItemData item) {
@@ -42,7 +65,7 @@ public class Model implements IModel {
 		}
 	}
 
-	public IDishMenuItem getItem(IDishMenuItemID id) {
+	public IDishMenuItem getMenuItem(IDishMenuItemID id) {
 		return this.dishMenu.getItem(id);
 	}
 
@@ -69,5 +92,25 @@ public class Model implements IModel {
 	@Override
 	public void subscribe(Updatable updatable) {
 		this.updatables.add(updatable);
+	}
+
+	@Override
+	public void addOrder(String orderData) {
+		this.orderCollector.addOrder(this.orderDeserialiser.deserialise(orderData));
+	}
+
+	@Override
+	public IOrderData getOrder(IOrderID id) {
+		return this.orderCollector.getOrder(id).getOrderData(this.orderDataFac, this.orderItemDataFac, this.dataFac);
+	}
+
+	@Override
+	public IOrderData[] getAllOrders() {
+		IOrder[] orders = this.orderCollector.getAllOrders();
+		IOrderData[] data = new IOrderData[orders.length];
+		for (int i = 0; i < data.length; i++) {
+			data[i] = this.orderDataFac.orderToData(orders[i], this.orderItemDataFac, this.dataFac);
+		}
+		return data;
 	}
 }

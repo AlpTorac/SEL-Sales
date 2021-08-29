@@ -3,10 +3,11 @@ package model.order;
 import java.math.BigDecimal;
 
 import model.dish.IDishMenuItem;
+import model.dish.IDishMenuItemDataFactory;
 
 public interface IOrderItem extends Comparable<IOrderItem> {
-	default IOrderItemData getOrderItemData(IOrderItemDataFactory fac) {
-		return fac.orderItemToData(this);
+	default IOrderItemData getOrderItemData(IOrderItemDataFactory orderItemFac, IDishMenuItemDataFactory dishMenuItemFac) {
+		return orderItemFac.orderItemToData(this, dishMenuItemFac);
 	}
 	IDishMenuItem getMenuItem();
 	BigDecimal getAmount();
