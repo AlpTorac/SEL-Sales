@@ -6,8 +6,12 @@ import view.repository.IToggleGroup;
 import view.repository.Toggleable;
 
 public interface FXToggleable extends FXAttachable, Toggleable {
-	default public void setSelected(boolean selected) {
-		((Toggle) this).setSelected(selected);
+	default public void setToggled(boolean isToggled) {
+		((Toggle) this).setSelected(isToggled);
+	}
+	
+	default public boolean isToggled() {
+		return ((Toggle) this).isSelected();
 	}
 	
 	default public void setToggleGroup(IToggleGroup tg) {

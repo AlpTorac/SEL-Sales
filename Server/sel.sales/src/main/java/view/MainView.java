@@ -90,4 +90,9 @@ public class MainView extends View {
 	public void refreshMenu() {
 		this.mda.refreshMenuDisplay(this.getModel().getMenuData());
 	}
+
+	@Override
+	public void refreshOrders() {
+		this.ota.addUnconfirmedOrders(this.getModel().getAllOrders());
+	}
 }

@@ -97,6 +97,7 @@ public class Model implements IModel {
 	@Override
 	public void addOrder(String orderData) {
 		this.orderCollector.addOrder(this.orderDeserialiser.deserialise(orderData));
+		this.updatables.forEach(u -> u.refreshOrders());
 	}
 
 	@Override

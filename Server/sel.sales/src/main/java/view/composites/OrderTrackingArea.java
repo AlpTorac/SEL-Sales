@@ -1,5 +1,6 @@
 package view.composites;
 
+import model.order.IOrderData;
 import view.repository.IListView;
 import view.repository.IRadioButton;
 import view.repository.IToggleGroup;
@@ -9,6 +10,12 @@ import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIVBoxLayout;
 
 public class OrderTrackingArea extends UIVBoxLayout {
+	private IListView<IOrderData> unconfirmedOrderList;
+	private IListView<IOrderData> pastOrderList;
+	private IRadioButton auto;
+	private IRadioButton manual;
+	private IToggleGroup group;
+	
 	private UIComponentFactory fac;
 	
 	public OrderTrackingArea(UIComponentFactory fac) {
@@ -19,39 +26,88 @@ public class OrderTrackingArea extends UIVBoxLayout {
 	
 	private void init() {
 		this.setSpacing(20);
+		
+		this.unconfirmedOrderList = this.initOrderConfirmationTrackingList();
+		this.pastOrderList = this.initPastOrdersList();
+		
 		this.addUIComponents(new IUIComponent[] {
-				this.initOrderConfirmationTrackingList(),
+				this.getUnconfirmedOrderList(),
 				this.initConfirmationSettings(),
-				this.initPastOrdersList()
+				this.getPastOrderList()
 		});
 	}
 	
-	protected IListView initOrderConfirmationTrackingList() {
-		IListView list = this.fac.createListView();
+	protected IListView<IOrderData> initOrderConfirmationTrackingList() {
+		IListView<IOrderData> list = this.fac.createListView();
 		return list;
 	}
 	
 	protected IVBoxLayout initConfirmationSettings() {
 		IVBoxLayout optionArea = this.fac.createVBoxLayout();
 		
-		IRadioButton auto = this.fac.createRadioButton();
-		auto.setCaption("Auto-Confirm");
+		this.auto = this.fac.createRadioButton();
+		this.auto.setCaption("Auto-Confirm");
 		
-		IRadioButton manual = this.fac.createRadioButton();
-		manual.setCaption("Manual Confirmation");
+		this.manual = this.fac.createRadioButton();
+		this.manual.setCaption("Manual Confirmation");
 		
-		IRadioButton[] choices = new IRadioButton[] {auto, manual};
+		IRadioButton[] choices = new IRadioButton[] {this.auto, this.manual};
 		
-		IToggleGroup group = this.fac.createToggleGroup();
-		group.addAllToToggleGroup(choices);
+		this.group = this.fac.createToggleGroup();
+		this.group.addAllToToggleGroup(choices);
 		
 		optionArea.addUIComponents(choices);
 		
 		return optionArea;
 	}
 	
-	protected IListView initPastOrdersList() {
-		IListView list = this.fac.createListView();
+	protected IListView<IOrderData> initPastOrdersList() {
+		IListView<IOrderData> list = this.fac.createListView();
 		return list;
 	}
+	
+	public void addUnconfirmedOrders(IOrderData[] orderDatas) {
+		for (IOrderData d : orderDatas) {
+			this.addUnconfirmedOrder(d);
+		}
+	}
+	
+	public void addUnconfirmedOrder(IOrderData orderData) {
+		if (this.getAuto().isToggled()) {
+			this.confirmOrder(orderData);
+		} else {
+			this.getUnconfirmedOrderList().addItem(orderData);
+		}
+	}
+	
+	public void confirmOrder(IOrderData orderData) {
+		this.getUnconfirmedOrderList().removeItem(orderData);
+		this.addPastOrder(orderData);
+	}
+	
+	public void addPastOrder(IOrderData orderData) {
+		this.getPastOrderList().addItem(orderData);
+	}
+
+	public IListView<IOrderData> getUnconfirmedOrderList() {
+		return unconfirmedOrderList;
+	}
+
+	public IListView<IOrderData> getPastOrderList() {
+		return pastOrderList;
+	}
+
+	public IRadioButton getAuto() {
+		return auto;
+	}
+
+	public IRadioButton getManual() {
+		return manual;
+	}
+
+	public IToggleGroup getGroup() {
+		return group;
+	}
+	
+	
 }

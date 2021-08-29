@@ -5,15 +5,20 @@ import javafx.scene.Parent;
 import view.repository.IUIComponent;
 
 public interface FXComponent extends IUIComponent {
-	default public FXComponent getComponent() {
+	@Override
+	default FXComponent getComponent() {
 		return this;
 	}
 	
 	@Override
-	default public void show() {
+	default void setEnabled(boolean isEnabled) {
+		((Node) this).setDisable(!isEnabled);
+	}
+	@Override
+	default void show() {
 		((Node) this).setVisible(true);
 	}
-	default public Parent getParentProperty() {
+	default Parent getParentProperty() {
 		return ((Node) this).getParent();
 	}
 }
