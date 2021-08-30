@@ -1,8 +1,10 @@
-package sel.sales.model;
+package test.model.order;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,10 +13,13 @@ import org.junit.jupiter.api.Test;
 import model.IModel;
 import model.Model;
 import model.dish.IDishMenuItemDataFactory;
+import model.dish.IDishMenuItemID;
 import model.dish.IDishMenuItemIDFactory;
+import model.order.IOrder;
 import model.order.IOrderData;
+import model.order.IOrderItemData;
 
-class OrderNoDiscountCalculatedDataTest {
+class OrderParseTest {
 	private static IModel model;
 	private static IDishMenuItemDataFactory menuItemDataFac;
 	private static IDishMenuItemIDFactory menuItemIDFac;
@@ -50,31 +55,31 @@ class OrderNoDiscountCalculatedDataTest {
 		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;");
 		model.addOrder("order3-20200809000000-1-1:item3,5;");
 	}
+	
 	@Test
-	void totalDiscountTest() {
+	void orderSpecificDataTest() {
 		IOrderData[] orderData = model.getAllOrders();
 		
-		Assertions.assertEquals(BigDecimal.valueOf(0).compareTo(orderData[0].getTotalDiscount()), 0);
-		Assertions.assertEquals(BigDecimal.valueOf(0).compareTo(orderData[1].getTotalDiscount()), 0);
-		Assertions.assertEquals(BigDecimal.valueOf(0).compareTo(orderData[2].getTotalDiscount()), 0);
-	}
+		GregorianCalendar date1 = new GregorianCalendar();
+		date1.set(2020, 8, 9, 11, 22, 33);
 
-	@Test
-	void grossSumTest() {
-		IOrderData[] orderData = model.getAllOrders();
+		GregorianCalendar date2 = new GregorianCalendar();
+		date2.set(2020, 8, 9, 23, 59, 59);
+
+		GregorianCalendar date3 = new GregorianCalendar();
+		date3.set(2020, 8, 9, 0, 0, 0);
 		
-		Assertions.assertEquals(BigDecimal.valueOf(10).compareTo(orderData[0].getGrossSum()), 0);
-		Assertions.assertEquals(BigDecimal.valueOf(13).compareTo(orderData[1].getGrossSum()), 0);
-		Assertions.assertEquals(BigDecimal.valueOf(20).compareTo(orderData[2].getGrossSum()), 0);
+		OrderTestUtilityClass.assertOrderDataEqual(orderData[0], "order1", date1, false, false);
+		OrderTestUtilityClass.assertOrderDataEqual(orderData[1], "order2", date2, true, false);
+		OrderTestUtilityClass.assertOrderDataEqual(orderData[2], "order3", date3, true, true);
 	}
 	
 	@Test
-	void netSumTest() {
+	void OrderContentTest() {
 		IOrderData[] orderData = model.getAllOrders();
 		
-		Assertions.assertEquals(BigDecimal.valueOf(10).compareTo(orderData[0].getNetSum()), 0);
-		Assertions.assertEquals(BigDecimal.valueOf(13).compareTo(orderData[1].getNetSum()), 0);
-		Assertions.assertEquals(BigDecimal.valueOf(20).compareTo(orderData[2].getNetSum()), 0);
+		OrderTestUtilityClass.assertOrderDataEqual(orderData[0], new BigDecimal[] {BigDecimal.valueOf(2)}, new String[] {"item1"});
+		OrderTestUtilityClass.assertOrderDataEqual(orderData[1], new BigDecimal[] {BigDecimal.valueOf(2), BigDecimal.valueOf(3)}, new String[] {"item1", "item2"});
+		OrderTestUtilityClass.assertOrderDataEqual(orderData[2], new BigDecimal[] {BigDecimal.valueOf(5)}, new String[] {"item3"});
 	}
-	
 }

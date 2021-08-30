@@ -14,6 +14,7 @@ public class MenuDesignArea extends UIGridLayout {
 	private ITextBox portionBox;
 	private ITextBox productionCostBox;
 	private ITextBox priceBox;
+	private ITextBox discountBox;
 	private IButton addButton;
 	private IButton editButton;
 	private IButton removeButton;
@@ -37,13 +38,15 @@ public class MenuDesignArea extends UIGridLayout {
 		this.editButton = this.initEditButton();
 		this.removeButton = this.initRemoveButton();
 		this.menuItemTable = this.initMenuItemTable();
+		this.discountBox = this.initDiscountBox();
 		
-		this.addUIComponent(this.getMenuItemTable(), 		0, 0, 7, 1);
+		this.addUIComponent(this.getMenuItemTable(), 		0, 0, 8, 1);
 		this.addUIComponent(this.getDishNameBox(),   		0, 1, 1, 1);
 		this.addUIComponent(this.getMenuItemIDBox(), 		1, 1, 1, 1);
 		this.addUIComponent(this.getPortionBox(), 			2, 1, 1, 1);
 		this.addUIComponent(this.getProductionCostBox(), 	3, 1, 1, 1);
 		this.addUIComponent(this.getPriceBox(), 			4, 1, 1, 1);
+		this.addUIComponent(this.getDiscountBox(), 			5, 1, 1, 1);
 		this.addUIComponent(this.getAddButton(),     		0, 2, 2, 1);
 		this.addUIComponent(this.getEditButton(),     		2, 2, 2, 1);
 		this.addUIComponent(this.getRemoveButton(),     	4, 2, 2, 1);
@@ -56,7 +59,9 @@ public class MenuDesignArea extends UIGridLayout {
 		table.addColumn("ID", "Id");
 		table.addColumn("Portion Size", "PortionSize");
 		table.addColumn("Production Cost", "ProductionCost");
-		table.addColumn("Price", "Price");
+		table.addColumn("Gross Price", "GrossPrice");
+		table.addColumn("Discount", "Discount");
+		table.addColumn("Net Price", "NetPrice");
 //		table.addColumns(new String[] {
 //				"Dish Name",
 //				"ID",
@@ -94,6 +99,12 @@ public class MenuDesignArea extends UIGridLayout {
 	protected ITextBox initPriceBox() {
 		ITextBox priceBox = this.fac.createTextBox();
 		priceBox.setCaption("Price");
+		return priceBox;
+	}
+	
+	protected ITextBox initDiscountBox() {
+		ITextBox priceBox = this.fac.createTextBox();
+		priceBox.setCaption("Discount");
 		return priceBox;
 	}
 	
@@ -161,5 +172,9 @@ public class MenuDesignArea extends UIGridLayout {
 //		}
 		
 		this.getMenuItemTable().addItems(data);
+	}
+
+	public ITextBox getDiscountBox() {
+		return this.discountBox;
 	}
 }

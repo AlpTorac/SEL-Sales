@@ -19,4 +19,5 @@ public interface IModel {
 	IDishMenuItemData[] getMenuData();
 	IOrderData getOrder(IOrderID id);
 	IOrderData[] getAllOrders();
+	void removeAllOrders();
 }

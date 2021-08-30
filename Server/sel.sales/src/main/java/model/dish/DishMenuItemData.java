@@ -7,6 +7,7 @@ public class DishMenuItemData implements IDishMenuItemData {
 	private BigDecimal portionSize;
 	private BigDecimal price;
 	private BigDecimal productionCost;
+	private BigDecimal discount;
 	private IDishMenuItemID id;
 	
 	DishMenuItemData(String dishName, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, IDishMenuItemID id) {
@@ -15,6 +16,16 @@ public class DishMenuItemData implements IDishMenuItemData {
 		this.price = price;
 		this.productionCost = productionCost;
 		this.id = id;
+		this.discount = BigDecimal.ZERO;
+	}
+	
+	DishMenuItemData(String dishName, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, BigDecimal discount, IDishMenuItemID id) {
+		this.dishName = dishName;
+		this.portionSize = portionSize;
+		this.price = price;
+		this.productionCost = productionCost;
+		this.id = id;
+		this.discount = discount;
 	}
 
 	public String getDishName() {
@@ -25,7 +36,7 @@ public class DishMenuItemData implements IDishMenuItemData {
 		return portionSize;
 	}
 
-	public BigDecimal getPrice() {
+	public BigDecimal getGrossPrice() {
 		return price;
 	}
 
@@ -35,5 +46,10 @@ public class DishMenuItemData implements IDishMenuItemData {
 
 	public IDishMenuItemID getId() {
 		return id;
+	}
+
+	@Override
+	public BigDecimal getDiscount() {
+		return discount;
 	}
 }

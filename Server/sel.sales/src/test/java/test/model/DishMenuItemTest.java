@@ -1,4 +1,4 @@
-package sel.sales.model;
+package test.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,17 +51,9 @@ class DishMenuItemTest {
 	void test() {
 		IDishMenuItemData[] data = model.getMenuData();
 		
-		assertMenuItemDataEqual(data[0], "aaa", "item1", BigDecimal.valueOf(2.34), BigDecimal.valueOf(5), BigDecimal.valueOf(4));
-		assertMenuItemDataEqual(data[1], "bbb", "item2", BigDecimal.valueOf(5.67), BigDecimal.valueOf(1), BigDecimal.valueOf(0.5));
-		assertMenuItemDataEqual(data[2], "ccc", "item3", BigDecimal.valueOf(3.34), BigDecimal.valueOf(4), BigDecimal.valueOf(3.5));
-	}
-	
-	private static void assertMenuItemDataEqual(IDishMenuItemData data, String dishName, String id, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost) {
-		Assertions.assertEquals(data.getDishName(), dishName);
-		Assertions.assertEquals(data.getId().getID(), id);
-		Assertions.assertEquals(data.getPortionSize().compareTo(portionSize), 0);
-		Assertions.assertEquals(data.getPrice().compareTo(price), 0);
-		Assertions.assertEquals(data.getProductionCost().compareTo(productionCost), 0);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], "aaa", "item1", BigDecimal.valueOf(2.34), BigDecimal.valueOf(5), BigDecimal.valueOf(4));
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], "bbb", "item2", BigDecimal.valueOf(5.67), BigDecimal.valueOf(1), BigDecimal.valueOf(0.5));
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[2], "ccc", "item3", BigDecimal.valueOf(3.34), BigDecimal.valueOf(4), BigDecimal.valueOf(3.5));
 	}
 
 }

@@ -1,34 +1,60 @@
-package sel.sales.model;
+package test.view;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.testfx.framework.junit5.ApplicationTest;
 
+import controller.IController;
+import controller.MainController;
+import javafx.application.Application;
+import javafx.stage.Stage;
 import model.IModel;
 import model.Model;
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemIDFactory;
+import model.order.IOrderData;
+import test.GeneralTestUtilityClass;
+import test.model.order.ClientSimulant;
+import view.IView;
+import view.MainView;
+import view.composites.OrderTrackingArea;
+import view.repository.IListView;
+import view.repository.uifx.FXUIComponentFactory;
 
-class OrderConcurrencyTest {
+class OrderShowingTest extends ApplicationTest {
 	private static IModel model;
 	private static IDishMenuItemDataFactory menuItemDataFac;
 	private static IDishMenuItemIDFactory menuItemIDFac;
 	
+	private static IController controller;
+	private static IView view;
+	
 	private static ExecutorService pool = Executors.newFixedThreadPool(10);
 	
-	@BeforeAll
-	static void startUp() {
+	@AfterEach
+	void afterTest() {
+		model.removeAllOrders();
+	}
+	
+	@Override
+	public void start(Stage stage) {
 		model = new Model();
+		controller = new MainController(model);
+		view = new MainView(new FXUIComponentFactory(), controller, model);
+		view.startUp();
+//		view.show();
 		menuItemDataFac = model.getItemDataCommunicationProtocoll();
 		menuItemIDFac = model.getItemIDCommunicationProtocoll();
-		
 		model.addMenuItem(menuItemDataFac.constructData(
 				"aaa",
 				BigDecimal.valueOf(2.34),
@@ -52,7 +78,25 @@ class OrderConcurrencyTest {
 	}
 	
 	@Test
-	void test() {
+	void duplicateOrderTest() {
+		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		
+		Assertions.assertEquals(model.getAllOrders().length, 1);
+		
+		MainView mv = (MainView) view;
+		OrderTrackingArea ota = GeneralTestUtilityClass.getPrivateFieldValue(mv, "ota");;
+		IListView<IOrderData> list = ota.getUnconfirmedOrderList();
+		
+		Assertions.assertEquals(list.getSize(), 1);
+	}
+
+	@Test
+	void duplicateAsynchroneOrderTest() {
 		ClientSimulant c1 = new ClientSimulant("order1-20200809112233-0-0:item1,2;", model);
 		ClientSimulant c2 = new ClientSimulant("order2-20200809235959-1-0:item1,12;item2,3;", model);
 		ClientSimulant c3 = new ClientSimulant("order3-20210809000000-1-1:item3,5;item1,10;", model);
@@ -82,6 +126,12 @@ class OrderConcurrencyTest {
 		}
 		
 		Assertions.assertEquals(model.getAllOrders().length, 10);
+		
+		MainView mv = (MainView) view;
+		OrderTrackingArea ota = GeneralTestUtilityClass.getPrivateFieldValue(mv, "ota");;
+		IListView<IOrderData> list = ota.getUnconfirmedOrderList();
+		
+		Assertions.assertEquals(list.getSize(), 10);
 	}
 	
 }

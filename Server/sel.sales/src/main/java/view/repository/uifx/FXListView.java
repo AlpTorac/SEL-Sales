@@ -18,4 +18,16 @@ public class FXListView<T> extends ListView<T> implements FXAttachable, IListVie
 	public void removeItem(T item) {
 		super.getItems().remove(item);
 	}
+	
+	@Override
+	public int getSize() {
+		return super.getItems().size();
+	}
+	
+	@Override
+	public void addItemIfNotPresent(T item) {
+		if (super.getItems().stream().noneMatch(i -> i.equals(item))) {
+			this.addItem(item);
+		}
+	}
 }

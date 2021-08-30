@@ -9,6 +9,7 @@ public class DishMenuItem implements IDishMenuItem {
 	private IDishMenuItemID id;
 	private BigDecimal productionCost;
 	private IDishMenuItemIDFactory fac;
+	private BigDecimal discount;
 	
 	DishMenuItem(IDish dish, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, IDishMenuItemID id) {
 		this.dish = dish;
@@ -16,6 +17,7 @@ public class DishMenuItem implements IDishMenuItem {
 		this.price = price;
 		this.productionCost = productionCost;
 		this.id = id;
+		this.discount = BigDecimal.ZERO;
 	}
 	DishMenuItem(IDish dish, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, IDishMenuItemIDFactory fac) {
 		this.dish = dish;
@@ -24,6 +26,24 @@ public class DishMenuItem implements IDishMenuItem {
 		this.productionCost = productionCost;
 		this.fac = fac;
 		this.id = this.fac.createDishMenuItemID();
+		this.discount = BigDecimal.ZERO;
+	}
+	DishMenuItem(IDish dish, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, BigDecimal discount, IDishMenuItemID id) {
+		this.dish = dish;
+		this.portionSize = portionSize;
+		this.price = price;
+		this.productionCost = productionCost;
+		this.id = id;
+		this.discount = discount;
+	}
+	DishMenuItem(IDish dish, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, BigDecimal discount, IDishMenuItemIDFactory fac) {
+		this.dish = dish;
+		this.portionSize = portionSize;
+		this.price = price;
+		this.productionCost = productionCost;
+		this.fac = fac;
+		this.id = this.fac.createDishMenuItemID();
+		this.discount = discount;
 	}
 	
 	@Override
@@ -76,6 +96,12 @@ public class DishMenuItem implements IDishMenuItem {
 		this.productionCost = productionCost;
 	}
 	
+	public BigDecimal getDiscount() {
+		return discount;
+	}
+	public void setDiscount(BigDecimal discount) {
+		this.discount = discount;
+	}
 	@Override
 	public boolean equals(Object o) {
 		if (o == null || !(o instanceof IDishMenuItem)) {

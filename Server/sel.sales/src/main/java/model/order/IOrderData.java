@@ -16,4 +16,5 @@ public interface IOrderData {
 	default BigDecimal getNetSum() {
 		return this.getGrossSum().subtract(this.getTotalDiscount());
 	}
+	String toString();
 }

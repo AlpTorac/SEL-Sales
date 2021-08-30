@@ -18,8 +18,9 @@ public class EditDishListener extends ClickEventListener implements IBusinessEve
 	private HasText portion;
 	private HasText productionCost;
 	private HasText price;
+	private HasText discount;
 	
-	public EditDishListener(IController controller, HasText dishName, HasText dishID, HasText portion, HasText productionCost, HasText price) {
+	public EditDishListener(IController controller, HasText dishName, HasText dishID, HasText portion, HasText productionCost, HasText price, HasText discount) {
 		super();
 		this.controller = controller;
 		
@@ -28,6 +29,7 @@ public class EditDishListener extends ClickEventListener implements IBusinessEve
 		this.portion = portion;
 		this.productionCost = productionCost;
 		this.price = price;
+		this.discount = discount;
 	}
 	
 	@Override
@@ -35,11 +37,19 @@ public class EditDishListener extends ClickEventListener implements IBusinessEve
 		IDishMenuItemDataFactory fac = this.controller.getItemDataCommunicationProtocoll();
 		IDishMenuItemIDFactory idFac = this.controller.getItemIDCommunicationProtocoll();
 		
+		String discountAsText = this.getDiscount().getText();
+		BigDecimal discount = BigDecimal.ZERO;
+		
+		if (discountAsText != null) {
+			discount = BigDecimal.valueOf(Double.valueOf(discountAsText).doubleValue());
+		}
+		
 		IDishMenuItemData data = fac.constructData(
 				this.getDishName().getText(),
 				BigDecimal.valueOf(Double.valueOf(this.getPortion().getText()).doubleValue()), 
 				BigDecimal.valueOf(Double.valueOf(this.getPrice().getText()).doubleValue()),
 				BigDecimal.valueOf(Double.valueOf(this.getProductionCost().getText()).doubleValue()),
+				discount,
 				this.getDishID().getText(),
 				idFac
 		);
@@ -87,6 +97,11 @@ public class EditDishListener extends ClickEventListener implements IBusinessEve
 		this.getPortion().clearText();
 		this.getPrice().clearText();
 		this.getProductionCost().clearText();
+		this.getDiscount().clearText();
+	}
+
+	public HasText getDiscount() {
+		return discount;
 	}
 
 }

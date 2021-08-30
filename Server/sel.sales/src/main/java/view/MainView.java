@@ -62,7 +62,8 @@ public class MainView extends View {
 				mda.getMenuItemIDBox(),
 				mda.getPortionBox(),
 				mda.getProductionCostBox(),
-				mda.getPriceBox()
+				mda.getPriceBox(),
+				mda.getDiscountBox()
 		);
 		mda.getAddButton().addClickListener(addDishListener);
 		
@@ -78,7 +79,8 @@ public class MainView extends View {
 				mda.getMenuItemIDBox(),
 				mda.getPortionBox(),
 				mda.getProductionCostBox(),
-				mda.getPriceBox()
+				mda.getPriceBox(),
+				mda.getDiscountBox()
 		);
 		mda.getEditButton().addClickListener(editDishListener);
 	}

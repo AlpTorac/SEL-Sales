@@ -7,14 +7,12 @@ import model.dish.IDishMenuItemDataFactory;
 
 public class OrderItemDataFactory implements IOrderItemDataFactory {
 	@Override
-	public OrderItemData constructData(IDishMenuItemData menuItem, BigDecimal amount, BigDecimal discount) {
-		return new OrderItemData(menuItem, amount, discount);
+	public OrderItemData constructData(IDishMenuItemData menuItem, BigDecimal amount) {
+		return new OrderItemData(menuItem, amount);
 	}
 
 	@Override
 	public OrderItemData orderItemToData(IOrderItem item, IDishMenuItemDataFactory fac) {
-		return new OrderItemData(item.getMenuItem().getDishMenuItemData(fac),
-				item.getAmount(),
-				item.getDiscount());
+		return new OrderItemData(item.getMenuItem().getDishMenuItemData(fac), item.getAmount());
 	}
 }

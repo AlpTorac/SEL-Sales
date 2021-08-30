@@ -1,10 +1,8 @@
-package sel.sales.model;
+package test.model.order;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,13 +11,10 @@ import org.junit.jupiter.api.Test;
 import model.IModel;
 import model.Model;
 import model.dish.IDishMenuItemDataFactory;
-import model.dish.IDishMenuItemID;
 import model.dish.IDishMenuItemIDFactory;
-import model.order.IOrder;
 import model.order.IOrderData;
-import model.order.IOrderItemData;
 
-class OrderParseTest {
+class OrderDataEqualityTest {
 	private static IModel model;
 	private static IDishMenuItemDataFactory menuItemDataFac;
 	private static IDishMenuItemIDFactory menuItemIDFac;
@@ -57,29 +52,29 @@ class OrderParseTest {
 	}
 	
 	@Test
-	void orderSpecificDataTest() {
+	void notEqualTest() {
 		IOrderData[] orderData = model.getAllOrders();
 		
-		GregorianCalendar date1 = new GregorianCalendar();
-		date1.set(2020, 8, 9, 11, 22, 33);
-
-		GregorianCalendar date2 = new GregorianCalendar();
-		date2.set(2020, 8, 9, 23, 59, 59);
-
-		GregorianCalendar date3 = new GregorianCalendar();
-		date3.set(2020, 8, 9, 0, 0, 0);
-		
-		OrderTestUtilityClass.assertOrderDataEqual(orderData[0], "order1", date1, false, false);
-		OrderTestUtilityClass.assertOrderDataEqual(orderData[1], "order2", date2, true, false);
-		OrderTestUtilityClass.assertOrderDataEqual(orderData[2], "order3", date3, true, true);
+		Assertions.assertFalse(orderData[0].equals(orderData[1]));
+		Assertions.assertFalse(orderData[0].equals(orderData[2]));
+		Assertions.assertFalse(orderData[1].equals(orderData[0]));
+		Assertions.assertFalse(orderData[1].equals(orderData[2]));
+		Assertions.assertFalse(orderData[2].equals(orderData[0]));
+		Assertions.assertFalse(orderData[2].equals(orderData[1]));
 	}
 	
 	@Test
-	void OrderContentTest() {
-		IOrderData[] orderData = model.getAllOrders();
+	void equalTest() {
+		IOrderData[] orderData1 = model.getAllOrders();
+		IOrderData[] orderData2 = model.getAllOrders();
 		
-		OrderTestUtilityClass.assertOrderDataEqual(orderData[0], new BigDecimal[] {BigDecimal.valueOf(2)}, new String[] {"item1"});
-		OrderTestUtilityClass.assertOrderDataEqual(orderData[1], new BigDecimal[] {BigDecimal.valueOf(2), BigDecimal.valueOf(3)}, new String[] {"item1", "item2"});
-		OrderTestUtilityClass.assertOrderDataEqual(orderData[2], new BigDecimal[] {BigDecimal.valueOf(5)}, new String[] {"item3"});
+		// Make sure references are different
+		Assertions.assertFalse(orderData1[0] == orderData2[0]);
+		Assertions.assertFalse(orderData1[1] == orderData2[1]);
+		Assertions.assertFalse(orderData1[2] == orderData2[2]);
+		
+		Assertions.assertTrue(orderData1[0].equals(orderData2[0]));
+		Assertions.assertTrue(orderData1[1].equals(orderData2[1]));
+		Assertions.assertTrue(orderData1[2].equals(orderData2[2]));
 	}
 }

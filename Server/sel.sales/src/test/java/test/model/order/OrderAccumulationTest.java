@@ -1,4 +1,4 @@
-package sel.sales.model;
+package test.model.order;
 
 import static org.junit.jupiter.api.Assertions.*;
 

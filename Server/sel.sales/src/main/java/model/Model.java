@@ -96,7 +96,8 @@ public class Model implements IModel {
 
 	@Override
 	public void addOrder(String orderData) {
-		this.orderCollector.addOrder(this.orderDeserialiser.deserialise(orderData));
+		IOrder order = this.orderDeserialiser.deserialise(orderData);
+		this.orderCollector.addOrder(order);
 		this.updatables.forEach(u -> u.refreshOrders());
 	}
 
@@ -113,5 +114,10 @@ public class Model implements IModel {
 			data[i] = this.orderDataFac.orderToData(orders[i], this.orderItemDataFac, this.dataFac);
 		}
 		return data;
+	}
+
+	@Override
+	public void removeAllOrders() {
+		this.orderCollector.clearOrders();
 	}
 }

@@ -49,7 +49,7 @@ public class OrderData implements IOrderData {
 	@Override
 	public boolean getIsDiscounted() {
 		return this.orderItems.stream()
-				.anyMatch(item -> item.getDiscount().compareTo(BigDecimal.ZERO) > 0);
+				.anyMatch(item -> item.getTotalDiscount().compareTo(BigDecimal.ZERO) > 0);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class OrderData implements IOrderData {
 	public BigDecimal getGrossSum() {
 		BigDecimal result = BigDecimal.ZERO;
 		for (IOrderItemData d : this.orderItems) {
-			result = result.add(d.getTotalPrice());
+			result = result.add(d.getNetPrice());
 		}
 		return result;
 	}
@@ -70,7 +70,7 @@ public class OrderData implements IOrderData {
 	public BigDecimal getTotalDiscount() {
 		BigDecimal result = BigDecimal.ZERO;
 		for (IOrderItemData d : this.orderItems) {
-			result = result.add(d.getDiscount());
+			result = result.add(d.getTotalDiscount());
 		}
 		return result;
 	}
@@ -79,5 +79,19 @@ public class OrderData implements IOrderData {
 	public IOrderItemData[] getOrderedItems() {
 		return this.orderItems.toArray(IOrderItemData[]::new);
 	}
-
+	
+	@Override
+	public String toString() {
+		return this.getID().toString();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof IOrderData)) {
+			return false;
+		} else {
+			IOrderData otherOrderData = (IOrderData) o;
+			return this.getID().equals(otherOrderData.getID());
+		}
+	}
 }

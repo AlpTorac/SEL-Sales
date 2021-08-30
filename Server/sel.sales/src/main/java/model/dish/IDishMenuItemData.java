@@ -3,13 +3,19 @@ package model.dish;
 import java.math.BigDecimal;
 
 public interface IDishMenuItemData {
-	public String getDishName();
+	String getDishName();
 
-	public BigDecimal getPortionSize();
+	BigDecimal getPortionSize();
 
-	public BigDecimal getPrice();
+	BigDecimal getGrossPrice();
 
-	public BigDecimal getProductionCost();
+	BigDecimal getProductionCost();
 
-	public IDishMenuItemID getId();
+	BigDecimal getDiscount();
+	
+	default BigDecimal getNetPrice() {
+		return this.getGrossPrice().subtract(this.getDiscount());
+	}
+	
+	IDishMenuItemID getId();
 }

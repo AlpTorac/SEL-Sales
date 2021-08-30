@@ -1,4 +1,4 @@
-package sel.sales.model;
+package test.model.order;
 
 import java.math.BigDecimal;
 import java.util.Calendar;

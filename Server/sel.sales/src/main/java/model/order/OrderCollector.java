@@ -37,4 +37,9 @@ public class OrderCollector implements IOrderCollector {
 		return this.orders.values().toArray(IOrder[]::new);
 	}
 
+	@Override
+	public void clearOrders() {
+		this.orders.clear();
+	}
+
 }

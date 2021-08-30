@@ -5,4 +5,5 @@ public interface IOrderCollector {
 	boolean removeOrder(IOrderID id);
 	IOrder getOrder(IOrderID id);
 	IOrder[] getAllOrders();
+	void clearOrders();
 }
