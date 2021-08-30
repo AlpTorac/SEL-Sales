@@ -21,4 +21,8 @@ public interface FXComponent extends IUIComponent {
 	default Parent getParentProperty() {
 		return ((Node) this).getParent();
 	}
+	
+	default void setOpacity(double opacity) {
+		((Node) this).setOpacity(opacity);
+	}
 }

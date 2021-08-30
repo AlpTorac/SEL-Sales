@@ -1,6 +1,6 @@
 package view.repository;
 
-public interface IListView<T> extends Attachable {
+public interface IListView<T> extends Attachable, IEventShooterOnClickUIComponent {
 	@SuppressWarnings("unchecked")
 	default public void addItem(T item) {
 		((IListView<T>) this.getComponent()).addItem(item);

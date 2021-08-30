@@ -10,14 +10,13 @@ public class FXButton extends Button implements IButton, FXAttachable {
 
 	@Override
 	public void addClickListener(ClickEventListener l) {
-		Button ref = this;
 		EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				l.action();
 			}
 		};
-		ref.setOnAction(event);
+		super.setOnAction(event);
 	}
 
 	@Override

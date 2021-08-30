@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,11 @@ class OrderConcurrencyTest {
 	private static IDishMenuItemIDFactory menuItemIDFac;
 	
 	private static ExecutorService pool = Executors.newFixedThreadPool(10);
+	
+	@AfterEach
+	void afterTest() {
+		model.removeAllOrders();
+	}
 	
 	@BeforeAll
 	static void startUp() {

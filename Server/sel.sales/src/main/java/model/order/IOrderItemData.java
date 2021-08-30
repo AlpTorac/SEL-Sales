@@ -19,6 +19,16 @@ public interface IOrderItemData {
 	default BigDecimal getGrossPricePerMenuItem() {
 		return this.getItemData().getGrossPrice();
 	}
+	
+	default BigDecimal getGrossPricePerPortion() {
+		return this.getItemData().getGrossPricePerPortion();
+	}
+	default BigDecimal getNetPricePerPortion() {
+		return this.getItemData().getNetPricePerPortion();
+	}
+	default BigDecimal getDiscountPerPortion() {
+		return this.getItemData().getDiscountPerPortion();
+	}
 
 	default BigDecimal getNetPricePerMenuItem() {
 		return this.getItemData().getNetPrice();

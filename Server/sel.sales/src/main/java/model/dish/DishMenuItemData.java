@@ -52,4 +52,9 @@ public class DishMenuItemData implements IDishMenuItemData {
 	public BigDecimal getDiscount() {
 		return discount;
 	}
+	
+	@Override
+	public String toString() {
+		return this.getId().toString();
+	}
 }

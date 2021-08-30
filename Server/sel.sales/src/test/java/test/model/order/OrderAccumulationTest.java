@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +19,11 @@ class OrderAccumulationTest {
 	private static IModel model;
 	private static IDishMenuItemDataFactory menuItemDataFac;
 	private static IDishMenuItemIDFactory menuItemIDFac;
+	
+	@AfterEach
+	void afterTest() {
+		model.removeAllOrders();
+	}
 	
 	@BeforeAll
 	static void startUp() {

@@ -5,5 +5,8 @@ public interface IUIComponent {
 		this.getComponent().setEnabled(isEnabled);
 	}
 	IUIComponent getComponent();
+	default void setOpacity(double opacity) {
+		this.getComponent().setOpacity(opacity);
+	}
 	void show();
 }

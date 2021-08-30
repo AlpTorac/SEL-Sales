@@ -1,16 +1,16 @@
 package view.repository.uiwrapper;
 
-import view.repository.IEventShooterUIComponent;
+import view.repository.IEventShooterOnClickUIComponent;
 
-public abstract class EventShooterUIComponent extends UIComponent implements IEventShooterUIComponent {
+public abstract class EventShooterUIComponent extends UIComponent implements IEventShooterOnClickUIComponent {
 
-	EventShooterUIComponent(IEventShooterUIComponent component) {
+	EventShooterUIComponent(IEventShooterOnClickUIComponent component) {
 		super(component);
 	}
 
 	@Override
-	public IEventShooterUIComponent getComponent() {
-		return (IEventShooterUIComponent) super.getComponent();
+	public IEventShooterOnClickUIComponent getComponent() {
+		return (IEventShooterOnClickUIComponent) super.getComponent();
 	}
 	
 	public void addClickListener(ClickEventListener l) {

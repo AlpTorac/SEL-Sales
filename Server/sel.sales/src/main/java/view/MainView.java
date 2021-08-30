@@ -12,6 +12,7 @@ import view.composites.EditDishListener;
 import view.composites.MainWindow;
 import view.composites.MenuDesignArea;
 import view.composites.OrderInspectionArea;
+import view.composites.OrderInspectionListener;
 import view.composites.OrderTrackingArea;
 import view.composites.RemoveDishListener;
 
@@ -83,6 +84,12 @@ public class MainView extends View {
 				mda.getDiscountBox()
 		);
 		mda.getEditButton().addClickListener(editDishListener);
+		
+		ClickEventListener unconfirmedOrderInspectionListener = new OrderInspectionListener(oia);
+		ota.getUnconfirmedOrderList().addClickListener(unconfirmedOrderInspectionListener);
+		
+		ClickEventListener pastOrderInspectionListener = new OrderInspectionListener(oia);
+		ota.getPastOrderList().addClickListener(pastOrderInspectionListener);
 	}
 	public void show() {
 		this.mainWindow.setInnerFrame(frame);

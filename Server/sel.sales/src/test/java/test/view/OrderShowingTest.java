@@ -4,8 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
@@ -52,7 +56,7 @@ class OrderShowingTest extends ApplicationTest {
 		controller = new MainController(model);
 		view = new MainView(new FXUIComponentFactory(), controller, model);
 		view.startUp();
-//		view.show();
+		view.show();
 		menuItemDataFac = model.getItemDataCommunicationProtocoll();
 		menuItemIDFac = model.getItemIDCommunicationProtocoll();
 		model.addMenuItem(menuItemDataFac.constructData(
@@ -76,7 +80,6 @@ class OrderShowingTest extends ApplicationTest {
 				BigDecimal.valueOf(3.5),
 				"item3", menuItemIDFac));
 	}
-	
 	@Test
 	void duplicateOrderTest() {
 		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
@@ -108,22 +111,30 @@ class OrderShowingTest extends ApplicationTest {
 		ClientSimulant c9 = new ClientSimulant("order9-20210709000000-1-1:item3,5;", model);
 		ClientSimulant c10 = new ClientSimulant("order10-20210809000000-1-1:item3,5;", model);
 		
-		pool.submit(c1);
-		pool.submit(c2);
-		pool.submit(c3);
-		pool.submit(c4);
-		pool.submit(c5);
-		pool.submit(c6);
-		pool.submit(c7);
-		pool.submit(c8);
-		pool.submit(c9);
-		pool.submit(c10);
+		Collection<ClientSimulant> cs = new ArrayList<ClientSimulant>();
+		cs.add(c1);
+		cs.add(c2);
+		cs.add(c3);
+		cs.add(c4);
+		cs.add(c5);
+		cs.add(c6);
+		cs.add(c7);
+		cs.add(c8);
+		cs.add(c9);
+		cs.add(c10);
 		
-		try {
-			pool.awaitTermination(1, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		@SuppressWarnings("rawtypes")
+		Collection<Future> fs = new ArrayList<Future>();
+		
+		for (ClientSimulant c : cs) {
+			fs.add(pool.submit(c));
 		}
+		
+		while (!fs.stream().allMatch(f -> f.isDone())) {
+			
+		}
+		
+		pool.shutdown();
 		
 		Assertions.assertEquals(model.getAllOrders().length, 10);
 		
