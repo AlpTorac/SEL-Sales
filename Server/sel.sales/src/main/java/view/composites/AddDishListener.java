@@ -20,16 +20,16 @@ public class AddDishListener extends ClickEventListener implements IBusinessEven
 	private HasText price;
 	private HasText discount;
 	
-	public AddDishListener(IController controller, HasText dishName, HasText dishID, HasText portion, HasText productionCost, HasText price, HasText discount) {
+	public AddDishListener(IController controller, MenuDesignArea mda) {
 		super();
 		this.controller = controller;
 		
-		this.dishName = dishName;
-		this.dishID = dishID;
-		this.portion = portion;
-		this.productionCost = productionCost;
-		this.price = price;
-		this.discount = discount;
+		this.dishName = mda.getDishNameBox();
+		this.dishID = mda.getMenuItemIDBox();
+		this.portion = mda.getPortionBox();
+		this.productionCost = mda.getProductionCostBox();
+		this.price = mda.getPriceBox();
+		this.discount = mda.getDiscountBox();
 	}
 
 	@Override

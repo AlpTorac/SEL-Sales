@@ -47,13 +47,13 @@ class OrderNoDiscountCalculatedDataTest {
 				BigDecimal.valueOf(3.5),
 				"item3", menuItemIDFac));
 		
-		model.addOrder("order1-20200809112233-0-0:item1,2;");
-		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;");
-		model.addOrder("order3-20200809000000-1-1:item3,5;");
+		model.addUnconfirmedOrder("order1-20200809112233-0-0:item1,2;");
+		model.addUnconfirmedOrder("order2-20200809235959-1-0:item1,2;item2,3;");
+		model.addUnconfirmedOrder("order3-20200809000000-1-1:item3,5;");
 	}
 	@Test
 	void totalDiscountTest() {
-		IOrderData[] orderData = model.getAllOrders();
+		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		Assertions.assertEquals(BigDecimal.valueOf(0).compareTo(orderData[0].getTotalDiscount()), 0);
 		Assertions.assertEquals(BigDecimal.valueOf(0).compareTo(orderData[1].getTotalDiscount()), 0);
@@ -62,7 +62,7 @@ class OrderNoDiscountCalculatedDataTest {
 
 	@Test
 	void grossSumTest() {
-		IOrderData[] orderData = model.getAllOrders();
+		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		Assertions.assertEquals(BigDecimal.valueOf(10).compareTo(orderData[0].getGrossSum()), 0);
 		Assertions.assertEquals(BigDecimal.valueOf(13).compareTo(orderData[1].getGrossSum()), 0);
@@ -71,7 +71,7 @@ class OrderNoDiscountCalculatedDataTest {
 	
 	@Test
 	void netSumTest() {
-		IOrderData[] orderData = model.getAllOrders();
+		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		Assertions.assertEquals(BigDecimal.valueOf(10).compareTo(orderData[0].getNetSum()), 0);
 		Assertions.assertEquals(BigDecimal.valueOf(13).compareTo(orderData[1].getNetSum()), 0);

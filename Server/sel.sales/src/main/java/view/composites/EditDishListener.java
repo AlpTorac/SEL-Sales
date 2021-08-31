@@ -7,7 +7,6 @@ import controller.IBusinessEventShooter;
 import controller.IController;
 import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemDataFactory;
-import model.dish.IDishMenuItemID;
 import model.dish.IDishMenuItemIDFactory;
 import view.repository.HasText;
 import view.repository.uiwrapper.ClickEventListener;
@@ -20,16 +19,16 @@ public class EditDishListener extends ClickEventListener implements IBusinessEve
 	private HasText price;
 	private HasText discount;
 	
-	public EditDishListener(IController controller, HasText dishName, HasText dishID, HasText portion, HasText productionCost, HasText price, HasText discount) {
+	public EditDishListener(IController controller, MenuDesignArea mda) {
 		super();
 		this.controller = controller;
 		
-		this.dishName = dishName;
-		this.dishID = dishID;
-		this.portion = portion;
-		this.productionCost = productionCost;
-		this.price = price;
-		this.discount = discount;
+		this.dishName = mda.getDishNameBox();
+		this.dishID = mda.getMenuItemIDBox();
+		this.portion = mda.getPortionBox();
+		this.productionCost = mda.getProductionCostBox();
+		this.price = mda.getPriceBox();
+		this.discount = mda.getDiscountBox();
 	}
 	
 	@Override
@@ -54,11 +53,9 @@ public class EditDishListener extends ClickEventListener implements IBusinessEve
 				idFac
 		);
 		
-		IDishMenuItemID id = idFac.createDishMenuItemID(this.getDishID().getText());
-		
 		this.resetUserInput();
 		
-		return new Object[] {id, data};
+		return new Object[] {data};
 	}
 	
 	@Override

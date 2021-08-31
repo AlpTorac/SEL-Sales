@@ -52,14 +52,14 @@ class OrderParseTest {
 				BigDecimal.valueOf(3.5),
 				"item3", menuItemIDFac));
 		
-		model.addOrder("order1-20200809112233-0-0:item1,2;");
-		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;");
-		model.addOrder("order3-20200809000000-1-1:item3,5;");
+		model.addUnconfirmedOrder("order1-20200809112233-0-0:item1,2;");
+		model.addUnconfirmedOrder("order2-20200809235959-1-0:item1,2;item2,3;");
+		model.addUnconfirmedOrder("order3-20200809000000-1-1:item3,5;");
 	}
 	
 	@Test
 	void orderSpecificDataTest() {
-		IOrderData[] orderData = model.getAllOrders();
+		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		GregorianCalendar date1 = new GregorianCalendar();
 		date1.set(2020, 8, 9, 11, 22, 33);
@@ -77,7 +77,7 @@ class OrderParseTest {
 	
 	@Test
 	void OrderContentTest() {
-		IOrderData[] orderData = model.getAllOrders();
+		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		OrderTestUtilityClass.assertOrderDataEqual(orderData[0], new BigDecimal[] {BigDecimal.valueOf(2)}, new String[] {"item1"});
 		OrderTestUtilityClass.assertOrderDataEqual(orderData[1], new BigDecimal[] {BigDecimal.valueOf(2), BigDecimal.valueOf(3)}, new String[] {"item1", "item2"});

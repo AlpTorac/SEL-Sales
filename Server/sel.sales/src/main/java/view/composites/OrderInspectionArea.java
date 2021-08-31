@@ -18,8 +18,10 @@ import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIVBoxLayout;
 
 public class OrderInspectionArea extends UIVBoxLayout {
-	private static DateFormat dateInYearFormat = new SimpleDateFormat("dd/MM/yyyy");
-	private static DateFormat timeInDayFormat = new SimpleDateFormat("HH:mm:ss");
+	private static String dateInYearSeperator = "/";
+	private static String timeInDaySeperator = ":";
+	private static DateFormat dateInYearFormat = new SimpleDateFormat("dd"+dateInYearSeperator+"MM"+dateInYearSeperator+"yyyy");
+	private static DateFormat timeInDayFormat = new SimpleDateFormat("HH"+timeInDaySeperator+"mm"+timeInDaySeperator+"ss");
 	
 	private ILabel orderIDLabel;
 	private ILabel orderTimeInDayLabel;
@@ -53,6 +55,21 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		this.init();
 	}
 
+	public void clearOrderDisplay() {
+		this.getOrderIDLabel().clearText();
+		this.getOrderTimeInDayLabel().clearText();
+		this.getOrderDateLabel().clearText();
+		this.getOrderDetailsDisplay().clear();
+		this.getCashOrCard().clearSelections();
+		this.getHereOrToGo().clearSelections();
+		this.getGrossSumDisplay().clearText();
+		this.getNetSumDisplay().clearText();
+		this.getDiscountDisplay().clearText();
+		this.getAddConfirmButton().setEnabled(false);
+		this.getRemoveButton().setEnabled(false);
+		this.getEditButton().setEnabled(false);
+	}
+	
 	public void displayOrder(IOrderData data) {
 		this.displayOrderID(data);
 		this.displayOrderDate(data);
@@ -102,7 +119,7 @@ public class OrderInspectionArea extends UIVBoxLayout {
 				this.initOrderOperationsLayout()
 		});
 	}
-
+	
 	protected IGridLayout initDisplayLayout() {
 		IGridLayout layout = this.fac.createGridLayout();
 		
@@ -284,16 +301,19 @@ public class OrderInspectionArea extends UIVBoxLayout {
 	protected IButton initOrderAddConfirmButton() {
 		IButton button = this.fac.createButton();
 		button.setCaption("Add / Confirm");
+		button.setEnabled(false);
 		return button;
 	}
 	protected IButton initOrderRemoveButton() {
 		IButton button = this.fac.createButton();
 		button.setCaption("Remove");
+		button.setEnabled(false);
 		return button;
 	}
 	protected IButton initOrderEditButton() {
 		IButton button = this.fac.createButton();
 		button.setCaption("Edit");
+		button.setEnabled(false);
 		return button;
 	}
 	protected IButton initOrderNewButton() {
@@ -377,5 +397,13 @@ public class OrderInspectionArea extends UIVBoxLayout {
 
 	public IButton getConfirmAllButton() {
 		return confirmAllButton;
+	}
+
+	public static String getDateInYearSeperator() {
+		return dateInYearSeperator;
+	}
+
+	public static String getTimeInDaySeperator() {
+		return timeInDaySeperator;
 	}
 }

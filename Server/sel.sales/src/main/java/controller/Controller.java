@@ -6,18 +6,17 @@ import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemID;
 import model.dish.IDishMenuItemIDFactory;
+import model.order.IOrderData;
+import model.order.IOrderDataFactory;
+import model.order.IOrderIDFactory;
 
 public abstract class Controller implements IController {
 	private IBusinessEventManager eventManager;
 	private IModel model;
-	private IDishMenuItemDataFactory dataFac;
-	private IDishMenuItemIDFactory idFac;
 	
 	public Controller(IModel model) {
 		this.model = model;
 		this.eventManager = this.initEventManager();
-		this.dataFac = this.model.getItemDataCommunicationProtocoll();
-		this.idFac = this.model.getItemIDCommunicationProtocoll();
 	}
 	
 	public void addBusinessEventMapping(BusinessEvent event, IBusinessEventHandler handler) {
@@ -38,17 +37,28 @@ public abstract class Controller implements IController {
 	}
 	public IDishMenuItemData getItem(IDishMenuItemID id) {
 		IDishMenuItem item = this.model.getMenuItem(id);
-		return this.dataFac.menuItemToData(item);
+		return this.model.getItemDataCommunicationProtocoll().menuItemToData(item);
 	}
 	
 	public IDishMenuItemDataFactory getItemDataCommunicationProtocoll() {
-		return this.dataFac;
+		return this.model.getItemDataCommunicationProtocoll();
 	}
 	public IDishMenuItemIDFactory getItemIDCommunicationProtocoll() {
-		return this.idFac;
+		return this.model.getItemIDCommunicationProtocoll();
+	}
+	
+	public IOrderDataFactory getOrderDataCommunicationProtocoll() {
+		return this.model.getOrderDataCommunicationProtocoll();
+	}
+	public IOrderIDFactory getOrderItemDataCommunicationProtocoll() {
+		return this.model.getOrderItemDataCommunicationProtocoll();
 	}
 	
 	public void addOrder(String serialisedOrder) {
-		this.model.addOrder(serialisedOrder);
+		this.model.addUnconfirmedOrder(serialisedOrder);
+	}
+	
+	public void confirmOrder(IOrderData data) {
+		this.model.addConfirmedOrder(data);
 	}
 }

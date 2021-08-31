@@ -15,4 +15,9 @@ public class FXToggleGroup extends ToggleGroup implements IToggleGroup {
 	public void addToToggleGroup(Toggleable t) {
 		t.setToggleGroup(this);
 	}
+	
+	@Override
+	public void clearSelections() {
+		super.getToggles().forEach(t -> t.setSelected(false));
+	}
 }

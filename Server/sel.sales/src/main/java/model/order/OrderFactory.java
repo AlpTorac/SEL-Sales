@@ -12,6 +12,7 @@ public class OrderFactory implements IOrderFactory {
 	@Override
 	public Order createOrder(IDishMenuItemFinder finder, IOrderData data) {
 		Order order = new Order(data.getDate(), data.getCashOrCard(), data.getHereOrToGo(), data.getID());
+		order.setOrderDiscount(data.getOrderDiscount());
 		for (IOrderItemData d : data.getOrderedItems()) {
 			order.addOrderItem(this.fac.createOrderItem(finder, d));
 		}

@@ -13,6 +13,8 @@ public interface IOrderData {
 	IOrderID getID();
 	BigDecimal getGrossSum();
 	BigDecimal getTotalDiscount();
+	BigDecimal getOrderDiscount();
+	void setOrderDiscount(BigDecimal orderDiscount);
 	default BigDecimal getNetSum() {
 		return this.getGrossSum().subtract(this.getTotalDiscount());
 	}

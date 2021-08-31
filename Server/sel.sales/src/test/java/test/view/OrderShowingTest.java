@@ -47,7 +47,7 @@ class OrderShowingTest extends ApplicationTest {
 	
 	@AfterEach
 	void afterTest() {
-		model.removeAllOrders();
+		model.removeAllUnconfirmedOrders();
 	}
 	
 	@Override
@@ -56,7 +56,6 @@ class OrderShowingTest extends ApplicationTest {
 		controller = new MainController(model);
 		view = new MainView(new FXUIComponentFactory(), controller, model);
 		view.startUp();
-		view.show();
 		menuItemDataFac = model.getItemDataCommunicationProtocoll();
 		menuItemIDFac = model.getItemIDCommunicationProtocoll();
 		model.addMenuItem(menuItemDataFac.constructData(
@@ -82,14 +81,14 @@ class OrderShowingTest extends ApplicationTest {
 	}
 	@Test
 	void duplicateOrderTest() {
-		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
 		
-		Assertions.assertEquals(model.getAllOrders().length, 1);
+		Assertions.assertEquals(model.getAllUnconfirmedOrders().length, 1);
 		
 		MainView mv = (MainView) view;
 		OrderTrackingArea ota = GeneralTestUtilityClass.getPrivateFieldValue(mv, "ota");;
@@ -136,7 +135,7 @@ class OrderShowingTest extends ApplicationTest {
 		
 		pool.shutdown();
 		
-		Assertions.assertEquals(model.getAllOrders().length, 10);
+		Assertions.assertEquals(model.getAllUnconfirmedOrders().length, 10);
 		
 		MainView mv = (MainView) view;
 		OrderTrackingArea ota = GeneralTestUtilityClass.getPrivateFieldValue(mv, "ota");;

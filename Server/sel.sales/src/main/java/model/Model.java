@@ -19,11 +19,17 @@ import model.order.IOrderCollector;
 import model.order.IOrderData;
 import model.order.IOrderDataFactory;
 import model.order.IOrderDeserialiser;
+import model.order.IOrderFactory;
 import model.order.IOrderID;
+import model.order.IOrderIDFactory;
 import model.order.IOrderItemDataFactory;
+import model.order.IOrderItemFactory;
 import model.order.OrderCollector;
 import model.order.OrderDataFactory;
+import model.order.OrderFactory;
+import model.order.OrderIDFactory;
 import model.order.OrderItemDataFactory;
+import model.order.OrderItemFactory;
 import model.order.StandardOrderDeserialiser;
 
 public class Model implements IModel {
@@ -33,9 +39,13 @@ public class Model implements IModel {
 	private IDishMenuItemDataFactory dataFac;
 	private IDishMenuItemIDFactory idFac;
 	
+	private IOrderFactory orderFac;
+	private IOrderItemFactory orderItemFac;
 	private IOrderDataFactory orderDataFac;
 	private IOrderItemDataFactory orderItemDataFac;
-	private IOrderCollector orderCollector;
+	private IOrderIDFactory orderIDFac;
+	private IOrderCollector orderUnconfirmedCollector;
+	private IOrderCollector orderConfirmedCollector;
 	private IOrderDeserialiser orderDeserialiser;
 	private IDishMenuItemFinder finder;
 	
@@ -46,9 +56,13 @@ public class Model implements IModel {
 		this.dataFac = new DishMenuItemDataFactory();
 		this.idFac = new DishMenuItemIDFactory();
 
+		this.orderItemFac = new OrderItemFactory();
 		this.orderDataFac = new OrderDataFactory();
 		this.orderItemDataFac = new OrderItemDataFactory();
-		this.orderCollector = new OrderCollector();
+		this.orderUnconfirmedCollector = new OrderCollector();
+		this.orderConfirmedCollector = new OrderCollector();
+		this.orderIDFac = new OrderIDFactory();
+		this.orderFac = new OrderFactory(this.orderItemFac);
 		this.finder = new DishMenuItemFinder(this.dishMenu);
 		this.orderDeserialiser = new StandardOrderDeserialiser(this.finder, this.dataFac, this.idFac);
 	}
@@ -95,20 +109,26 @@ public class Model implements IModel {
 	}
 
 	@Override
-	public void addOrder(String orderData) {
+	public void addUnconfirmedOrder(String orderData) {
 		IOrder order = this.orderDeserialiser.deserialise(orderData);
-		this.orderCollector.addOrder(order);
-		this.updatables.forEach(u -> u.refreshOrders());
+		this.orderUnconfirmedCollector.addOrder(order);
+		this.updatables.forEach(u -> u.refreshUnconfirmedOrders());
 	}
 
 	@Override
 	public IOrderData getOrder(IOrderID id) {
-		return this.orderCollector.getOrder(id).getOrderData(this.orderDataFac, this.orderItemDataFac, this.dataFac);
+		IOrder order = this.orderUnconfirmedCollector.getOrder(id);
+		
+		if (order == null) {
+			order = this.orderConfirmedCollector.getOrder(id);
+		}
+		
+		return order.getOrderData(this.orderDataFac, this.orderItemDataFac, this.dataFac);
 	}
 
 	@Override
-	public IOrderData[] getAllOrders() {
-		IOrder[] orders = this.orderCollector.getAllOrders();
+	public IOrderData[] getAllUnconfirmedOrders() {
+		IOrder[] orders = this.orderUnconfirmedCollector.getAllOrders();
 		IOrderData[] data = new IOrderData[orders.length];
 		for (int i = 0; i < data.length; i++) {
 			data[i] = this.orderDataFac.orderToData(orders[i], this.orderItemDataFac, this.dataFac);
@@ -117,7 +137,47 @@ public class Model implements IModel {
 	}
 
 	@Override
-	public void removeAllOrders() {
-		this.orderCollector.clearOrders();
+	public void removeAllUnconfirmedOrders() {
+		this.orderUnconfirmedCollector.clearOrders();
+	}
+
+	@Override
+	public void editMenuItem(IDishMenuItemData newItem) {
+		IDishMenuItem oldItem = this.getMenuItem(newItem.getId());
+		
+		oldItem.getDish().setName(newItem.getDishName());
+		oldItem.setDiscount(newItem.getDiscount());
+		oldItem.setPortionSize(newItem.getPortionSize());
+		oldItem.setPrice(newItem.getGrossPrice());
+		oldItem.setProductionCost(newItem.getProductionCost());
+	}
+
+	@Override
+	public IOrderDataFactory getOrderDataCommunicationProtocoll() {
+		return this.orderDataFac;
+	}
+
+	@Override
+	public IOrderIDFactory getOrderItemDataCommunicationProtocoll() {
+		return this.orderIDFac;
+	}
+
+	@Override
+	public void addConfirmedOrder(IOrderData orderData) {
+		this.orderUnconfirmedCollector.removeOrder(orderData.getID());
+		IOrder confirmedOrder = this.orderFac.createOrder(this.finder, orderData);
+		this.orderConfirmedCollector.addOrder(confirmedOrder);
+		this.updatables.forEach(u -> u.refreshUnconfirmedOrders());
+		this.updatables.forEach(u -> u.refreshConfirmedOrders());
+	}
+
+	@Override
+	public IOrderData[] getAllConfirmedOrders() {
+		IOrder[] orders = this.orderConfirmedCollector.getAllOrders();
+		IOrderData[] data = new IOrderData[orders.length];
+		for (int i = 0; i < data.length; i++) {
+			data[i] = this.orderDataFac.orderToData(orders[i], this.orderItemDataFac, this.dataFac);
+		}
+		return data;
 	}
 }

@@ -13,6 +13,10 @@ public class Order implements IOrder {
 	private boolean cashOrCard;
 	private boolean hereOrToGo;
 	private IOrderID id;
+	/**
+	 * Order specific discount, FULLY INDEPENDENT of discounts of individual ordered items.
+	 */
+	private BigDecimal orderDiscount = BigDecimal.ZERO;
 	
 	private Map<IDishMenuItemID, IOrderItem> orderItems = new ConcurrentSkipListMap<IDishMenuItemID, IOrderItem>();
 	
@@ -95,5 +99,15 @@ public class Order implements IOrder {
 	@Override
 	public Collection<IOrderItem> getOrderItemCollection() {
 		return this.orderItems.values();
+	}
+
+	@Override
+	public BigDecimal getOrderDiscount() {
+		return this.orderDiscount;
+	}
+
+	@Override
+	public void setOrderDiscount(BigDecimal orderDiscount) {
+		this.orderDiscount = orderDiscount;
 	}
 }

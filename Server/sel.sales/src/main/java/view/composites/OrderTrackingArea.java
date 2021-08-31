@@ -50,7 +50,7 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		
 		this.manual = this.fac.createRadioButton();
 		this.manual.setCaption("Manual Confirmation");
-		this.manual.setEnabled(true);
+		this.manual.setToggled(true);
 		
 		IRadioButton[] choices = new IRadioButton[] {this.auto, this.manual};
 		

@@ -5,5 +5,6 @@ public enum BusinessEvent {
 	SHOW_MENU,
 	REMOVE_DISH,
 	EDIT_DISH,
-	ADD_ORDER
+	ADD_ORDER,
+	CONFIRM_ORDER
 }

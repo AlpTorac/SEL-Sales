@@ -3,8 +3,14 @@ package view.repository;
 import java.util.Collection;
 
 public interface IToggleGroup {
-	default public void addToToggleGroup(Toggleable t) {
-		((IToggleGroup) this.getToggleGroup()).addToToggleGroup(t);
+	public void addToToggleGroup(Toggleable t);
+	
+	default public Toggleable[] getAllToggleables() {
+		return null;
+	}
+	
+	default public void clearSelections() {
+		((IToggleGroup) this.getToggleGroup()).clearSelections();
 	}
 	
 	default public void addAllToToggleGroup(Toggleable[] ts) {

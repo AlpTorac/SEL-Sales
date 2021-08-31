@@ -1,14 +1,14 @@
 package view.repository.uifx;
 
-import javafx.event.ActionEvent;
+import java.util.Collection;
+
 import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
-import view.repository.IEventShooterOnClickUIComponent;
 import view.repository.IListView;
 import view.repository.uiwrapper.ClickEventListener;
 
-public class FXListView<T> extends ListView<T> implements FXAttachable, IListView<T> {
+public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T> {
 	@Override
 	public void addItem(T item) {
 		super.getItems().add(item);
@@ -49,5 +49,15 @@ public class FXListView<T> extends ListView<T> implements FXAttachable, IListVie
 	@Override
 	public void removeClickListener(ClickEventListener l) {
 		super.setOnMouseClicked(null);
+	}
+	
+	@Override
+	public Collection<T> getItems(int beginIndex, int endIndex) {
+		return super.getItems().subList(beginIndex, endIndex);
+	}
+	
+	@Override
+	public boolean contains(T item) {
+		return super.getItems().stream().anyMatch(t -> t.equals(item));
 	}
 }

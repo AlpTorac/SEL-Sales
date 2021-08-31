@@ -14,12 +14,16 @@ public class OrderDataFactory implements IOrderDataFactory {
 
 	@Override
 	public OrderData orderToData(IOrder order, IOrderItemDataFactory orderItemDatafac, IDishMenuItemDataFactory dishMenuItemDataFac) {
-		return new OrderData(
+		OrderData data = new OrderData(
 				order.getOrderItemCollection().stream().map((o) -> {return orderItemDatafac.orderItemToData(o, dishMenuItemDataFac);}).toArray(IOrderItemData[]::new),
 				order.getDate(),
 				order.getCashOrCard(),
 				order.getHereOrToGo(),
 				order.getID());
+		
+		data.setOrderDiscount(order.getOrderDiscount());
+		
+		return data;
 	}
 
 }

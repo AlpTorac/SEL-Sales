@@ -11,4 +11,9 @@ public class Dish implements IDish {
 	public String getName() {
 		return this.dishName;
 	}
+
+	@Override
+	public void setName(String name) {
+		this.dishName = name;
+	}
 }

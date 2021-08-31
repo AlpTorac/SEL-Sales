@@ -2,12 +2,14 @@ package view;
 
 import controller.IController;
 import model.IModel;
+import model.order.IOrderData;
 import view.repository.uiwrapper.ClickEventListener;
 import view.repository.uiwrapper.UIComponent;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIInnerFrame;
 import view.repository.uiwrapper.UIRootComponent;
 import view.composites.AddDishListener;
+import view.composites.ConfirmOrderListener;
 import view.composites.EditDishListener;
 import view.composites.MainWindow;
 import view.composites.MenuDesignArea;
@@ -57,39 +59,23 @@ public class MainView extends View {
 		return this.fac.createInnerFrame(parent);
 	}
 	protected void initListeners() {
-		ClickEventListener addDishListener = new AddDishListener(
-				this.getController(),
-				mda.getDishNameBox(),
-				mda.getMenuItemIDBox(),
-				mda.getPortionBox(),
-				mda.getProductionCostBox(),
-				mda.getPriceBox(),
-				mda.getDiscountBox()
-		);
+		ClickEventListener addDishListener = new AddDishListener(this.getController(), mda);
 		mda.getAddButton().addClickListener(addDishListener);
 		
-		ClickEventListener removeDishListener = new RemoveDishListener(
-				this.getController(),
-				mda.getMenuItemIDBox()
-		);
+		ClickEventListener removeDishListener = new RemoveDishListener(this.getController(),mda);
 		mda.getRemoveButton().addClickListener(removeDishListener);
 		
-		ClickEventListener editDishListener = new EditDishListener(
-				this.getController(),
-				mda.getDishNameBox(),
-				mda.getMenuItemIDBox(),
-				mda.getPortionBox(),
-				mda.getProductionCostBox(),
-				mda.getPriceBox(),
-				mda.getDiscountBox()
-		);
+		ClickEventListener editDishListener = new EditDishListener(this.getController(),mda);
 		mda.getEditButton().addClickListener(editDishListener);
 		
-		ClickEventListener unconfirmedOrderInspectionListener = new OrderInspectionListener(oia);
+		ClickEventListener unconfirmedOrderInspectionListener = new OrderInspectionListener(ota, oia);
 		ota.getUnconfirmedOrderList().addClickListener(unconfirmedOrderInspectionListener);
 		
-		ClickEventListener pastOrderInspectionListener = new OrderInspectionListener(oia);
+		ClickEventListener pastOrderInspectionListener = new OrderInspectionListener(ota, oia);
 		ota.getPastOrderList().addClickListener(pastOrderInspectionListener);
+		
+		ClickEventListener orderConfirmListener = new ConfirmOrderListener(this.getController(),oia);
+		oia.getAddConfirmButton().addClickListener(orderConfirmListener);
 	}
 	public void show() {
 		this.mainWindow.setInnerFrame(frame);
@@ -101,7 +87,16 @@ public class MainView extends View {
 	}
 
 	@Override
-	public void refreshOrders() {
-		this.ota.addUnconfirmedOrders(this.getModel().getAllOrders());
+	public void refreshUnconfirmedOrders() {
+		this.ota.addUnconfirmedOrders(this.getModel().getAllUnconfirmedOrders());
+	}
+
+	@Override
+	public void refreshConfirmedOrders() {
+		IOrderData[] confirmedOrders = this.getModel().getAllConfirmedOrders();
+		
+		for (IOrderData order : confirmedOrders) {
+			this.ota.confirmOrder(order);
+		}
 	}
 }

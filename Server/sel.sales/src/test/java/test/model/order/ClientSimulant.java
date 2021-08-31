@@ -13,7 +13,7 @@ public class ClientSimulant implements Runnable {
 	
 	@Override
 	public void run() {
-		model.addOrder(serialisedOrder);
+		model.addUnconfirmedOrder(serialisedOrder);
 	}
 	
 }

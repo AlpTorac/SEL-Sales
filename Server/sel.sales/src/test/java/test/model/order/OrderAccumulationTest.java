@@ -22,7 +22,7 @@ class OrderAccumulationTest {
 	
 	@AfterEach
 	void afterTest() {
-		model.removeAllOrders();
+		model.removeAllUnconfirmedOrders();
 	}
 	
 	@BeforeAll
@@ -52,12 +52,12 @@ class OrderAccumulationTest {
 				BigDecimal.valueOf(3.5),
 				"item3", menuItemIDFac));
 		
-		model.addOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2-20200809235959-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
 	}
 
 	@Test
 	void test() {
-		IOrderData[] orderData = model.getAllOrders();
+		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		OrderTestUtilityClass.assertOrderDataEqual(
 				orderData[0],

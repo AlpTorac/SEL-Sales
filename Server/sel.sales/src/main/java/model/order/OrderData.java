@@ -1,9 +1,9 @@
 package model.order;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class OrderData implements IOrderData {
 	private Collection<IOrderItemData> orderItems;
@@ -11,9 +11,11 @@ public class OrderData implements IOrderData {
 	private boolean cashOrCard;
 	private boolean hereOrToGo;
 	private IOrderID id;
+	private BigDecimal orderDiscount = BigDecimal.ZERO;
 	
 	OrderData(Collection<IOrderItemData> orderItems, Calendar date, boolean cashOrCard, boolean hereOrToGo, IOrderID id) {
-		this.orderItems = orderItems;
+		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>();
+		this.orderItems.addAll(orderItems);
 		this.date = date;
 		this.cashOrCard = cashOrCard;
 		this.hereOrToGo = hereOrToGo;
@@ -21,7 +23,7 @@ public class OrderData implements IOrderData {
 	}
 	
 	OrderData(IOrderItemData[] orderItems, Calendar date, boolean cashOrCard, boolean hereOrToGo, IOrderID id) {
-		this.orderItems = new ArrayList<IOrderItemData>();
+		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>();
 		for (IOrderItemData d : orderItems) {
 			this.orderItems.add(d);
 		}
@@ -93,5 +95,15 @@ public class OrderData implements IOrderData {
 			IOrderData otherOrderData = (IOrderData) o;
 			return this.getID().equals(otherOrderData.getID());
 		}
+	}
+
+	@Override
+	public BigDecimal getOrderDiscount() {
+		return this.orderDiscount;
+	}
+
+	@Override
+	public void setOrderDiscount(BigDecimal orderDiscount) {
+		this.orderDiscount = orderDiscount;
 	}
 }

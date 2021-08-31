@@ -2,11 +2,12 @@ package view.repository.uifx;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.TextField;
 import view.repository.ITextBox;
 import view.repository.uiwrapper.ClickEventListener;
 
-public class FXTextBox extends TextField implements ITextBox, FXAttachable {
+public class FXTextBox extends TextField implements ITextBox, FXHasText {
 
 	public void addClickListener(ClickEventListener l) {
 		TextField ref = this;
@@ -18,13 +19,13 @@ public class FXTextBox extends TextField implements ITextBox, FXAttachable {
 		};
 		ref.setOnAction(event);
 	}
-
-	public void removeClickListener(ClickEventListener l) {
-		this.setOnAction(null);
-	}
 	
 	public void setCaption(String caption) {
-		this.setText(caption);
+		super.setText(caption);
+	}
+	
+	public void removeClickListener(ClickEventListener l) {
+		this.setOnAction(null);
 	}
 	
 	public void clearText() {

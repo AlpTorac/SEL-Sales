@@ -12,9 +12,9 @@ public class RemoveDishListener extends ClickEventListener implements IBusinessE
 	private IController controller;
 	private HasText dishID;
 	
-	public RemoveDishListener(IController controller, HasText dishID) {
+	public RemoveDishListener(IController controller, MenuDesignArea mda) {
 		this.controller = controller;
-		this.dishID = dishID;
+		this.dishID = mda.getMenuItemIDBox();
 	}
 	
 	@Override

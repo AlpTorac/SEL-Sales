@@ -26,7 +26,7 @@ class OrderConcurrencyTest {
 	
 	@AfterEach
 	void afterTest() {
-		model.removeAllOrders();
+		model.removeAllUnconfirmedOrders();
 	}
 	
 	@BeforeAll
@@ -87,7 +87,7 @@ class OrderConcurrencyTest {
 			e.printStackTrace();
 		}
 		
-		Assertions.assertEquals(model.getAllOrders().length, 10);
+		Assertions.assertEquals(model.getAllUnconfirmedOrders().length, 10);
 	}
 	
 }
