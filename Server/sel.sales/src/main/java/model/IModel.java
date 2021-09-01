@@ -13,6 +13,8 @@ import model.order.IOrderIDFactory;
 public interface IModel {
 	void addUnconfirmedOrder(String serialisedOrderData);
 	void addConfirmedOrder(IOrderData orderData);
+	void removeUnconfirmedOrder(IOrderID id);
+	void removeConfirmedOrder(IOrderID id);
 	void addMenuItem(IDishMenuItemData item);
 	void editMenuItem(IDishMenuItemData newItem);
 	void removeMenuItem(IDishMenuItemID item);

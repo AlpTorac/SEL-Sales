@@ -1,7 +1,8 @@
 package view.composites;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
 import controller.BusinessEvent;
@@ -27,8 +28,6 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 	private IRadioButton isCash;
 	private IRadioButton isHere;
 	private HasText orderDiscount;
-	private String dateInYearSeperator;
-	private String timeInDaySeperator;
 	
 	public ConfirmOrderListener(IController controller, OrderInspectionArea oia) {
 		super();
@@ -41,8 +40,6 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 		this.isCash = this.oia.getCashRadioButton();
 		this.isHere = this.oia.getHereRadioButton();
 		this.orderDiscount = this.oia.getDiscountDisplay();
-		this.dateInYearSeperator = OrderInspectionArea.getDateInYearSeperator();
-		this.timeInDaySeperator = OrderInspectionArea.getTimeInDaySeperator();
 	}
 
 	@Override
@@ -55,20 +52,6 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 		IOrderDataFactory orderDataFac = this.controller.getOrderDataCommunicationProtocoll();
 		IOrderIDFactory orderIDFac = this.controller.getOrderItemDataCommunicationProtocoll();
 		Collection<IOrderItemData> orderItemDataCollection = this.getOrderItems().getAllItems();		
-		Calendar date = Calendar.getInstance();
-		
-		String[] timeInDay = this.getOrderTimeInDay().getText().split(timeInDaySeperator);
-		String[] dateInYear = this.getOrderDateInYear().getText().split(dateInYearSeperator);
-		
-		String hour = timeInDay[0];
-		String minute = timeInDay[1];
-		String second = timeInDay[2];
-		
-		String year = dateInYear[0];
-		String month = dateInYear[1];
-		String day = dateInYear[2];
-		
-		date.set(Integer.valueOf(year), Integer.valueOf(month), Integer.valueOf(day), Integer.valueOf(hour), Integer.valueOf(minute), Integer.valueOf(second));
 		
 		boolean isCash = this.getIsCash().isToggled();
 		boolean isHere = this.getIsHere().isToggled();
@@ -76,6 +59,8 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 		String orderID = this.getOrderID().getText();
 		
 		BigDecimal orderDiscount = BigDecimal.valueOf(Double.valueOf(this.getOrderDiscount().getText()));
+		
+		LocalDateTime date = this.oia.getDisplayedDate();
 		
 		IOrderData data = orderDataFac.constructData(orderItemDataCollection, date, isCash, isHere, orderIDFac.createOrderID(orderID));
 		
@@ -93,14 +78,6 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 
 	private HasText getOrderID() {
 		return orderID;
-	}
-
-	private HasText getOrderTimeInDay() {
-		return orderTimeInDay;
-	}
-
-	private HasText getOrderDateInYear() {
-		return orderDateInYear;
 	}
 
 	private ITable<IOrderItemData> getOrderItems() {

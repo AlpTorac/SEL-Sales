@@ -1,11 +1,12 @@
 package model.order;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public interface IOrderData {
 	IOrderItemData[] getOrderedItems();
-	Calendar getDate();
+	LocalDateTime getDate();
 
 	boolean getCashOrCard();
 	boolean getHereOrToGo();

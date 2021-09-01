@@ -9,6 +9,7 @@ import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIInnerFrame;
 import view.repository.uiwrapper.UIRootComponent;
 import view.composites.AddDishListener;
+import view.composites.ConfirmAllOrdersListener;
 import view.composites.ConfirmOrderListener;
 import view.composites.EditDishListener;
 import view.composites.MainWindow;
@@ -17,6 +18,7 @@ import view.composites.OrderInspectionArea;
 import view.composites.OrderInspectionListener;
 import view.composites.OrderTrackingArea;
 import view.composites.RemoveDishListener;
+import view.composites.RemoveOrderListener;
 
 public class MainView extends View {
 
@@ -62,10 +64,10 @@ public class MainView extends View {
 		ClickEventListener addDishListener = new AddDishListener(this.getController(), mda);
 		mda.getAddButton().addClickListener(addDishListener);
 		
-		ClickEventListener removeDishListener = new RemoveDishListener(this.getController(),mda);
+		ClickEventListener removeDishListener = new RemoveDishListener(this.getController(), mda);
 		mda.getRemoveButton().addClickListener(removeDishListener);
 		
-		ClickEventListener editDishListener = new EditDishListener(this.getController(),mda);
+		ClickEventListener editDishListener = new EditDishListener(this.getController(), mda);
 		mda.getEditButton().addClickListener(editDishListener);
 		
 		ClickEventListener unconfirmedOrderInspectionListener = new OrderInspectionListener(ota, oia);
@@ -74,8 +76,14 @@ public class MainView extends View {
 		ClickEventListener pastOrderInspectionListener = new OrderInspectionListener(ota, oia);
 		ota.getPastOrderList().addClickListener(pastOrderInspectionListener);
 		
-		ClickEventListener orderConfirmListener = new ConfirmOrderListener(this.getController(),oia);
+		ClickEventListener orderConfirmListener = new ConfirmOrderListener(this.getController(), oia);
 		oia.getAddConfirmButton().addClickListener(orderConfirmListener);
+		
+		ClickEventListener removeOrderListener = new RemoveOrderListener(this.getController(), oia);
+		oia.getRemoveButton().addClickListener(removeOrderListener);
+		
+		ClickEventListener confirmAllOrdersListener = new ConfirmAllOrdersListener(this.getController(), ota);
+		oia.getConfirmAllButton().addClickListener(confirmAllOrdersListener);
 	}
 	public void show() {
 		this.mainWindow.setInnerFrame(frame);
@@ -88,11 +96,13 @@ public class MainView extends View {
 
 	@Override
 	public void refreshUnconfirmedOrders() {
+		this.ota.clearUnconfirmedOrderList();
 		this.ota.addUnconfirmedOrders(this.getModel().getAllUnconfirmedOrders());
 	}
 
 	@Override
 	public void refreshConfirmedOrders() {
+		this.ota.clearConfirmedOrderList();
 		IOrderData[] confirmedOrders = this.getModel().getAllConfirmedOrders();
 		
 		for (IOrderData order : confirmedOrders) {

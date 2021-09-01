@@ -45,11 +45,6 @@ class OrderShowingTest extends ApplicationTest {
 	
 	private static ExecutorService pool = Executors.newFixedThreadPool(10);
 	
-	@AfterEach
-	void afterTest() {
-		model.removeAllUnconfirmedOrders();
-	}
-	
 	@Override
 	public void start(Stage stage) {
 		model = new Model();
@@ -95,6 +90,8 @@ class OrderShowingTest extends ApplicationTest {
 		IListView<IOrderData> list = ota.getUnconfirmedOrderList();
 		
 		Assertions.assertEquals(list.getSize(), 1);
+		
+		model.removeAllUnconfirmedOrders();
 	}
 
 	@Test
@@ -140,6 +137,8 @@ class OrderShowingTest extends ApplicationTest {
 		MainView mv = (MainView) view;
 		OrderTrackingArea ota = GeneralTestUtilityClass.getPrivateFieldValue(mv, "ota");;
 		IListView<IOrderData> list = ota.getUnconfirmedOrderList();
+		
+		this.sleep(1000);
 		
 		Assertions.assertEquals(list.getSize(), 10);
 	}

@@ -1,8 +1,18 @@
-package model.order;
+package model.serialise;
 
 import model.IDishMenuItemFinder;
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemIDFactory;
+import model.order.IOrderDataFactory;
+import model.order.IOrderFactory;
+import model.order.IOrderIDFactory;
+import model.order.IOrderItemDataFactory;
+import model.order.IOrderItemFactory;
+import model.order.OrderDataFactory;
+import model.order.OrderFactory;
+import model.order.OrderIDFactory;
+import model.order.OrderItemDataFactory;
+import model.order.OrderItemFactory;
 
 public class StandardOrderDeserialiser extends OrderDeserialiser {
 
@@ -14,6 +24,7 @@ public class StandardOrderDeserialiser extends OrderDeserialiser {
 		IOrderItemDataFactory orderItemDataFac = new OrderItemDataFactory();
 		IOrderIDFactory orderIDFac = new OrderIDFactory();
 		IOrderFactory orderFac = new OrderFactory(itemFac);
+		IOrderDateParser orderDateParser = new OrderDateParser();
 		
 		this.finder = finder;
 		this.orderFac = orderFac;
@@ -23,6 +34,7 @@ public class StandardOrderDeserialiser extends OrderDeserialiser {
 		this.orderItemDataFac = orderItemDataFac;
 		this.orderIDFac = orderIDFac;
 		this.dishMenuItemIDFac = dishMenuItemIDFac;
+		this.orderDateParser = orderDateParser;
 		
 		this.orderParser = new OrderParser(
 				this.finder,
@@ -32,6 +44,7 @@ public class StandardOrderDeserialiser extends OrderDeserialiser {
 				this.dishMenuItemDataFac,
 				this.orderItemDataFac,
 				this.orderIDFac,
-				this.dishMenuItemIDFac);
+				this.dishMenuItemIDFac,
+				this.orderDateParser);
 	}
 }

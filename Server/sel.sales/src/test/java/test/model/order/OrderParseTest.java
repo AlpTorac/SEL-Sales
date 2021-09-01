@@ -3,6 +3,7 @@ package test.model.order;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -61,14 +62,9 @@ class OrderParseTest {
 	void orderSpecificDataTest() {
 		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
-		GregorianCalendar date1 = new GregorianCalendar();
-		date1.set(2020, 8, 9, 11, 22, 33);
-
-		GregorianCalendar date2 = new GregorianCalendar();
-		date2.set(2020, 8, 9, 23, 59, 59);
-
-		GregorianCalendar date3 = new GregorianCalendar();
-		date3.set(2020, 8, 9, 0, 0, 0);
+		LocalDateTime date1 = LocalDateTime.of(2020, 8, 9, 11, 22, 33);
+		LocalDateTime date2 = LocalDateTime.of(2020, 8, 9, 23, 59, 59);
+		LocalDateTime date3 = LocalDateTime.of(2020, 8, 9, 0, 0, 0);
 		
 		OrderTestUtilityClass.assertOrderDataEqual(orderData[0], "order1", date1, false, false);
 		OrderTestUtilityClass.assertOrderDataEqual(orderData[1], "order2", date2, true, false);

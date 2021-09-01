@@ -1,19 +1,21 @@
 package model.order;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class OrderData implements IOrderData {
 	private Collection<IOrderItemData> orderItems;
-	private Calendar date;
+	private LocalDateTime date;
 	private boolean cashOrCard;
 	private boolean hereOrToGo;
 	private IOrderID id;
 	private BigDecimal orderDiscount = BigDecimal.ZERO;
 	
-	OrderData(Collection<IOrderItemData> orderItems, Calendar date, boolean cashOrCard, boolean hereOrToGo, IOrderID id) {
+	OrderData(Collection<IOrderItemData> orderItems, LocalDateTime date, boolean cashOrCard, boolean hereOrToGo, IOrderID id) {
 		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>();
 		this.orderItems.addAll(orderItems);
 		this.date = date;
@@ -22,7 +24,7 @@ public class OrderData implements IOrderData {
 		this.id = id;
 	}
 	
-	OrderData(IOrderItemData[] orderItems, Calendar date, boolean cashOrCard, boolean hereOrToGo, IOrderID id) {
+	OrderData(IOrderItemData[] orderItems, LocalDateTime date, boolean cashOrCard, boolean hereOrToGo, IOrderID id) {
 		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>();
 		for (IOrderItemData d : orderItems) {
 			this.orderItems.add(d);
@@ -34,7 +36,7 @@ public class OrderData implements IOrderData {
 	}
 	
 	@Override
-	public Calendar getDate() {
+	public LocalDateTime getDate() {
 		return this.date;
 	}
 

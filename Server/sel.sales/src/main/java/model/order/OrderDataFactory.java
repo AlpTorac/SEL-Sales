@@ -1,5 +1,7 @@
 package model.order;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Collection;
 
@@ -7,7 +9,7 @@ import model.dish.IDishMenuItemDataFactory;
 
 public class OrderDataFactory implements IOrderDataFactory {
 	@Override
-	public OrderData constructData(Collection<IOrderItemData> orderData, Calendar date, boolean cashOrCard,
+	public OrderData constructData(Collection<IOrderItemData> orderData, LocalDateTime date, boolean cashOrCard,
 			boolean hereOrToGo, IOrderID id) {
 		return new OrderData(orderData, date, cashOrCard, hereOrToGo, id);
 	}

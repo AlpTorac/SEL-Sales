@@ -1,16 +1,25 @@
-package model.order;
+package model.serialise;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.GregorianCalendar;
 
 import model.IDishMenuItemFinder;
 import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemID;
 import model.dish.IDishMenuItemIDFactory;
+import model.order.IOrder;
+import model.order.IOrderData;
+import model.order.IOrderDataFactory;
+import model.order.IOrderFactory;
+import model.order.IOrderID;
+import model.order.IOrderIDFactory;
+import model.order.IOrderItemData;
+import model.order.IOrderItemDataFactory;
+import model.order.IOrderItemFactory;
 
 public interface IOrderParser {
 	
@@ -27,7 +36,7 @@ public interface IOrderParser {
 		String serialisedHereOrToGo = this.getSerialisedHereOrToGo(serialisedOrderDataFields);
 		
 		IOrderID orderID = this.parseOrderID(serialisedOrderID);
-		Calendar date = this.parseOrderDate(serialisedDate);
+		LocalDateTime date = this.parseOrderDate(serialisedDate);
 		boolean cashOrCard = this.parseCashOrCard(serialisedCashOrCard);
 		boolean hereOrToGo = this.parseHereOrToGo(serialisedHereOrToGo);
 		
@@ -86,34 +95,8 @@ public interface IOrderParser {
 	default IOrderID parseOrderID(String s) {
 		return this.getOrderIDFac().createOrderID(s);
 	}
-	default int parseYear(String s) {
-		return Integer.valueOf(s);
-	}
-	default int parseMonth(String s) {
-		return Integer.valueOf(s);
-	}
-	default int parseDay(String s) {
-		return Integer.valueOf(s);
-	}
-	default int parseHour(String s) {
-		return Integer.valueOf(s);
-	}
-	default int parseMinute(String s) {
-		return Integer.valueOf(s);
-	}
-	default int parseSecond(String s) {
-		return Integer.valueOf(s);
-	}
-	default Calendar parseOrderDate(String s) {
-		Calendar date = new GregorianCalendar();
-		int year = this.parseYear(s.substring(0, 4));
-		int month = this.parseMonth(s.substring(4, 6));
-		int day = this.parseMonth(s.substring(6, 8));
-		int hour = this.parseHour(s.substring(8, 10));
-		int minute = this.parseHour(s.substring(10, 12));
-		int second = this.parseHour(s.substring(12, 14));
-		
-		date.set(year, month, day, hour, minute, second);
+	default LocalDateTime parseOrderDate(String s) {
+		LocalDateTime date = LocalDateTime.parse(s, this.getOrderDateParser().getFormatter());
 		return date;
 	}
 	default IDishMenuItemID parseDishMenuItemID(String s) {
@@ -150,6 +133,7 @@ public interface IOrderParser {
 	IDishMenuItemDataFactory getDishMenuItemDataFac();
 	IOrderDataFactory getOrderDataFactory();
 	IOrderItemDataFactory getOrderItemDataFactory();
+	IOrderDateParser getOrderDateParser();
 	
 	String getOrderItemDataFieldSeperator();
 	String getOrderItemDataNewLine();

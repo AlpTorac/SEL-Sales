@@ -1,7 +1,9 @@
 package model.order;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
 import model.dish.IDishMenuItemDataFactory;
@@ -16,7 +18,7 @@ public interface IOrder extends Comparable<IOrder> {
 	boolean removeOrderItem(IDishMenuItemID id);
 	boolean setOrderedItemAmount(IDishMenuItemID id, BigDecimal amount);
 	IOrderItem getOrderItem(IDishMenuItemID id);
-	Calendar getDate();
+	LocalDateTime getDate();
 	boolean getCashOrCard();
 	boolean getHereOrToGo();
 	IOrderItem[] getAllOrderItems();

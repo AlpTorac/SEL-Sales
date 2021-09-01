@@ -1,10 +1,9 @@
 package view.composites;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
+import java.time.LocalDateTime;
 import model.order.IOrderData;
 import model.order.IOrderItemData;
+import view.IDateSettings;
 import view.repository.IButton;
 import view.repository.IGridLayout;
 import view.repository.IHBoxLayout;
@@ -18,11 +17,8 @@ import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIVBoxLayout;
 
 public class OrderInspectionArea extends UIVBoxLayout {
-	private static String dateInYearSeperator = "/";
-	private static String timeInDaySeperator = ":";
-	private static DateFormat dateInYearFormat = new SimpleDateFormat("dd"+dateInYearSeperator+"MM"+dateInYearSeperator+"yyyy");
-	private static DateFormat timeInDayFormat = new SimpleDateFormat("HH"+timeInDaySeperator+"mm"+timeInDaySeperator+"ss");
-	
+	private IDateSettings ds;
+
 	private ILabel orderIDLabel;
 	private ILabel orderTimeInDayLabel;
 	private ILabel orderDateLabel;
@@ -49,12 +45,17 @@ public class OrderInspectionArea extends UIVBoxLayout {
 	
 	private UIComponentFactory fac;
 	
-	public OrderInspectionArea(UIComponentFactory fac) {
+	public OrderInspectionArea(UIComponentFactory fac, IDateSettings ds) {
 		super(fac.createVBoxLayout().getComponent());
+		this.ds = ds;
 		this.fac = fac;
 		this.init();
 	}
 
+	public LocalDateTime getDisplayedDate()  {
+		return this.ds.parseDate(this.getOrderDateLabel().getText()+this.getOrderTimeInDayLabel().getText());
+	}
+	
 	public void clearOrderDisplay() {
 		this.getOrderIDLabel().clearText();
 		this.getOrderTimeInDayLabel().clearText();
@@ -95,8 +96,9 @@ public class OrderInspectionArea extends UIVBoxLayout {
 	}
 	
 	private void displayOrderDate(IOrderData data) {
-		this.getOrderTimeInDayLabel().setCaption(timeInDayFormat.format(data.getDate().getTime()));
-		this.getOrderDateLabel().setCaption(dateInYearFormat.format(data.getDate().getTime()));
+		LocalDateTime orderDate = data.getDate();
+		this.getOrderTimeInDayLabel().setCaption(this.ds.getTimeInDay(orderDate));
+		this.getOrderDateLabel().setCaption(this.ds.getDateInYear(orderDate));
 	}
 	
 	private void displayCashOrCard(IOrderData data) {
@@ -397,13 +399,5 @@ public class OrderInspectionArea extends UIVBoxLayout {
 
 	public IButton getConfirmAllButton() {
 		return confirmAllButton;
-	}
-
-	public static String getDateInYearSeperator() {
-		return dateInYearSeperator;
-	}
-
-	public static String getTimeInDaySeperator() {
-		return timeInDaySeperator;
 	}
 }

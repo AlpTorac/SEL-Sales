@@ -101,5 +101,4 @@ public class AddDishListener extends ClickEventListener implements IBusinessEven
 	public HasText getDiscount() {
 		return discount;
 	}
-
 }

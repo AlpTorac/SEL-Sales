@@ -16,6 +16,7 @@ public class MainController extends Controller {
 		bem.addBusinessEventToHandlerMapping(BusinessEvent.EDIT_DISH, new EditDishHandler(this));
 		bem.addBusinessEventToHandlerMapping(BusinessEvent.ADD_ORDER, new AddOrderHandler(this));
 		bem.addBusinessEventToHandlerMapping(BusinessEvent.CONFIRM_ORDER, new ConfirmOrderHandler(this));
+		bem.addBusinessEventToHandlerMapping(BusinessEvent.REMOVE_ORDER, new RemoveOrderHandler(this));
 		return bem;
 	}
 }

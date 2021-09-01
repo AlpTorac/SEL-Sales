@@ -1,8 +1,13 @@
-package model.order;
+package model.serialise;
 
 import model.IDishMenuItemFinder;
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemIDFactory;
+import model.order.IOrderDataFactory;
+import model.order.IOrderFactory;
+import model.order.IOrderIDFactory;
+import model.order.IOrderItemDataFactory;
+import model.order.IOrderItemFactory;
 
 public class OrderParser implements IOrderParser {
 	
@@ -14,6 +19,7 @@ public class OrderParser implements IOrderParser {
 	private IDishMenuItemIDFactory dishMenuItemIDFac;
 	private IOrderDataFactory orderDataFac;
 	private IOrderItemDataFactory orderItemDataFac;
+	private IOrderDateParser orderDateParser;
 	
 	OrderParser(
 			IDishMenuItemFinder finder,
@@ -23,7 +29,8 @@ public class OrderParser implements IOrderParser {
 			IDishMenuItemDataFactory dishMenuItemDataFac,
 			IOrderItemDataFactory orderItemDataFac,
 			IOrderIDFactory orderIDFac,
-			IDishMenuItemIDFactory dishMenuItemIDFac) {
+			IDishMenuItemIDFactory dishMenuItemIDFac,
+			IOrderDateParser orderDateParser) {
 		
 		this.finder = finder;
 		this.orderFac = orderFac;
@@ -33,6 +40,7 @@ public class OrderParser implements IOrderParser {
 		this.orderItemDataFac = orderItemDataFac;
 		this.orderIDFac = orderIDFac;
 		this.dishMenuItemIDFac = dishMenuItemIDFac;
+		this.orderDateParser = orderDateParser;
 	}
 	
 	private String orderItemDataFieldSeperator = ",";
@@ -87,6 +95,10 @@ public class OrderParser implements IOrderParser {
 	@Override
 	public String getOrderDataFieldEnd() {
 		return this.orderDataFieldEnd;
+	}
+	@Override
+	public IOrderDateParser getOrderDateParser() {
+		return this.orderDateParser;
 	}
 
 }

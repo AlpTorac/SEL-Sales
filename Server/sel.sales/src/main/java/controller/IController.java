@@ -6,6 +6,7 @@ import model.dish.IDishMenuItemID;
 import model.dish.IDishMenuItemIDFactory;
 import model.order.IOrderData;
 import model.order.IOrderDataFactory;
+import model.order.IOrderID;
 import model.order.IOrderIDFactory;
 
 public interface IController {
@@ -13,6 +14,7 @@ public interface IController {
 	void handleBusinessEvent(BusinessEvent event, Object[] args);
 	void addMenuItem(IDishMenuItemData args);
 	void addOrder(String serialisedOrder);
+	void removeOrder(IOrderID id);
 	void removeMenuItem(IDishMenuItemID id);
 	void confirmOrder(IOrderData orderData);
 	IDishMenuItemData getItem(IDishMenuItemID id);

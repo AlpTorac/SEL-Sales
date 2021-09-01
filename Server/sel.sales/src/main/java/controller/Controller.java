@@ -8,6 +8,7 @@ import model.dish.IDishMenuItemID;
 import model.dish.IDishMenuItemIDFactory;
 import model.order.IOrderData;
 import model.order.IOrderDataFactory;
+import model.order.IOrderID;
 import model.order.IOrderIDFactory;
 
 public abstract class Controller implements IController {
@@ -60,5 +61,10 @@ public abstract class Controller implements IController {
 	
 	public void confirmOrder(IOrderData data) {
 		this.model.addConfirmedOrder(data);
+	}
+	
+	public void removeOrder(IOrderID id) {
+		this.model.removeConfirmedOrder(id);
+		this.model.removeUnconfirmedOrder(id);
 	}
 }

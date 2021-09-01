@@ -1,8 +1,14 @@
-package model.order;
+package model.serialise;
 
 import model.IDishMenuItemFinder;
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemIDFactory;
+import model.order.IOrder;
+import model.order.IOrderDataFactory;
+import model.order.IOrderFactory;
+import model.order.IOrderIDFactory;
+import model.order.IOrderItemDataFactory;
+import model.order.IOrderItemFactory;
 
 public abstract class OrderDeserialiser implements IOrderDeserialiser {
 	protected IOrderParser orderParser;
@@ -16,6 +22,8 @@ public abstract class OrderDeserialiser implements IOrderDeserialiser {
 	protected IOrderIDFactory orderIDFac;
 	protected IDishMenuItemIDFactory dishMenuItemIDFac;
 	
+	protected IOrderDateParser orderDateParser;
+
 	public OrderDeserialiser() {
 		
 	}
@@ -25,6 +33,14 @@ public abstract class OrderDeserialiser implements IOrderDeserialiser {
 		return this.orderParser.parseOrder(s);
 	}
 
+	protected IOrderDateParser getOrderDateParser() {
+		return orderDateParser;
+	}
+
+	protected void setOrderDateParser(IOrderDateParser orderDateParser) {
+		this.orderDateParser = orderDateParser;
+	}
+	
 	protected void setOrderParser(IOrderParser orderParser) {
 		this.orderParser = orderParser;
 	}

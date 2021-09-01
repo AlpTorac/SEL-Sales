@@ -3,6 +3,11 @@ package test;
 import java.lang.reflect.Field;
 
 public final class GeneralTestUtilityClass {
+	/**
+	 * @param o Object with wanted the field
+	 * @param fieldName
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T,S> T getPrivateFieldValue(S o, String fieldName) {
 		Field f = null;

@@ -16,7 +16,7 @@ public class OrderInspectionListener extends ClickEventListener {
 	protected void multiClickAction(int amountOfClicks, Object[] parameters) {
 		super.multiClickAction(amountOfClicks, parameters);
 		
-		if (amountOfClicks > 1 && parameters != null && parameters[0] != null) {
+		if (amountOfClicks > 1 && parameters != null && parameters.length > 0 && parameters[0] != null) {
 			IOrderData orderData = (IOrderData) parameters[0];
 			this.oia.displayOrder(orderData);
 			if (!this.ota.getPastOrderList().contains(orderData)) {

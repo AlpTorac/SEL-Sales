@@ -18,7 +18,6 @@ import model.order.IOrder;
 import model.order.IOrderCollector;
 import model.order.IOrderData;
 import model.order.IOrderDataFactory;
-import model.order.IOrderDeserialiser;
 import model.order.IOrderFactory;
 import model.order.IOrderID;
 import model.order.IOrderIDFactory;
@@ -30,7 +29,8 @@ import model.order.OrderFactory;
 import model.order.OrderIDFactory;
 import model.order.OrderItemDataFactory;
 import model.order.OrderItemFactory;
-import model.order.StandardOrderDeserialiser;
+import model.serialise.IOrderDeserialiser;
+import model.serialise.StandardOrderDeserialiser;
 
 public class Model implements IModel {
 	private Collection<Updatable> updatables;
@@ -179,5 +179,17 @@ public class Model implements IModel {
 			data[i] = this.orderDataFac.orderToData(orders[i], this.orderItemDataFac, this.dataFac);
 		}
 		return data;
+	}
+
+	@Override
+	public void removeUnconfirmedOrder(IOrderID id) {
+		this.orderUnconfirmedCollector.removeOrder(id);
+		this.updatables.forEach(u -> u.refreshUnconfirmedOrders());
+	}
+
+	@Override
+	public void removeConfirmedOrder(IOrderID id) {
+		this.orderConfirmedCollector.removeOrder(id);
+		this.updatables.forEach(u -> u.refreshConfirmedOrders());
 	}
 }

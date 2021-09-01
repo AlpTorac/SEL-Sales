@@ -1,6 +1,8 @@
 package model.order;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Map;
@@ -9,7 +11,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import model.dish.IDishMenuItemID;
 
 public class Order implements IOrder {
-	private Calendar date;
+	private LocalDateTime date;
 	private boolean cashOrCard;
 	private boolean hereOrToGo;
 	private IOrderID id;
@@ -20,7 +22,7 @@ public class Order implements IOrder {
 	
 	private Map<IDishMenuItemID, IOrderItem> orderItems = new ConcurrentSkipListMap<IDishMenuItemID, IOrderItem>();
 	
-	Order(Calendar date, boolean cashOrCard, boolean hereOrToGo, IOrderID id) {
+	Order(LocalDateTime date, boolean cashOrCard, boolean hereOrToGo, IOrderID id) {
 		this.date = date;
 		this.cashOrCard = cashOrCard;
 		this.hereOrToGo = hereOrToGo;
@@ -82,7 +84,7 @@ public class Order implements IOrder {
 	}
 	
 	@Override
-	public Calendar getDate() {
+	public LocalDateTime getDate() {
 		return this.date;
 	}
 	

@@ -81,6 +81,14 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		}
 	}
 	
+	public void confirmAllOrders() {
+		IOrderData[] datas = this.getUnconfirmedOrderList().getAllItems().toArray(IOrderData[]::new);
+		
+		for (IOrderData d : datas) {
+			this.confirmOrder(d);
+		}
+	}
+	
 	public void confirmOrder(IOrderData orderData) {
 		this.getUnconfirmedOrderList().removeItem(orderData);
 		this.addPastOrder(orderData);
@@ -88,6 +96,13 @@ public class OrderTrackingArea extends UIVBoxLayout {
 	
 	public void addPastOrder(IOrderData orderData) {
 		this.getPastOrderList().addItemIfNotPresent(orderData);
+	}
+	
+	public void clearUnconfirmedOrderList() {
+		this.getUnconfirmedOrderList().clear();
+	}
+	public void clearConfirmedOrderList() {
+		this.getPastOrderList().clear();
 	}
 
 	public IListView<IOrderData> getUnconfirmedOrderList() {
