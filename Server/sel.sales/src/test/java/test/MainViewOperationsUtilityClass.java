@@ -6,6 +6,7 @@ import java.util.Collection;
 import controller.IController;
 import model.IModel;
 import model.dish.IDishMenuItem;
+import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
 import view.IView;
 import view.MainView;
@@ -53,7 +54,7 @@ public class MainViewOperationsUtilityClass {
 		editButton = mda.getEditButton();
 	}
 	
-	public IDishMenuItem addMenuItem(String name, String id, BigDecimal price, BigDecimal productionCost, BigDecimal portionSize, BigDecimal discount) {
+	public IDishMenuItemData addMenuItem(String name, String id, BigDecimal price, BigDecimal productionCost, BigDecimal portionSize, BigDecimal discount) {
 		dishNameBox.setCaption(name);
 		priceBox.setCaption(String.valueOf(price.doubleValue()));
 		idBox.setCaption(id);
@@ -63,23 +64,23 @@ public class MainViewOperationsUtilityClass {
 		
 		addButton.performArtificialClick();
 		
-		return model.getMenuItem(model.getItemIDCommunicationProtocoll().createDishMenuItemID(id));
+		return model.getMenuItem(id);
 	}
 	
-	public IDishMenuItem removeMenuItem(String id) {
-		IDishMenuItem itemToBeRemoved = model.getMenuItem(model.getItemIDCommunicationProtocoll().createDishMenuItemID(id));
+	public IDishMenuItemData removeMenuItem(String id) {
+		IDishMenuItemData itemToBeRemoved = model.getMenuItem(id);
 		
 		idBox.setCaption(id);
 		removeButton.performArtificialClick();
 		
-		if (model.getMenuItem(model.getItemIDCommunicationProtocoll().createDishMenuItemID(id)) == null) {
+		if (model.getMenuItem(id) == null) {
 			return itemToBeRemoved;
 		} else {
 			return null;
 		}
 	}
 	
-	public IDishMenuItem editMenuItem(String name, String id, BigDecimal price, BigDecimal productionCost, BigDecimal portionSize, BigDecimal discount) {
+	public IDishMenuItemData editMenuItem(String name, String id, BigDecimal price, BigDecimal productionCost, BigDecimal portionSize, BigDecimal discount) {
 		dishNameBox.setCaption(name);
 		priceBox.setCaption(String.valueOf(price.doubleValue()));
 		idBox.setCaption(id);
@@ -89,7 +90,7 @@ public class MainViewOperationsUtilityClass {
 		
 		editButton.performArtificialClick();
 		
-		IDishMenuItem editedItem = model.getMenuItem(model.getItemIDCommunicationProtocoll().createDishMenuItemID(id));
+		IDishMenuItemData editedItem = model.getMenuItem(id);
 		
 		return editedItem;
 	}

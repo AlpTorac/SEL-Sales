@@ -1,9 +1,9 @@
 package model.order;
 
 public interface IOrderCollector {
-	boolean addOrder(IOrder item);
-	boolean removeOrder(IOrderID id);
-	IOrder getOrder(IOrderID id);
-	IOrder[] getAllOrders();
+	boolean addOrder(IOrderData item);
+	boolean removeOrder(String id);
+	IOrderData getOrder(String id);
+	IOrderData[] getAllOrders();
 	void clearOrders();
 }

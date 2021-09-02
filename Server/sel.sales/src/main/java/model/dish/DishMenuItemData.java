@@ -8,7 +8,7 @@ public class DishMenuItemData implements IDishMenuItemData {
 	private BigDecimal price;
 	private BigDecimal productionCost;
 	private BigDecimal discount;
-	private IDishMenuItemID id;
+	private String id;
 	
 //	DishMenuItemData(String dishName, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, IDishMenuItemID id) {
 //		this.dishName = dishName;
@@ -19,7 +19,7 @@ public class DishMenuItemData implements IDishMenuItemData {
 //		this.discount = BigDecimal.ZERO;
 //	}
 	
-	DishMenuItemData(String dishName, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, BigDecimal discount, IDishMenuItemID id) {
+	DishMenuItemData(String dishName, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, BigDecimal discount, String id) {
 		this.dishName = dishName;
 		this.portionSize = portionSize;
 		this.price = price;
@@ -44,8 +44,8 @@ public class DishMenuItemData implements IDishMenuItemData {
 		return productionCost;
 	}
 
-	public IDishMenuItemID getId() {
-		return id;
+	public String getId() {
+		return this.id;
 	}
 
 	@Override
@@ -56,5 +56,14 @@ public class DishMenuItemData implements IDishMenuItemData {
 	@Override
 	public String toString() {
 		return this.getId().toString();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof IDishMenuItemData)) {
+			return false;
+		}
+		
+		return this.compareTo(((IDishMenuItemData) o)) == 0;
 	}
 }

@@ -12,10 +12,10 @@ public class OrderData implements IOrderData {
 	private LocalDateTime date;
 	private boolean cashOrCard;
 	private boolean hereOrToGo;
-	private IOrderID id;
+	private String id;
 	private BigDecimal orderDiscount = BigDecimal.ZERO;
 	
-	OrderData(Collection<IOrderItemData> orderItems, LocalDateTime date, boolean cashOrCard, boolean hereOrToGo, IOrderID id) {
+	OrderData(Collection<IOrderItemData> orderItems, LocalDateTime date, boolean cashOrCard, boolean hereOrToGo, String id) {
 		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>();
 		this.orderItems.addAll(orderItems);
 		this.date = date;
@@ -24,7 +24,7 @@ public class OrderData implements IOrderData {
 		this.id = id;
 	}
 	
-	OrderData(IOrderItemData[] orderItems, LocalDateTime date, boolean cashOrCard, boolean hereOrToGo, IOrderID id) {
+	OrderData(IOrderItemData[] orderItems, LocalDateTime date, boolean cashOrCard, boolean hereOrToGo, String id) {
 		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>();
 		for (IOrderItemData d : orderItems) {
 			this.orderItems.add(d);
@@ -57,7 +57,7 @@ public class OrderData implements IOrderData {
 	}
 
 	@Override
-	public IOrderID getID() {
+	public String getID() {
 		return this.id;
 	}
 
@@ -76,7 +76,7 @@ public class OrderData implements IOrderData {
 		for (IOrderItemData d : this.orderItems) {
 			result = result.add(d.getTotalDiscount());
 		}
-		return result;
+		return result.add(this.getOrderDiscount());
 	}
 
 	@Override

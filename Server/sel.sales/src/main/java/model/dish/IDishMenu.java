@@ -1,13 +1,10 @@
 package model.dish;
 
 public interface IDishMenu {
-
-	boolean addMenuItem(IDishMenuItem item);
-
-	boolean removeMenuItem(IDishMenuItemID id);
-
-	IDishMenuItem getItem(IDishMenuItemID id);
-
-	IDishMenuItem[] getAllItems();
+	boolean addMenuItem(IDishMenuItemData item);
+	boolean removeMenuItem(String id);
+	void editMenuItem(IDishMenuItemData newItem);
+	IDishMenuItemData getItem(String id);
+	IDishMenuItemData[] getAllItems();
 	
 }

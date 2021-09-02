@@ -1,10 +1,12 @@
 package model.order;
 
-import model.IDishMenuItemFinder;
-
 public class OrderItemFactory implements IOrderItemFactory {
+	public OrderItemFactory() {
+		
+	}
+	
 	@Override
-	public OrderItem createOrderItem(IDishMenuItemFinder finder, IOrderItemData item) {
-		return new OrderItem(finder, item);
+	public OrderItem createOrderItem(IOrderItemData item) {
+		return new OrderItem(item);
 	}
 }

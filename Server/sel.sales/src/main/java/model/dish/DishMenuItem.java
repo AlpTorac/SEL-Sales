@@ -8,7 +8,6 @@ public class DishMenuItem implements IDishMenuItem {
 	private BigDecimal price;
 	private IDishMenuItemID id;
 	private BigDecimal productionCost;
-	private IDishMenuItemIDFactory fac;
 	private BigDecimal discount;
 	
 //	DishMenuItem(IDish dish, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, IDishMenuItemID id) {
@@ -77,13 +76,8 @@ public class DishMenuItem implements IDishMenuItem {
 	}
 
 	@Override
-	public IDishMenuItemID getID() {
-		return id;
-	}
-
-	@Override
-	public void setID(IDishMenuItemID id) {
-		this.id = id;
+	public String getID() {
+		return this.id.getID();
 	}
 
 	@Override

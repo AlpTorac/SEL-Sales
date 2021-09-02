@@ -1,32 +1,25 @@
 package model;
 
-import model.dish.IDishMenuItem;
 import model.dish.IDishMenuItemData;
-import model.dish.IDishMenuItemDataFactory;
-import model.dish.IDishMenuItemID;
-import model.dish.IDishMenuItemIDFactory;
+import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
-import model.order.IOrderDataFactory;
-import model.order.IOrderID;
-import model.order.IOrderIDFactory;
+import model.order.serialise.IOrderSerialiser;
 
 public interface IModel {
 	void addUnconfirmedOrder(String serialisedOrderData);
-	void addConfirmedOrder(IOrderData orderData);
-	void removeUnconfirmedOrder(IOrderID id);
-	void removeConfirmedOrder(IOrderID id);
-	void addMenuItem(IDishMenuItemData item);
-	void editMenuItem(IDishMenuItemData newItem);
-	void removeMenuItem(IDishMenuItemID item);
+	void confirmOrder(String serialisedConfirmedOrderData);
+	void removeUnconfirmedOrder(String id);
+	void removeConfirmedOrder(String id);
+	void addMenuItem(String serialisedItemData);
+	void editMenuItem(String serialisedNewItemData);
+	void removeMenuItem(String id);
 	void subscribe(Updatable updatable);
-	IDishMenuItem getMenuItem(IDishMenuItemID id);
-	IDishMenuItemDataFactory getItemDataCommunicationProtocoll();
-	IDishMenuItemIDFactory getItemIDCommunicationProtocoll();
-	IOrderDataFactory getOrderDataCommunicationProtocoll();
-	IOrderIDFactory getOrderItemDataCommunicationProtocoll();
+	IDishMenuItemData getMenuItem(String id);
 	IDishMenuItemData[] getMenuData();
-	IOrderData getOrder(IOrderID id);
+	IOrderData getOrder(String id);
 	IOrderData[] getAllUnconfirmedOrders();
 	IOrderData[] getAllConfirmedOrders();
+	IDishMenuItemSerialiser getDishMenuItemSerialiser();
+	IOrderSerialiser getOrderSerialiser();
 	void removeAllUnconfirmedOrders();
 }

@@ -4,103 +4,65 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import model.dish.DishMenu;
-import model.dish.DishMenuItemDataFactory;
-import model.dish.DishMenuItemFactory;
-import model.dish.DishMenuItemIDFactory;
 import model.dish.IDishMenu;
-import model.dish.IDishMenuItem;
 import model.dish.IDishMenuItemData;
-import model.dish.IDishMenuItemDataFactory;
-import model.dish.IDishMenuItemFactory;
-import model.dish.IDishMenuItemID;
-import model.dish.IDishMenuItemIDFactory;
-import model.order.IOrder;
+import model.dish.serialise.DishMenuItemSerialiser;
+import model.dish.serialise.IDishMenuDeserialiser;
+import model.dish.serialise.IDishMenuItemSerialiser;
+import model.dish.serialise.StandardDishMenuDeserialiser;
 import model.order.IOrderCollector;
 import model.order.IOrderData;
-import model.order.IOrderDataFactory;
-import model.order.IOrderFactory;
-import model.order.IOrderID;
-import model.order.IOrderIDFactory;
-import model.order.IOrderItemDataFactory;
-import model.order.IOrderItemFactory;
 import model.order.OrderCollector;
-import model.order.OrderDataFactory;
-import model.order.OrderFactory;
-import model.order.OrderIDFactory;
-import model.order.OrderItemDataFactory;
-import model.order.OrderItemFactory;
-import model.serialise.IOrderDeserialiser;
-import model.serialise.StandardOrderDeserialiser;
+import model.order.serialise.IOrderDeserialiser;
+import model.order.serialise.IOrderSerialiser;
+import model.order.serialise.OrderSerialiser;
+import model.order.serialise.StandardOrderDeserialiser;
 
 public class Model implements IModel {
 	private Collection<Updatable> updatables;
 	private IDishMenu dishMenu;
-	private IDishMenuItemFactory fac;
-	private IDishMenuItemDataFactory dataFac;
-	private IDishMenuItemIDFactory idFac;
 	
-	private IOrderFactory orderFac;
-	private IOrderItemFactory orderItemFac;
-	private IOrderDataFactory orderDataFac;
-	private IOrderItemDataFactory orderItemDataFac;
-	private IOrderIDFactory orderIDFac;
 	private IOrderCollector orderUnconfirmedCollector;
 	private IOrderCollector orderConfirmedCollector;
+	private IOrderSerialiser orderSerialiser;
 	private IOrderDeserialiser orderDeserialiser;
+	private IDishMenuDeserialiser dishMenuDeserialiser;
 	private IDishMenuItemFinder finder;
+	private IDishMenuItemSerialiser menuItemSerialiser;
 	
 	public Model() {
 		this.updatables = new ArrayList<Updatable>();
 		this.dishMenu = new DishMenu();
-		this.fac = new DishMenuItemFactory();
-		this.dataFac = new DishMenuItemDataFactory();
-		this.idFac = new DishMenuItemIDFactory();
-
-		this.orderItemFac = new OrderItemFactory();
-		this.orderDataFac = new OrderDataFactory();
-		this.orderItemDataFac = new OrderItemDataFactory();
+		
+		this.orderSerialiser = new OrderSerialiser();
+		this.menuItemSerialiser = new DishMenuItemSerialiser();
+		this.dishMenuDeserialiser = new StandardDishMenuDeserialiser();
+		this.finder = new DishMenuItemFinder(this.dishMenu);
 		this.orderUnconfirmedCollector = new OrderCollector();
 		this.orderConfirmedCollector = new OrderCollector();
-		this.orderIDFac = new OrderIDFactory();
-		this.orderFac = new OrderFactory(this.orderItemFac);
-		this.finder = new DishMenuItemFinder(this.dishMenu);
-		this.orderDeserialiser = new StandardOrderDeserialiser(this.finder, this.dataFac, this.idFac);
+		this.orderDeserialiser = new StandardOrderDeserialiser(this.finder);
 	}
 	
-	public void addMenuItem(IDishMenuItemData item) {
-		if (this.dishMenu.addMenuItem(this.fac.createMenuItem(item))) {
+	public void addMenuItem(String serialisedItemData) {
+		IDishMenuItemData data = this.dishMenuDeserialiser.deserialise(serialisedItemData);
+		if (this.dishMenu.addMenuItem(data)) {
 			this.updatables.forEach(u -> u.refreshMenu());
 		}
 	}
 
-	public void removeMenuItem(IDishMenuItemID id) {
+	public void removeMenuItem(String id) {
 		if (this.dishMenu.removeMenuItem(id)) {
 			this.updatables.forEach(u -> u.refreshMenu());
 		}
 	}
 
-	public IDishMenuItem getMenuItem(IDishMenuItemID id) {
+	public IDishMenuItemData getMenuItem(String id) {
 		return this.dishMenu.getItem(id);
 	}
 
 	@Override
-	public IDishMenuItemDataFactory getItemDataCommunicationProtocoll() {
-		return this.dataFac;
-	}
-
-	@Override
-	public IDishMenuItemIDFactory getItemIDCommunicationProtocoll() {
-		return this.idFac;
-	}
-
-	@Override
 	public IDishMenuItemData[] getMenuData() {
-		IDishMenuItem[] items = this.dishMenu.getAllItems();
-		IDishMenuItemData[] data = new IDishMenuItemData[items.length];
-		for (int i = 0; i < data.length; i++) {
-			data[i] = this.dataFac.menuItemToData(items[i]);
-		}
-		return data;
+		return this.dishMenu.getAllItems();
 	}
 
 	@Override
@@ -110,30 +72,25 @@ public class Model implements IModel {
 
 	@Override
 	public void addUnconfirmedOrder(String orderData) {
-		IOrder order = this.orderDeserialiser.deserialise(orderData);
+		IOrderData order = this.orderDeserialiser.deserialise(orderData);
 		this.orderUnconfirmedCollector.addOrder(order);
 		this.updatables.forEach(u -> u.refreshUnconfirmedOrders());
 	}
 
 	@Override
-	public IOrderData getOrder(IOrderID id) {
-		IOrder order = this.orderUnconfirmedCollector.getOrder(id);
+	public IOrderData getOrder(String id) {
+		IOrderData order = this.orderUnconfirmedCollector.getOrder(id);
 		
 		if (order == null) {
 			order = this.orderConfirmedCollector.getOrder(id);
 		}
 		
-		return order.getOrderData(this.orderDataFac, this.orderItemDataFac, this.dataFac);
+		return order;
 	}
 
 	@Override
 	public IOrderData[] getAllUnconfirmedOrders() {
-		IOrder[] orders = this.orderUnconfirmedCollector.getAllOrders();
-		IOrderData[] data = new IOrderData[orders.length];
-		for (int i = 0; i < data.length; i++) {
-			data[i] = this.orderDataFac.orderToData(orders[i], this.orderItemDataFac, this.dataFac);
-		}
-		return data;
+		return this.orderUnconfirmedCollector.getAllOrders();
 	}
 
 	@Override
@@ -142,56 +99,45 @@ public class Model implements IModel {
 	}
 
 	@Override
-	public void editMenuItem(IDishMenuItemData newItem) {
-		IDishMenuItem oldItem = this.getMenuItem(newItem.getId());
-		
-		oldItem.getDish().setName(newItem.getDishName());
-		oldItem.setDiscount(newItem.getDiscount());
-		oldItem.setPortionSize(newItem.getPortionSize());
-		oldItem.setPrice(newItem.getGrossPrice());
-		oldItem.setProductionCost(newItem.getProductionCost());
-		
+	public void editMenuItem(String serialisedNewItemData) {
+		IDishMenuItemData data = dishMenuDeserialiser.deserialise(serialisedNewItemData);
+		this.dishMenu.editMenuItem(data);
 		this.updatables.forEach(u -> u.refreshMenu());
 	}
 
 	@Override
-	public IOrderDataFactory getOrderDataCommunicationProtocoll() {
-		return this.orderDataFac;
-	}
-
-	@Override
-	public IOrderIDFactory getOrderItemDataCommunicationProtocoll() {
-		return this.orderIDFac;
-	}
-
-	@Override
-	public void addConfirmedOrder(IOrderData orderData) {
+	public void confirmOrder(String serialisedConfirmedOrderData) {
+		IOrderData orderData = this.orderDeserialiser.deserialise(serialisedConfirmedOrderData);
 		this.orderUnconfirmedCollector.removeOrder(orderData.getID());
-		IOrder confirmedOrder = this.orderFac.createOrder(this.finder, orderData);
-		this.orderConfirmedCollector.addOrder(confirmedOrder);
+		this.orderConfirmedCollector.addOrder(orderData);
 		this.updatables.forEach(u -> u.refreshUnconfirmedOrders());
 		this.updatables.forEach(u -> u.refreshConfirmedOrders());
 	}
 
 	@Override
 	public IOrderData[] getAllConfirmedOrders() {
-		IOrder[] orders = this.orderConfirmedCollector.getAllOrders();
-		IOrderData[] data = new IOrderData[orders.length];
-		for (int i = 0; i < data.length; i++) {
-			data[i] = this.orderDataFac.orderToData(orders[i], this.orderItemDataFac, this.dataFac);
-		}
-		return data;
+		return this.orderConfirmedCollector.getAllOrders();
 	}
 
 	@Override
-	public void removeUnconfirmedOrder(IOrderID id) {
+	public void removeUnconfirmedOrder(String id) {
 		this.orderUnconfirmedCollector.removeOrder(id);
 		this.updatables.forEach(u -> u.refreshUnconfirmedOrders());
 	}
 
 	@Override
-	public void removeConfirmedOrder(IOrderID id) {
+	public void removeConfirmedOrder(String id) {
 		this.orderConfirmedCollector.removeOrder(id);
 		this.updatables.forEach(u -> u.refreshConfirmedOrders());
+	}
+
+	@Override
+	public IDishMenuItemSerialiser getDishMenuItemSerialiser() {
+		return this.menuItemSerialiser;
+	}
+
+	@Override
+	public IOrderSerialiser getOrderSerialiser() {
+		return this.orderSerialiser;
 	}
 }

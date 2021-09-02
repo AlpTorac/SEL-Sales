@@ -1,20 +1,17 @@
 package model.order;
 
-import model.IDishMenuItemFinder;
-
 public class OrderFactory implements IOrderFactory {
-	private IOrderItemFactory fac;
-	
-	public OrderFactory(IOrderItemFactory fac) {
-		this.fac = fac;
+	private IOrderIDFactory idFac;
+	public OrderFactory(IOrderIDFactory idFac) {
+		this.idFac = idFac;
 	}
 	
 	@Override
-	public Order createOrder(IDishMenuItemFinder finder, IOrderData data) {
-		Order order = new Order(data.getDate(), data.getCashOrCard(), data.getHereOrToGo(), data.getID());
+	public Order createOrder(IOrderData data) {
+		Order order = new Order(data.getDate(), data.getCashOrCard(), data.getHereOrToGo(), this.idFac.createOrderID(data.getID()));
 		order.setOrderDiscount(data.getOrderDiscount());
 		for (IOrderItemData d : data.getOrderedItems()) {
-			order.addOrderItem(this.fac.createOrderItem(finder, d));
+			order.addOrderItem(d);
 		}
 		return order;
 	}

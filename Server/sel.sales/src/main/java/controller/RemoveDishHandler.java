@@ -1,7 +1,5 @@
 package controller;
 
-import model.dish.IDishMenuItemID;
-
 public class RemoveDishHandler extends BusinessEventHandler {
 
 	RemoveDishHandler(IController controller) {
@@ -10,6 +8,6 @@ public class RemoveDishHandler extends BusinessEventHandler {
 
 	@Override
 	public void handleBusinessEvent(Object[] args) {
-		this.getController().removeMenuItem((IDishMenuItemID) args[0]);
+		this.getController().removeMenuItem((String) args[0]);
 	}
 }

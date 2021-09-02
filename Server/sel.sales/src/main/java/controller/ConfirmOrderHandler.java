@@ -1,7 +1,5 @@
 package controller;
 
-import model.order.IOrderData;
-
 public class ConfirmOrderHandler extends BusinessEventHandler {
 
 	ConfirmOrderHandler(IController controller) {
@@ -10,7 +8,7 @@ public class ConfirmOrderHandler extends BusinessEventHandler {
 
 	@Override
 	public void handleBusinessEvent(Object[] args) {
-		this.getController().confirmOrder((IOrderData) args[0]);
+		this.getController().confirmOrder((String) args[0]);
 	}
 
 }

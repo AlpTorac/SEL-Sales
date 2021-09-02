@@ -28,12 +28,12 @@ public final class DishMenuItemTestUtilityClass {
 		Assertions.assertEquals(item.getDiscount().compareTo(discount), 0);
 	}
 	public static void assertMenuItemDataPricesEqual(IDishMenuItemData data, BigDecimal discount, BigDecimal portionSize, BigDecimal grossPrice) {
-		Assertions.assertEquals(data.getDiscount(), discount);
-		Assertions.assertEquals(data.getGrossPrice(), grossPrice);
-		Assertions.assertEquals(data.getGrossPricePerPortion(), grossPrice.divide(portionSize, mc));
+		Assertions.assertEquals(data.getDiscount().compareTo(discount), 0);
+		Assertions.assertEquals(data.getGrossPrice().compareTo(grossPrice), 0);
+		Assertions.assertEquals(data.getGrossPricePerPortion().compareTo(grossPrice.divide(portionSize, mc)), 0);
 		BigDecimal netPrice = grossPrice.subtract(discount);
-		Assertions.assertEquals(data.getNetPrice(), netPrice);
-		Assertions.assertEquals(data.getNetPricePerPortion(), netPrice.divide(portionSize, mc));
+		Assertions.assertEquals(data.getNetPrice().compareTo(netPrice), 0);
+		Assertions.assertEquals(data.getNetPricePerPortion().compareTo(netPrice.divide(portionSize, mc)), 0);
 	}
 	public static void assertMenuItemAndDataEqual(IDishMenuItem item, IDishMenuItemData data) {
 		Assertions.assertEquals(item.getDish().getName(), data.getDishName());

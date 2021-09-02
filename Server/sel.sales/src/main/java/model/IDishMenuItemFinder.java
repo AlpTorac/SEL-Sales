@@ -1,8 +1,7 @@
 package model;
 
-import model.dish.IDishMenuItem;
-import model.dish.IDishMenuItemID;
+import model.dish.IDishMenuItemData;
 
 public interface IDishMenuItemFinder {
-	IDishMenuItem getDish(IDishMenuItemID id);
+	IDishMenuItemData getDish(String id);
 }

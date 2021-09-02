@@ -3,8 +3,6 @@ package view.composites;
 import controller.BusinessEvent;
 import controller.IBusinessEventShooter;
 import controller.IController;
-import model.dish.IDishMenuItemID;
-import model.dish.IDishMenuItemIDFactory;
 import view.repository.HasText;
 import view.repository.uiwrapper.ClickEventListener;
 
@@ -19,8 +17,7 @@ public class RemoveDishListener extends ClickEventListener implements IBusinessE
 	
 	@Override
 	public Object[] getArgs() {
-		IDishMenuItemIDFactory idFac = this.controller.getItemIDCommunicationProtocoll();
-		IDishMenuItemID id = idFac.createDishMenuItemID(this.getDishID().getText());
+		String id = this.getDishID().getText();
 		this.resetUserInput();
 		return new Object[] {id};
 	}

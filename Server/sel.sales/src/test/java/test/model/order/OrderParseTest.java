@@ -10,6 +10,7 @@ import java.util.GregorianCalendar;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import model.IModel;
@@ -17,41 +18,43 @@ import model.Model;
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemID;
 import model.dish.IDishMenuItemIDFactory;
+import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrder;
 import model.order.IOrderData;
 import model.order.IOrderItemData;
 
 class OrderParseTest {
 	private static IModel model;
-	private static IDishMenuItemDataFactory menuItemDataFac;
-	private static IDishMenuItemIDFactory menuItemIDFac;
+	private static IDishMenuItemSerialiser serialiser;
 	
-	@BeforeAll
-	static void startUp() {
+	private String i1Name = "aaa";
+	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
+	private BigDecimal i1Price = BigDecimal.valueOf(5);
+	private BigDecimal i1ProCost = BigDecimal.valueOf(4);
+	private BigDecimal i1Disc = BigDecimal.valueOf(0);
+	private String i1id = "item1";
+	
+	private String i2Name = "bbb";
+	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
+	private BigDecimal i2Price = BigDecimal.valueOf(1);
+	private BigDecimal i2ProCost = BigDecimal.valueOf(0.5);
+	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
+	private String i2id = "item2";
+	
+	private String i3Name = "ccc";
+	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
+	private BigDecimal i3Price = BigDecimal.valueOf(4);
+	private BigDecimal i3ProCost = BigDecimal.valueOf(3.5);
+	private BigDecimal i3Disc = BigDecimal.valueOf(1);
+	private String i3id = "item3";
+	
+	@BeforeEach
+	void startUp() {
 		model = new Model();
-		menuItemDataFac = model.getItemDataCommunicationProtocoll();
-		menuItemIDFac = model.getItemIDCommunicationProtocoll();
-		
-		model.addMenuItem(menuItemDataFac.constructData(
-				"aaa",
-				BigDecimal.valueOf(2.34),
-				BigDecimal.valueOf(5),
-				BigDecimal.valueOf(4),
-				"item1", menuItemIDFac));
-		
-		model.addMenuItem(menuItemDataFac.constructData(
-				"bbb",
-				BigDecimal.valueOf(5.67),
-				BigDecimal.valueOf(1),
-				BigDecimal.valueOf(0.5),
-				"item2", menuItemIDFac));
-		
-		model.addMenuItem(menuItemDataFac.constructData(
-				"ccc",
-				BigDecimal.valueOf(3.34),
-				BigDecimal.valueOf(4),
-				BigDecimal.valueOf(3.5),
-				"item3", menuItemIDFac));
+		serialiser = model.getDishMenuItemSerialiser();
+		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
+		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
+		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
 		
 		model.addUnconfirmedOrder("order1-20200809112233000-0-0:item1,2;");
 		model.addUnconfirmedOrder("order2-20200809235959532-1-0:item1,2;item2,3;");

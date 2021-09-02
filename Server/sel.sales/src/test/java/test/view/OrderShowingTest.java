@@ -27,6 +27,7 @@ import model.IModel;
 import model.Model;
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemIDFactory;
+import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
 import test.GeneralTestUtilityClass;
 import test.MainViewOperationsUtilityClass;
@@ -39,8 +40,28 @@ import view.repository.uifx.FXUIComponentFactory;
 
 class OrderShowingTest extends ApplicationTest {
 	private static IModel model;
-	private static IDishMenuItemDataFactory menuItemDataFac;
-	private static IDishMenuItemIDFactory menuItemIDFac;
+	private static IDishMenuItemSerialiser serialiser;
+	
+	private String i1Name = "aaa";
+	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
+	private BigDecimal i1Price = BigDecimal.valueOf(5);
+	private BigDecimal i1ProCost = BigDecimal.valueOf(4);
+	private BigDecimal i1Disc = BigDecimal.valueOf(0);
+	private String i1id = "item1";
+	
+	private String i2Name = "bbb";
+	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
+	private BigDecimal i2Price = BigDecimal.valueOf(1);
+	private BigDecimal i2ProCost = BigDecimal.valueOf(0.5);
+	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
+	private String i2id = "item2";
+	
+	private String i3Name = "ccc";
+	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
+	private BigDecimal i3Price = BigDecimal.valueOf(4);
+	private BigDecimal i3ProCost = BigDecimal.valueOf(3.5);
+	private BigDecimal i3Disc = BigDecimal.valueOf(1);
+	private String i3id = "item3";
 	
 	private static IController controller;
 	private static IView view;
@@ -63,28 +84,10 @@ class OrderShowingTest extends ApplicationTest {
 		controller = new MainController(model);
 		view = new MainView(new FXUIComponentFactory(), controller, model);
 		view.startUp();
-		menuItemDataFac = model.getItemDataCommunicationProtocoll();
-		menuItemIDFac = model.getItemIDCommunicationProtocoll();
-		model.addMenuItem(menuItemDataFac.constructData(
-				"aaa",
-				BigDecimal.valueOf(2.34),
-				BigDecimal.valueOf(5),
-				BigDecimal.valueOf(4),
-				"item1", menuItemIDFac));
-		
-		model.addMenuItem(menuItemDataFac.constructData(
-				"bbb",
-				BigDecimal.valueOf(5.67),
-				BigDecimal.valueOf(1),
-				BigDecimal.valueOf(0.5),
-				"item2", menuItemIDFac));
-		
-		model.addMenuItem(menuItemDataFac.constructData(
-				"ccc",
-				BigDecimal.valueOf(3.34),
-				BigDecimal.valueOf(4),
-				BigDecimal.valueOf(3.5),
-				"item3", menuItemIDFac));
+		serialiser = model.getDishMenuItemSerialiser();
+		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
+		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
+		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
 	}
 	@Test
 	void duplicateOrderTest() {

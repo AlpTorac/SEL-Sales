@@ -1,7 +1,6 @@
 package model.order;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface IOrderData {
@@ -11,13 +10,13 @@ public interface IOrderData {
 	boolean getCashOrCard();
 	boolean getHereOrToGo();
 	boolean getIsDiscounted();
-	IOrderID getID();
+	String getID();
 	BigDecimal getGrossSum();
 	BigDecimal getTotalDiscount();
 	BigDecimal getOrderDiscount();
 	void setOrderDiscount(BigDecimal orderDiscount);
 	default BigDecimal getNetSum() {
-		return this.getGrossSum().subtract(this.getTotalDiscount());
+		return this.getGrossSum().subtract(this.getOrderDiscount());
 	}
 	String toString();
 }

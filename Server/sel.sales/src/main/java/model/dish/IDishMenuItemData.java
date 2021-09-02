@@ -6,8 +6,8 @@ import java.math.RoundingMode;
 
 import model.IDishMenuItemFinder;
 
-public interface IDishMenuItemData {
-	default IDishMenuItem getAssociatedItem(IDishMenuItemFinder finder) {
+public interface IDishMenuItemData extends Comparable<IDishMenuItemData> {
+	default IDishMenuItemData getAssociatedItem(IDishMenuItemFinder finder) {
 		return finder.getDish(this.getId());
 	}
 	
@@ -39,5 +39,9 @@ public interface IDishMenuItemData {
 		return this.getGrossPrice().subtract(this.getDiscount());
 	}
 	
-	IDishMenuItemID getId();
+	String getId();
+	
+	default public int compareTo(IDishMenuItemData data) {
+		return this.getId().compareTo(data.getId());
+	}
 }

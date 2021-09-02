@@ -3,8 +3,6 @@ package view.composites;
 import controller.BusinessEvent;
 import controller.IBusinessEventShooter;
 import controller.IController;
-import model.order.IOrderID;
-import model.order.IOrderIDFactory;
 import view.repository.uiwrapper.ClickEventListener;
 
 public class RemoveOrderListener extends ClickEventListener implements IBusinessEventShooter {
@@ -22,11 +20,8 @@ public class RemoveOrderListener extends ClickEventListener implements IBusiness
 	
 	@Override
 	public Object[] getArgs() {
-		IOrderIDFactory orderIDFac = this.controller.getOrderItemDataCommunicationProtocoll();
-		IOrderID id = orderIDFac.createOrderID(this.oia.getOrderIDLabel().getText());
-		
+		String id = this.oia.getOrderIDLabel().getText();
 		this.oia.clearOrderDisplay();
-		
 		return new Object[] {id};
 	}
 

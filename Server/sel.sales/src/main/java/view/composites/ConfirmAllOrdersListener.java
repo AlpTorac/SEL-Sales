@@ -25,7 +25,7 @@ public class ConfirmAllOrdersListener extends ClickEventListener implements IBus
 	@Override
 	public Object[] getArgs() {
 		IOrderData data = this.ota.getUnconfirmedOrderList().getAllItems().stream().findFirst().get();
-		return new Object[] {data};
+		return new Object[] {this.controller.getOrderSerialiser().serialiseOrderData(data)};
 	}
 
 	@Override

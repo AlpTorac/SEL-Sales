@@ -1,7 +1,5 @@
 package controller;
 
-import model.dish.IDishMenuItemData;
-
 public class AddDishHandler extends BusinessEventHandler {
 
 	AddDishHandler(IController controller) {
@@ -10,6 +8,6 @@ public class AddDishHandler extends BusinessEventHandler {
 
 	@Override
 	public void handleBusinessEvent(Object[] args) {
-		this.getController().addMenuItem((IDishMenuItemData) args[0]);
+		this.getController().addMenuItem((String) args[0]);
 	}
 }

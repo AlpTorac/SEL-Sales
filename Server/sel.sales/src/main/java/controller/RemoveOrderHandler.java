@@ -1,7 +1,5 @@
 package controller;
 
-import model.order.IOrderID;
-
 public class RemoveOrderHandler extends BusinessEventHandler {
 
 	RemoveOrderHandler(IController controller) {
@@ -10,7 +8,7 @@ public class RemoveOrderHandler extends BusinessEventHandler {
 
 	@Override
 	public void handleBusinessEvent(Object[] args) {
-		this.getController().removeOrder((IOrderID) args[0]);
+		this.getController().removeOrder((String) args[0]);
 	}
 
 }

@@ -2,25 +2,24 @@ package model.order;
 
 import java.math.BigDecimal;
 
-import model.IDishMenuItemFinder;
-import model.dish.IDishMenuItem;
+import model.dish.IDishMenuItemData;
 
 public class OrderItem implements IOrderItem {
-	private IDishMenuItem menuItem;
+	private IDishMenuItemData menuItem;
 	private BigDecimal amount;
 	
-	OrderItem(IDishMenuItem menuItem, BigDecimal amount) {
+	OrderItem(IDishMenuItemData menuItem, BigDecimal amount) {
 		this.menuItem = menuItem;
 		this.amount = amount;
 	}
 	
-	OrderItem(IDishMenuItemFinder finder, IOrderItemData data) {
-		this.menuItem = finder.getDish(data.getItemData().getId());
+	OrderItem(IOrderItemData data) {
+		this.menuItem = data.getItemData();
 		this.amount = data.getAmount();
 	}
 	
 	@Override
-	public IDishMenuItem getMenuItem() {
+	public IDishMenuItemData getMenuItemData() {
 		return this.menuItem;
 	}
 

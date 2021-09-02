@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import model.dish.IDishMenuItemData;
 
-public interface IOrderItemData {
+public interface IOrderItemData extends Comparable<IOrderItemData> {
 	IDishMenuItemData getItemData();
 	BigDecimal getAmount();
 	
@@ -40,5 +40,9 @@ public interface IOrderItemData {
 	
 	default BigDecimal getNetPrice() {
 		return this.getNetPricePerMenuItem().multiply(this.getAmount());
+	}
+	
+	default public int compareTo(IOrderItemData data) {
+		return this.getItemData().getId().compareTo(data.getItemData().getId());
 	}
 }

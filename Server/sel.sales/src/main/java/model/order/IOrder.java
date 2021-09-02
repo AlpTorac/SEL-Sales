@@ -1,23 +1,15 @@
 package model.order;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
-import model.dish.IDishMenuItemDataFactory;
-import model.dish.IDishMenuItemID;
-
 public interface IOrder extends Comparable<IOrder> {
-	default IOrderData getOrderData(IOrderDataFactory orderDataFac, IOrderItemDataFactory orderItemDataFac, IDishMenuItemDataFactory dishMenuItemDataFac) {
-		return orderDataFac.orderToData(this, orderItemDataFac, dishMenuItemDataFac);
-	}
-	IOrderID getID();
-	boolean addOrderItem(IOrderItem item);
-	boolean removeOrderItem(IDishMenuItemID id);
-	boolean setOrderedItemAmount(IDishMenuItemID id, BigDecimal amount);
-	IOrderItem getOrderItem(IDishMenuItemID id);
+	String getID();
+	boolean addOrderItem(IOrderItemData item);
+	boolean removeOrderItem(String id);
+	boolean setOrderedItemAmount(String id, BigDecimal amount);
+	IOrderItem getOrderItem(String id);
 	LocalDateTime getDate();
 	boolean getCashOrCard();
 	boolean getHereOrToGo();

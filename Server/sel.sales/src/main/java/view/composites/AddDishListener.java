@@ -39,25 +39,21 @@ public class AddDishListener extends ClickEventListener implements IBusinessEven
 
 	@Override
 	public Object[] getArgs() {
-		IDishMenuItemDataFactory fac = this.controller.getItemDataCommunicationProtocoll();
-		IDishMenuItemIDFactory idFac = this.controller.getItemIDCommunicationProtocoll();
-		
 		String discountAsText = this.getDiscount().getText();
+		
 		BigDecimal discount = BigDecimal.ZERO;
 		
 		if (discountAsText != null) {
 			discount = BigDecimal.valueOf(Double.valueOf(discountAsText).doubleValue());
 		}
 		
-		IDishMenuItemData data = fac.constructData(
+		String data = this.controller.getDishMenuItemSerialiser().serialise(
 				this.getDishName().getText(),
+				this.getDishID().getText(),
 				BigDecimal.valueOf(Double.valueOf(this.getPortion().getText()).doubleValue()), 
 				BigDecimal.valueOf(Double.valueOf(this.getPrice().getText()).doubleValue()),
 				BigDecimal.valueOf(Double.valueOf(this.getProductionCost().getText()).doubleValue()),
-				discount,
-				this.getDishID().getText(),
-				idFac
-		);
+				discount);
 		
 		this.resetUserInput();
 		

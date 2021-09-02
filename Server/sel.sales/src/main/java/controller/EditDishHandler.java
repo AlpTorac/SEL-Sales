@@ -1,7 +1,5 @@
 package controller;
 
-import model.dish.IDishMenuItemData;
-
 public class EditDishHandler extends BusinessEventHandler {
 	
 	EditDishHandler(IController controller) {
@@ -10,6 +8,6 @@ public class EditDishHandler extends BusinessEventHandler {
 
 	@Override
 	public void handleBusinessEvent(Object[] args) {
-		this.getController().editMenuItem((IDishMenuItemData) args[0]);
+		this.getController().editMenuItem((String) args[0]);
 	}
 }

@@ -2,15 +2,11 @@ package view.composites;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
 import controller.BusinessEvent;
 import controller.IBusinessEventShooter;
 import controller.IController;
-import model.order.IOrderData;
-import model.order.IOrderDataFactory;
-import model.order.IOrderIDFactory;
 import model.order.IOrderItemData;
 import view.repository.HasText;
 import view.repository.IRadioButton;
@@ -22,8 +18,6 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 	
 	private IController controller;
 	private HasText orderID;
-	private HasText orderTimeInDay;
-	private HasText orderDateInYear;
 	private ITable<IOrderItemData> orderItems;
 	private IRadioButton isCash;
 	private IRadioButton isHere;
@@ -34,8 +28,6 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 		this.controller = controller;
 		this.oia = oia;
 		this.orderID = this.oia.getOrderIDLabel();
-		this.orderTimeInDay = this.oia.getOrderTimeInDayLabel();
-		this.orderDateInYear = this.oia.getOrderDateLabel();
 		this.orderItems = this.oia.getOrderDetailsDisplay();
 		this.isCash = this.oia.getCashRadioButton();
 		this.isHere = this.oia.getHereRadioButton();
@@ -49,8 +41,6 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 	
 	@Override
 	public Object[] getArgs() {
-		IOrderDataFactory orderDataFac = this.controller.getOrderDataCommunicationProtocoll();
-		IOrderIDFactory orderIDFac = this.controller.getOrderItemDataCommunicationProtocoll();
 		Collection<IOrderItemData> orderItemDataCollection = this.getOrderItems().getAllItems();		
 		
 		boolean isCash = this.getIsCash().isToggled();
@@ -62,9 +52,7 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 		
 		LocalDateTime date = this.oia.getDisplayedDate();
 		
-		IOrderData data = orderDataFac.constructData(orderItemDataCollection, date, isCash, isHere, orderIDFac.createOrderID(orderID));
-		
-		data.setOrderDiscount(orderDiscount);
+		String data = this.controller.getOrderSerialiser().serialiseOrderData(orderItemDataCollection.toArray(IOrderItemData[]::new), date, isCash, isHere, orderDiscount, orderID);
 		
 		this.oia.clearOrderDisplay();
 		

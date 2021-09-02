@@ -13,12 +13,11 @@ import model.Model;
 import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemIDFactory;
+import model.dish.serialise.IDishMenuItemSerialiser;
 
 class DishMenuItemDataTest {
-
 	private static IModel model;
-	private static IDishMenuItemDataFactory menuItemDataFac;
-	private static IDishMenuItemIDFactory menuItemIDFac;
+	private static IDishMenuItemSerialiser serialiser;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -44,42 +43,19 @@ class DishMenuItemDataTest {
 	@BeforeEach
 	void startUp() {
 		model = new Model();
-		menuItemDataFac = model.getItemDataCommunicationProtocoll();
-		menuItemIDFac = model.getItemIDCommunicationProtocoll();
-		
-		model.addMenuItem(menuItemDataFac.constructData(
-				i1Name,
-				i1PorSize,
-				i1Price,
-				i1ProCost,
-				i1Disc,
-				i1id, menuItemIDFac));
-		
-		model.addMenuItem(menuItemDataFac.constructData(
-				i2Name,
-				i2PorSize,
-				i2Price,
-				i2ProCost,
-				i2Disc,
-				i2id, menuItemIDFac));
-		
-		model.addMenuItem(menuItemDataFac.constructData(
-				i3Name,
-				i3PorSize,
-				i3Price,
-				i3ProCost,
-				i3Disc,
-				i3id, menuItemIDFac));
-		
+		serialiser = model.getDishMenuItemSerialiser();
+		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
+		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
+		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
 	}
 	
 	@Test
 	void contentTest() {
-		IDishMenuItemData d1 = model.getMenuItem(menuItemIDFac.createDishMenuItemID("item1")).getDishMenuItemData(menuItemDataFac);
+		IDishMenuItemData d1 = model.getMenuItem(i1id);
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d1, i1Name, i1id, i1PorSize, i1Price, i1ProCost, i1Disc);
-		IDishMenuItemData d2 = model.getMenuItem(menuItemIDFac.createDishMenuItemID("item2")).getDishMenuItemData(menuItemDataFac);
+		IDishMenuItemData d2 = model.getMenuItem(i2id);
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d2, i2Name, i2id, i2PorSize, i2Price, i2ProCost, i2Disc);
-		IDishMenuItemData d3 = model.getMenuItem(menuItemIDFac.createDishMenuItemID("item3")).getDishMenuItemData(menuItemDataFac);
+		IDishMenuItemData d3 = model.getMenuItem(i3id);
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d3, i3Name, i3id, i3PorSize, i3Price, i3ProCost, i3Disc);
 	}
 	

@@ -1,8 +1,7 @@
 package model;
 
 import model.dish.IDishMenu;
-import model.dish.IDishMenuItem;
-import model.dish.IDishMenuItemID;
+import model.dish.IDishMenuItemData;
 
 public class DishMenuItemFinder implements IDishMenuItemFinder {
 	private IDishMenu menu;
@@ -12,7 +11,7 @@ public class DishMenuItemFinder implements IDishMenuItemFinder {
 	}
 	
 	@Override
-	public IDishMenuItem getDish(IDishMenuItemID id) {
+	public IDishMenuItemData getDish(String id) {
 		return this.menu.getItem(id);
 	}
 

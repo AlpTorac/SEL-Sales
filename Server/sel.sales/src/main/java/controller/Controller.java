@@ -1,15 +1,9 @@
 package controller;
 
 import model.IModel;
-import model.dish.IDishMenuItem;
 import model.dish.IDishMenuItemData;
-import model.dish.IDishMenuItemDataFactory;
-import model.dish.IDishMenuItemID;
-import model.dish.IDishMenuItemIDFactory;
-import model.order.IOrderData;
-import model.order.IOrderDataFactory;
-import model.order.IOrderID;
-import model.order.IOrderIDFactory;
+import model.dish.serialise.IDishMenuItemSerialiser;
+import model.order.serialise.IOrderSerialiser;
 
 public abstract class Controller implements IController {
 	private IBusinessEventManager eventManager;
@@ -30,45 +24,37 @@ public abstract class Controller implements IController {
 	
 	protected abstract IBusinessEventManager initEventManager();
 	
-	public void addMenuItem(IDishMenuItemData data) {
-		this.model.addMenuItem(data);
+	public void addMenuItem(String serialisedItemData) {
+		this.model.addMenuItem(serialisedItemData);
 	}
-	public void removeMenuItem(IDishMenuItemID id) {
+	public void removeMenuItem(String id) {
 		this.model.removeMenuItem(id);
 	}
-	public IDishMenuItemData getItem(IDishMenuItemID id) {
-		IDishMenuItem item = this.model.getMenuItem(id);
-		return this.model.getItemDataCommunicationProtocoll().menuItemToData(item);
-	}
-	
-	public IDishMenuItemDataFactory getItemDataCommunicationProtocoll() {
-		return this.model.getItemDataCommunicationProtocoll();
-	}
-	public IDishMenuItemIDFactory getItemIDCommunicationProtocoll() {
-		return this.model.getItemIDCommunicationProtocoll();
-	}
-	
-	public IOrderDataFactory getOrderDataCommunicationProtocoll() {
-		return this.model.getOrderDataCommunicationProtocoll();
-	}
-	public IOrderIDFactory getOrderItemDataCommunicationProtocoll() {
-		return this.model.getOrderItemDataCommunicationProtocoll();
+	public IDishMenuItemData getItem(String id) {
+		IDishMenuItemData item = this.model.getMenuItem(id);
+		return item;
 	}
 	
 	public void addOrder(String serialisedOrder) {
 		this.model.addUnconfirmedOrder(serialisedOrder);
 	}
 	
-	public void confirmOrder(IOrderData data) {
-		this.model.addConfirmedOrder(data);
+	public void confirmOrder(String serialisedConfirmedOrderData) {
+		this.model.confirmOrder(serialisedConfirmedOrderData);
 	}
 	
-	public void removeOrder(IOrderID id) {
-		this.model.removeConfirmedOrder(id);
+	public void removeOrder(String id) {
 		this.model.removeUnconfirmedOrder(id);
+		this.model.removeConfirmedOrder(id);
 	}
 	@Override
-	public void editMenuItem(IDishMenuItemData data) {
-		this.model.editMenuItem(data);
+	public void editMenuItem(String serialisedNewItemData) {
+		this.model.editMenuItem(serialisedNewItemData);
+	}
+	public IDishMenuItemSerialiser getDishMenuItemSerialiser() {
+		return this.model.getDishMenuItemSerialiser();
+	}
+	public IOrderSerialiser getOrderSerialiser() {
+		return this.model.getOrderSerialiser();
 	}
 }

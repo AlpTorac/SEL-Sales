@@ -18,7 +18,7 @@ public final class OrderTestUtilityClass {
 	}
 	
 	public static void assertOrderItemDataEqual(IOrderItemData data, String id) {
-		Assertions.assertEquals(data.getItemData().getId().getID(), id);
+		Assertions.assertEquals(data.getItemData().getId(), id);
 	}
 	
 	public static void assertDatesEqual(LocalDateTime date1, LocalDateTime date2) {
@@ -31,7 +31,7 @@ public final class OrderTestUtilityClass {
 	}
 	
 	public static void assertOrderDataEqual(IOrderData order, String id, LocalDateTime date, boolean cashOrCard, boolean hereOrToGo) {
-		Assertions.assertEquals(id, order.getID().getID());
+		Assertions.assertEquals(id, order.getID());
 		assertDatesEqual(order.getDate(), date);
 		Assertions.assertEquals(order.getCashOrCard(), cashOrCard);
 		Assertions.assertEquals(order.getHereOrToGo(), hereOrToGo);

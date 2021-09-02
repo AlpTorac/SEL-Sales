@@ -28,28 +28,33 @@ public class MainApp extends Application {
 		view.show();
 		// ADD FAKE DATA -------------------------------------------------------
 		// ADD FAKE DATA -------------------------------------------------------
-		IDishMenuItemDataFactory menuItemDataFac = model.getItemDataCommunicationProtocoll();
-		IDishMenuItemIDFactory menuItemIDFac = model.getItemIDCommunicationProtocoll();
-		model.addMenuItem(menuItemDataFac.constructData(
+		
+		model.addMenuItem(controller.getDishMenuItemSerialiser().serialise(
 				"aaa",
+				"item1",
 				BigDecimal.valueOf(2.34),
-				BigDecimal.valueOf(5),
+				BigDecimal.valueOf(2),
 				BigDecimal.valueOf(4),
-				"item1", menuItemIDFac));
+				BigDecimal.valueOf(0)
+				));
 		
-		model.addMenuItem(menuItemDataFac.constructData(
+		model.addMenuItem(controller.getDishMenuItemSerialiser().serialise(
 				"bbb",
-				BigDecimal.valueOf(5.67),
+				"item2",
 				BigDecimal.valueOf(1),
-				BigDecimal.valueOf(0.5),
-				"item2", menuItemIDFac));
+				BigDecimal.valueOf(5.67),
+				BigDecimal.valueOf(10),
+				BigDecimal.valueOf(0.5)
+				));
 		
-		model.addMenuItem(menuItemDataFac.constructData(
+		model.addMenuItem(controller.getDishMenuItemSerialiser().serialise(
 				"ccc",
-				BigDecimal.valueOf(3.34),
+				"item3",
+				BigDecimal.valueOf(2.5),
+				BigDecimal.valueOf(1),
 				BigDecimal.valueOf(4),
-				BigDecimal.valueOf(3.5),
-				"item3", menuItemIDFac));
+				BigDecimal.valueOf(0.5)
+				));
 		
 		model.addUnconfirmedOrder("order1-20200820112233000-0-0:item1,2;");
 		model.addUnconfirmedOrder("order2-20200110235959153-1-0:item1,2;item2,3;");

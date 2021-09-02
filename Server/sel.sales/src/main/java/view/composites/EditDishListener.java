@@ -5,9 +5,6 @@ import java.math.BigDecimal;
 import controller.BusinessEvent;
 import controller.IBusinessEventShooter;
 import controller.IController;
-import model.dish.IDishMenuItemData;
-import model.dish.IDishMenuItemDataFactory;
-import model.dish.IDishMenuItemIDFactory;
 import view.repository.HasText;
 import view.repository.uiwrapper.ClickEventListener;
 
@@ -33,9 +30,6 @@ public class EditDishListener extends ClickEventListener implements IBusinessEve
 	
 	@Override
 	public Object[] getArgs() {
-		IDishMenuItemDataFactory fac = this.controller.getItemDataCommunicationProtocoll();
-		IDishMenuItemIDFactory idFac = this.controller.getItemIDCommunicationProtocoll();
-		
 		String discountAsText = this.getDiscount().getText();
 		BigDecimal discount = BigDecimal.ZERO;
 		
@@ -43,14 +37,13 @@ public class EditDishListener extends ClickEventListener implements IBusinessEve
 			discount = BigDecimal.valueOf(Double.valueOf(discountAsText).doubleValue());
 		}
 		
-		IDishMenuItemData data = fac.constructData(
+		String data = this.controller.getDishMenuItemSerialiser().serialise(
 				this.getDishName().getText(),
-				BigDecimal.valueOf(Double.valueOf(this.getPortion().getText()).doubleValue()), 
-				BigDecimal.valueOf(Double.valueOf(this.getPrice().getText()).doubleValue()),
-				BigDecimal.valueOf(Double.valueOf(this.getProductionCost().getText()).doubleValue()),
-				discount,
 				this.getDishID().getText(),
-				idFac
+				BigDecimal.valueOf(Double.valueOf(this.getPortion().getText()).doubleValue()),
+				BigDecimal.valueOf(Double.valueOf(this.getProductionCost().getText()).doubleValue()),
+				BigDecimal.valueOf(Double.valueOf(this.getPrice().getText()).doubleValue()),
+				discount
 		);
 		
 		this.resetUserInput();

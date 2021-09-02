@@ -6,5 +6,5 @@ import model.dish.IDishMenuItemDataFactory;
 
 public interface IOrderItemDataFactory {
 	IOrderItemData constructData(IDishMenuItemData menuItem, BigDecimal amount);
-	IOrderItemData orderItemToData(IOrderItem item, IDishMenuItemDataFactory fac);
+	IOrderItemData orderItemToData(IOrderItem item);
 }
