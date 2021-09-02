@@ -53,18 +53,18 @@ class DishMenuTest {
 	void addMenuItemTest() {
 		IDishMenuItemData[] data = model.getMenuData();
 		
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], "aaa", "item1", BigDecimal.valueOf(2.34), BigDecimal.valueOf(5), BigDecimal.valueOf(4));
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], "bbb", "item2", BigDecimal.valueOf(5.67), BigDecimal.valueOf(1), BigDecimal.valueOf(0.5));
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[2], "ccc", "item3", BigDecimal.valueOf(3.34), BigDecimal.valueOf(4), BigDecimal.valueOf(3.5));
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], "aaa", "item1", BigDecimal.valueOf(2.34), BigDecimal.valueOf(5), BigDecimal.valueOf(4), BigDecimal.ZERO);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], "bbb", "item2", BigDecimal.valueOf(5.67), BigDecimal.valueOf(1), BigDecimal.valueOf(0.5), BigDecimal.ZERO);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[2], "ccc", "item3", BigDecimal.valueOf(3.34), BigDecimal.valueOf(4), BigDecimal.valueOf(3.5), BigDecimal.ZERO);
 	}
 
 	@Test
 	void removeMenuItemTest() {
 		IDishMenuItemData[] data = model.getMenuData();
 		
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], "aaa", "item1", BigDecimal.valueOf(2.34), BigDecimal.valueOf(5), BigDecimal.valueOf(4));
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], "bbb", "item2", BigDecimal.valueOf(5.67), BigDecimal.valueOf(1), BigDecimal.valueOf(0.5));
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[2], "ccc", "item3", BigDecimal.valueOf(3.34), BigDecimal.valueOf(4), BigDecimal.valueOf(3.5));
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], "aaa", "item1", BigDecimal.valueOf(2.34), BigDecimal.valueOf(5), BigDecimal.valueOf(4), BigDecimal.ZERO);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], "bbb", "item2", BigDecimal.valueOf(5.67), BigDecimal.valueOf(1), BigDecimal.valueOf(0.5), BigDecimal.ZERO);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[2], "ccc", "item3", BigDecimal.valueOf(3.34), BigDecimal.valueOf(4), BigDecimal.valueOf(3.5), BigDecimal.ZERO);
 		
 		Assertions.assertEquals(3, data.length);
 		
@@ -72,8 +72,8 @@ class DishMenuTest {
 		
 		data = model.getMenuData();
 		
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], "bbb", "item2", BigDecimal.valueOf(5.67), BigDecimal.valueOf(1), BigDecimal.valueOf(0.5));
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], "ccc", "item3", BigDecimal.valueOf(3.34), BigDecimal.valueOf(4), BigDecimal.valueOf(3.5));
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], "bbb", "item2", BigDecimal.valueOf(5.67), BigDecimal.valueOf(1), BigDecimal.valueOf(0.5), BigDecimal.ZERO);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], "ccc", "item3", BigDecimal.valueOf(3.34), BigDecimal.valueOf(4), BigDecimal.valueOf(3.5), BigDecimal.ZERO);
 		
 		Assertions.assertEquals(2, data.length);
 		
@@ -81,7 +81,7 @@ class DishMenuTest {
 		
 		data = model.getMenuData();
 		
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], "ccc", "item3", BigDecimal.valueOf(3.34), BigDecimal.valueOf(4), BigDecimal.valueOf(3.5));
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], "ccc", "item3", BigDecimal.valueOf(3.34), BigDecimal.valueOf(4), BigDecimal.valueOf(3.5), BigDecimal.ZERO);
 		
 		Assertions.assertEquals(1, data.length);
 		
@@ -103,9 +103,9 @@ class DishMenuTest {
 		
 		IDishMenuItemData[] data = model.getMenuData();
 		
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], "aaa", "item1", BigDecimal.valueOf(2.34), BigDecimal.valueOf(5), BigDecimal.valueOf(4));
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], "bbb", "item2", BigDecimal.valueOf(5.67), BigDecimal.valueOf(1), BigDecimal.valueOf(0.5));
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[2], "ccc", "item3", BigDecimal.valueOf(3.34), BigDecimal.valueOf(4), BigDecimal.valueOf(3.5));
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], "aaa", "item1", BigDecimal.valueOf(2.34), BigDecimal.valueOf(5), BigDecimal.valueOf(4), BigDecimal.ZERO);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], "bbb", "item2", BigDecimal.valueOf(5.67), BigDecimal.valueOf(1), BigDecimal.valueOf(0.5), BigDecimal.ZERO);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[2], "ccc", "item3", BigDecimal.valueOf(3.34), BigDecimal.valueOf(4), BigDecimal.valueOf(3.5), BigDecimal.ZERO);
 		
 		Assertions.assertEquals(3, data.length);
 	}
@@ -113,10 +113,10 @@ class DishMenuTest {
 	@Test
 	void getTest() {
 		IDishMenuItem i1 = model.getMenuItem(menuItemIDFac.createDishMenuItemID("item1"));
-		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, "aaa", "item1", BigDecimal.valueOf(2.34), BigDecimal.valueOf(5), BigDecimal.valueOf(4));
+		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, "aaa", "item1", BigDecimal.valueOf(2.34), BigDecimal.valueOf(5), BigDecimal.valueOf(4), BigDecimal.ZERO);
 		IDishMenuItem i2 = model.getMenuItem(menuItemIDFac.createDishMenuItemID("item2"));
-		DishMenuItemTestUtilityClass.assertMenuItemEqual(i2, "bbb", "item2", BigDecimal.valueOf(5.67), BigDecimal.valueOf(1), BigDecimal.valueOf(0.5));
+		DishMenuItemTestUtilityClass.assertMenuItemEqual(i2, "bbb", "item2", BigDecimal.valueOf(5.67), BigDecimal.valueOf(1), BigDecimal.valueOf(0.5), BigDecimal.ZERO);
 		IDishMenuItem i3 = model.getMenuItem(menuItemIDFac.createDishMenuItemID("item3"));
-		DishMenuItemTestUtilityClass.assertMenuItemEqual(i3, "ccc", "item3", BigDecimal.valueOf(3.34), BigDecimal.valueOf(4), BigDecimal.valueOf(3.5));
+		DishMenuItemTestUtilityClass.assertMenuItemEqual(i3, "ccc", "item3", BigDecimal.valueOf(3.34), BigDecimal.valueOf(4), BigDecimal.valueOf(3.5), BigDecimal.ZERO);
 	}
 }

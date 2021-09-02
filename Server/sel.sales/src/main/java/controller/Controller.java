@@ -67,4 +67,8 @@ public abstract class Controller implements IController {
 		this.model.removeConfirmedOrder(id);
 		this.model.removeUnconfirmedOrder(id);
 	}
+	@Override
+	public void editMenuItem(IDishMenuItemData data) {
+		this.model.editMenuItem(data);
+	}
 }

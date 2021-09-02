@@ -115,25 +115,25 @@ class DishMenuItemTest {
 	@Test
 	void setTest() {
 		IDishMenuItem i1 = model.getMenuItem(menuItemIDFac.createDishMenuItemID(i1id));
-		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, i1Name, i1id, i1PorSize, i1Price, i1ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, i1Name, i1id, i1PorSize, i1Price, i1ProCost, i1Disc);
 		
 		BigDecimal newDisc = BigDecimal.valueOf(1);
 		i1.setDiscount(newDisc);
-		DishMenuItemTestUtilityClass.assertMenuItemDiscountEqual(i1, newDisc);
+		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, i1Name, i1id, i1PorSize, i1Price, i1ProCost, newDisc);
 		String newName = "abc";
 		i1.getDish().setName(newName);
-		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, newName, i1id, i1PorSize, i1Price, i1ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, newName, i1id, i1PorSize, i1Price, i1ProCost, newDisc);
 		String newID = "newItem1";
 		i1.setID(menuItemIDFac.createDishMenuItemID(newID));
-		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, newName, newID, i1PorSize, i1Price, i1ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, newName, newID, i1PorSize, i1Price, i1ProCost, newDisc);
 		BigDecimal newPorSize = BigDecimal.valueOf(1);
 		i1.setPortionSize(newPorSize);
-		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, newName, newID, newPorSize, i1Price, i1ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, newName, newID, newPorSize, i1Price, i1ProCost, newDisc);
 		BigDecimal newPrice = BigDecimal.valueOf(5);
 		i1.setPrice(newPrice);
-		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, newName, newID, newPorSize, newPrice, i1ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, newName, newID, newPorSize, newPrice, i1ProCost, newDisc);
 		BigDecimal newProCost = BigDecimal.valueOf(10);
 		i1.setProductionCost(newProCost);
-		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, newName, newID, newPorSize, newPrice, newProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, newName, newID, newPorSize, newPrice, newProCost, newDisc); 
 	}
 }

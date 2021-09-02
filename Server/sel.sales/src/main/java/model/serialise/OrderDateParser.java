@@ -3,7 +3,7 @@ package model.serialise;
 import java.time.format.DateTimeFormatter;
 
 public class OrderDateParser implements IOrderDateParser {
-	private String dateFormat = "yyyyMMddHHmmss";
+	private String dateFormat = "yyyyMMddHHmmssSSS";
 
 	@Override
 	public DateTimeFormatter getFormatter() {

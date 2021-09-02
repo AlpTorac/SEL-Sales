@@ -51,9 +51,9 @@ public class MainApp extends Application {
 				BigDecimal.valueOf(3.5),
 				"item3", menuItemIDFac));
 		
-		model.addUnconfirmedOrder("order1-20200820112233-0-0:item1,2;");
-		model.addUnconfirmedOrder("order2-20200110235959-1-0:item1,2;item2,3;");
-		model.addUnconfirmedOrder("order3-20201201000000-1-1:item3,5;");
+		model.addUnconfirmedOrder("order1-20200820112233000-0-0:item1,2;");
+		model.addUnconfirmedOrder("order2-20200110235959153-1-0:item1,2;item2,3;");
+		model.addUnconfirmedOrder("order3-20201201000000999-1-1:item3,5;");
 		// ADD FAKE DATA -------------------------------------------------------
 		// ADD FAKE DATA -------------------------------------------------------
 	}

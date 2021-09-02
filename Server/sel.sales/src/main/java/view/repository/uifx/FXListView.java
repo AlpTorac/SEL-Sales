@@ -60,4 +60,9 @@ public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T
 	public boolean contains(T item) {
 		return super.getItems().stream().anyMatch(t -> t.equals(item));
 	}
+	
+	@Override
+	public void performArtificialClick() {
+		//ToDo
+	}
 }

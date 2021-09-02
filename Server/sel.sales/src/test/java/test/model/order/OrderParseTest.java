@@ -53,9 +53,9 @@ class OrderParseTest {
 				BigDecimal.valueOf(3.5),
 				"item3", menuItemIDFac));
 		
-		model.addUnconfirmedOrder("order1-20200809112233-0-0:item1,2;");
-		model.addUnconfirmedOrder("order2-20200809235959-1-0:item1,2;item2,3;");
-		model.addUnconfirmedOrder("order3-20200809000000-1-1:item3,5;");
+		model.addUnconfirmedOrder("order1-20200809112233000-0-0:item1,2;");
+		model.addUnconfirmedOrder("order2-20200809235959532-1-0:item1,2;item2,3;");
+		model.addUnconfirmedOrder("order3-20200809000000999-1-1:item3,5;");
 	}
 	
 	@Test
@@ -63,8 +63,11 @@ class OrderParseTest {
 		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		LocalDateTime date1 = LocalDateTime.of(2020, 8, 9, 11, 22, 33);
+		date1.plusNanos(0);
 		LocalDateTime date2 = LocalDateTime.of(2020, 8, 9, 23, 59, 59);
+		date2 = date2.plusNanos(532000000);
 		LocalDateTime date3 = LocalDateTime.of(2020, 8, 9, 0, 0, 0);
+		date3 = date3.plusNanos(999000000);
 		
 		OrderTestUtilityClass.assertOrderDataEqual(orderData[0], "order1", date1, false, false);
 		OrderTestUtilityClass.assertOrderDataEqual(orderData[1], "order2", date2, true, false);

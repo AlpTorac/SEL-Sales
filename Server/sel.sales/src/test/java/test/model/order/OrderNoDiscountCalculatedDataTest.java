@@ -47,9 +47,9 @@ class OrderNoDiscountCalculatedDataTest {
 				BigDecimal.valueOf(3.5),
 				"item3", menuItemIDFac));
 		
-		model.addUnconfirmedOrder("order1-20200809112233-0-0:item1,2;");
-		model.addUnconfirmedOrder("order2-20200809235959-1-0:item1,2;item2,3;");
-		model.addUnconfirmedOrder("order3-20200809000000-1-1:item3,5;");
+		model.addUnconfirmedOrder("order1-20200809112233343-0-0:item1,2;");
+		model.addUnconfirmedOrder("order2-20200809235959111-1-0:item1,2;item2,3;");
+		model.addUnconfirmedOrder("order3-20200809000000222-1-1:item3,5;");
 	}
 	@Test
 	void totalDiscountTest() {

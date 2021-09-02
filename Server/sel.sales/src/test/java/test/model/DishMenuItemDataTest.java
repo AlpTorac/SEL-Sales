@@ -76,11 +76,11 @@ class DishMenuItemDataTest {
 	@Test
 	void contentTest() {
 		IDishMenuItemData d1 = model.getMenuItem(menuItemIDFac.createDishMenuItemID("item1")).getDishMenuItemData(menuItemDataFac);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d1, i1Name, i1id, i1PorSize, i1Price, i1ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d1, i1Name, i1id, i1PorSize, i1Price, i1ProCost, i1Disc);
 		IDishMenuItemData d2 = model.getMenuItem(menuItemIDFac.createDishMenuItemID("item2")).getDishMenuItemData(menuItemDataFac);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d2, i2Name, i2id, i2PorSize, i2Price, i2ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d2, i2Name, i2id, i2PorSize, i2Price, i2ProCost, i2Disc);
 		IDishMenuItemData d3 = model.getMenuItem(menuItemIDFac.createDishMenuItemID("item3")).getDishMenuItemData(menuItemDataFac);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d3, i3Name, i3id, i3PorSize, i3Price, i3ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d3, i3Name, i3id, i3PorSize, i3Price, i3ProCost, i3Disc);
 	}
 	
 	@Test

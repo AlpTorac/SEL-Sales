@@ -2,7 +2,6 @@ package model.serialise;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -96,7 +95,7 @@ public interface IOrderParser {
 		return this.getOrderIDFac().createOrderID(s);
 	}
 	default LocalDateTime parseOrderDate(String s) {
-		LocalDateTime date = LocalDateTime.parse(s, this.getOrderDateParser().getFormatter());
+		LocalDateTime date = this.getOrderDateParser().parseDate(s);
 		return date;
 	}
 	default IDishMenuItemID parseDishMenuItemID(String s) {

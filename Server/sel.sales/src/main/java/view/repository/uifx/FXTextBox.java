@@ -1,5 +1,7 @@
 package view.repository.uifx;
 
+import java.awt.Event;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Labeled;
@@ -30,5 +32,10 @@ public class FXTextBox extends TextField implements ITextBox, FXHasText {
 	
 	public void clearText() {
 		super.clear();
+	}
+	
+	@Override
+	public void performArtificialClick() {
+		//ToDo
 	}
 }

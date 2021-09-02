@@ -150,6 +150,8 @@ public class Model implements IModel {
 		oldItem.setPortionSize(newItem.getPortionSize());
 		oldItem.setPrice(newItem.getGrossPrice());
 		oldItem.setProductionCost(newItem.getProductionCost());
+		
+		this.updatables.forEach(u -> u.refreshMenu());
 	}
 
 	@Override
