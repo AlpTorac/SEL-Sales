@@ -2,6 +2,8 @@ package view.repository;
 
 import java.util.Collection;
 
+import view.repository.uiwrapper.ItemChangeListener;
+
 public interface IDataCollectingUIComponent<T> extends IUIComponent {
 	@SuppressWarnings("unchecked")
 	default public void addItem(T item) {
@@ -45,6 +47,11 @@ public interface IDataCollectingUIComponent<T> extends IUIComponent {
 	}
 	
 	@SuppressWarnings("unchecked")
+	default public T getItem(int index) {
+		return ((IDataCollectingUIComponent<T>) this.getComponent()).getItem(index);
+	}
+	
+	@SuppressWarnings("unchecked")
 	default public Collection<T> getItems(int beginIndex, int endIndex) {
 		return ((IDataCollectingUIComponent<T>) this.getComponent()).getItems(beginIndex, endIndex);
 	}
@@ -52,5 +59,10 @@ public interface IDataCollectingUIComponent<T> extends IUIComponent {
 	@SuppressWarnings("unchecked")
 	default public boolean contains(T item) {
 		return ((IDataCollectingUIComponent<T>) this.getComponent()).contains(item);
+	}
+	
+	@SuppressWarnings("unchecked")
+	default public void addItemChangeListener(ItemChangeListener l) {
+		((IDataCollectingUIComponent<T>) this.getComponent()).addItemChangeListener(l);
 	}
 }

@@ -9,9 +9,9 @@ public class OrderDataFactory implements IOrderDataFactory {
 	}
 	
 	@Override
-	public OrderData constructData(IOrderItemData[] orderData, LocalDateTime date, boolean cashOrCard,
-			boolean hereOrToGo, String id) {
-		return new OrderData(orderData, date, cashOrCard, hereOrToGo, id);
+	public OrderData constructData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash,
+			boolean isHere, String id) {
+		return new OrderData(orderData, date, isCash, isHere, id);
 	}
 
 	@Override
@@ -19,8 +19,8 @@ public class OrderDataFactory implements IOrderDataFactory {
 		OrderData data = new OrderData(
 				order.getOrderItemCollection().stream().map((o) -> {return orderItemDatafac.orderItemToData(o);}).toArray(IOrderItemData[]::new),
 				order.getDate(),
-				order.getCashOrCard(),
-				order.getHereOrToGo(),
+				order.getIsCash(),
+				order.getIsHere(),
 				order.getID());
 		
 		data.setOrderDiscount(order.getOrderDiscount());

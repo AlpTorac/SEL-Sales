@@ -2,11 +2,13 @@ package view.repository.uifx;
 
 import java.util.Collection;
 
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import view.repository.IListView;
 import view.repository.uiwrapper.ClickEventListener;
+import view.repository.uiwrapper.ItemChangeListener;
 
 public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T> {
 	@Override
@@ -41,7 +43,7 @@ public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T
 		EventHandler<MouseEvent> event = new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent click) {
-				l.action(click.getClickCount(), ref.getSelectionModel().getSelectedItems().toArray(Object[]::new));
+				l.clickAction(click.getClickCount(), ref.getSelectionModel().getSelectedItems().toArray(Object[]::new));
 			}
 		};
 		super.setOnMouseClicked(event);
@@ -57,12 +59,47 @@ public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T
 	}
 	
 	@Override
+	public T getItem(int index) {
+		return super.getItems().get(index);
+	}
+	
+	@Override
 	public boolean contains(T item) {
 		return super.getItems().stream().anyMatch(t -> t.equals(item));
 	}
 	
 	@Override
 	public void performArtificialClick() {
-		//ToDo
+		// ToDo
+	}
+	
+	@Override
+	public void addItemChangeListener(ItemChangeListener l) {
+		ListView<T> ref = this;
+		
+		ListChangeListener<T> listener = new ListChangeListener<T>() {
+			@Override
+			public void onChanged(Change<? extends T> c) {
+				while (c.next()) {
+					if (c.wasAdded() && checkRanges(c)) {
+						l.itemAddedAction(c.getAddedSubList());
+					}
+					if (c.wasRemoved()) {
+						l.itemRemovedAction(c.getRemoved());
+					}
+					if (c.wasReplaced()) {
+						l.itemEditedAction(c.getRemoved());
+					}
+				}
+				c.reset();
+			}
+			
+			private boolean checkRanges(Change<? extends T> c) {
+				int size = c.getList().size();
+				return size > 0 && c.getFrom() < size && c.getTo() <= size && c.getFrom() <= c.getTo();
+			}
+		};
+		
+		ref.getItems().addListener(listener);
 	}
 }

@@ -16,16 +16,8 @@ public abstract class View implements IView {
 		return this.controller;
 	}
 	
-	public void setController(IController controller) {
-		this.controller = controller;
-	}
-	
 	public IModel getModel() {
 		return this.model;
-	}
-	
-	public void setModel(IModel model) {
-		this.model = model;
 	}
 	
 	public void startUp() {

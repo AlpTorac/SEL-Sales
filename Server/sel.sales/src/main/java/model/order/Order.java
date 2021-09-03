@@ -12,8 +12,8 @@ import model.dish.IDishMenuItemIDFactory;
 
 public class Order implements IOrder {
 	private LocalDateTime date;
-	private boolean cashOrCard;
-	private boolean hereOrToGo;
+	private boolean isCash;
+	private boolean isHere;
 	private IOrderID id;
 	private IDishMenuItemIDFactory menuItemIDFac = new DishMenuItemIDFactory();
 	private IOrderItemFactory orderItemFac = new OrderItemFactory();
@@ -24,10 +24,10 @@ public class Order implements IOrder {
 	
 	private Map<IDishMenuItemID, IOrderItem> orderItems = new ConcurrentSkipListMap<IDishMenuItemID, IOrderItem>();
 	
-	Order(LocalDateTime date, boolean cashOrCard, boolean hereOrToGo, IOrderID id) {
+	Order(LocalDateTime date, boolean isCash, boolean isHere, IOrderID id) {
 		this.date = date;
-		this.cashOrCard = cashOrCard;
-		this.hereOrToGo = hereOrToGo;
+		this.isCash = isCash;
+		this.isHere = isHere;
 		this.id = id;
 	}
 	
@@ -86,13 +86,13 @@ public class Order implements IOrder {
 	}
 	
 	@Override
-	public boolean getCashOrCard() {
-		return this.cashOrCard;
+	public boolean getIsCash() {
+		return this.isCash;
 	}
 	
 	@Override
-	public boolean getHereOrToGo() {
-		return this.hereOrToGo;
+	public boolean getIsHere() {
+		return this.isHere;
 	}
 
 	@Override

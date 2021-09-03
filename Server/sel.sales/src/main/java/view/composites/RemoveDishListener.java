@@ -28,7 +28,7 @@ public class RemoveDishListener extends ClickEventListener implements IBusinessE
 	}
 
 	@Override
-	protected void clickAction() {
+	public void clickAction() {
 		this.fireBusinessEvent(controller);
 	}
 

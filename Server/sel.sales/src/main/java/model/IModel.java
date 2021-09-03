@@ -22,4 +22,9 @@ public interface IModel {
 	IDishMenuItemSerialiser getDishMenuItemSerialiser();
 	IOrderSerialiser getOrderSerialiser();
 	void removeAllUnconfirmedOrders();
+	void removeAllConfirmedOrders();
+	default void removeAllOrders() {
+		this.removeAllUnconfirmedOrders();
+		this.removeAllConfirmedOrders();
+	}
 }

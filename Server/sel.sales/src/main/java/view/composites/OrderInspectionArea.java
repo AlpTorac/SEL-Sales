@@ -27,11 +27,11 @@ public class OrderInspectionArea extends UIVBoxLayout {
 	
 	private IRadioButton cashRadioButton;
 	private IRadioButton cardRadioButton;
-	private IToggleGroup cashOrCard;
+	private IToggleGroup isCash;
 	
 	private IRadioButton toGoRadioButton;
 	private IRadioButton hereRadioButton;
-	private IToggleGroup hereOrToGo;
+	private IToggleGroup isHere;
 	
 	private ILabel grossSumDisplay;
 	private ILabel discountDisplay;
@@ -61,8 +61,8 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		this.getOrderTimeInDayLabel().clearText();
 		this.getOrderDateLabel().clearText();
 		this.getOrderDetailsDisplay().clear();
-		this.getCashOrCard().clearSelections();
-		this.getHereOrToGo().clearSelections();
+		this.getIsCash().clearSelections();
+		this.getIsHere().clearSelections();
 		this.getGrossSumDisplay().clearText();
 		this.getNetSumDisplay().clearText();
 		this.getDiscountDisplay().clearText();
@@ -75,9 +75,12 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		this.displayOrderID(data);
 		this.displayOrderDate(data);
 		this.displayOrderedItems(data);
-		this.displayCashOrCard(data);
-		this.displayHereOrToGo(data);
+		this.displayIsCash(data);
+		this.displayIsHere(data);
 		this.displayOrderPriceDetails(data);
+		this.getAddConfirmButton().setEnabled(true);
+		this.getRemoveButton().setEnabled(true);
+		this.getEditButton().setEnabled(true);
 	}
 	
 	private void displayOrderID(IOrderData data) {
@@ -101,18 +104,18 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		this.getOrderDateLabel().setCaption(this.ds.getDateInYear(orderDate));
 	}
 	
-	private void displayCashOrCard(IOrderData data) {
-		boolean cashOrCard = data.getCashOrCard();
+	private void displayIsCash(IOrderData data) {
+		boolean isCash = data.getIsCash();
 		
-		this.getCashRadioButton().setToggled(cashOrCard);
-		this.getCardRadioButton().setToggled(!cashOrCard);
+		this.getCashRadioButton().setToggled(isCash);
+		this.getCardRadioButton().setToggled(!isCash);
 	}
 	
-	private void displayHereOrToGo(IOrderData data) {
-		boolean hereOrToGo = data.getHereOrToGo();
+	private void displayIsHere(IOrderData data) {
+		boolean isHere = data.getIsHere();
 		
-		this.getHereRadioButton().setToggled(hereOrToGo);
-		this.getToGoRadioButton().setToggled(!hereOrToGo);
+		this.getHereRadioButton().setToggled(isHere);
+		this.getToGoRadioButton().setToggled(!isHere);
 	}
 	
 	private void init() {
@@ -184,8 +187,8 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		
 		IRadioButton[] choices = new IRadioButton[] {this.getCardRadioButton(), this.getCashRadioButton()};
 		
-		this.cashOrCard = this.fac.createToggleGroup();
-		this.cashOrCard.addAllToToggleGroup(choices);
+		this.isCash = this.fac.createToggleGroup();
+		this.isCash.addAllToToggleGroup(choices);
 		
 		optionArea.addUIComponents(choices);
 		
@@ -207,8 +210,8 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		
 		IRadioButton[] choices = new IRadioButton[] {this.getToGoRadioButton(), this.getHereRadioButton()};
 		
-		this.hereOrToGo = this.fac.createToggleGroup();
-		this.hereOrToGo.addAllToToggleGroup(choices);
+		this.isHere = this.fac.createToggleGroup();
+		this.isHere.addAllToToggleGroup(choices);
 		
 		optionArea.addUIComponents(choices);
 		
@@ -353,8 +356,8 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		return cardRadioButton;
 	}
 
-	public IToggleGroup getCashOrCard() {
-		return cashOrCard;
+	public IToggleGroup getIsCash() {
+		return isCash;
 	}
 
 	public IRadioButton getToGoRadioButton() {
@@ -365,8 +368,8 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		return hereRadioButton;
 	}
 
-	public IToggleGroup getHereOrToGo() {
-		return hereOrToGo;
+	public IToggleGroup getIsHere() {
+		return isHere;
 	}
 
 	public ILabel getGrossSumDisplay() {

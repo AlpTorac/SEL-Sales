@@ -4,6 +4,7 @@ import controller.IController;
 import model.IModel;
 import model.order.IOrderData;
 import view.repository.uiwrapper.ClickEventListener;
+import view.repository.uiwrapper.ItemChangeListener;
 import view.repository.uiwrapper.UIComponent;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIInnerFrame;
@@ -19,6 +20,7 @@ import view.composites.OrderInspectionListener;
 import view.composites.OrderTrackingArea;
 import view.composites.RemoveDishListener;
 import view.composites.RemoveOrderListener;
+import view.composites.UnconfirmedOrderListener;
 
 public class MainView extends View {
 
@@ -82,8 +84,11 @@ public class MainView extends View {
 		ClickEventListener removeOrderListener = new RemoveOrderListener(this.getController(), oia);
 		oia.getRemoveButton().addClickListener(removeOrderListener);
 		
-		ClickEventListener confirmAllOrdersListener = new ConfirmAllOrdersListener(this.getController(), ota);
+		ClickEventListener confirmAllOrdersListener = new ConfirmAllOrdersListener(oia, ota);
 		oia.getConfirmAllButton().addClickListener(confirmAllOrdersListener);
+		
+		ItemChangeListener unconfirmedOrderListener = new UnconfirmedOrderListener(ota, oia);
+		ota.getUnconfirmedOrderList().addItemChangeListener(unconfirmedOrderListener);
 	}
 	public void show() {
 		this.mainWindow.setInnerFrame(frame);

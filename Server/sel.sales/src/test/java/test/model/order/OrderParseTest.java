@@ -55,14 +55,14 @@ class OrderParseTest {
 		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
 		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
 		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
-		
-		model.addUnconfirmedOrder("order1-20200809112233000-0-0:item1,2;");
-		model.addUnconfirmedOrder("order2-20200809235959532-1-0:item1,2;item2,3;");
-		model.addUnconfirmedOrder("order3-20200809000000999-1-1:item3,5;");
 	}
 	
 	@Test
 	void orderSpecificDataTest() {
+		model.addUnconfirmedOrder("order1-20200809112233000-0-0:item1,2;");
+		model.addUnconfirmedOrder("order2-20200809235959532-1-0:item1,2;item2,3;");
+		model.addUnconfirmedOrder("order3-20200809000000999-1-1:item3,5;");
+		
 		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		LocalDateTime date1 = LocalDateTime.of(2020, 8, 9, 11, 22, 33);
@@ -78,11 +78,27 @@ class OrderParseTest {
 	}
 	
 	@Test
-	void OrderContentTest() {
+	void orderContentTest() {
+		model.addUnconfirmedOrder("order1-20200809112233000-0-0:item1,2;");
+		model.addUnconfirmedOrder("order2-20200809235959532-1-0:item1,2;item2,3;");
+		model.addUnconfirmedOrder("order3-20200809000000999-1-1:item3,5;");
+		
 		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		OrderTestUtilityClass.assertOrderDataEqual(orderData[0], new BigDecimal[] {BigDecimal.valueOf(2)}, new String[] {"item1"});
 		OrderTestUtilityClass.assertOrderDataEqual(orderData[1], new BigDecimal[] {BigDecimal.valueOf(2), BigDecimal.valueOf(3)}, new String[] {"item1", "item2"});
 		OrderTestUtilityClass.assertOrderDataEqual(orderData[2], new BigDecimal[] {BigDecimal.valueOf(5)}, new String[] {"item3"});
+	}
+	
+	@Test
+	void discountedOrderTest() {
+		model.addUnconfirmedOrder("order4-20200809112233000-0-1-12:item1,2;");
+		
+		IOrderData[] orderData = model.getAllUnconfirmedOrders();
+		
+		LocalDateTime date1 = LocalDateTime.of(2020, 8, 9, 11, 22, 33);
+		date1.plusNanos(0);
+		
+		OrderTestUtilityClass.assertOrderDataEqual(orderData[0], "order4", date1, false, true, BigDecimal.valueOf(12));
 	}
 }

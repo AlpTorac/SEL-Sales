@@ -21,7 +21,7 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 	private ITable<IOrderItemData> orderItems;
 	private IRadioButton isCash;
 	private IRadioButton isHere;
-	private HasText orderDiscount;
+	private HasText totalOrderDiscount;
 	
 	public ConfirmOrderListener(IController controller, OrderInspectionArea oia) {
 		super();
@@ -31,11 +31,11 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 		this.orderItems = this.oia.getOrderDetailsDisplay();
 		this.isCash = this.oia.getCashRadioButton();
 		this.isHere = this.oia.getHereRadioButton();
-		this.orderDiscount = this.oia.getDiscountDisplay();
+		this.totalOrderDiscount = this.oia.getDiscountDisplay();
 	}
 
 	@Override
-	protected void clickAction() {
+	public void clickAction() {
 		this.fireBusinessEvent(controller);
 	}
 	
@@ -48,7 +48,8 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 		
 		String orderID = this.getOrderID().getText();
 		
-		BigDecimal orderDiscount = BigDecimal.valueOf(Double.valueOf(this.getOrderDiscount().getText()));
+		BigDecimal menuItemDiscounts = orderItemDataCollection.stream().map(i -> i.getTotalDiscount()).reduce(BigDecimal.ZERO, (sum, i) -> sum = sum.add(i));
+		BigDecimal orderDiscount = BigDecimal.valueOf(Double.valueOf(this.getTotalOrderDiscount().getText())).subtract(menuItemDiscounts);
 		
 		LocalDateTime date = this.oia.getDisplayedDate();
 		
@@ -80,7 +81,7 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 		return isHere;
 	}
 
-	private HasText getOrderDiscount() {
-		return orderDiscount;
+	private HasText getTotalOrderDiscount() {
+		return totalOrderDiscount;
 	}
 }

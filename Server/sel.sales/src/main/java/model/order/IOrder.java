@@ -11,8 +11,8 @@ public interface IOrder extends Comparable<IOrder> {
 	boolean setOrderedItemAmount(String id, BigDecimal amount);
 	IOrderItem getOrderItem(String id);
 	LocalDateTime getDate();
-	boolean getCashOrCard();
-	boolean getHereOrToGo();
+	boolean getIsCash();
+	boolean getIsHere();
 	IOrderItem[] getAllOrderItems();
 	Collection<IOrderItem> getOrderItemCollection();
 	BigDecimal getOrderDiscount();

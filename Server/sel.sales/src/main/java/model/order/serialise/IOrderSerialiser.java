@@ -9,13 +9,18 @@ import model.order.IOrderData;
 import model.order.IOrderItemData;
 
 public interface IOrderSerialiser {
-	default String serialiseOrderData(IOrderItemData[] orderItemsData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal discount, String orderID) {
+	default String serialiseOrderData(IOrderItemData[] orderItemsData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, String orderID) {
 		String result = "";
 		result += orderID + this.getOrderFormat().getOrderDataFieldSeperator();
 		result += this.getOrderFormat().formatDate(date) + this.getOrderFormat().getOrderDataFieldSeperator();
-		result += discount.toPlainString() + this.getOrderFormat().getOrderDataFieldSeperator();
 		result += this.serialiseBoolean(isCash) + this.getOrderFormat().getOrderDataFieldSeperator();
-		result += this.serialiseBoolean(isHere) + this.getOrderFormat().getOrderDataFieldEnd();
+		result += this.serialiseBoolean(isHere);
+		
+		if (orderDiscount.compareTo(BigDecimal.ZERO) != 0) {
+			result += this.getOrderFormat().getOrderDataFieldSeperator() + orderDiscount.toPlainString() + this.getOrderFormat().getOrderDataFieldEnd();
+		} else {
+			result += this.getOrderFormat().getOrderDataFieldEnd();
+		}
 		
 		for (IOrderItemData i : orderItemsData) {
 			result += this.serialiseOrderItemData(i);
@@ -25,7 +30,7 @@ public interface IOrderSerialiser {
 	}
 	
 	default String serialiseOrderData(IOrderData orderData) {
-		return this.serialiseOrderData(orderData.getOrderedItems(), orderData.getDate(), orderData.getCashOrCard(), orderData.getHereOrToGo(), orderData.getOrderDiscount(), orderData.getID());
+		return this.serialiseOrderData(orderData.getOrderedItems(), orderData.getDate(), orderData.getIsCash(), orderData.getIsHere(), orderData.getOrderDiscount(), orderData.getID());
 	}
 	
 	default String serialiseOrderItemData(IOrderItemData orderItemData) {
@@ -50,12 +55,12 @@ public interface IOrderSerialiser {
 		return orderData.getID();
 	}
 	
-	default String serialiseCashOrCard(IOrderData orderData) {
-		return this.serialiseBoolean(orderData.getCashOrCard());
+	default String serialiseIsCash(IOrderData orderData) {
+		return this.serialiseBoolean(orderData.getIsCash());
 	}
 	
-	default String serialiseHereOrToGo(IOrderData orderData) {
-		return this.serialiseBoolean(orderData.getHereOrToGo());
+	default String serialiseIsHere(IOrderData orderData) {
+		return this.serialiseBoolean(orderData.getIsHere());
 	}
 	
 	default String serialiseBoolean(boolean b) {

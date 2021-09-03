@@ -43,6 +43,11 @@ public class FXTable<T> extends TableView<T> implements FXHasText, ITable<T> {
 	}
 	
 	@Override
+	public T getItem(int index) {
+		return super.getItems().get(index);
+	}
+	
+	@Override
 	public int getSize() {
 		return super.getItems().size();
 	}

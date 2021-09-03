@@ -50,7 +50,6 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		
 		this.manual = this.fac.createRadioButton();
 		this.manual.setCaption("Manual Confirmation");
-		this.manual.setToggled(true);
 		
 		IRadioButton[] choices = new IRadioButton[] {this.auto, this.manual};
 		
@@ -58,6 +57,8 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		this.group.addAllToToggleGroup(choices);
 		
 		optionArea.addUIComponents(choices);
+		
+		this.manual.setToggled(true);
 		
 		return optionArea;
 	}
@@ -74,19 +75,7 @@ public class OrderTrackingArea extends UIVBoxLayout {
 	}
 	
 	public void addUnconfirmedOrder(IOrderData orderData) {
-		if (this.getAuto().isToggled()) {
-			this.confirmOrder(orderData);
-		} else {
-			this.getUnconfirmedOrderList().addItemIfNotPresent(orderData);
-		}
-	}
-	
-	public void confirmAllOrders() {
-		IOrderData[] datas = this.getUnconfirmedOrderList().getAllItems().toArray(IOrderData[]::new);
-		
-		for (IOrderData d : datas) {
-			this.confirmOrder(d);
-		}
+		this.getUnconfirmedOrderList().addItemIfNotPresent(orderData);
 	}
 	
 	public void confirmOrder(IOrderData orderData) {

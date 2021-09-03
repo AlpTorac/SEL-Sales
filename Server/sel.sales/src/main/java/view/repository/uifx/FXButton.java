@@ -1,13 +1,9 @@
 package view.repository.uifx;
 
-import java.awt.Event;
-import java.awt.event.InputEvent;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import view.repository.IButton;
-import view.repository.IEventShooterOnClickUIComponent;
 import view.repository.uiwrapper.ClickEventListener;
 
 public class FXButton extends Button implements IButton, FXHasText {
@@ -17,7 +13,7 @@ public class FXButton extends Button implements IButton, FXHasText {
 		EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				l.action();
+				l.clickAction();
 			}
 		};
 		super.setOnAction(event);

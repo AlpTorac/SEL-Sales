@@ -96,6 +96,7 @@ public class Model implements IModel {
 	@Override
 	public void removeAllUnconfirmedOrders() {
 		this.orderUnconfirmedCollector.clearOrders();
+		this.updatables.forEach(u -> u.refreshUnconfirmedOrders());
 	}
 
 	@Override
@@ -139,5 +140,11 @@ public class Model implements IModel {
 	@Override
 	public IOrderSerialiser getOrderSerialiser() {
 		return this.orderSerialiser;
+	}
+
+	@Override
+	public void removeAllConfirmedOrders() {
+		this.orderConfirmedCollector.clearOrders();
+		this.updatables.forEach(u -> u.refreshConfirmedOrders());
 	}
 }

@@ -30,10 +30,21 @@ public final class OrderTestUtilityClass {
 //		Assertions.assertEquals(date1.get(GregorianCalendar.SECOND), date2.get(GregorianCalendar.SECOND));
 	}
 	
-	public static void assertOrderDataEqual(IOrderData order, String id, LocalDateTime date, boolean cashOrCard, boolean hereOrToGo) {
+	public static void assertOrderDataEqual(IOrderData order, String id, LocalDateTime date, boolean isCash, boolean isHere) {
 		Assertions.assertEquals(id, order.getID());
 		assertDatesEqual(order.getDate(), date);
-		Assertions.assertEquals(order.getCashOrCard(), cashOrCard);
-		Assertions.assertEquals(order.getHereOrToGo(), hereOrToGo);
+		Assertions.assertEquals(order.getIsCash(), isCash);
+		Assertions.assertEquals(order.getIsHere(), isHere);
+	}
+	public static void assertOrderDataEqual(IOrderData order, String id, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount) {
+		Assertions.assertEquals(id, order.getID());
+		assertDatesEqual(order.getDate(), date);
+		Assertions.assertEquals(order.getIsCash(), isCash);
+		Assertions.assertEquals(order.getIsHere(), isHere);
+		Assertions.assertEquals(order.getOrderDiscount().compareTo(orderDiscount), 0);
+	}
+	
+	public static void assertOrderDatasEqual(IOrderData orderData1, IOrderData orderData2) {
+		assertOrderDataEqual(orderData1, orderData2.getID(), orderData2.getDate(), orderData2.getIsCash(), orderData2.getIsHere());
 	}
 }

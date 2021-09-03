@@ -7,8 +7,8 @@ public interface IOrderData {
 	IOrderItemData[] getOrderedItems();
 	LocalDateTime getDate();
 
-	boolean getCashOrCard();
-	boolean getHereOrToGo();
+	boolean getIsCash();
+	boolean getIsHere();
 	boolean getIsDiscounted();
 	String getID();
 	BigDecimal getGrossSum();

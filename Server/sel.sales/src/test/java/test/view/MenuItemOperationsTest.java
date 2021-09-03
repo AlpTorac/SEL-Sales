@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 
@@ -31,18 +32,6 @@ class MenuItemOperationsTest extends ApplicationTest {
 	private static IModel model;
 	private static IController controller;
 	private static IView view;
-//	private static MenuDesignArea mda;
-//	
-//	private static HasText dishNameBox;
-//	private static HasText priceBox;
-//	private static HasText idBox;
-//	private static HasText prodCostBox;
-//	private static HasText porSizeBox;
-//	private static HasText discBox;
-//	
-//	private static IEventShooterOnClickUIComponent addButton;
-//	private static IEventShooterOnClickUIComponent removeButton;
-//	private static IEventShooterOnClickUIComponent editButton;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -65,25 +54,17 @@ class MenuItemOperationsTest extends ApplicationTest {
 	private BigDecimal i3Disc = BigDecimal.valueOf(1);
 	private String i3id = "item3";
 	
+	@BeforeEach
+	void prep() {
+		model.removeAllOrders();
+	}
+	
 	@Override
 	public void start(Stage stage) {
 		model = new Model();
 		controller = new MainController(model);
 		view = new MainView(new FXUIComponentFactory(), controller, model);
 		view.startUp();
-//		
-//		MainView mv = (MainView) view;
-//		mda = GeneralTestUtilityClass.getPrivateFieldValue(mv, "mda");
-//		dishNameBox = mda.getDishNameBox();
-//		priceBox = mda.getPriceBox();
-//		idBox = mda.getMenuItemIDBox();
-//		prodCostBox = mda.getProductionCostBox();
-//		porSizeBox = mda.getPortionBox();
-//		discBox = mda.getDiscountBox();
-//		
-//		addButton = mda.getAddButton();
-//		removeButton = mda.getRemoveButton();
-//		editButton = mda.getEditButton();
 	}
 	
 	@Test
@@ -95,8 +76,6 @@ class MenuItemOperationsTest extends ApplicationTest {
 		Assertions.assertEquals(datas.length, 1);
 		
 		Assertions.assertTrue(addedItem.equals(datas[0]));
-		
-		model.removeMenuItem(i1id);
 	}
 	
 	@Test
@@ -128,7 +107,6 @@ class MenuItemOperationsTest extends ApplicationTest {
 		IDishMenuItemData editedItem = opHelper.editMenuItem(i2Name, i1id, i3Price, i2ProCost, i3PorSize, i2Disc);
 		
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(editedItem, i2Name, i1id, i3PorSize, i3Price, i2ProCost, i2Disc);
-		model.removeMenuItem(i1id);
 	}
 
 }

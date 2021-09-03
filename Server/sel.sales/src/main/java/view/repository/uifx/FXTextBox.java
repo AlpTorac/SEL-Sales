@@ -1,10 +1,7 @@
 package view.repository.uifx;
 
-import java.awt.Event;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Labeled;
 import javafx.scene.control.TextField;
 import view.repository.ITextBox;
 import view.repository.uiwrapper.ClickEventListener;
@@ -16,7 +13,7 @@ public class FXTextBox extends TextField implements ITextBox, FXHasText {
 		EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				l.action();
+				l.clickAction();
 			}
 		};
 		ref.setOnAction(event);

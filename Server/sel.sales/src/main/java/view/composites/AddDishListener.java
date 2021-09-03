@@ -5,9 +5,6 @@ import java.math.BigDecimal;
 import controller.BusinessEvent;
 import controller.IBusinessEventShooter;
 import controller.IController;
-import model.dish.IDishMenuItemData;
-import model.dish.IDishMenuItemDataFactory;
-import model.dish.IDishMenuItemIDFactory;
 import view.repository.HasText;
 import view.repository.uiwrapper.ClickEventListener;
 
@@ -33,7 +30,7 @@ public class AddDishListener extends ClickEventListener implements IBusinessEven
 	}
 
 	@Override
-	protected void clickAction() {
+	public void clickAction() {
 		this.fireBusinessEvent(controller);
 	}
 

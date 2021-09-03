@@ -19,18 +19,21 @@ public interface IOrderParser {
 		
 		String serialisedOrderID = this.getSerialisedOrderID(serialisedOrderDataFields);
 		String serialisedDate = this.getSerialisedDate(serialisedOrderDataFields);
-		String serialisedCashOrCard = this.getSerialisedCashOrCard(serialisedOrderDataFields);
-		String serialisedHereOrToGo = this.getSerialisedHereOrToGo(serialisedOrderDataFields);
+		String serialisedIsCash = this.getSerialisedIsCash(serialisedOrderDataFields);
+		String serialisedIsHere = this.getSerialisedIsHere(serialisedOrderDataFields);
+		String serialisedOrderDiscount = this.getSerialisedOrderDiscount(serialisedOrderDataFields);
 		
 		LocalDateTime date = this.parseOrderDate(serialisedDate);
-		boolean cashOrCard = this.parseCashOrCard(serialisedCashOrCard);
-		boolean hereOrToGo = this.parseHereOrToGo(serialisedHereOrToGo);
+		boolean IsCash = this.parseIsCash(serialisedIsCash);
+		boolean IsHere = this.parseIsHere(serialisedIsHere);
+		
+		BigDecimal orderDiscount = BigDecimal.valueOf(Double.valueOf(serialisedOrderDiscount));
 		
 		String serialisedOrderItemData = this.getSerialisedOrderItemData(serialisedOrderSpecificAndOrderItemData);
 		
 		IOrderItemData[] orderItemData = this.parseOrderItems(serialisedOrderItemData);
 		
-		return this.getOrderDataFactory().constructData(orderItemData, date, cashOrCard, hereOrToGo, serialisedOrderID);
+		return this.getOrderDataFactory().constructData(orderItemData, date, IsCash, IsHere, orderDiscount, serialisedOrderID);
 	}
 	default String[] getSerialisedOrderSpecificAndOrderItemData(String s) {
 		return s.split(this.getOrderFormat().getOrderDataFieldEnd());
@@ -50,11 +53,18 @@ public interface IOrderParser {
 	default String getSerialisedDate(String[] ss) {
 		return ss[1];
 	}
-	default String getSerialisedCashOrCard(String[] ss) {
+	default String getSerialisedIsCash(String[] ss) {
 		return ss[2];
 	}
-	default String getSerialisedHereOrToGo(String[] ss) {
+	default String getSerialisedIsHere(String[] ss) {
 		return ss[3];
+	}
+	default String getSerialisedOrderDiscount(String[] ss) {
+		if (ss.length > 4) {
+			return ss[4];
+		} else {
+			return "0";
+		}
 	}
 	default IOrderItemData[] parseOrderItems(String s) {
 		Collection<IOrderItemData> orderItemData = new ArrayList<IOrderItemData>();
@@ -86,14 +96,14 @@ public interface IOrderParser {
 	default BigDecimal parseAmount(String s) {
 		return BigDecimal.valueOf(Double.valueOf(s));
 	}
-	default boolean parseCashOrCard(String s) {
+	default boolean parseIsCash(String s) {
 		if (s.equals("0")) {
 			return false;
 		} else {
 			return true;
 		}
 	}
-	default boolean parseHereOrToGo(String s) {
+	default boolean parseIsHere(String s) {
 		if (s.equals("0")) {
 			return false;
 		} else {

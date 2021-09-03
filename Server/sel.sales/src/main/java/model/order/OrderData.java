@@ -10,28 +10,28 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class OrderData implements IOrderData {
 	private Collection<IOrderItemData> orderItems;
 	private LocalDateTime date;
-	private boolean cashOrCard;
-	private boolean hereOrToGo;
+	private boolean isCash;
+	private boolean isHere;
 	private String id;
 	private BigDecimal orderDiscount = BigDecimal.ZERO;
 	
-	OrderData(Collection<IOrderItemData> orderItems, LocalDateTime date, boolean cashOrCard, boolean hereOrToGo, String id) {
+	OrderData(Collection<IOrderItemData> orderItems, LocalDateTime date, boolean isCash, boolean isHere, String id) {
 		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>();
 		this.orderItems.addAll(orderItems);
 		this.date = date;
-		this.cashOrCard = cashOrCard;
-		this.hereOrToGo = hereOrToGo;
+		this.isCash = isCash;
+		this.isHere = isHere;
 		this.id = id;
 	}
 	
-	OrderData(IOrderItemData[] orderItems, LocalDateTime date, boolean cashOrCard, boolean hereOrToGo, String id) {
+	OrderData(IOrderItemData[] orderItems, LocalDateTime date, boolean isCash, boolean isHere, String id) {
 		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>();
 		for (IOrderItemData d : orderItems) {
 			this.orderItems.add(d);
 		}
 		this.date = date;
-		this.cashOrCard = cashOrCard;
-		this.hereOrToGo = hereOrToGo;
+		this.isCash = isCash;
+		this.isHere = isHere;
 		this.id = id;
 	}
 	
@@ -41,13 +41,13 @@ public class OrderData implements IOrderData {
 	}
 
 	@Override
-	public boolean getCashOrCard() {
-		return this.cashOrCard;
+	public boolean getIsCash() {
+		return this.isCash;
 	}
 
 	@Override
-	public boolean getHereOrToGo() {
-		return this.hereOrToGo;
+	public boolean getIsHere() {
+		return this.isHere;
 	}
 
 	@Override

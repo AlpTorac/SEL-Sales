@@ -57,7 +57,7 @@ public class EditDishListener extends ClickEventListener implements IBusinessEve
 	}
 	
 	@Override
-	protected void clickAction() {
+	public void clickAction() {
 		this.fireBusinessEvent(controller);
 	}
 	

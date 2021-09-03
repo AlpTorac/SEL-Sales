@@ -1,6 +1,7 @@
 package test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import controller.IController;
@@ -93,6 +94,60 @@ public class MainViewOperationsUtilityClass {
 		IDishMenuItemData editedItem = model.getMenuItem(id);
 		
 		return editedItem;
+	}
+	
+	public IOrderData addConfirmOrder() {
+		IOrderData data = this.getUnconfirmedOrders().stream().findFirst().get();
+		this.oia.displayOrder(data);
+		this.oia.getAddConfirmButton().performArtificialClick();
+		this.view.refreshUnconfirmedOrders();
+		this.view.refreshConfirmedOrders();
+		return data;
+	}
+	
+	public Collection<IOrderData> confirmAllOrders() {
+		Collection<IOrderData> unconfirmedOrders = this.getUnconfirmedOrders();
+		IOrderData[] confirmedOrders = new IOrderData[unconfirmedOrders.size()];
+		int size = unconfirmedOrders.size();
+		
+		for (int i = 0; i < size; i++) {
+			IOrderData data = this.addConfirmOrder();
+			confirmedOrders[i] = data;
+		}
+		
+		Collection<IOrderData> co = new ArrayList<IOrderData>();
+		
+		for (IOrderData d : confirmedOrders) {
+			co.add(d);
+		}
+		
+		return co;
+	}
+	
+	public void confirmAllOrdersWithoutReturn() {
+		this.oia.getConfirmAllButton().performArtificialClick();
+	}
+	
+	public void toggleAutoConfirm() {
+		this.ota.getAuto().setToggled(true);
+	}
+	
+	public IOrderData removeUnconfirmedOrder() {
+		IOrderData data = this.getUnconfirmedOrders().stream().findFirst().get();
+		this.oia.displayOrder(data);
+		this.oia.getRemoveButton().performArtificialClick();
+		this.view.refreshUnconfirmedOrders();
+		this.view.refreshConfirmedOrders();
+		return data;
+	}
+	
+	public IOrderData removeConfirmedOrder() {
+		IOrderData data = this.getConfirmedOrders().stream().findFirst().get();
+		this.oia.displayOrder(data);
+		this.oia.getRemoveButton().performArtificialClick();
+		this.view.refreshUnconfirmedOrders();
+		this.view.refreshConfirmedOrders();
+		return data;
 	}
 	
 	public Collection<IOrderData> getUnconfirmedOrders() {
