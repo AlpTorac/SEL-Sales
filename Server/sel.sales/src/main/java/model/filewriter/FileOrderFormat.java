@@ -1,18 +1,20 @@
-package model.order.serialise;
+package model.filewriter;
 
 import java.time.format.DateTimeFormatter;
 
-public class OrderFormat implements IOrderFormat {
+import model.order.serialise.IOrderFormat;
+
+public class FileOrderFormat implements IOrderFormat {
 	private String orderItemDataFieldSeperator = ",";
-	private String orderItemDataNewLine = ";";
-	private String orderDataFieldSeperator = "-";
-	private String orderDataFieldEnd = ":";
+	private String orderItemDataEnd = ",";
+	private String orderDataFieldSeperator = ",";
+	private String orderDataFieldEnd = ";\n";
 	
-	private String dateFormat = "yyyyMMddHHmmssSSS";
+	private String dateFormat = "yyyyMMdd"+this.getOrderDataFieldSeperator()+"HHmmss";
 	
 	@Override
 	public DateTimeFormatter getDateFormatter() {
-		return DateTimeFormatter.ofPattern(this.dateFormat);
+		return DateTimeFormatter.ofPattern(dateFormat);
 	}
 
 	@Override
@@ -21,8 +23,8 @@ public class OrderFormat implements IOrderFormat {
 	}
 
 	@Override
-	public String getOrderItemDataNewLine() {
-		return this.orderItemDataNewLine;
+	public String getOrderItemDataFieldEnd() {
+		return this.orderItemDataEnd;
 	}
 
 	@Override
@@ -34,4 +36,5 @@ public class OrderFormat implements IOrderFormat {
 	public String getOrderDataFieldEnd() {
 		return this.orderDataFieldEnd;
 	}
+
 }

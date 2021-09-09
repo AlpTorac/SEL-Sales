@@ -12,7 +12,7 @@ public class StandardOrderDeserialiser extends OrderDeserialiser {
 		
 		IOrderItemDataFactory orderItemDataFac = new OrderItemDataFactory();
 		IOrderDataFactory orderDataFac = new OrderDataFactory(orderItemDataFac);
-		IOrderFormat orderDateParser = new OrderFormat();
+		IOrderFormat orderDateParser = new IntraAppOrderFormat();
 		
 		this.finder = finder;
 		this.orderDataFac = orderDataFac;

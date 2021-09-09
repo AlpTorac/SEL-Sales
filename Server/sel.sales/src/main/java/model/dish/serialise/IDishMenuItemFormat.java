@@ -1,6 +1,6 @@
 package model.dish.serialise;
 
-public interface IDishMenuFormat {
+public interface IDishMenuItemFormat {
 	String getDishMenuItemDataFieldEnd();
 	String getDishMenuItemDataFieldSeperator();
 }

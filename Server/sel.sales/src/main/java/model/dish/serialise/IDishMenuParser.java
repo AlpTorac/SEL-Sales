@@ -69,7 +69,7 @@ public interface IDishMenuParser {
 		return serialisedDishMenuItemFields.split(this.getDishMenuFormat().getDishMenuItemDataFieldSeperator());
 	}
 	
-	IDishMenuFormat getDishMenuFormat();
+	IDishMenuItemFormat getDishMenuFormat();
 	IDishMenuItemDataFactory getDishMenuItemDataFactory();
 	IDishMenuDataFactory getDishMenuFactory();
 }

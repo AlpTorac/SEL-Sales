@@ -27,4 +27,6 @@ public interface IModel {
 		this.removeAllUnconfirmedOrders();
 		this.removeAllConfirmedOrders();
 	}
+	boolean writeOrders();
+	boolean writeDishMenu();
 }

@@ -4,29 +4,46 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import model.dish.IDishMenuItemData;
-import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
 import model.order.IOrderItemData;
 
 public interface IOrderSerialiser {
-	default String serialiseOrderData(IOrderItemData[] orderItemsData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, String orderID) {
+	String serialiseOrderData(IOrderItemData[] orderItemsData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, String orderID);
+	
+	default String serialiseOrderID(String orderID) {
+		return orderID;
+	}
+	
+	default String serialiseOrderDiscount(BigDecimal orderDiscount) {
+		return this.serialiseBigDecimal(orderDiscount);
+	}
+	
+	default String serialiseOrderItemDatas(IOrderItemData[] orderItemsData) {
 		String result = "";
-		result += orderID + this.getOrderFormat().getOrderDataFieldSeperator();
-		result += this.getOrderFormat().formatDate(date) + this.getOrderFormat().getOrderDataFieldSeperator();
-		result += this.serialiseBoolean(isCash) + this.getOrderFormat().getOrderDataFieldSeperator();
-		result += this.serialiseBoolean(isHere);
-		
-		if (orderDiscount.compareTo(BigDecimal.ZERO) != 0) {
-			result += this.getOrderFormat().getOrderDataFieldSeperator() + orderDiscount.toPlainString() + this.getOrderFormat().getOrderDataFieldEnd();
-		} else {
-			result += this.getOrderFormat().getOrderDataFieldEnd();
-		}
-		
 		for (IOrderItemData i : orderItemsData) {
 			result += this.serialiseOrderItemData(i);
 		}
-		
 		return result;
+	}
+	
+	default String serialiseOrderDate(LocalDateTime date) {
+		return this.getOrderFormat().formatDate(date);
+	}
+	
+	default String serialiseIsCash(boolean isCash) {
+		return this.serialiseBoolean(isCash);
+	}
+	
+	default String serialiseIsHere(boolean isHere) {
+		return this.serialiseBoolean(isHere);
+	}
+	
+	default String getOrderDataFieldSeperator() {
+		return this.getOrderFormat().getOrderDataFieldSeperator();
+	}
+	
+	default String getOrderDataFieldEnd() {
+		return this.getOrderFormat().getOrderDataFieldEnd();
 	}
 	
 	default String serialiseOrderData(IOrderData orderData) {
@@ -35,32 +52,28 @@ public interface IOrderSerialiser {
 	
 	default String serialiseOrderItemData(IOrderItemData orderItemData) {
 		String result = "";
-		result += this.serialiseDishMenuItemID(orderItemData.getItemData()) + this.getOrderFormat().getOrderItemDataFieldSeperator() 
-				+ this.serialiseOrderItemAmount(orderItemData) + this.getOrderFormat().getOrderItemDataNewLine();
+		result += this.serialiseDishMenuItemID(orderItemData.getItemData()) + this.getOrderItemDataFieldSeperator() 
+				+ this.serialiseOrderItemAmount(orderItemData) + this.getOrderItemDataFieldEnd();
 		return result;
 	}
 	
-	default String serialiseOrderDate(IOrderData orderData) {
-		return this.getOrderFormat().getDateFormatter().format(orderData.getDate());
+	default String getOrderItemDataFieldSeperator() {
+		return this.getOrderFormat().getOrderItemDataFieldSeperator();
+	}
+	
+	default String getOrderItemDataFieldEnd() {
+		return this.getOrderFormat().getOrderItemDataFieldEnd();
 	}
 	
 	default String serialiseDishMenuItemID(IDishMenuItemData menuItemData) {
 		return menuItemData.getId();
 	}
 	default String serialiseOrderItemAmount(IOrderItemData orderItemData) {
-		return orderItemData.getAmount().toPlainString();
+		return this.serialiseBigDecimal(orderItemData.getAmount());
 	}
 	
-	default String serialiseOrderID(IOrderData orderData) {
-		return orderData.getID();
-	}
-	
-	default String serialiseIsCash(IOrderData orderData) {
-		return this.serialiseBoolean(orderData.getIsCash());
-	}
-	
-	default String serialiseIsHere(IOrderData orderData) {
-		return this.serialiseBoolean(orderData.getIsHere());
+	default String serialiseBigDecimal(BigDecimal bd) {
+		return bd.toPlainString();
 	}
 	
 	default String serialiseBoolean(boolean b) {
@@ -71,6 +84,5 @@ public interface IOrderSerialiser {
 		}
 	}
 	
-	IDishMenuItemSerialiser getDishMenuItemSerialiser();
 	IOrderFormat getOrderFormat();
 }

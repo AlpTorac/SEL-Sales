@@ -4,47 +4,69 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import model.dish.DishMenu;
+import model.dish.DishMenuDataFactory;
 import model.dish.IDishMenu;
+import model.dish.IDishMenuDataFactory;
 import model.dish.IDishMenuItemData;
-import model.dish.serialise.DishMenuItemSerialiser;
-import model.dish.serialise.IDishMenuDeserialiser;
+import model.dish.serialise.IntraAppDishMenuItemSerialiser;
+import model.dish.serialise.IDishMenuItemDeserialiser;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.dish.serialise.StandardDishMenuDeserialiser;
+import model.filewriter.DishMenuFileWriter;
+import model.filewriter.OrderFileWriter;
+import model.filewriter.StandardDishMenuFileWriter;
+import model.filewriter.StandardOrderFileWriter;
 import model.order.IOrderCollector;
 import model.order.IOrderData;
 import model.order.OrderCollector;
 import model.order.serialise.IOrderDeserialiser;
 import model.order.serialise.IOrderSerialiser;
-import model.order.serialise.OrderSerialiser;
+import model.order.serialise.IntraAppOrderSerialiser;
 import model.order.serialise.StandardOrderDeserialiser;
 
 public class Model implements IModel {
 	private Collection<Updatable> updatables;
+	
 	private IDishMenu dishMenu;
+	private IDishMenuDataFactory dishMenuDataFac;
 	
 	private IOrderCollector orderUnconfirmedCollector;
 	private IOrderCollector orderConfirmedCollector;
 	private IOrderSerialiser orderSerialiser;
 	private IOrderDeserialiser orderDeserialiser;
-	private IDishMenuDeserialiser dishMenuDeserialiser;
+	private IDishMenuItemDeserialiser dishMenuItemDeserialiser;
 	private IDishMenuItemFinder finder;
 	private IDishMenuItemSerialiser menuItemSerialiser;
 	
+	private String orderFolderAddress;
+	private OrderFileWriter orderWriter;
+	
+	private String dishMenuFolderAddress;
+	private DishMenuFileWriter dishMenuWriter;
+	
 	public Model() {
 		this.updatables = new ArrayList<Updatable>();
-		this.dishMenu = new DishMenu();
 		
-		this.orderSerialiser = new OrderSerialiser();
-		this.menuItemSerialiser = new DishMenuItemSerialiser();
-		this.dishMenuDeserialiser = new StandardDishMenuDeserialiser();
+		this.dishMenu = new DishMenu();
+		this.dishMenuDataFac = new DishMenuDataFactory();
+		
+		this.orderSerialiser = new IntraAppOrderSerialiser();
+		this.menuItemSerialiser = new IntraAppDishMenuItemSerialiser();
+		this.dishMenuItemDeserialiser = new StandardDishMenuDeserialiser();
 		this.finder = new DishMenuItemFinder(this.dishMenu);
 		this.orderUnconfirmedCollector = new OrderCollector();
 		this.orderConfirmedCollector = new OrderCollector();
 		this.orderDeserialiser = new StandardOrderDeserialiser(this.finder);
+		
+		this.orderFolderAddress = "src/main/resources/orders";
+		this.orderWriter = new StandardOrderFileWriter(this.orderFolderAddress);
+		
+		this.dishMenuFolderAddress = "src/main/resources/dishMenuItems";
+		this.dishMenuWriter = new StandardDishMenuFileWriter(this.dishMenuFolderAddress);
 	}
 	
 	public void addMenuItem(String serialisedItemData) {
-		IDishMenuItemData data = this.dishMenuDeserialiser.deserialise(serialisedItemData);
+		IDishMenuItemData data = this.dishMenuItemDeserialiser.deserialise(serialisedItemData);
 		if (this.dishMenu.addMenuItem(data)) {
 			this.updatables.forEach(u -> u.refreshMenu());
 		}
@@ -101,7 +123,7 @@ public class Model implements IModel {
 
 	@Override
 	public void editMenuItem(String serialisedNewItemData) {
-		IDishMenuItemData data = dishMenuDeserialiser.deserialise(serialisedNewItemData);
+		IDishMenuItemData data = dishMenuItemDeserialiser.deserialise(serialisedNewItemData);
 		this.dishMenu.editMenuItem(data);
 		this.updatables.forEach(u -> u.refreshMenu());
 	}
@@ -146,5 +168,19 @@ public class Model implements IModel {
 	public void removeAllConfirmedOrders() {
 		this.orderConfirmedCollector.clearOrders();
 		this.updatables.forEach(u -> u.refreshConfirmedOrders());
+	}
+
+	@Override
+	public boolean writeOrders() {
+		boolean b = true;
+		for (IOrderData d : this.getAllConfirmedOrders()) {
+			b = b && this.orderWriter.writeOrderData(d);
+		}
+		return b;
+	}
+
+	@Override
+	public boolean writeDishMenu() {
+		return this.dishMenuWriter.writeDishMenuData(this.dishMenuDataFac.dishMenuToData(this.dishMenu));
 	}
 }

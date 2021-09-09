@@ -1,7 +1,9 @@
-package model.dish.serialise;
+package model.filewriter;
 
-public class DishMenuFormat implements IDishMenuFormat {
-	private String dishMenuItemDataFieldEnd = ";";
+import model.dish.serialise.IDishMenuItemFormat;
+
+public class FileDishMenuFormat implements IDishMenuItemFormat {
+	private String dishMenuItemDataFieldEnd = ";\n";
 	private String dishMenuItemDataFieldSeperator = ",";
 	
 	@Override

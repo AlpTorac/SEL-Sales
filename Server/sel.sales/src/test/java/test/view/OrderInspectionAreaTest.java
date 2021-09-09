@@ -27,7 +27,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	private static IModel model;
 	private static IController controller;
 	private static IView view;
-	private static IDishMenuItemSerialiser dishMenuSerialiser;
+	private static IDishMenuItemSerialiser dishMenuItemSerialiser;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -61,10 +61,10 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		controller = new MainController(model);
 		view = new MainView(new FXUIComponentFactory(), controller, model);
 		view.startUp();
-		dishMenuSerialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(dishMenuSerialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
-		model.addMenuItem(dishMenuSerialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
-		model.addMenuItem(dishMenuSerialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
+		dishMenuItemSerialiser = model.getDishMenuItemSerialiser();
+		model.addMenuItem(dishMenuItemSerialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
+		model.addMenuItem(dishMenuItemSerialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
+		model.addMenuItem(dishMenuItemSerialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
 	}
 
 	@Test

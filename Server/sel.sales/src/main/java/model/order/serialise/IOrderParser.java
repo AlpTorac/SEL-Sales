@@ -70,7 +70,7 @@ public interface IOrderParser {
 		Collection<IOrderItemData> orderItemData = new ArrayList<IOrderItemData>();
 		
 		this.removeLastNewLine(s);
-		String[] orderItems = s.split(this.getOrderFormat().getOrderItemDataNewLine());
+		String[] orderItems = s.split(this.getOrderFormat().getOrderItemDataFieldEnd());
 		
 		for (String item : orderItems) {
 			orderItemData.add(this.parseOrderItemData(item));
@@ -111,7 +111,7 @@ public interface IOrderParser {
 		}
 	}
 	default void removeLastNewLine(String s) {
-		if (s.endsWith(this.getOrderFormat().getOrderItemDataNewLine())) {
+		if (s.endsWith(this.getOrderFormat().getOrderItemDataFieldEnd())) {
 			s = s.substring(0, s.length() - 1);
 		}
 	}

@@ -4,10 +4,10 @@ import model.dish.IDishMenuDataFactory;
 import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemDataFactory;
 
-public abstract class DishMenuDeserialiser implements IDishMenuDeserialiser {
+public abstract class DishMenuDeserialiser implements IDishMenuItemDeserialiser {
 	protected IDishMenuParser menuParser;
 	
-	protected IDishMenuFormat format;
+	protected IDishMenuItemFormat format;
 	protected IDishMenuDataFactory menuDataFac;
 	protected IDishMenuItemDataFactory menuItemfDataFac;
 	

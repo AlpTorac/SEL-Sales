@@ -14,7 +14,7 @@ public interface IOrderFormat {
 	DateTimeFormatter getDateFormatter();
 	
 	String getOrderItemDataFieldSeperator();
-	String getOrderItemDataNewLine();
+	String getOrderItemDataFieldEnd();
 	String getOrderDataFieldSeperator();
 	String getOrderDataFieldEnd();
 }
