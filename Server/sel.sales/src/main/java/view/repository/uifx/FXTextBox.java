@@ -32,7 +32,7 @@ public class FXTextBox extends TextField implements ITextBox, FXHasText {
 	}
 	
 	@Override
-	public void performArtificialClick() {
+	public void performArtificialClicks(int clickCount) {
 		//ToDo
 	}
 }

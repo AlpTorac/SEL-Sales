@@ -4,7 +4,10 @@ import view.repository.uiwrapper.ClickEventListener;
 
 public interface IEventShooterOnClickUIComponent extends IUIComponent {
 	default void performArtificialClick() {
-		((IEventShooterOnClickUIComponent) this.getComponent()).performArtificialClick();
+		((IEventShooterOnClickUIComponent) this.getComponent()).performArtificialClicks(1);
+	}
+	default void performArtificialClicks(int clickCount) {
+		((IEventShooterOnClickUIComponent) this.getComponent()).performArtificialClicks(clickCount);
 	}
 	default void addClickListener(ClickEventListener l) {
 		((IEventShooterOnClickUIComponent) this.getComponent()).addClickListener(l);

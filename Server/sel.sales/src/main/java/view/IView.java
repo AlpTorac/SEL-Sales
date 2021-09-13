@@ -8,6 +8,7 @@ public interface IView extends Updatable {
 	IController getController();
 	IModel getModel();
 	void show();
+	void hide();
 	default void subscribe() {
 		this.getModel().subscribe(this);
 	}

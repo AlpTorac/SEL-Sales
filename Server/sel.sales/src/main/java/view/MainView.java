@@ -76,7 +76,7 @@ public class MainView extends View {
 		ota.getUnconfirmedOrderList().addClickListener(unconfirmedOrderInspectionListener);
 		
 		ClickEventListener pastOrderInspectionListener = new OrderInspectionListener(ota, oia);
-		ota.getPastOrderList().addClickListener(pastOrderInspectionListener);
+		ota.getConfirmedOrderList().addClickListener(pastOrderInspectionListener);
 		
 		ClickEventListener orderConfirmListener = new ConfirmOrderListener(this.getController(), oia);
 		oia.getAddConfirmButton().addClickListener(orderConfirmListener);
@@ -113,5 +113,10 @@ public class MainView extends View {
 		for (IOrderData order : confirmedOrders) {
 			this.ota.confirmOrder(order);
 		}
+	}
+
+	@Override
+	public void hide() {
+		this.mainWindow.hide();
 	}
 }

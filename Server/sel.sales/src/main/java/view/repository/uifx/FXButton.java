@@ -24,7 +24,9 @@ public class FXButton extends Button implements IButton, FXHasText {
 		this.setOnAction(null);
 	}
 	@Override
-	public void performArtificialClick() {
-		super.fire();
+	public void performArtificialClicks(int clickCount) {
+		for (int i = 0; i < clickCount; i++) {
+			super.fire();
+		}
 	}
 }

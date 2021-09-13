@@ -11,7 +11,7 @@ import view.repository.uiwrapper.UIVBoxLayout;
 
 public class OrderTrackingArea extends UIVBoxLayout {
 	private IListView<IOrderData> unconfirmedOrderList;
-	private IListView<IOrderData> pastOrderList;
+	private IListView<IOrderData> confirmedOrderList;
 	private IRadioButton auto;
 	private IRadioButton manual;
 	private IToggleGroup group;
@@ -28,12 +28,12 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		this.setSpacing(20);
 		
 		this.unconfirmedOrderList = this.initOrderConfirmationTrackingList();
-		this.pastOrderList = this.initPastOrdersList();
+		this.confirmedOrderList = this.initConfirmedOrdersList();
 		
 		this.addUIComponents(new IUIComponent[] {
 				this.getUnconfirmedOrderList(),
 				this.initConfirmationSettings(),
-				this.getPastOrderList()
+				this.getConfirmedOrderList()
 		});
 	}
 	
@@ -63,7 +63,7 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		return optionArea;
 	}
 	
-	protected IListView<IOrderData> initPastOrdersList() {
+	protected IListView<IOrderData> initConfirmedOrdersList() {
 		IListView<IOrderData> list = this.fac.createListView();
 		return list;
 	}
@@ -80,26 +80,26 @@ public class OrderTrackingArea extends UIVBoxLayout {
 	
 	public void confirmOrder(IOrderData orderData) {
 		this.getUnconfirmedOrderList().removeItem(orderData);
-		this.addPastOrder(orderData);
+		this.addConfirmedOrder(orderData);
 	}
 	
-	public void addPastOrder(IOrderData orderData) {
-		this.getPastOrderList().addItemIfNotPresent(orderData);
+	public void addConfirmedOrder(IOrderData orderData) {
+		this.getConfirmedOrderList().addItemIfNotPresent(orderData);
 	}
 	
 	public void clearUnconfirmedOrderList() {
 		this.getUnconfirmedOrderList().clear();
 	}
 	public void clearConfirmedOrderList() {
-		this.getPastOrderList().clear();
+		this.getConfirmedOrderList().clear();
 	}
 
 	public IListView<IOrderData> getUnconfirmedOrderList() {
 		return unconfirmedOrderList;
 	}
 
-	public IListView<IOrderData> getPastOrderList() {
-		return pastOrderList;
+	public IListView<IOrderData> getConfirmedOrderList() {
+		return confirmedOrderList;
 	}
 
 	public IRadioButton getAuto() {

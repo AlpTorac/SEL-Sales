@@ -66,7 +66,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		model.addMenuItem(dishMenuItemSerialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
 		model.addMenuItem(dishMenuItemSerialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
 	}
-
+	
 	@Test
 	void confirmOrderTest() {
 		model.addUnconfirmedOrder("order2-20200809235959890-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");

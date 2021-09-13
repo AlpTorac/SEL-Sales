@@ -4,8 +4,12 @@ import java.util.Collection;
 
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
+import javafx.geometry.Point2D;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import view.repository.IDataCollectingUIComponent;
 import view.repository.IListView;
 import view.repository.uiwrapper.ClickEventListener;
 import view.repository.uiwrapper.ItemChangeListener;
@@ -68,9 +72,52 @@ public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T
 		return super.getItems().stream().anyMatch(t -> t.equals(item));
 	}
 	
+	/**
+	 * Performs a click on the middle of the list (the middle of the list component itself,
+	 * not necessarily on an element)
+	 * <p>
+	 * Make sure that the list is in a Window.
+	 */
 	@Override
-	public void performArtificialClick() {
-		// ToDo
+	public void performArtificialClicks(int clickCount) {
+		double width = super.getMinWidth();
+		double height = super.getMinHeight();
+		
+		Point2D sceneP = super.localToScene(0, 0); // top left corner in scene coords
+		double sceneX = sceneP.getX();
+		double sceneY = sceneP.getY();
+		Point2D clickAreaOnScene = new Point2D(width / 2d + sceneX, height / 2d + sceneY);
+		
+		Point2D screenP = super.localToScreen(0, 0); // top left corner in screen coords
+		double screenX = screenP.getX();
+		double screenY = screenP.getY();
+		Point2D clickAreaOnScreen = new Point2D(width / 2d + screenX, height / 2d + screenY);
+		
+		super.fireEvent(new MouseEvent(
+				MouseEvent.MOUSE_CLICKED,
+				clickAreaOnScene.getX(),
+				clickAreaOnScene.getY(),
+				clickAreaOnScreen.getX(),
+				clickAreaOnScreen.getY(),
+				MouseButton.PRIMARY,
+				clickCount,
+				false,
+				false,
+				false,
+				false,
+				false,
+				false,
+				false,
+				false,
+				false,
+				false,
+				false,
+				true,
+				null));
+	}
+	@Override
+	public void artificiallySelectItem(int index, int itemPropertyIndex) {
+		super.getSelectionModel().select(index);
 	}
 	
 	@Override

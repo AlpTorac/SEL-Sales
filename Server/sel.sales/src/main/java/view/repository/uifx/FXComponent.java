@@ -18,6 +18,10 @@ public interface FXComponent extends IUIComponent {
 	default void show() {
 		((Node) this).setVisible(true);
 	}
+	@Override
+	default void hide() {
+		((Node) this).setVisible(false);
+	}
 	default Parent getParentProperty() {
 		return ((Node) this).getParent();
 	}

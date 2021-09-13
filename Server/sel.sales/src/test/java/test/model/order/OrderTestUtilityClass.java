@@ -13,12 +13,17 @@ public final class OrderTestUtilityClass {
 		IOrderItemData[] itemData = data.getOrderedItems();
 		for (int i = 0; i < itemData.length; i++) {
 			Assertions.assertEquals(itemData[i].getAmount().compareTo(amounts[i]), 0);
-			assertOrderItemDataEqual(itemData[i], ids[i]);
+			assertOrderItemDataIDEqual(itemData[i], ids[i]);
 		}
 	}
 	
-	public static void assertOrderItemDataEqual(IOrderItemData data, String id) {
+	public static void assertOrderItemDataIDEqual(IOrderItemData data, String id) {
 		Assertions.assertEquals(data.getItemData().getId(), id);
+	}
+	
+	public static void assertOrderItemDataEqual(IOrderItemData data, String id, BigDecimal amount) {
+		assertOrderItemDataIDEqual(data, id);
+		Assertions.assertEquals(data.getAmount().compareTo(amount), 0);
 	}
 	
 	public static void assertDatesEqual(LocalDateTime date1, LocalDateTime date2) {
@@ -47,4 +52,5 @@ public final class OrderTestUtilityClass {
 	public static void assertOrderDatasEqual(IOrderData orderData1, IOrderData orderData2) {
 		assertOrderDataEqual(orderData1, orderData2.getID(), orderData2.getDate(), orderData2.getIsCash(), orderData2.getIsHere());
 	}
+	
 }

@@ -18,6 +18,11 @@ public abstract class UIComponent implements IUIComponent {
 		this.component.show();
 	}
 	
+	@Override
+	public void hide() {
+		this.component.hide();
+	}
+	
 	public EditPart[] getEditors() {
 		return this.editors.toArray(EditPart[]::new);
 	}

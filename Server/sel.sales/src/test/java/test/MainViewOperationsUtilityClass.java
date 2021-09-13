@@ -1,14 +1,22 @@
 package test;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import org.junit.jupiter.api.Assertions;
 
 import controller.IController;
 import model.IModel;
 import model.dish.IDishMenuItem;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
+import model.order.IOrderItemData;
+import model.order.serialise.IntraAppOrderFormat;
+import test.model.order.OrderTestUtilityClass;
+import view.IDateSettings;
 import view.IView;
 import view.MainView;
 import view.composites.MenuDesignArea;
@@ -36,6 +44,8 @@ public class MainViewOperationsUtilityClass {
 	private IEventShooterOnClickUIComponent removeButton;
 	private IEventShooterOnClickUIComponent editButton;
 	
+	private IDateSettings ds;
+	
 	public MainViewOperationsUtilityClass(MainView mv, IController controller, IModel model) {
 		this.model = model;
 		this.controller = controller;
@@ -43,6 +53,7 @@ public class MainViewOperationsUtilityClass {
 		mda = GeneralTestUtilityClass.getPrivateFieldValue(mv, "mda");
 		ota = GeneralTestUtilityClass.getPrivateFieldValue(mv, "ota");
 		oia = GeneralTestUtilityClass.getPrivateFieldValue(mv, "oia");
+		ds = GeneralTestUtilityClass.getPrivateFieldValue(oia, "ds");
 		dishNameBox = mda.getDishNameBox();
 		priceBox = mda.getPriceBox();
 		idBox = mda.getMenuItemIDBox();
@@ -155,6 +166,51 @@ public class MainViewOperationsUtilityClass {
 	}
 	
 	public Collection<IOrderData> getConfirmedOrders() {
-		return ota.getPastOrderList().getAllItems();
+		return ota.getConfirmedOrderList().getAllItems();
+	}
+	
+	public void clickOnUnconfirmedOrder(int index) {
+		ota.getUnconfirmedOrderList().artificiallySelectItem(index, 0);
+		ota.getUnconfirmedOrderList().performArtificialClicks(2);
+	}
+	
+	public void clickOnConfirmedOrder(int index) {
+		ota.getConfirmedOrderList().artificiallySelectItem(index, 0);
+		ota.getConfirmedOrderList().performArtificialClicks(2);
+	}
+	
+	public void assertShownOrderEquals(IOrderData orderData) {
+		String dateText = oia.getOrderTimeInDayLabel().getText() + " " + oia.getOrderDateLabel().getText();
+		String orderID = oia.getOrderIDLabel().getText();
+		LocalDateTime ldt = LocalDateTime.parse(dateText, DateTimeFormatter.ofPattern("HH:mm:ss:SSS dd/MM/yyyy"));
+		boolean isCash = oia.getCashRadioButton().isToggled();
+		boolean isHere = oia.getHereRadioButton().isToggled();
+		BigDecimal totalOrderDiscount = BigDecimal.valueOf(Double.valueOf(oia.getDiscountDisplay().getText()));
+		BigDecimal grossSum = BigDecimal.valueOf(Double.valueOf(oia.getGrossSumDisplay().getText()));
+		BigDecimal netSum = BigDecimal.valueOf(Double.valueOf(oia.getNetSumDisplay().getText()));
+		String[] itemIDs = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getItemData().getId()).toArray(String[]::new);
+		BigDecimal[] itemAmounts = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getAmount()).toArray(BigDecimal[]::new);
+		BigDecimal[] itemGrossPrices = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getGrossPrice()).toArray(BigDecimal[]::new);
+		BigDecimal[] itemTotalDiscounts = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getTotalDiscount()).toArray(BigDecimal[]::new);
+		BigDecimal[] itemNetPrices = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getNetPrice()).toArray(BigDecimal[]::new);
+		
+		OrderTestUtilityClass.assertOrderDataEqual(
+				orderData,
+				orderID,
+				ldt,
+				isCash,
+				isHere,
+				orderData.getOrderDiscount());
+		Assertions.assertEquals(orderData.getGrossSum().compareTo(grossSum), 0);
+		Assertions.assertEquals(orderData.getTotalDiscount().compareTo(totalOrderDiscount), 0);
+		Assertions.assertEquals(orderData.getNetSum().compareTo(netSum), 0);
+		IOrderItemData[] idatas = orderData.getOrderedItems();
+		int orderItemLen = idatas.length;
+		for (int i = 0; i < orderItemLen; i++) {
+			OrderTestUtilityClass.assertOrderItemDataEqual(idatas[i], itemIDs[i], itemAmounts[i]);
+			Assertions.assertEquals(idatas[i].getGrossPrice().compareTo(itemGrossPrices[i]), 0);
+			Assertions.assertEquals(idatas[i].getTotalDiscount().compareTo(itemTotalDiscounts[i]), 0);
+			Assertions.assertEquals(idatas[i].getNetPrice().compareTo(itemNetPrices[i]), 0);
+		}
 	}
 }

@@ -38,7 +38,7 @@ import view.composites.OrderTrackingArea;
 import view.repository.IListView;
 import view.repository.uifx.FXUIComponentFactory;
 
-class UnconfirmedOrderShowingTest extends ApplicationTest {
+class UnconfirmedOrderTest extends ApplicationTest {
 	private static IModel model;
 	private static IDishMenuItemSerialiser serialiser;
 	

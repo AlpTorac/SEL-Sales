@@ -65,4 +65,9 @@ public interface IDataCollectingUIComponent<T> extends IUIComponent {
 	default public void addItemChangeListener(ItemChangeListener l) {
 		((IDataCollectingUIComponent<T>) this.getComponent()).addItemChangeListener(l);
 	}
+	
+	@SuppressWarnings("unchecked")
+	default public void artificiallySelectItem(int index, int itemPropertyIndex) {
+		((IDataCollectingUIComponent<T>) this.getComponent()).artificiallySelectItem(index, itemPropertyIndex);
+	}
 }

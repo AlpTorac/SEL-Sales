@@ -23,6 +23,4 @@ public abstract class View implements IView {
 	public void startUp() {
 		this.subscribe();
 	}
-	
-	public abstract void show();
 }

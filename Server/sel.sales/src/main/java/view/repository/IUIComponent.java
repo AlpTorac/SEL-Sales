@@ -9,4 +9,5 @@ public interface IUIComponent {
 		this.getComponent().setOpacity(opacity);
 	}
 	void show();
+	void hide();
 }
