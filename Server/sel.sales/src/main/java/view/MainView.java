@@ -119,4 +119,9 @@ public class MainView extends View {
 	public void hide() {
 		this.mainWindow.hide();
 	}
+
+	@Override
+	public void close() {
+		this.mainWindow.close();
+	}
 }

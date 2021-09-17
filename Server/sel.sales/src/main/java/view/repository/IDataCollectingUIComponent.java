@@ -67,7 +67,12 @@ public interface IDataCollectingUIComponent<T> extends IUIComponent {
 	}
 	
 	@SuppressWarnings("unchecked")
-	default public void artificiallySelectItem(int index, int itemPropertyIndex) {
-		((IDataCollectingUIComponent<T>) this.getComponent()).artificiallySelectItem(index, itemPropertyIndex);
+	default public void artificiallySelectItem(int index) {
+		((IDataCollectingUIComponent<T>) this.getComponent()).artificiallySelectItem(index);
+	}
+	
+	@SuppressWarnings("unchecked")
+	default public void artificiallySelectItemProperty(int index, int itemPropertyIndex) {
+		((IDataCollectingUIComponent<T>) this.getComponent()).artificiallySelectItemProperty(index, itemPropertyIndex);
 	}
 }

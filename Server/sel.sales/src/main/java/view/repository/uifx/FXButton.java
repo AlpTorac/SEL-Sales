@@ -6,7 +6,7 @@ import javafx.scene.control.Button;
 import view.repository.IButton;
 import view.repository.uiwrapper.ClickEventListener;
 
-public class FXButton extends Button implements IButton, FXHasText {
+public class FXButton extends Button implements IButton, FXHasText, FXEventShooterOnClickUI {
 
 	@Override
 	public void addClickListener(ClickEventListener l) {

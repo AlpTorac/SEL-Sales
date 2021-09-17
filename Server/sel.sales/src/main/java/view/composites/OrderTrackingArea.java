@@ -113,6 +113,4 @@ public class OrderTrackingArea extends UIVBoxLayout {
 	public IToggleGroup getGroup() {
 		return group;
 	}
-	
-	
 }

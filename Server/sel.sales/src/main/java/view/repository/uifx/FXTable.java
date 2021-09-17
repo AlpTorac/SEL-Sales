@@ -5,10 +5,9 @@ import java.util.Collection;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import view.repository.IDataCollectingUIComponent;
 import view.repository.ITable;
 
-public class FXTable<T> extends TableView<T> implements FXHasText, ITable<T> {
+public class FXTable<T> extends TableView<T> implements FXHasText, ITable<T>, FXEventShooterOnClickUI {
 	
 	FXTable() {
 		super();
@@ -55,5 +54,16 @@ public class FXTable<T> extends TableView<T> implements FXHasText, ITable<T> {
 	@Override
 	public boolean contains(T item) {
 		return super.getItems().stream().anyMatch(t -> t.equals(item));
+	}
+	
+	@Override
+	public void artificiallySelectItem(int index) {
+		super.getSelectionModel().select(index);
+	}
+	
+	@Override
+	public void artificiallySelectItemProperty(int index, int itemPropertyIndex) {
+		super.getSelectionModel().select(index,
+				super.getColumns().get(itemPropertyIndex));
 	}
 }

@@ -11,12 +11,6 @@ public interface IHBoxLayout extends ILayout {
 		((IHBoxLayout) this.getComponent()).addUIComponent(c);
 	}
 	
-	default public void addUIComponents(Collection<IUIComponent> cs) {
-		for (IUIComponent c : cs) {
-			this.addUIComponent(c);
-		}
-	}
-	
 	default public void addUIComponents(IUIComponent[] cs) {
 		for (IUIComponent c : cs) {
 			this.addUIComponent(c);

@@ -170,12 +170,12 @@ public class MainViewOperationsUtilityClass {
 	}
 	
 	public void clickOnUnconfirmedOrder(int index) {
-		ota.getUnconfirmedOrderList().artificiallySelectItem(index, 0);
+		ota.getUnconfirmedOrderList().artificiallySelectItem(index);
 		ota.getUnconfirmedOrderList().performArtificialClicks(2);
 	}
 	
 	public void clickOnConfirmedOrder(int index) {
-		ota.getConfirmedOrderList().artificiallySelectItem(index, 0);
+		ota.getConfirmedOrderList().artificiallySelectItem(index);
 		ota.getConfirmedOrderList().performArtificialClicks(2);
 	}
 	

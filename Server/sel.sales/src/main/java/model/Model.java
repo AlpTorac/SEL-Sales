@@ -43,7 +43,7 @@ public class Model implements IModel {
 	
 	private String dishMenuFolderAddress;
 	private DishMenuFileWriter dishMenuWriter;
-	
+
 	public Model() {
 		this.updatables = new ArrayList<Updatable>();
 		

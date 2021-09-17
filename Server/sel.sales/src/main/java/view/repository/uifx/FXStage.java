@@ -19,4 +19,9 @@ public class FXStage extends Stage implements IRootComponent, IFXSizable {
 	public void setPrefHeight(double height) {
 		((Stage) this).setHeight(height);
 	}
+	
+	@Override
+	public void close() {
+		super.close();
+	}
 }

@@ -12,5 +12,6 @@ public interface IView extends Updatable {
 	default void subscribe() {
 		this.getModel().subscribe(this);
 	}
+	void close();
 	void startUp();
 }

@@ -5,25 +5,32 @@ import java.math.BigDecimal;
 import controller.IController;
 import controller.MainController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import model.IModel;
 import model.Model;
-import model.dish.IDishMenuItemDataFactory;
-import model.dish.IDishMenuItemIDFactory;
 import view.IView;
 import view.MainView;
 import view.repository.uifx.FXUIComponentFactory;
 
 public class MainApp extends Application {
+	private static IModel model;
+	private static IController controller;
+	private static IView view;
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
 
+	public static void close() {
+		Platform.exit();
+	}
+	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		IModel model = new Model();
-		IController controller = new MainController(model);
-		IView view = new MainView(new FXUIComponentFactory(), controller, model);
+		model = new Model();
+		controller = new MainController(model);
+		view = new MainView(new FXUIComponentFactory(), controller, model);
 		view.startUp();
 		view.show();
 		// ADD FAKE DATA -------------------------------------------------------

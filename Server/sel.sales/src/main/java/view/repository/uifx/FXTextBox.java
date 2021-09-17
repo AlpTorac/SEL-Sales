@@ -6,7 +6,7 @@ import javafx.scene.control.TextField;
 import view.repository.ITextBox;
 import view.repository.uiwrapper.ClickEventListener;
 
-public class FXTextBox extends TextField implements ITextBox, FXHasText {
+public class FXTextBox extends TextField implements ITextBox, FXHasText, FXEventShooterOnClickUI {
 
 	public void addClickListener(ClickEventListener l) {
 		TextField ref = this;
@@ -29,10 +29,5 @@ public class FXTextBox extends TextField implements ITextBox, FXHasText {
 	
 	public void clearText() {
 		super.clear();
-	}
-	
-	@Override
-	public void performArtificialClicks(int clickCount) {
-		//ToDo
 	}
 }
