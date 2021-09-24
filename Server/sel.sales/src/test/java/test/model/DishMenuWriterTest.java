@@ -16,7 +16,9 @@ import org.junit.jupiter.api.Test;
 
 import model.IModel;
 import model.Model;
+import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
+import model.dish.serialise.FileDishMenuSerialiser;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.filewriter.FileDishMenuItemSerialiser;
 
@@ -57,21 +59,33 @@ class DishMenuWriterTest {
 	@Test
 	void fileDishMenuItemSerialiserTest() {
 		FileDishMenuItemSerialiser fdmis = new FileDishMenuItemSerialiser();
-		IDishMenuItemData[] ds = model.getMenuData();
+		IDishMenuItemData[] ds = model.getMenuData().getAllDishMenuItems();
 		IDishMenuItemData d1 = ds[0];
 		String s1 = fdmis.serialise(d1);
-		Assertions.assertEquals(s1, i1id+","+i1Name+","+i1Disc.toPlainString()+".0,"+i1Price.toPlainString()+".0,"+i1PorSize.toPlainString()+","+i1ProCost.toPlainString()+".0;\n");
+		Assertions.assertEquals(s1, i1id+","+i1Name+","+i1Disc.toPlainString()+".0,"+i1Price.toPlainString()+".0,"+i1PorSize.toPlainString()+","+i1ProCost.toPlainString()+".0");
 		IDishMenuItemData d2 = ds[1];
 		String s2 = fdmis.serialise(d2);
-		Assertions.assertEquals(s2, i2id+","+i2Name+","+i2Disc.toPlainString()+","+i2Price.toPlainString()+".0,"+i2PorSize.toPlainString()+","+i2ProCost.toPlainString()+";\n");
+		Assertions.assertEquals(s2, i2id+","+i2Name+","+i2Disc.toPlainString()+","+i2Price.toPlainString()+".0,"+i2PorSize.toPlainString()+","+i2ProCost.toPlainString());
 		IDishMenuItemData d3 = ds[2];
 		String s3 = fdmis.serialise(d3);
-		Assertions.assertEquals(s3, i3id+","+i3Name+","+i3Disc.toPlainString()+".0,"+i3Price.toPlainString()+".0,"+i3PorSize.toPlainString()+","+i3ProCost.toPlainString()+";\n");
+		Assertions.assertEquals(s3, i3id+","+i3Name+","+i3Disc.toPlainString()+".0,"+i3Price.toPlainString()+".0,"+i3PorSize.toPlainString()+","+i3ProCost.toPlainString());
+	}
+	
+	@Test
+	void fileDishMenuSerialiserTest() {
+		FileDishMenuSerialiser fdmis = new FileDishMenuSerialiser();
+		String s = fdmis.serialise(model.getMenuData());
+		Assertions.assertEquals(s, 
+				i1id+","+i1Name+","+i1Disc.toPlainString()+".0,"+i1Price.toPlainString()+".0,"+i1PorSize.toPlainString()+","+i1ProCost.toPlainString()+".0;\n"+
+				i2id+","+i2Name+","+i2Disc.toPlainString()+","+i2Price.toPlainString()+".0,"+i2PorSize.toPlainString()+","+i2ProCost.toPlainString()+";\n"+
+				i3id+","+i3Name+","+i3Disc.toPlainString()+".0,"+i3Price.toPlainString()+".0,"+i3PorSize.toPlainString()+","+i3ProCost.toPlainString()+";\n"
+		);
 	}
 	
 	@Test
 	void writeTest() {
-		IDishMenuItemData[] ds = model.getMenuData();
+		IDishMenuData menuData = model.getMenuData();
+		IDishMenuItemData[] ds = menuData.getAllDishMenuItems();
 		Assertions.assertEquals(ds.length, 3);
 		Assertions.assertTrue(model.writeDishMenu());
 		File f = new File("src/main/resources/dishMenuItems/file.txt");
@@ -84,7 +98,10 @@ class DishMenuWriterTest {
 				fail();
 			}
 			String[] ls = r.lines().toArray(String[]::new);
-			Assertions.assertEquals(ls.length, 3);
+			if (ls.length != 3) {
+				f.delete();
+				fail();
+			}
 			ArrayList<String> lCol = new ArrayList<String>();
 			for (String l : ls) {
 				lCol.add(l);

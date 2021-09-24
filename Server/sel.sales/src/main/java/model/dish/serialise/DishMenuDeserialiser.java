@@ -7,7 +7,7 @@ import model.dish.IDishMenuItemDataFactory;
 public abstract class DishMenuDeserialiser implements IDishMenuItemDeserialiser {
 	protected IDishMenuParser menuParser;
 	
-	protected IDishMenuItemFormat format;
+	protected IDishMenuFormat format;
 	protected IDishMenuDataFactory menuDataFac;
 	protected IDishMenuItemDataFactory menuItemfDataFac;
 	

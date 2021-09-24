@@ -1,19 +1,9 @@
 package model.filewriter;
 
-import model.dish.serialise.IDishMenuItemFormat;
+import model.dish.serialise.DishMenuFormat;
 
-public class FileDishMenuFormat implements IDishMenuItemFormat {
-	private String dishMenuItemDataFieldEnd = ";\n";
-	private String dishMenuItemDataFieldSeperator = ",";
-	
-	@Override
-	public String getDishMenuItemDataFieldEnd() {
-		return this.dishMenuItemDataFieldEnd;
+public class FileDishMenuFormat extends DishMenuFormat {
+	public FileDishMenuFormat() {
+		super(";\n", new FileDishMenuItemFormat());
 	}
-
-	@Override
-	public String getDishMenuItemDataFieldSeperator() {
-		return this.dishMenuItemDataFieldSeperator;
-	}
-
 }

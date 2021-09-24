@@ -1,6 +1,6 @@
 package model.order.serialise;
 
-import model.IDishMenuItemFinder;
+import model.dish.IDishMenuItemFinder;
 import model.order.IOrderDataFactory;
 import model.order.IOrderItemDataFactory;
 import model.order.OrderDataFactory;

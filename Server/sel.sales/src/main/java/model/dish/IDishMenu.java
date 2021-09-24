@@ -5,6 +5,5 @@ public interface IDishMenu {
 	boolean removeMenuItem(String id);
 	void editMenuItem(IDishMenuItemData newItem);
 	IDishMenuItemData getItem(String id);
-	IDishMenuItemData[] getAllItems();
-	
+	IDishMenuItemData[] getAllItemData();
 }

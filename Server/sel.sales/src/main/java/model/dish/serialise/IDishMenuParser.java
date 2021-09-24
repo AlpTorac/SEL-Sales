@@ -66,10 +66,10 @@ public interface IDishMenuParser {
 		if (serialisedDishMenuItemFields.endsWith(this.getDishMenuFormat().getDishMenuItemDataFieldEnd())) {
 			serialisedDishMenuItemFields = serialisedDishMenuItemFields.substring(0, serialisedDishMenuItemFields.length()-1);
 		}
-		return serialisedDishMenuItemFields.split(this.getDishMenuFormat().getDishMenuItemDataFieldSeperator());
+		return serialisedDishMenuItemFields.split(this.getDishMenuFormat().getDishMenuItemFormat().getDishMenuItemDataFieldSeperator());
 	}
 	
-	IDishMenuItemFormat getDishMenuFormat();
+	IDishMenuFormat getDishMenuFormat();
 	IDishMenuItemDataFactory getDishMenuItemDataFactory();
 	IDishMenuDataFactory getDishMenuFactory();
 }

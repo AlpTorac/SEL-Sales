@@ -1,5 +1,6 @@
 package view.composites;
 
+import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
 import view.repository.IButton;
 import view.repository.ITable;
@@ -162,7 +163,7 @@ public class MenuDesignArea extends UIGridLayout {
 		return this.menuItemTable;
 	}
 	
-	public void refreshMenuDisplay(IDishMenuItemData[] data) {
+	public void refreshMenuDisplay(IDishMenuData data) {
 		this.getMenuItemTable().clear();
 		
 //		String[][] transformedData = new String[data.length][];
@@ -171,7 +172,7 @@ public class MenuDesignArea extends UIGridLayout {
 //			transformedData[i] = data[i].allToString();
 //		}
 		
-		this.getMenuItemTable().addItems(data);
+		this.getMenuItemTable().addItems(data.getAllDishMenuItems());
 	}
 
 	public ITextBox getDiscountBox() {

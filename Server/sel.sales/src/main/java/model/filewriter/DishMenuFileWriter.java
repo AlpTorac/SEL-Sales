@@ -1,24 +1,20 @@
 package model.filewriter;
 
 import model.dish.IDishMenuData;
-import model.dish.IDishMenuItemData;
+import model.dish.serialise.FileDishMenuSerialiser;
 
 public abstract class DishMenuFileWriter extends FileAccess {
-	private FileDishMenuItemSerialiser serialiser;
+	private FileDishMenuSerialiser serialiser;
 
-	public DishMenuFileWriter(String address, FileDishMenuItemSerialiser serialiser) {
+	public DishMenuFileWriter(String address, FileDishMenuSerialiser serialiser) {
 		super(address);
 		this.serialiser = serialiser;
 	}
 	
-	protected FileDishMenuItemSerialiser getSerialiser() {
+	protected FileDishMenuSerialiser getSerialiser() {
 		return this.serialiser;
 	}
 	public boolean writeDishMenuData(IDishMenuData d) {
-		boolean b = true;
-		for (IDishMenuItemData idata : d.getAllDishMenuItems()) {
-			b = b && this.writeToFile(this.getSerialiser().serialise(idata));
-		}
-		return b;
+		return this.writeToFile(this.getSerialiser().serialise(d));
 	}
 }

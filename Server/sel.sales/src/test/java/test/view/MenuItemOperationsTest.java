@@ -72,7 +72,7 @@ class MenuItemOperationsTest extends ApplicationTest {
 		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
 		
-		IDishMenuItemData[] datas = model.getMenuData();
+		IDishMenuItemData[] datas = model.getMenuData().getAllDishMenuItems();
 		Assertions.assertEquals(datas.length, 1);
 		
 		Assertions.assertTrue(addedItem.equals(datas[0]));
@@ -82,13 +82,13 @@ class MenuItemOperationsTest extends ApplicationTest {
 	void removeMenuItemTest() {
 		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1ProCost, i1PorSize, i1Disc);
-		IDishMenuItemData[] datas = model.getMenuData();
+		IDishMenuItemData[] datas = model.getMenuData().getAllDishMenuItems();
 		Assertions.assertEquals(datas.length, 1);
 		
 		Assertions.assertTrue(addedItem.equals(datas[0]));
 		
 		IDishMenuItemData removedItem = opHelper.removeMenuItem(i1id);
-		datas = model.getMenuData();
+		datas = model.getMenuData().getAllDishMenuItems();
 		
 		Assertions.assertTrue(addedItem.equals(removedItem));
 		Assertions.assertEquals(datas.length, 0);
@@ -99,7 +99,7 @@ class MenuItemOperationsTest extends ApplicationTest {
 		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
 		
-		IDishMenuItemData[] datas = model.getMenuData();
+		IDishMenuItemData[] datas = model.getMenuData().getAllDishMenuItems();
 		Assertions.assertEquals(datas.length, 1);
 		
 		Assertions.assertTrue(addedItem.equals(datas[0]));

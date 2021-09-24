@@ -57,7 +57,7 @@ public class DishMenu implements IDishMenu {
 	}
 
 	@Override
-	public IDishMenuItemData[] getAllItems() {
+	public IDishMenuItemData[] getAllItemData() {
 		return this.dishes.values().stream().map(i -> this.dataFac.menuItemToData(i)).toArray(IDishMenuItemData[]::new);
 	}
 	

@@ -5,12 +5,17 @@ import java.util.Collection;
 
 import model.dish.DishMenu;
 import model.dish.DishMenuDataFactory;
+import model.dish.DishMenuItemFinder;
 import model.dish.IDishMenu;
+import model.dish.IDishMenuData;
 import model.dish.IDishMenuDataFactory;
 import model.dish.IDishMenuItemData;
+import model.dish.IDishMenuItemFinder;
 import model.dish.serialise.IntraAppDishMenuItemSerialiser;
+import model.dish.serialise.ExternalDishMenuSerialiser;
 import model.dish.serialise.IDishMenuItemDeserialiser;
 import model.dish.serialise.IDishMenuItemSerialiser;
+import model.dish.serialise.IDishMenuSerialiser;
 import model.dish.serialise.StandardDishMenuDeserialiser;
 import model.filewriter.DishMenuFileWriter;
 import model.filewriter.OrderFileWriter;
@@ -34,9 +39,15 @@ public class Model implements IModel {
 	private IOrderCollector orderConfirmedCollector;
 	private IOrderSerialiser orderSerialiser;
 	private IOrderDeserialiser orderDeserialiser;
+	
 	private IDishMenuItemDeserialiser dishMenuItemDeserialiser;
 	private IDishMenuItemFinder finder;
 	private IDishMenuItemSerialiser menuItemSerialiser;
+	
+	/**
+	 * Only for the external clients (outside the server part of the app)
+	 */
+	private IDishMenuSerialiser externalDishMenuSerialiser;
 	
 	private String orderFolderAddress;
 	private OrderFileWriter orderWriter;
@@ -63,6 +74,8 @@ public class Model implements IModel {
 		
 		this.dishMenuFolderAddress = "src/main/resources/dishMenuItems";
 		this.dishMenuWriter = new StandardDishMenuFileWriter(this.dishMenuFolderAddress);
+		
+		this.externalDishMenuSerialiser = new ExternalDishMenuSerialiser();
 	}
 	
 	public void addMenuItem(String serialisedItemData) {
@@ -83,8 +96,8 @@ public class Model implements IModel {
 	}
 
 	@Override
-	public IDishMenuItemData[] getMenuData() {
-		return this.dishMenu.getAllItems();
+	public IDishMenuData getMenuData() {
+		return this.dishMenuDataFac.dishMenuToData(this.dishMenu);
 	}
 
 	@Override
@@ -182,5 +195,10 @@ public class Model implements IModel {
 	@Override
 	public boolean writeDishMenu() {
 		return this.dishMenuWriter.writeDishMenuData(this.dishMenuDataFac.dishMenuToData(this.dishMenu));
+	}
+
+	@Override
+	public IDishMenuSerialiser getExternalDishMenuSerialiser() {
+		return this.externalDishMenuSerialiser;
 	}
 }

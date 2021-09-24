@@ -3,7 +3,7 @@ package model.dish.serialise;
 import java.math.BigDecimal;
 
 public class IntraAppDishMenuItemSerialiser implements IDishMenuItemSerialiser {
-	private IDishMenuItemFormat dishMenuItemFormat = new IntraAppDishMenuFormat();
+	private IDishMenuItemFormat dishMenuItemFormat = new IntraAppDishMenuItemFormat();
 	@Override
 	public IDishMenuItemFormat getDishMenuFormat() {
 		return this.dishMenuItemFormat;
@@ -17,7 +17,7 @@ public class IntraAppDishMenuItemSerialiser implements IDishMenuItemSerialiser {
 		result += this.serialisePortionSize(portionSize) + this.getDishMenuItemDataFieldSeperator();
 		result += this.serialiseProductionCost(productionCost) + this.getDishMenuItemDataFieldSeperator();
 		result += this.serialisePrice(price) + this.getDishMenuItemDataFieldSeperator();
-		result += this.serialiseDiscount(discount) + this.getDishMenuItemDataFieldEnd();
+		result += this.serialiseDiscount(discount);
 		return result;
 	}
 }

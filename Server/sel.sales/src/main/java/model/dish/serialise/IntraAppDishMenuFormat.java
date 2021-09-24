@@ -1,17 +1,7 @@
 package model.dish.serialise;
 
-public class IntraAppDishMenuFormat implements IDishMenuItemFormat {
-	private String dishMenuItemDataFieldEnd = ";";
-	private String dishMenuItemDataFieldSeperator = ",";
-	
-	@Override
-	public String getDishMenuItemDataFieldEnd() {
-		return this.dishMenuItemDataFieldEnd;
+public class IntraAppDishMenuFormat extends DishMenuFormat {
+	protected IntraAppDishMenuFormat() {
+		super(";", new IntraAppDishMenuItemFormat());
 	}
-
-	@Override
-	public String getDishMenuItemDataFieldSeperator() {
-		return this.dishMenuItemDataFieldSeperator;
-	}
-
 }

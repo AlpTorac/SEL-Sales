@@ -61,7 +61,7 @@ class DishMenuItemDataTest {
 	
 	@Test
 	void pricesPerPortionTest() {
-		IDishMenuItemData[] data = model.getMenuData();
+		IDishMenuItemData[] data = model.getMenuData().getAllDishMenuItems();
 		
 		IDishMenuItemData d1 = data[0];
 		IDishMenuItemData d2 = data[1];

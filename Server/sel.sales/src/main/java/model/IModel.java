@@ -1,7 +1,9 @@
 package model;
 
+import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
 import model.dish.serialise.IDishMenuItemSerialiser;
+import model.dish.serialise.IDishMenuSerialiser;
 import model.order.IOrderData;
 import model.order.serialise.IOrderSerialiser;
 
@@ -15,11 +17,12 @@ public interface IModel {
 	void removeMenuItem(String id);
 	void subscribe(Updatable updatable);
 	IDishMenuItemData getMenuItem(String id);
-	IDishMenuItemData[] getMenuData();
+	IDishMenuData getMenuData();
 	IOrderData getOrder(String id);
 	IOrderData[] getAllUnconfirmedOrders();
 	IOrderData[] getAllConfirmedOrders();
 	IDishMenuItemSerialiser getDishMenuItemSerialiser();
+	IDishMenuSerialiser getExternalDishMenuSerialiser();
 	IOrderSerialiser getOrderSerialiser();
 	void removeAllUnconfirmedOrders();
 	void removeAllConfirmedOrders();

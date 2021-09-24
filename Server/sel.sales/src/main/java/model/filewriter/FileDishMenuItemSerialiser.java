@@ -7,7 +7,7 @@ import model.dish.serialise.IDishMenuItemSerialiser;
 
 public class FileDishMenuItemSerialiser implements IDishMenuItemSerialiser {
 
-	private IDishMenuItemFormat format = new FileDishMenuFormat();
+	private IDishMenuItemFormat format = new FileDishMenuItemFormat();
 	
 	@Override
 	public String serialise(String dishName, String id, BigDecimal portionSize, BigDecimal productionCost,
@@ -18,7 +18,7 @@ public class FileDishMenuItemSerialiser implements IDishMenuItemSerialiser {
 		result += this.serialiseDiscount(discount) + this.getDishMenuItemDataFieldSeperator();
 		result += this.serialisePrice(price) + this.getDishMenuItemDataFieldSeperator();
 		result += this.serialisePortionSize(portionSize) + this.getDishMenuItemDataFieldSeperator();
-		result += this.serialiseProductionCost(productionCost) + this.getDishMenuItemDataFieldEnd();
+		result += this.serialiseProductionCost(productionCost);
 		return result;
 	}
 

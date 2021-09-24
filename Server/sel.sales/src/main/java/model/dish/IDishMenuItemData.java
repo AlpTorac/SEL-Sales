@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
-import model.IDishMenuItemFinder;
-
 public interface IDishMenuItemData extends Comparable<IDishMenuItemData> {
 	default IDishMenuItemData getAssociatedItem(IDishMenuItemFinder finder) {
 		return finder.getDish(this.getId());

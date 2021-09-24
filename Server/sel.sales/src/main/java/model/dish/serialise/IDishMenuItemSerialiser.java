@@ -11,10 +11,6 @@ public interface IDishMenuItemSerialiser {
 		return this.getDishMenuFormat().getDishMenuItemDataFieldSeperator();
 	}
 	
-	default String getDishMenuItemDataFieldEnd() {
-		return this.getDishMenuFormat().getDishMenuItemDataFieldEnd();
-	}
-	
 	default String serialiseDishName(String dishName) {
 		return dishName;
 	}
