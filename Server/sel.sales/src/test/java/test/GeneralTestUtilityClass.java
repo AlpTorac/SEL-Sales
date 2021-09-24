@@ -49,4 +49,11 @@ public final class GeneralTestUtilityClass {
 		}
 		return result;
 	}
+	
+	public static long generateRandomNumber(long lowerLimit, long upperLimit) {
+		long intervallLength = upperLimit - lowerLimit;
+		double factor = Math.random();
+		long randomNumber = Math.round(factor * intervallLength);
+		return randomNumber;
+	}
 }

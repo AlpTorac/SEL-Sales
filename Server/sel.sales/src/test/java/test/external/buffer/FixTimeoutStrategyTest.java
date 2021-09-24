@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,87 +16,77 @@ import org.junit.jupiter.api.Test;
 import external.buffer.FixTimeoutStrategy;
 import external.buffer.HasTimeout;
 import external.buffer.ITimeoutStrategy;
+import test.GeneralTestUtilityClass;
 
 class FixTimeoutStrategyTest {
-	private long toleranceInMillis = 50;
+	private long toleranceInMillis;
 	private ExecutorService es;
-	private long esTerminationTimeout = 50;
+	private long esTerminationTimeout;
+	private LocalDateTime startTime;
+	private long timeoutInMillis;
+	private long shortestRandomDuration;
+	private long longestRandomDuration;
+	private ITimeoutStrategy ts;
 	
 	@BeforeEach
 	void prep() {
+		toleranceInMillis = 50;
+		esTerminationTimeout = 50;
 		es = Executors.newFixedThreadPool(2);
+		timeoutInMillis = 500;
+		shortestRandomDuration = timeoutInMillis / 10;
+		longestRandomDuration = timeoutInMillis;
+	}
+	
+	/**
+	 * Not in prep() to allow last minute custom settings changes.
+	 */
+	private void initTimeoutStrategy() {
+		startTime = LocalDateTime.now();
+		ts = new FixTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS);
+		ts.startTimer();
+		es.submit(ts);
+	}
+	
+	@AfterEach
+	void cleanUp() {
+		ts.terminate();
+		try {
+			es.awaitTermination(esTerminationTimeout, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
 	void noResetTest() {
-		LocalDateTime startTime = LocalDateTime.now();
-		long timeoutInMillis = 500;
-		ITimeoutStrategy ts = new FixTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS);
-		ts.startTimer();
-		es.submit(ts);
-		while (ts.isRunning()) {
-			if (startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS) > timeoutInMillis + toleranceInMillis) {
-				fail("Timer exceeds the tolerated delay.");
-			}
-		}
-		Assertions.assertTrue(startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS) >= timeoutInMillis);
-		ts.terminate();
-		try {
-			es.awaitTermination(esTerminationTimeout, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		this.initTimeoutStrategy();
+		TimeoutTestUtilityClass.failIfToleranceViolated(ts, startTime, timeoutInMillis, toleranceInMillis);
+		TimeoutTestUtilityClass.assertTimeoutLonger(startTime, timeoutInMillis, toleranceInMillis);
 	}
 	
 	@Test
 	void resetWithWorkTimeTest() {
-		LocalDateTime startTime = LocalDateTime.now();
-		long timeoutInMillis = 500;
-		ITimeoutStrategy ts = new FixTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS);
-		ts.startTimer();
-		es.submit(ts);
+		this.initTimeoutStrategy();
 		long waitTime = 200;
-		try {
-			Thread.sleep(waitTime);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
-		ts.reset();
-		while (ts.isRunning()) {
-			if (startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS) > timeoutInMillis + toleranceInMillis) {
-				fail("Timer exceeds the tolerated delay.");
-			}
-		}
-		Assertions.assertTrue(startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS) >= waitTime);
-		Assertions.assertTrue(startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS) < waitTime + toleranceInMillis);
-		ts.terminate();
-		try {
-			es.awaitTermination(esTerminationTimeout, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		TimeoutTestUtilityClass.assertTimeoutResetSuccessful(ts, waitTime, startTime, timeoutInMillis, toleranceInMillis);
 	}
 
 	@Test
 	void immediateResetTest() {
-		LocalDateTime startTime = LocalDateTime.now();
-		long timeoutInMillis = 500;
-		ITimeoutStrategy ts = new FixTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS);
-		ts.startTimer();
-		es.submit(ts);
-		ts.reset();
-		while (ts.isRunning()) {
-			if (startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS) > toleranceInMillis) {
-				fail("Timer exceeds the tolerated delay.");
-			}
-		}
-		Assertions.assertTrue(startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS) < toleranceInMillis);
-		ts.terminate();
-		try {
-			es.awaitTermination(esTerminationTimeout, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		this.initTimeoutStrategy();
+		TimeoutTestUtilityClass.assertTimeoutResetSuccessful(ts, 0, startTime, 0, toleranceInMillis);
+		TimeoutTestUtilityClass.assertTimeoutShorter(startTime, 0, toleranceInMillis);
 	}
 	
+	@Test
+	void multipleUseTest() {
+		timeoutInMillis = 100;
+		shortestRandomDuration = timeoutInMillis / 10;
+		longestRandomDuration = timeoutInMillis;
+		this.initTimeoutStrategy();
+		TimeoutTestUtilityClass.assertRandomTimeoutResetSuccessful(ts, startTime, timeoutInMillis, toleranceInMillis, shortestRandomDuration, longestRandomDuration);
+		TimeoutTestUtilityClass.assertRandomTimeoutResetSuccessful(ts, startTime, timeoutInMillis, toleranceInMillis, shortestRandomDuration, longestRandomDuration);
+		TimeoutTestUtilityClass.assertRandomTimeoutResetSuccessful(ts, startTime, timeoutInMillis, toleranceInMillis, shortestRandomDuration, longestRandomDuration);
+	}
 }
