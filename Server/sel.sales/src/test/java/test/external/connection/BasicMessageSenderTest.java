@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -46,9 +47,29 @@ class BasicMessageSenderTest {
 	void sendMessageTest() {
 		String serialisedData = "abcdefg";
 		IMessage message = new Message(null, null, serialisedData);
-		mss.sendMessage(os, message);
-		BufferUtilityClass.assertOutputWrittenEquals(os, (messageFormat.getMessageStart()+"0"+fieldSeparator +
+		Assertions.assertTrue(mss.sendMessage(os, message));
+		String serialisedMessage = (messageFormat.getMessageStart()+"0"+fieldSeparator +
 				fieldSeparator + fieldSeparator +
-				message.getSerialisedData() + messageFormat.getMessageEnd()).getBytes());
+				message.getSerialisedData() + messageFormat.getMessageEnd());
+		BufferUtilityClass.assertOutputWrittenEquals(os, serialisedMessage.getBytes());
+	}
+	
+	@Test
+	void sendMultipleMessagesTest() {
+		String serialisedData = "abcdefg";
+		IMessage message = new Message(null, null, serialisedData);
+		Assertions.assertTrue(mss.sendMessage(os, message));
+		String serialisedMessage1 = (messageFormat.getMessageStart()+"0"+fieldSeparator +
+				fieldSeparator + fieldSeparator +
+				message.getSerialisedData() + messageFormat.getMessageEnd());
+		BufferUtilityClass.assertOutputWrittenEquals(os, serialisedMessage1.getBytes());
+		
+		serialisedData = "gdfkhjlgs";
+		message = new Message(null, null, serialisedData);
+		Assertions.assertTrue(mss.sendMessage(os, message));
+		String serialisedMessage2 = (messageFormat.getMessageStart()+"0"+fieldSeparator +
+				fieldSeparator + fieldSeparator +
+				message.getSerialisedData() + messageFormat.getMessageEnd());
+		BufferUtilityClass.assertOutputWrittenEquals(os, (serialisedMessage1+serialisedMessage2).getBytes());
 	}
 }

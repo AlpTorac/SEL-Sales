@@ -13,4 +13,9 @@ public final class MessageTestUtilityClass {
 		Assertions.assertArrayEquals(flags, parsedMessage.getMessageFlags());
 		Assertions.assertEquals(serialisedData, parsedMessage.getSerialisedData());
 	}
+	
+	public static void assertMessageEquals(IMessage expected, IMessage actual) {
+		assertMessageContentEquals(actual.getSequenceNumber(), actual.getMessageContext(),
+				actual.getMessageFlags(), actual.getSerialisedData(), expected);
+	}
 }

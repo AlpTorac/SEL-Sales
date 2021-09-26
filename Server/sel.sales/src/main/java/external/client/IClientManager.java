@@ -12,4 +12,5 @@ public interface IClientManager {
 	void removeClient(String clientAddress);
 	void allowClient(String clientAddress);
 	void blockClient(String clientAddress);
+	int getClientCount();
 }

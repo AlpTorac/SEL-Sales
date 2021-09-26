@@ -28,4 +28,15 @@ public class BluetoothClient implements IClient {
 	public String getClientAddress() {
 		return this.device.getBluetoothAddress();
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null) {
+			return false;
+		}
+		if (!(o instanceof IClient)) {
+			return false;
+		}
+		return this.getClientAddress().equals(((IClient) o).getClientAddress());
+	}
 }

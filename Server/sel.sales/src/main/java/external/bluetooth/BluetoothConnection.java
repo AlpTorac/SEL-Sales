@@ -28,7 +28,9 @@ public class BluetoothConnection implements IConnection {
 	public void close() throws IOException {
 		this.conn.close();
 		this.conn = null;
+		this.is.close();
 		this.is = null;
+		this.os.close();
 		this.os = null;
 	}
 

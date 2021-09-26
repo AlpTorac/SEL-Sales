@@ -14,7 +14,7 @@ public abstract class ConnectionManager implements IConnectionManager {
 	private ISendBuffer sb;
 	protected IController controller;
 	
-	ConnectionManager(IController controller, IConnection conn, ExecutorService es) {
+	protected ConnectionManager(IController controller, IConnection conn, ExecutorService es) {
 		this.controller = controller;
 		this.conn = conn;
 		this.es = es;

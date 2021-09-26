@@ -2,7 +2,9 @@ package external.client;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 public abstract class ClientManager implements IClientManager {
 
@@ -27,12 +29,17 @@ public abstract class ClientManager implements IClientManager {
 	}
 
 	private ClientManagerEntry getClientEntry(String clientAddress) {
-		return this.clients.stream().filter(e -> e.getClient().getClientAddress().equals(clientAddress)).findFirst().get();
+		Optional<ClientManagerEntry> soughtEntry = this.clients.stream().filter(e -> e.getClient().getClientAddress().equals(clientAddress)).findFirst();
+		return soughtEntry.isEmpty() ? null : soughtEntry.get();
 	}
 	
 	@Override
 	public IClient getClient(String clientAddress) {
-		return this.getClientEntry(clientAddress).getClient();
+		ClientManagerEntry wantedClientEntry = this.getClientEntry(clientAddress);
+		if (wantedClientEntry == null) {
+			return null;
+		}
+		return wantedClientEntry.getClient();
 	}
 	
 	@Override
@@ -71,6 +78,11 @@ public abstract class ClientManager implements IClientManager {
 	@Override
 	public void setDiscoveryStrategy(ClientDiscoveryStrategy cds) {
 		this.cds = cds;
+	}
+	
+	@Override
+	public int getClientCount() {
+		return this.clients.size();
 	}
 	
 	private class ClientManagerEntry {
