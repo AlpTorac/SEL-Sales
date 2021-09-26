@@ -20,6 +20,14 @@ public abstract class MessageFormat {
 	public String getDataFieldElementSeparator() {
 		return dataFieldElementSeparator;
 	}
+	/**
+	 * @return dataFieldSeparator for plain text (not regex)
+	 */
+	public abstract String getDataFieldSeparatorForString();
+	/**
+	 * @return dataFieldSeparator for plain text (not regex)
+	 */
+	public abstract String getDataFieldElementSeparatorForString();
 
 	public String getMessageEnd() {
 		return messageEnd;

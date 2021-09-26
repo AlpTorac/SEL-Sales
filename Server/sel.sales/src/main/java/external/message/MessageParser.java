@@ -14,7 +14,10 @@ public abstract class MessageParser implements IMessageParser {
 		int sequenceNumber = this.parseSequenceNumber(fields[0]);
 		MessageContext context = this.parseContext(fields[1]);
 		MessageFlag[] flags = this.parseFlags(fields[2]);
-		String serialisedData = this.parseSerialisedData(fields[3]);
+		String serialisedData = "";
+		if (fields.length > 3) {
+			serialisedData = this.parseSerialisedData(fields[3]);
+		}
 		return new Message(sequenceNumber, context, flags, serialisedData);
 	}
 	
@@ -22,7 +25,8 @@ public abstract class MessageParser implements IMessageParser {
 		int startIndex = 0;
 		int endIndex = 0;
 		if (message.startsWith(this.getMessageStart())) {
-			startIndex = this.getMessageStart().length() - 1;
+			int len = this.getMessageStart().length();
+			startIndex = len == 0 ? 0 : len - 1;
 		}
 		if (message.endsWith(this.getMessageEnd())) {
 			endIndex = message.length() - this.getMessageEnd().length();
@@ -42,7 +46,9 @@ public abstract class MessageParser implements IMessageParser {
 		return serialisedData;
 	}
 	protected MessageFlag[] parseFlags(String serialisedFlags) {
-		if (serialisedFlags == null || serialisedFlags.equals("")) {
+		if (serialisedFlags == null) {
+			return null;
+		} else if (serialisedFlags.equals("")) {
 			return null;
 		}
 		String[] flags = this.parseDataFieldElements(serialisedFlags);

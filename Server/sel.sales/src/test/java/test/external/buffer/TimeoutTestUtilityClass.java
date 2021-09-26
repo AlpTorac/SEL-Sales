@@ -32,16 +32,8 @@ public final class TimeoutTestUtilityClass {
 		Assertions.assertTrue(startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS) < durationInMillis + toleranceInMillis);
 	}
 	
-	public static void performWait(long durationInMillis) {
-		try {
-			Thread.sleep(durationInMillis);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
-	}
-	
 	public static void assertTimeoutResetSuccessful(ITimeoutStrategy ts, long waitDuration, LocalDateTime startTime, long timeoutInMillis, long toleranceInMillis) {
-		performWait(waitDuration);
+		GeneralTestUtilityClass.performWait(waitDuration);
 		ts.reset();
 		failIfToleranceViolated(ts, startTime, timeoutInMillis, toleranceInMillis);
 	}

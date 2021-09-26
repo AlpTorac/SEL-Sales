@@ -13,7 +13,7 @@ public interface IIncomingMessageListener {
 	IMessageReadingStrategy getMessageReadingStrategy();
 	InputStream getInputStream();
 	default void handleCurrentMessage() {
-		String message = this.getMessageReadingStrategy().readMessage(this.getInputStream());
+		String message = this.getMessageReadingStrategy().readMessage();
 		if (message != null && !message.equals("")) {
 			this.handleMessage(message);
 		}

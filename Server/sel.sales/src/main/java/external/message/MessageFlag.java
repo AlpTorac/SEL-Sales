@@ -9,13 +9,13 @@ public enum MessageFlag {
 		this.message = message;
 	}
 	
-	public static MessageFlag stringToMessageFlag(String message) {
+	public static MessageFlag stringToMessageFlag(String serialisedFlag) {
 		for (MessageFlag t : values()) {
-			if (t.toString().equals(message)) {
+			if (t.toString().equals(serialisedFlag)) {
 				return t;
 			}
 		}
-		throw new IllegalArgumentException("No message type " + message);
+		throw new IllegalArgumentException("No message type " + serialisedFlag);
 	}
 	
 	@Override

@@ -28,9 +28,9 @@ public class IncomingMessageListener implements IIncomingMessageListener {
 		this.os = os;
 		this.controller = controller;
 		this.sendBuffer = sendBuffer;
+		this.messageParser = this.initMessageParser();
 		this.messageHandlers = this.initMessageHandlers();
 		this.mrs = this.initMessageReadingStrategy();
-		this.messageParser = this.initMessageParser();
 	}
 	
 	@Override
@@ -63,7 +63,7 @@ public class IncomingMessageListener implements IIncomingMessageListener {
 
 	@Override
 	public IMessageReadingStrategy initMessageReadingStrategy() {
-		return new LineReader();
+		return new LineReader(is);
 	}
 
 	@Override

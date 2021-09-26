@@ -10,13 +10,13 @@ public enum MessageContext {
 		this.message = message;
 	}
 	
-	public static MessageContext stringToMessageContext(String message) {
+	public static MessageContext stringToMessageContext(String serialisedContext) {
 		for (MessageContext t : values()) {
-			if (t.toString().equals(message)) {
+			if (t.toString().equals(serialisedContext)) {
 				return t;
 			}
 		}
-		throw new IllegalArgumentException("No message type " + message);
+		throw new IllegalArgumentException("No message type " + serialisedContext);
 	}
 	
 	@Override

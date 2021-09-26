@@ -50,6 +50,14 @@ public final class GeneralTestUtilityClass {
 		return result;
 	}
 	
+	public static void performWait(long durationInMillis) {
+		try {
+			Thread.sleep(durationInMillis);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
 	public static long generateRandomNumber(long lowerLimit, long upperLimit) {
 		long intervallLength = upperLimit - lowerLimit;
 		double factor = Math.random();

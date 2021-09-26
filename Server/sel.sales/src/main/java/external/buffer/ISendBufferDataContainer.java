@@ -6,9 +6,9 @@ public interface ISendBufferDataContainer {
 	boolean isEmpty();
 	boolean add(IMessage message);
 	boolean remove(int sequenceNumber);
-	default boolean remove(IMessage message) {
-		return this.remove(message.getSequenceNumber());
-	}
+	void clear();
+	int size();
+	boolean remove(IMessage message);
 	/**
 	 * @return The message to be sent without removing it.
 	 */

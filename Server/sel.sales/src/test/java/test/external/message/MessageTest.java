@@ -1,0 +1,88 @@
+package test.external.message;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import external.message.IMessage;
+import external.message.Message;
+import external.message.MessageContext;
+import external.message.MessageFlag;
+
+class MessageTest {
+	private int sequenceNumber;
+	private MessageContext context;
+	private MessageFlag[] flags;
+	private String serialisedData;
+	private IMessage message;
+	
+	@BeforeEach
+	void prep() {
+		sequenceNumber = 1;
+		context = MessageContext.MENU;
+		flags = new MessageFlag[] {};
+		serialisedData = "menuData";
+		message = new Message(sequenceNumber, context, flags, serialisedData);
+	}
+	
+	@Test
+	void getSequenceNumberTest() {
+		Assertions.assertEquals(sequenceNumber, message.getSequenceNumber());
+	}
+	
+	@Test
+	void getMessageContextTest() {
+		Assertions.assertEquals(context, message.getMessageContext());
+	}
+	
+	@Test
+	void getMessageFlagsTest() {
+		Assertions.assertArrayEquals(flags, message.getMessageFlags());
+	}
+	
+	@Test
+	void getSerialisedDataTest() {
+		Assertions.assertEquals(serialisedData, message.getSerialisedData());
+	}
+	
+	@Test
+	void getMinimalAcknowledgementTest() {
+		IMessage acknowledgement = message.getMinimalAcknowledgementMessage();
+		MessageTestUtilityClass.assertMessageContentEquals(sequenceNumber, context, new MessageFlag[] {MessageFlag.ACKNOWLEDGEMENT}, "", acknowledgement);
+	}
+	
+	@Test
+	void acknowledgementOfAcknowledgementTest() {
+		Assertions.assertNull(message.getMinimalAcknowledgementMessage().getMinimalAcknowledgementMessage());
+	}
+	
+	@Test
+	void hasFlagTest() {
+		Assertions.assertFalse(message.hasFlag(MessageFlag.ACKNOWLEDGEMENT));
+		IMessage acknowledgement = message.getMinimalAcknowledgementMessage();
+		Assertions.assertTrue(acknowledgement.hasFlag(MessageFlag.ACKNOWLEDGEMENT));
+	}
+	
+	@Test
+	void hasFlagMultiTest() {
+		message = new Message(sequenceNumber, context, new MessageFlag[] {null, MessageFlag.ACKNOWLEDGEMENT, null}, serialisedData);
+		Assertions.assertTrue(message.hasFlag(MessageFlag.ACKNOWLEDGEMENT));
+		
+		message = new Message(sequenceNumber, context, new MessageFlag[] {null, null, null}, serialisedData);
+		Assertions.assertFalse(message.hasFlag(MessageFlag.ACKNOWLEDGEMENT));
+	}
+	
+	@Test
+	void hasContextTest() {
+		Assertions.assertTrue(message.hasContext(context));
+		Assertions.assertFalse(message.hasContext(MessageContext.ORDER));
+	}
+	
+	@Test
+	void noContextTest() {
+		IMessage messageWOContext = new Message(sequenceNumber, null, flags, serialisedData);
+		Assertions.assertFalse(messageWOContext.hasContext(context));
+	}
+}

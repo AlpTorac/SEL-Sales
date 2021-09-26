@@ -6,12 +6,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class LineReader implements IMessageReadingStrategy {
+	
+	private BufferedReader r;
+	
+	public LineReader(InputStream is) {
+		this.r = new BufferedReader(new InputStreamReader(is));
+	}
+	
 	/**
 	 * Assumes that each line is ended with \n or \r
 	 */
 	@Override
-	public String readMessage(InputStream inputStream) {
-		BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+	public String readMessage() {
 		String message = "";
 		try {
 			message = r.readLine();

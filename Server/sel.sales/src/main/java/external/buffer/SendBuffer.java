@@ -78,7 +78,7 @@ public abstract class SendBuffer implements ISendBuffer {
 		messageInLine.setSequenceNumber(this.currentSequenceNumber);
 		boolean isSent = this.mss.sendMessage(this.os, messageInLine);
 		if (isSent) {
-			this.ts.startTimer();
+			this.startTimeoutTimer();
 		}
 		return isSent;
 	}

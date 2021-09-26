@@ -9,8 +9,13 @@ public class FIFOBuffer implements ISendBufferDataContainer {
 
 	private Queue<IMessage> queue;
 	
-	FIFOBuffer() {
+	public FIFOBuffer() {
 		this.queue = new LinkedList<IMessage>();
+	}
+	
+	@Override
+	public int size() {
+		return this.queue.size();
 	}
 	
 	@Override
@@ -36,6 +41,16 @@ public class FIFOBuffer implements ISendBufferDataContainer {
 	@Override
 	public boolean isEmpty() {
 		return queue.isEmpty();
+	}
+
+	@Override
+	public void clear() {
+		this.queue.clear();
+	}
+
+	@Override
+	public boolean remove(IMessage message) {
+		return this.queue.remove(message);
 	}
 
 }
