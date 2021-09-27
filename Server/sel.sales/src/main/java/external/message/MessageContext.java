@@ -16,7 +16,7 @@ public enum MessageContext {
 				return t;
 			}
 		}
-		throw new IllegalArgumentException("No message type " + serialisedContext);
+		return null;
 	}
 	
 	@Override

@@ -13,7 +13,7 @@ public class DummyService extends Service {
 
 	@Override
 	public IServiceConnectionManager publish() {
-		return new DummyServiceConnectionManager(this, this.getClientManager(), this.getController());
+		return new DummyServiceConnectionManager(this.getClientManager(), this.getController());
 	}
 
 	@Override

@@ -15,12 +15,10 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 
 	protected ExecutorService pool = Executors.newCachedThreadPool();
 	private Collection<IConnectionManager> connectionManagers = new CopyOnWriteArrayList<IConnectionManager>();
-	protected IService service;
 	private IClientManager manager;
 	protected IController controller;
 
-	protected ServiceConnectionManager(IService service, IClientManager manager, IController controller) {
-		this.service = service;
+	protected ServiceConnectionManager(IClientManager manager, IController controller) {
 		this.manager = manager;
 		this.controller = controller;
 	}
@@ -56,7 +54,6 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			conn = null;
 			return false;
 		}
 	}
@@ -88,7 +85,6 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 		this.pool.shutdown();
 		this.connectionManagers.forEach(cm -> cm.close());
 		this.pool = null;
-		this.service = null;
 		this.manager = null;
 	}
 

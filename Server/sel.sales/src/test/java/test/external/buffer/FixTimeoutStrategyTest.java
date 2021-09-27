@@ -30,8 +30,8 @@ class FixTimeoutStrategyTest {
 	
 	@BeforeEach
 	void prep() {
-		toleranceInMillis = 50;
-		esTerminationTimeout = 50;
+		toleranceInMillis = 100;
+		esTerminationTimeout = 100;
 		es = Executors.newFixedThreadPool(2);
 		timeoutInMillis = 500;
 		shortestRandomDuration = timeoutInMillis / 10;

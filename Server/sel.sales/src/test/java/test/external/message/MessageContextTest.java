@@ -12,6 +12,6 @@ class MessageContextTest {
 	void stringToMessageContext() {
 		Assertions.assertEquals(MessageContext.MENU, MessageContext.stringToMessageContext("menu"));
 		Assertions.assertEquals(MessageContext.ORDER, MessageContext.stringToMessageContext("order"));
-		Assertions.assertThrows(IllegalArgumentException.class, () -> {MessageContext.stringToMessageContext("asdfkhjgsdf");});
+		Assertions.assertNull(MessageContext.stringToMessageContext("asdfkhjgsdf"));
 	}
 }

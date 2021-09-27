@@ -73,6 +73,10 @@ class StandardSendBufferTest {
 		this.prep();
 		this.emptySendTest();
 		this.cleanUp();
+		
+		this.prep();
+		this.receiveAckFailTest();
+		this.cleanUp();
 	}
 	
 	void addMessageTest() {
@@ -108,7 +112,7 @@ class StandardSendBufferTest {
 		GeneralTestUtilityClass.performWait(waitDuration);
 		
 		Assertions.assertFalse(sb.isEmpty());
-		BufferUtilityClass.assertAcknowledgementReceived(sb, m1);
+		BufferUtilityClass.assertAcknowledgementOfMessageReceived(sb, m1);
 		Assertions.assertTrue(sb.isEmpty());
 	}
 	
@@ -128,7 +132,7 @@ class StandardSendBufferTest {
 		GeneralTestUtilityClass.performWait(waitDuration);
 		
 		Assertions.assertFalse(sb.isEmpty());
-		BufferUtilityClass.assertAcknowledgementReceived(sb, m1);
+		BufferUtilityClass.assertAcknowledgementOfMessageReceived(sb, m1);
 		Assertions.assertTrue(sb.isEmpty());
 		
 		BufferUtilityClass.assertOutputWrittenEquals(os, (sentMessage+sentMessage).getBytes());
@@ -139,10 +143,20 @@ class StandardSendBufferTest {
 		IMessage m1 = new Message(null, null, sd1);
 		BufferUtilityClass.assertMessageSent(sb, 0, m1);
 		Assertions.assertFalse(sb.sendMessage());
-		BufferUtilityClass.assertAcknowledgementReceived(sb, m1);
+		BufferUtilityClass.assertAcknowledgementOfMessageReceived(sb, m1);
 	}
 	
 	void emptySendTest() {
 		Assertions.assertFalse(sb.sendMessage());
+	}
+	
+	void receiveAckFailTest() {
+		IMessage m = new Message(null, null, null);
+		sb.addMessage(m);
+		Assertions.assertTrue(sb.sendMessage());
+		
+		IMessage nonAck = new Message(null, null, null);
+		sb.receiveAcknowledgement(nonAck);
+		Assertions.assertTrue(sb.isBlocked());
 	}
 }

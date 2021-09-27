@@ -29,6 +29,6 @@ public class OrderHandler extends MessageHandler {
 
 	@Override
 	public boolean verify(IMessage message) {
-		return message.hasContext(MessageContext.ORDER);
+		return !message.isAcknowledgementMessage() && message.hasContext(MessageContext.ORDER);
 	}
 }

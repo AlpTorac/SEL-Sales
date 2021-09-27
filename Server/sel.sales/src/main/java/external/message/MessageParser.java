@@ -23,7 +23,7 @@ public abstract class MessageParser implements IMessageParser {
 	
 	protected String parseMessageBody(String message) {
 		int startIndex = 0;
-		int endIndex = 0;
+		int endIndex = message.length() - 1;
 		if (message.startsWith(this.getMessageStart())) {
 			int len = this.getMessageStart().length();
 			startIndex = len == 0 ? 0 : len - 1;

@@ -17,9 +17,9 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 	private StreamConnectionNotifier connNotifier;
 	
 	public BluetoothServiceConnectionManager(BluetoothService service, BluetoothClientManager manager, IController controller) {
-		super(service, manager, controller);
+		super(manager, controller);
 		try {
-			this.connNotifier = (StreamConnectionNotifier) Connector.open(this.service.getURL());
+			this.connNotifier = (StreamConnectionNotifier) Connector.open(service.getURL());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -19,7 +19,11 @@ public abstract class ClientManager implements IClientManager {
 	
 	@Override
 	public boolean isAllowedToConnect(String clientAddress) {
-		return this.getClientEntry(clientAddress).isAllowedToConnect();
+		ClientManagerEntry e = this.getClientEntry(clientAddress);
+		if (e == null) {
+			return false;
+		}
+		return e.isAllowedToConnect();
 	}
 
 	@Override

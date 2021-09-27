@@ -19,7 +19,8 @@ public abstract class Acknowledger implements IAcknowledger {
 	
 	@Override
 	public boolean acknowledge(IMessage message) {
-		return this.mss.sendMessage(this.os, this.ackStrategy.generateAcknowledgementMessage(message));
+		return !message.isAcknowledgementMessage() &&
+				this.mss.sendMessage(this.os, this.ackStrategy.generateAcknowledgementMessage(message));
 	}
 
 }

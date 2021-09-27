@@ -27,13 +27,16 @@ public final class BufferUtilityClass {
 		Assertions.assertEquals(sequenceNumber, message.getSequenceNumber());
 		Assertions.assertTrue(sb.isBlocked());
 	}
-	public static void assertAcknowledgementReceived(ISendBuffer sb, IMessage message) {
-		sb.receiveAcknowledgement(message.getMinimalAcknowledgementMessage());
+	public static void assertAcknowledgementOfMessageReceived(ISendBuffer sb, IMessage message) {
+		assertAcknowledgementReceived(sb, message.getMinimalAcknowledgementMessage());
+	}
+	public static void assertAcknowledgementReceived(ISendBuffer sb, IMessage ackMessage) {
+		sb.receiveAcknowledgement(ackMessage);
 		Assertions.assertFalse(sb.isBlocked());
 	}
 	
 	public static void assertMessageAcknowledgementCycleSuccessful(ISendBuffer sb, int sequenceNumber, IMessage message) {
 		assertMessageSent(sb, sequenceNumber, message);
-		assertAcknowledgementReceived(sb, message);
+		assertAcknowledgementOfMessageReceived(sb, message);
 	}
 }

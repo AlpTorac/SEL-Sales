@@ -37,16 +37,6 @@ public class IncomingMessageListener implements IIncomingMessageListener {
 	public boolean handleMessage(String message) {
 		return this.messageHandlers.stream().anyMatch(h -> h.handleMessage(message));
 	}
-	
-	@Override
-	public void setMessageReadingStrategy(IMessageReadingStrategy mrs) {
-		this.mrs = mrs;
-	}
-
-	@Override
-	public IMessageReadingStrategy getMessageReadingStrategy() {
-		return this.mrs;
-	}
 
 	@Override
 	public Collection<IMessageHandler> initMessageHandlers() {
@@ -57,11 +47,6 @@ public class IncomingMessageListener implements IIncomingMessageListener {
 	}
 
 	@Override
-	public InputStream getInputStream() {
-		return this.is;
-	}
-
-	@Override
 	public IMessageReadingStrategy initMessageReadingStrategy() {
 		return new LineReader(is);
 	}
@@ -69,6 +54,15 @@ public class IncomingMessageListener implements IIncomingMessageListener {
 	@Override
 	public IMessageParser initMessageParser() {
 		return new StandardMessageParser();
+	}
+
+	@Override
+	public boolean handleCurrentMessage() {
+		String message = this.mrs.readMessage();
+		if (message != null && !message.equals("")) {
+			return this.handleMessage(message);
+		}
+		return false;
 	}
 
 }

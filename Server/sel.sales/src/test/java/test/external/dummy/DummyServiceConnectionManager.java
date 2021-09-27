@@ -4,25 +4,35 @@ import controller.IController;
 import external.client.IClientManager;
 import external.connection.IConnection;
 import external.connection.IConnectionManager;
-import external.connection.IService;
 import external.connection.ServiceConnectionManager;
 
 public class DummyServiceConnectionManager extends ServiceConnectionManager {
 
-	private int connectionCount;
+	private volatile DummyClient currentClient;
 	
-	protected DummyServiceConnectionManager(IService service, IClientManager manager, IController controller) {
-		super(service, manager, controller);
+	public DummyServiceConnectionManager(IClientManager manager, IController controller) {
+		super(manager, controller);
 	}
 
+	public void setCurrentConnectionObject(DummyClient currentClient) {
+		this.currentClient = currentClient;
+	}
+	
+//	@Override
+//	protected boolean addConnection(IConnection conn) {
+//		boolean result = super.addConnection(conn);
+//		System.out.println(conn.getTargetClientAddress() + " added");
+//		return result;
+//	}
+	
 	@Override
 	protected IConnection initConnection(Object connectionObject) {
-		return new DummyConnection("client" + connectionCount + "address");
+		return new DummyConnection(((DummyClient) getConnectionObject()).getClientAddress());
 	}
 
 	@Override
 	protected Object getConnectionObject() {
-		return null;
+		return currentClient;
 	}
 
 	@Override

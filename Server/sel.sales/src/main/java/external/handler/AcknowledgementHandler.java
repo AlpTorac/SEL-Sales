@@ -26,6 +26,6 @@ public class AcknowledgementHandler extends MessageHandler {
 	@Override
 	public boolean performNeededAction(IMessage message) {
 		this.sendBuffer.receiveAcknowledgement(message);
-		return true;
+		return !this.sendBuffer.isBlocked();
 	}
 }

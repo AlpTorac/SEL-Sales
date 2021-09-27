@@ -98,7 +98,6 @@ public abstract class ConnectionManager implements IConnectionManager {
 			this.sb.close();
 			this.conn.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.iml = null;
