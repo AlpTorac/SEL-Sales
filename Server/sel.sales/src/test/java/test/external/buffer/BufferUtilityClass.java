@@ -39,4 +39,17 @@ public final class BufferUtilityClass {
 		assertMessageSent(sb, sequenceNumber, message);
 		assertAcknowledgementOfMessageReceived(sb, message);
 	}
+	
+	public static void fillBuffer(byte[] isBuffer, String bufferContent) {
+		byte[] bytes = bufferContent.getBytes();
+		int i = 0;
+		byte currentByte = isBuffer[i];
+		while (currentByte != 0) {
+			i++;
+			currentByte = isBuffer[i];
+		}
+		for (int j = 0; j < bytes.length; j++) {
+			isBuffer[i+j] = bytes[j];
+		}
+	}
 }

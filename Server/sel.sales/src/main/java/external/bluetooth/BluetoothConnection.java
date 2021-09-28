@@ -61,4 +61,23 @@ public class BluetoothConnection implements IConnection {
 		return device.getBluetoothAddress();
 	}
 
+	@Override
+	public void refreshInputStream() {
+		try {
+			this.is.close();
+			this.is = this.conn.openInputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void refreshOutputStream() {
+		try {
+			this.os.close();
+			this.os = this.conn.openOutputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

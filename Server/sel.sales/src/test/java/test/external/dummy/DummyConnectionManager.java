@@ -7,23 +7,23 @@ import external.buffer.ISendBuffer;
 import external.buffer.StandardSendBuffer;
 import external.connection.ConnectionManager;
 import external.connection.IConnection;
-import external.connection.IIncomingMessageListener;
-import external.connection.IncomingMessageListener;
+import external.connection.IMessageReceptionist;
+import external.connection.MessageReceptionist;
 
 public class DummyConnectionManager extends ConnectionManager {
 
-	DummyConnectionManager(IController controller, IConnection conn, ExecutorService es) {
+	public DummyConnectionManager(IController controller, IConnection conn, ExecutorService es) {
 		super(controller, conn, es);
 	}
 
 	@Override
 	protected ISendBuffer initSendBuffer() {
-		return new StandardSendBuffer(this.getConnection().getOutputStream(), this.getExecutorService());
+		return new StandardSendBuffer(this.getConnection(), this.getExecutorService());
 	}
 
 	@Override
-	protected IIncomingMessageListener initIncomingMessageListener() {
-		return new IncomingMessageListener(this.getConnection().getInputStream(), this.getConnection().getOutputStream(), controller, this.getSendBuffer());
+	protected IMessageReceptionist initIncomingMessageListener() {
+		return new MessageReceptionist(this.getConnection(), controller, this.getSendBuffer(), this.getExecutorService());
 	}
 
 	@Override

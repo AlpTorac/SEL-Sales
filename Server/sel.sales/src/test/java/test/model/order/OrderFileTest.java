@@ -13,13 +13,15 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import model.IModel;
 import model.Model;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.filewriter.FileOrderSerialiser;
 import model.order.IOrderData;
-
+@Execution(value = ExecutionMode.SAME_THREAD)
 class OrderFileTest {
 	private static IModel model;
 	private static IDishMenuItemSerialiser serialiser;

@@ -1,9 +1,8 @@
 package external.connection;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
 
 import controller.IController;
 import external.acknowledgement.StandardAcknowledger;
@@ -14,18 +13,18 @@ import external.handler.OrderHandler;
 import external.message.IMessageParser;
 import external.message.StandardMessageParser;
 
-public class IncomingMessageListener implements IIncomingMessageListener {
+public class MessageReceptionist implements IMessageReceptionist {
+	protected ExecutorService es;
 	private Collection<IMessageHandler> messageHandlers;
 	private IMessageReadingStrategy mrs;
 	private IMessageParser messageParser;
-	private InputStream is;
-	private OutputStream os;
+	private IConnection conn;
 	private IController controller;
 	private ISendBuffer sendBuffer;
 	
-	public IncomingMessageListener(InputStream is, OutputStream os, IController controller, ISendBuffer sendBuffer) {
-		this.is = is;
-		this.os = os;
+	public MessageReceptionist(IConnection conn, IController controller, ISendBuffer sendBuffer, ExecutorService es) {
+		this.es = es;
+		this.conn = conn;
 		this.controller = controller;
 		this.sendBuffer = sendBuffer;
 		this.messageParser = this.initMessageParser();
@@ -33,36 +32,40 @@ public class IncomingMessageListener implements IIncomingMessageListener {
 		this.mrs = this.initMessageReadingStrategy();
 	}
 	
-	@Override
-	public boolean handleMessage(String message) {
+	protected boolean handleMessage(String message) {
 		return this.messageHandlers.stream().anyMatch(h -> h.handleMessage(message));
 	}
 
-	@Override
-	public Collection<IMessageHandler> initMessageHandlers() {
+	protected Collection<IMessageHandler> initMessageHandlers() {
 		Collection<IMessageHandler> col = new CopyOnWriteArrayList<IMessageHandler>();
-		col.add(new OrderHandler(this.messageParser, new StandardAcknowledger(this.os), this.controller));
+		col.add(new OrderHandler(this.messageParser, new StandardAcknowledger(this.conn), this.controller));
 		col.add(new AcknowledgementHandler(this.messageParser, this.sendBuffer));
 		return col;
 	}
 
-	@Override
-	public IMessageReadingStrategy initMessageReadingStrategy() {
-		return new LineReader(is);
+	protected IMessageReadingStrategy initMessageReadingStrategy() {
+		return new StandardReader();
 	}
 
-	@Override
-	public IMessageParser initMessageParser() {
+	protected IMessageParser initMessageParser() {
 		return new StandardMessageParser();
 	}
 
 	@Override
-	public boolean handleCurrentMessage() {
-		String message = this.mrs.readMessage();
-		if (message != null && !message.equals("")) {
-			return this.handleMessage(message);
-		}
-		return false;
+	public void close() {
+		this.messageHandlers.clear();
 	}
 
+	@Override
+	public boolean checkForMessages() {
+		String[] serialisedMessages;
+		boolean allHandled = true;
+		if ((serialisedMessages = this.mrs.readMessages(this.conn.getInputStream())) != null) {
+			for (String m : serialisedMessages) {
+				allHandled = allHandled & this.handleMessage(m);
+			}
+			this.conn.refreshInputStream();
+		}
+		return allHandled;
+	}
 }

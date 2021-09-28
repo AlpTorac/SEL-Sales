@@ -1,7 +1,6 @@
 package external.acknowledgement;
 
-import java.io.OutputStream;
-
+import external.connection.IConnection;
 import external.connection.IMessageSendingStrategy;
 import external.message.IMessage;
 
@@ -9,10 +8,10 @@ public abstract class Acknowledger implements IAcknowledger {
 	
 	private IAcknowledgementStrategy ackStrategy;
 	private IMessageSendingStrategy mss;
-	private OutputStream os;
+	private IConnection conn;
 	
-	Acknowledger(OutputStream os, IAcknowledgementStrategy ackStrategy, IMessageSendingStrategy mss) {
-		this.os = os;
+	Acknowledger(IConnection conn, IAcknowledgementStrategy ackStrategy, IMessageSendingStrategy mss) {
+		this.conn = conn;
 		this.ackStrategy = ackStrategy;
 		this.mss = mss;
 	}
@@ -20,7 +19,7 @@ public abstract class Acknowledger implements IAcknowledger {
 	@Override
 	public boolean acknowledge(IMessage message) {
 		return !message.isAcknowledgementMessage() &&
-				this.mss.sendMessage(this.os, this.ackStrategy.generateAcknowledgementMessage(message));
+				this.mss.sendMessage(this.conn, this.ackStrategy.generateAcknowledgementMessage(message));
 	}
 
 }

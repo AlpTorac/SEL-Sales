@@ -12,10 +12,12 @@ public class BasicMessageSender implements IMessageSendingStrategy {
 	private IMessageSerialiser messageSerialiser = new MessageSerialiser(new StandardMessageFormat());
 	
 	@Override
-	public boolean sendMessage(OutputStream os, IMessage message) {
+	public boolean sendMessage(IConnection conn, IMessage message) {
+		OutputStream os = conn.getOutputStream();
 		try {
 			os.write(messageSerialiser.serialise(message).getBytes());
 			os.flush();
+			conn.refreshOutputStream();
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();

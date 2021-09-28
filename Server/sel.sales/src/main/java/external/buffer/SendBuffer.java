@@ -1,8 +1,8 @@
 package external.buffer;
 
-import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
 
+import external.connection.IConnection;
 import external.connection.IMessageSendingStrategy;
 import external.message.IMessage;
 
@@ -12,16 +12,16 @@ public abstract class SendBuffer implements ISendBuffer {
 	
 	private IMessageSendingStrategy mss;
 	private ISendBufferDataContainer buffer;
-	private OutputStream os;
+	private IConnection conn;
 	
 	private ExecutorService es;
 	private ITimeoutStrategy ts;
 	
 	private int currentSequenceNumber;
 	
-	SendBuffer(OutputStream os, IMessageSendingStrategy mss, ISendBufferDataContainer buffer, ITimeoutStrategy ts, ExecutorService es) {
+	SendBuffer(IConnection conn, IMessageSendingStrategy mss, ISendBufferDataContainer buffer, ITimeoutStrategy ts, ExecutorService es) {
 		this.currentSequenceNumber = 0;
-		this.os = os;
+		this.conn = conn;
 		this.mss = mss;
 		this.buffer = buffer;
 		this.ts = ts;
@@ -46,7 +46,7 @@ public abstract class SendBuffer implements ISendBuffer {
 	 * @return Whether the message is successfully sent.
 	 */
 	protected boolean resendLast() {
-		return this.mss.sendMessage(this.os, this.buffer.getMessageInLine());
+		return this.mss.sendMessage(this.conn, this.buffer.getMessageInLine());
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public abstract class SendBuffer implements ISendBuffer {
 		this.block();
 		IMessage messageInLine = this.buffer.getMessageInLine();
 		messageInLine.setSequenceNumber(this.currentSequenceNumber);
-		boolean isSent = this.mss.sendMessage(this.os, messageInLine);
+		boolean isSent = this.mss.sendMessage(this.conn, messageInLine);
 		if (isSent) {
 			this.startTimeoutTimer();
 		}

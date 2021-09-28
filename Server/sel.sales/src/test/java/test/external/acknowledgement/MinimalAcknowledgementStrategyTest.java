@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import external.acknowledgement.IAcknowledgementStrategy;
 import external.acknowledgement.MinimalAcknowledgementStrategy;
@@ -13,7 +15,7 @@ import external.message.Message;
 import external.message.MessageContext;
 import external.message.MessageFlag;
 import test.external.message.MessageTestUtilityClass;
-
+@Execution(value = ExecutionMode.SAME_THREAD)
 class MinimalAcknowledgementStrategyTest {
 	private IAcknowledgementStrategy acknowledgementStrategy;
 	private int sequenceNumber;

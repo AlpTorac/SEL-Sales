@@ -10,6 +10,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import external.acknowledgement.IAcknowledger;
 import external.acknowledgement.StandardAcknowledger;
@@ -21,9 +23,10 @@ import external.message.MessageFlag;
 import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
 import test.external.buffer.BufferUtilityClass;
-
+import test.external.dummy.DummyConnection;
+@Execution(value = ExecutionMode.SAME_THREAD)
 class StandardAcknowledgerTest {
-	private ByteArrayOutputStream os;
+	private DummyConnection conn;
 	private IAcknowledger acknowledger;
 	private int sequenceNumber;
 	private MessageContext context;
@@ -33,8 +36,8 @@ class StandardAcknowledgerTest {
 	
 	@BeforeEach
 	void prep() {
-		this.os = new ByteArrayOutputStream();
-		this.acknowledger = new StandardAcknowledger(os);
+		this.conn = new DummyConnection("clientaddress");
+		this.acknowledger = new StandardAcknowledger(conn);
 		sequenceNumber = 1;
 		context = MessageContext.MENU;
 		flags = new MessageFlag[] {};
@@ -45,7 +48,7 @@ class StandardAcknowledgerTest {
 	@AfterEach
 	void cleanUp() {
 		try {
-			this.os.close();
+			this.conn.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -53,6 +56,7 @@ class StandardAcknowledgerTest {
 	
 	@Test
 	void acknowledgeTest() {
+		ByteArrayOutputStream os = conn.getOutputStream();
 		Assertions.assertTrue(this.acknowledger.acknowledge(message));
 		IMessageSerialiser ms = new MessageSerialiser(new StandardMessageFormat());
 		String serialisedAcknowledgementMessage = ms.serialise(message.getMinimalAcknowledgementMessage());

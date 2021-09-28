@@ -10,7 +10,7 @@ import external.message.IMessage;
 public abstract class ConnectionManager implements IConnectionManager {
 	private ExecutorService es;
 	private IConnection conn;
-	private IIncomingMessageListener iml;
+	private IMessageReceptionist iml;
 	private ISendBuffer sb;
 	protected IController controller;
 	
@@ -18,6 +18,7 @@ public abstract class ConnectionManager implements IConnectionManager {
 		this.controller = controller;
 		this.conn = conn;
 		this.es = es;
+		this.init();
 	}
 	
 	@Override
@@ -31,9 +32,9 @@ public abstract class ConnectionManager implements IConnectionManager {
 	
 	protected abstract ISendBuffer initSendBuffer();
 	
-	protected abstract IIncomingMessageListener initIncomingMessageListener();
+	protected abstract IMessageReceptionist initIncomingMessageListener();
 	
-	private void setIncomingMessageListener(IIncomingMessageListener iml) {
+	private void setIncomingMessageListener(IMessageReceptionist iml) {
 		this.iml = iml;
 	}
 	
@@ -46,7 +47,7 @@ public abstract class ConnectionManager implements IConnectionManager {
 		return this.sb;
 	}
 	@Override
-	public IIncomingMessageListener getIncomingMessageListener() {
+	public IMessageReceptionist getIncomingMessageListener() {
 		return this.iml;
 	}
 	
@@ -56,10 +57,8 @@ public abstract class ConnectionManager implements IConnectionManager {
 		return new Runnable() {
 			@Override
 			public void run() {
-				IIncomingMessageListener incomingMessageListener = initIncomingMessageListener();
-				setIncomingMessageListener(incomingMessageListener);
 				while (!getConnection().isClosed()) {
-					getIncomingMessageListener().handleCurrentMessage();
+					getIncomingMessageListener().checkForMessages();
 				}
 			}
 		};
@@ -69,10 +68,8 @@ public abstract class ConnectionManager implements IConnectionManager {
 		return new Runnable() {
 			@Override
 			public void run() {
-				ISendBuffer sendBuffer = initSendBuffer();
-				setSendBuffer(sendBuffer);
 				while (!getConnection().isClosed()) {
-					if (!getSendBuffer().isEmpty() && !getSendBuffer().isBlocked()) {
+					if (!getSendBuffer().isBlocked() && !getSendBuffer().isEmpty()) {
 						getSendBuffer().sendMessage();
 					}
 				}
@@ -80,26 +77,30 @@ public abstract class ConnectionManager implements IConnectionManager {
 		};
 	}
 	
-	@Override
-	public void init() {
-		for (Runnable r : this.initConnectionRunnables()) {
-			this.es.submit(r);
+	protected void init() {
+		ISendBuffer sendBuffer = initSendBuffer();
+		setSendBuffer(sendBuffer);
+		IMessageReceptionist incomingMessageListener = initIncomingMessageListener();
+		setIncomingMessageListener(incomingMessageListener);
+		Runnable[] rs = this.initConnectionRunnables();
+		for (Runnable r : rs) {
+			getExecutorService().submit(r);
 		}
 	}
 	
 	@Override
 	public void sendMessage(IMessage message) {
-		this.sb.addMessage(message);
+		getSendBuffer().addMessage(message);
 	}
 	
 	@Override
 	public void close() {
 		try {
-			this.sb.close();
-			this.conn.close();
+			getSendBuffer().close();
+			conn.close();
+			iml.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		this.iml = null;
 	}
 }

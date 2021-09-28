@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import model.IModel;
 import model.Model;
@@ -16,7 +18,7 @@ import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemIDFactory;
 import model.dish.serialise.IDishMenuItemSerialiser;
-
+@Execution(value = ExecutionMode.SAME_THREAD)
 class DishMenuTest {
 	private static IModel model;
 	private static IDishMenuItemSerialiser serialiser;

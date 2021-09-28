@@ -12,6 +12,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import external.buffer.ISendBuffer;
 import external.buffer.StandardSendBuffer;
@@ -24,20 +26,21 @@ import external.message.MessageFlag;
 import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
 import external.message.StandardMessageParser;
-
+import test.external.dummy.DummyConnection;
+@Execution(value = ExecutionMode.SAME_THREAD)
 class AcknowledgementHandlerTest extends MessageHandlerTest {
 	private MessageSerialiser serialiser = new MessageSerialiser(new StandardMessageFormat());
 	private IMessageParser parser;
 	private ISendBuffer buffer;
 	private ExecutorService es;
-	private OutputStream os;
+	private DummyConnection conn;
 	
 	@BeforeEach
 	void prep() {
+		conn = new DummyConnection("clientaddress");
 		es = Executors.newFixedThreadPool(3);
-		os = new ByteArrayOutputStream();
 		parser = new StandardMessageParser();
-		buffer = new StandardSendBuffer(os, es);
+		buffer = new StandardSendBuffer(conn, es);
 		setHandler(new AcknowledgementHandler(parser, buffer));
 	}
 	
@@ -45,7 +48,7 @@ class AcknowledgementHandlerTest extends MessageHandlerTest {
 	void cleanUp() {
 		es.shutdown();
 		try {
-			os.close();
+			conn.close();
 			buffer.close();
 		} catch (IOException e) {
 			e.printStackTrace();

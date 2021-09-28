@@ -9,6 +9,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.BusinessEvent;
 import controller.IController;
@@ -30,8 +32,9 @@ import model.dish.IDishMenuItemData;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.serialise.IOrderSerialiser;
 import test.external.buffer.BufferUtilityClass;
+import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyController;
-
+@Execution(value = ExecutionMode.SAME_THREAD)
 class OrderHandlerTest extends MessageHandlerTest {
 	private MessageFormat format = new StandardMessageFormat();
 	private String fieldSeparator = format.getDataFieldSeparatorForString();
@@ -40,13 +43,13 @@ class OrderHandlerTest extends MessageHandlerTest {
 	private IMessageParser parser;
 	private IAcknowledger acknowledger;
 	private IController controller;
-	private ByteArrayOutputStream os;
+	private DummyConnection conn;
 	private boolean isOrderReceivedByController;
 	
 	@BeforeEach
 	void prep() {
-		os = new ByteArrayOutputStream();
-		acknowledger = new StandardAcknowledger(os);
+		conn = new DummyConnection("clientaddress");
+		acknowledger = new StandardAcknowledger(conn);
 		parser = new StandardMessageParser();
 		controller = initDummyController();
 		setHandler(new OrderHandler(parser, acknowledger, controller));
@@ -56,7 +59,7 @@ class OrderHandlerTest extends MessageHandlerTest {
 	@AfterEach
 	void cleanUp() {
 		try {
-			os.close();
+			conn.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -111,6 +114,7 @@ class OrderHandlerTest extends MessageHandlerTest {
 		MessageFlag[] flags = null;
 		String serialisedData = "";
 		IMessage message = new Message(sequenceNumber, context, flags, serialisedData);
+		ByteArrayOutputStream os = conn.getOutputStream();
 		this.acknowledgementSuccessfulTest(message);
 		String serialisedExpected = (format.getMessageStart() + sequenceNumber + fieldSeparator +
 				context.toString() + fieldSeparator + MessageFlag.ACKNOWLEDGEMENT.toString() +

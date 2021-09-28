@@ -9,4 +9,6 @@ public interface IConnection extends Closeable {
 	OutputStream getOutputStream();
 	boolean isClosed();
 	String getTargetClientAddress();
+	void refreshInputStream();
+	void refreshOutputStream();
 }

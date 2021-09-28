@@ -17,6 +17,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import controller.IController;
@@ -37,7 +39,7 @@ import view.MainView;
 import view.composites.OrderTrackingArea;
 import view.repository.IListView;
 import view.repository.uifx.FXUIComponentFactory;
-
+@Execution(value = ExecutionMode.SAME_THREAD)
 class UnconfirmedOrderTest extends ApplicationTest {
 	private static IModel model;
 	private static IDishMenuItemSerialiser serialiser;
@@ -146,6 +148,8 @@ class UnconfirmedOrderTest extends ApplicationTest {
 		Assertions.assertEquals(model.getAllUnconfirmedOrders().length, 4);
 		
 		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+		
+		GeneralTestUtilityClass.performWait(300);
 		
 		Assertions.assertEquals(opHelper.getUnconfirmedOrders().size(), 4);
 	}

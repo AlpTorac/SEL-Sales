@@ -1,11 +1,10 @@
 package external.acknowledgement;
 
-import java.io.OutputStream;
-
 import external.connection.BasicMessageSender;
+import external.connection.IConnection;
 
 public class StandardAcknowledger extends Acknowledger {
-	public StandardAcknowledger(OutputStream os) {
-		super(os, new MinimalAcknowledgementStrategy(), new BasicMessageSender());
+	public StandardAcknowledger(IConnection conn) {
+		super(conn, new MinimalAcknowledgementStrategy(), new BasicMessageSender());
 	}
 }

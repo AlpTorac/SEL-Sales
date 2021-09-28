@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import controller.IController;
@@ -27,7 +29,7 @@ import view.composites.MenuDesignArea;
 import view.repository.HasText;
 import view.repository.IEventShooterOnClickUIComponent;
 import view.repository.uifx.FXUIComponentFactory;
-
+@Execution(value = ExecutionMode.SAME_THREAD)
 class MenuItemOperationsTest extends ApplicationTest {
 	private static IModel model;
 	private static IController controller;

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import external.connection.BasicMessageSender;
 import external.connection.IMessageSendingStrategy;
@@ -17,9 +19,10 @@ import external.message.Message;
 import external.message.MessageFormat;
 import external.message.StandardMessageFormat;
 import test.external.buffer.BufferUtilityClass;
-
+import test.external.dummy.DummyConnection;
+@Execution(value = ExecutionMode.SAME_THREAD)
 class BasicMessageSenderTest {
-	private ByteArrayOutputStream os;
+	private DummyConnection conn;
 	private IMessageSendingStrategy mss;
 	private MessageFormat messageFormat;
 	private String fieldSeparator;
@@ -27,7 +30,7 @@ class BasicMessageSenderTest {
 	
 	@BeforeEach
 	void prep() {
-		os = new ByteArrayOutputStream();
+		conn = new DummyConnection("clientaddress");
 		mss = new BasicMessageSender();
 		this.messageFormat = new StandardMessageFormat();
 		this.fieldSeparator = this.messageFormat.getDataFieldSeparatorForString();
@@ -37,7 +40,7 @@ class BasicMessageSenderTest {
 	@AfterEach
 	void cleanUp() {
 		try {
-			os.close();
+			conn.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -47,7 +50,8 @@ class BasicMessageSenderTest {
 	void sendMessageTest() {
 		String serialisedData = "abcdefg";
 		IMessage message = new Message(null, null, serialisedData);
-		Assertions.assertTrue(mss.sendMessage(os, message));
+		ByteArrayOutputStream os = conn.getOutputStream();
+		Assertions.assertTrue(mss.sendMessage(conn, message));
 		String serialisedMessage = (messageFormat.getMessageStart()+"0"+fieldSeparator +
 				fieldSeparator + fieldSeparator +
 				message.getSerialisedData() + messageFormat.getMessageEnd());
@@ -58,7 +62,8 @@ class BasicMessageSenderTest {
 	void sendMultipleMessagesTest() {
 		String serialisedData = "abcdefg";
 		IMessage message = new Message(null, null, serialisedData);
-		Assertions.assertTrue(mss.sendMessage(os, message));
+		ByteArrayOutputStream os = conn.getOutputStream();
+		Assertions.assertTrue(mss.sendMessage(conn, message));
 		String serialisedMessage1 = (messageFormat.getMessageStart()+"0"+fieldSeparator +
 				fieldSeparator + fieldSeparator +
 				message.getSerialisedData() + messageFormat.getMessageEnd());
@@ -66,10 +71,11 @@ class BasicMessageSenderTest {
 		
 		serialisedData = "gdfkhjlgs";
 		message = new Message(null, null, serialisedData);
-		Assertions.assertTrue(mss.sendMessage(os, message));
+		os = conn.getOutputStream();
+		Assertions.assertTrue(mss.sendMessage(conn, message));
 		String serialisedMessage2 = (messageFormat.getMessageStart()+"0"+fieldSeparator +
 				fieldSeparator + fieldSeparator +
 				message.getSerialisedData() + messageFormat.getMessageEnd());
-		BufferUtilityClass.assertOutputWrittenEquals(os, (serialisedMessage1+serialisedMessage2).getBytes());
+		BufferUtilityClass.assertOutputWrittenEquals(os, serialisedMessage2.getBytes());
 	}
 }

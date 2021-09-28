@@ -8,6 +8,8 @@ import java.util.Collection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import external.client.ClientDiscoveryStrategy;
 import external.client.ClientManager;
@@ -17,7 +19,7 @@ import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyClient;
 import test.external.dummy.DummyClientDiscoveryStrategy;
 import test.external.dummy.DummyClientManager;
-
+@Execution(value = ExecutionMode.SAME_THREAD)
 class ClientManagerTest {
 	private String client1Name;
 	private String client1Address;

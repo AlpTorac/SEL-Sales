@@ -7,9 +7,8 @@ import external.message.IMessage;
 
 public interface IConnectionManager extends Closeable {
 	IConnection getConnection();
-	void init();
 	ISendBuffer getSendBuffer();
-	IIncomingMessageListener getIncomingMessageListener();
+	IMessageReceptionist getIncomingMessageListener();
 	void sendMessage(IMessage message);
 	void close();
 }

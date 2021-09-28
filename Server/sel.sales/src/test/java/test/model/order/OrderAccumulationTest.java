@@ -8,6 +8,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import model.IModel;
 import model.Model;
@@ -15,7 +17,7 @@ import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemIDFactory;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
-
+@Execution(value = ExecutionMode.SAME_THREAD)
 class OrderAccumulationTest {
 	private static IModel model;
 	private static IDishMenuItemSerialiser serialiser;

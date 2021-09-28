@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import model.IModel;
 import model.Model;
@@ -18,7 +20,7 @@ import model.dish.IDishMenuItemFinder;
 import model.dish.IDishMenuItemIDFactory;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import test.GeneralTestUtilityClass;
-
+@Execution(value = ExecutionMode.SAME_THREAD)
 class DishMenuItemTest {
 	private static IModel model;
 	private static IDishMenuItemSerialiser serialiser;

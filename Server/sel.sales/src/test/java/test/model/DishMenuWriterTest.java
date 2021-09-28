@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import model.IModel;
 import model.Model;
@@ -21,7 +23,7 @@ import model.dish.IDishMenuItemData;
 import model.dish.serialise.FileDishMenuSerialiser;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.filewriter.FileDishMenuItemSerialiser;
-
+@Execution(value = ExecutionMode.SAME_THREAD)
 class DishMenuWriterTest {
 	private static IModel model;
 	private static IDishMenuItemSerialiser serialiser;

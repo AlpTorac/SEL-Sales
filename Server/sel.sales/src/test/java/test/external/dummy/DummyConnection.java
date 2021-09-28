@@ -3,43 +3,49 @@ package test.external.dummy;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import external.connection.IConnection;
 
 public class DummyConnection implements IConnection {
 
-	private InputStream is;
-	private OutputStream os;
+	private byte[] buffer;
+	private ByteArrayInputStream is;
+	private ByteArrayOutputStream os;
 	private String clientAddress;
 	private boolean isClosed = false;
 	
 	public DummyConnection(String clientAddress) {
 		this.clientAddress = clientAddress;
+		buffer = new byte[100];
+		this.is = new ByteArrayInputStream(buffer);
+		this.os = new ByteArrayOutputStream();
+	}
+	
+	public byte[] getInputStreamBuffer() {
+		return this.buffer;
 	}
 	
 	@Override
 	public void close() throws IOException {
-		this.is.close();
-		this.os.close();
+		if (this.is != null) {
+			this.is.close();
+		}
+		if (this.os != null) {
+			this.os.close();
+		}
 		this.isClosed = true;
 	}
 
 	@Override
-	public InputStream getInputStream() {
-		try {
-			if (this.is == null || this.is.available() == 0) {
-				this.is = new ByteArrayInputStream(new byte[100]);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+	public ByteArrayInputStream getInputStream() {
+		if (this.is == null || this.is.available() == 0) {
+			this.is = new ByteArrayInputStream(buffer);
 		}
 		return this.is;
 	}
 
 	@Override
-	public OutputStream getOutputStream() {
+	public ByteArrayOutputStream getOutputStream() {
 		if (this.os == null) {
 			this.os = new ByteArrayOutputStream();
 		}
@@ -54,6 +60,29 @@ public class DummyConnection implements IConnection {
 	@Override
 	public String getTargetClientAddress() {
 		return this.clientAddress;
+	}
+
+	@Override
+	public void refreshInputStream() {
+		try {
+			this.is.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		buffer = new byte[100];
+		this.is = new ByteArrayInputStream(buffer);
+	}
+
+	@Override
+	public void refreshOutputStream() {
+		try {
+			this.os.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.os = new ByteArrayOutputStream();
 	}
 
 }

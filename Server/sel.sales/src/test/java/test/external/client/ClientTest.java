@@ -5,10 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import external.client.IClient;
 import test.external.dummy.DummyClient;
-
+@Execution(value = ExecutionMode.SAME_THREAD)
 class ClientTest {
 	private String client1Name;
 	private String client1Address;

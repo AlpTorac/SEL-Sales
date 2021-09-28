@@ -8,6 +8,8 @@ import java.util.Collection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import controller.IController;
@@ -22,7 +24,7 @@ import test.model.order.OrderTestUtilityClass;
 import view.IView;
 import view.MainView;
 import view.repository.uifx.FXUIComponentFactory;
-
+@Execution(value = ExecutionMode.SAME_THREAD)
 class OrderInspectionAreaTest extends ApplicationTest {
 	private static IModel model;
 	private static IController controller;

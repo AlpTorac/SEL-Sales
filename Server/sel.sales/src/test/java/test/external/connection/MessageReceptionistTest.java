@@ -7,17 +7,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.IController;
 import external.buffer.ISendBuffer;
 import external.buffer.StandardSendBuffer;
-import external.connection.IIncomingMessageListener;
-import external.connection.IncomingMessageListener;
+import external.connection.IMessageReceptionist;
+import external.connection.MessageReceptionist;
 import external.message.IMessage;
 import external.message.IMessageSerialiser;
 import external.message.Message;
@@ -25,57 +28,48 @@ import external.message.MessageContext;
 import external.message.MessageFlag;
 import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
+import test.GeneralTestUtilityClass;
 import test.external.buffer.BufferUtilityClass;
+import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyController;
-
-class IncomingMessageListenerTest {
+@Execution(value = ExecutionMode.SAME_THREAD)
+class MessageReceptionistTest {
+	private long waitTime = 300;
+	
 	private IMessageSerialiser serialiser = new MessageSerialiser(new StandardMessageFormat());
 	private IController controller;
-	private byte[] isBuffer;
-	private ByteArrayInputStream is;
-	private ByteArrayOutputStream os;
+	private DummyConnection conn;
 	private ISendBuffer buffer;
 	private ExecutorService es;
 	private boolean isOrderReceivedByController;
 	
-	private IIncomingMessageListener listener;
+	private IMessageReceptionist listener;
 	
 	@BeforeEach
 	void prep() {
 		isOrderReceivedByController = false;
-		isBuffer = new byte[100];
-		is = new ByteArrayInputStream(isBuffer);
-		os = new ByteArrayOutputStream();
+		conn = new DummyConnection("clientaddress");
 		controller = initController();
-		es = Executors.newFixedThreadPool(3);
-		buffer = new StandardSendBuffer(os, es);
-		listener = new IncomingMessageListener(is, os, controller, buffer);
+		es = Executors.newCachedThreadPool();
+		buffer = new StandardSendBuffer(conn, es);
+		listener = new MessageReceptionist(conn, controller, buffer, es);
 	}
 	
 	@AfterEach
 	void cleanUp() {
 		try {
 			buffer.close();
-			is.close();
-			os.close();
+			conn.close();
+			listener.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		es.shutdown();
+		try {
+			es.awaitTermination(waitTime, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		isOrderReceivedByController = false;
-	}
-	
-	private void fillBuffer(String bufferContent) {
-		byte[] bytes = bufferContent.getBytes();
-		int i = 0;
-		byte currentByte = isBuffer[i];
-		while (currentByte != 0) {
-			i++;
-			currentByte = isBuffer[i];
-		}
-		for (int j = 0; j < bytes.length; j++) {
-			isBuffer[i+j] = bytes[j];
-		}
 	}
 	
 	private IController initController() {
@@ -94,9 +88,10 @@ class IncomingMessageListenerTest {
 		String serialisedData = "someOrderData";
 		IMessage orderDataMessage = new Message(sequenceNumber, context, flags, serialisedData);
 		String serialisedMessage = serialiser.serialise(orderDataMessage);
-		fillBuffer(serialisedMessage);
+		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialisedMessage);
+		ByteArrayOutputStream os = conn.getOutputStream();
+		Assertions.assertTrue(listener.checkForMessages());
 		
-		Assertions.assertTrue(listener.handleCurrentMessage());
 		String serialisedAckMessage = serialiser.serialise(orderDataMessage.getMinimalAcknowledgementMessage());
 		BufferUtilityClass.assertOutputWrittenEquals(os, serialisedAckMessage.getBytes());
 		Assertions.assertTrue(isOrderReceivedByController);
@@ -114,9 +109,9 @@ class IncomingMessageListenerTest {
 		String serialisedData = "";
 		IMessage orderAckMessage = new Message(sequenceNumber, context, flags, serialisedData);
 		String serialisedMessage = serialiser.serialise(orderAckMessage);
-		fillBuffer(serialisedMessage);
+		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialisedMessage);
+		Assertions.assertTrue(listener.checkForMessages());
 		
-		Assertions.assertTrue(listener.handleCurrentMessage());
 		Assertions.assertFalse(buffer.isBlocked());
 	}
 
@@ -132,9 +127,9 @@ class IncomingMessageListenerTest {
 		String serialisedData = "";
 		IMessage menuAckMessage = new Message(sequenceNumber, context, flags, serialisedData);
 		String serialisedMessage = serialiser.serialise(menuAckMessage);
-		fillBuffer(serialisedMessage);
+		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialisedMessage);
+		Assertions.assertTrue(listener.checkForMessages());
 		
-		Assertions.assertTrue(listener.handleCurrentMessage());
 		Assertions.assertFalse(buffer.isBlocked());
 	}
 	
@@ -142,8 +137,8 @@ class IncomingMessageListenerTest {
 	void unhandleableMessageTest() {
 		IMessage m = new Message(null, null, null);
 		String serialisedMessage = serialiser.serialise(m);
-		fillBuffer(serialisedMessage);
-		Assertions.assertFalse(listener.handleCurrentMessage());
+		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialisedMessage);
+		Assertions.assertFalse(listener.checkForMessages());
 	}
 	
 }

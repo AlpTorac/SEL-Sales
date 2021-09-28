@@ -6,12 +6,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import external.buffer.FIFOBuffer;
 import external.buffer.ISendBufferDataContainer;
 import external.message.IMessage;
 import external.message.Message;
-
+@Execution(value = ExecutionMode.SAME_THREAD)
 class FIFOBufferTest {
 	private ISendBufferDataContainer buffer;
 	

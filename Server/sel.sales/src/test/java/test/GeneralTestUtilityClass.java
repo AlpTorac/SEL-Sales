@@ -14,11 +14,19 @@ public final class GeneralTestUtilityClass {
 	@SuppressWarnings("unchecked")
 	public static <T,S> T getPrivateFieldValue(S o, String fieldName) {
 		Field f = null;
+		Class<?> classObject = o.getClass();
 		try {
-			f = o.getClass().getDeclaredField(fieldName);
+			while (f == null) {
+				Field[] fields = classObject.getDeclaredFields();
+				for (Field field : fields) {
+					if (field.getName().equals(fieldName)) {
+						f = field;
+					}
+				}
+				classObject = classObject.getSuperclass();
+			}
 			f.setAccessible(true);
-			
-		} catch (NoSuchFieldException | SecurityException e) {
+		} catch (SecurityException e) {
 			e.printStackTrace();
 		}
 		T result = null;

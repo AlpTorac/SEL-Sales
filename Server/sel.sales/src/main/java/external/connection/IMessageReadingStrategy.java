@@ -1,5 +1,7 @@
 package external.connection;
 
+import java.io.InputStream;
+
 public interface IMessageReadingStrategy {
-	String readMessage();
+	String[] readMessages(InputStream is);
 }

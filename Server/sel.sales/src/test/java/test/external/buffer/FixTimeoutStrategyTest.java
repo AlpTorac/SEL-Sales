@@ -12,13 +12,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import external.buffer.FixTimeoutStrategy;
 import external.buffer.HasTimeout;
 import external.buffer.ITimeoutStrategy;
 import test.GeneralTestUtilityClass;
-
+@Execution(value = ExecutionMode.SAME_THREAD)
 class FixTimeoutStrategyTest {
+	private long testCompensationInMillis = 100;
 	private long toleranceInMillis;
 	private ExecutorService es;
 	private long esTerminationTimeout;
@@ -32,7 +35,7 @@ class FixTimeoutStrategyTest {
 	void prep() {
 		toleranceInMillis = 100;
 		esTerminationTimeout = 100;
-		es = Executors.newFixedThreadPool(2);
+		es = Executors.newFixedThreadPool(10);
 		timeoutInMillis = 500;
 		shortestRandomDuration = timeoutInMillis / 10;
 		longestRandomDuration = timeoutInMillis;
@@ -76,7 +79,7 @@ class FixTimeoutStrategyTest {
 	void immediateResetTest() {
 		this.initTimeoutStrategy();
 		TimeoutTestUtilityClass.assertTimeoutResetSuccessful(ts, 0, startTime, 0, toleranceInMillis);
-		TimeoutTestUtilityClass.assertTimeoutShorter(startTime, 0, toleranceInMillis);
+		TimeoutTestUtilityClass.assertTimeoutShorter(startTime, 0, toleranceInMillis + testCompensationInMillis);
 	}
 	
 	@Test

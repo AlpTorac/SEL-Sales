@@ -14,15 +14,14 @@ public class StandardConnectionManager extends ConnectionManager {
 
 	@Override
 	protected ISendBuffer initSendBuffer() {
-		return new StandardSendBuffer(this.getConnection().getOutputStream(), this.getExecutorService());
+		return new StandardSendBuffer(this.getConnection(), this.getExecutorService());
 	}
 
 	@Override
-	protected IIncomingMessageListener initIncomingMessageListener() {
-		return new IncomingMessageListener(this.getConnection().getInputStream(),
-				this.getConnection().getOutputStream(),
+	protected IMessageReceptionist initIncomingMessageListener() {
+		return new MessageReceptionist(this.getConnection(),
 				controller,
-				this.getSendBuffer());
+				this.getSendBuffer(), this.getExecutorService());
 	}
 
 	@Override
