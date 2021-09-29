@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 import controller.BusinessEvent;
-import controller.IBusinessEventShooter;
+import controller.IApplicationEvent;
+import controller.IApplicationEventShooter;
 import controller.IController;
 import model.order.IOrderItemData;
 import view.repository.HasText;
@@ -13,7 +14,7 @@ import view.repository.IRadioButton;
 import view.repository.ITable;
 import view.repository.uiwrapper.ClickEventListener;
 
-public class ConfirmOrderListener extends ClickEventListener implements IBusinessEventShooter {
+public class ConfirmOrderListener extends ClickEventListener implements IApplicationEventShooter {
 	private OrderInspectionArea oia;
 	
 	private IController controller;
@@ -36,7 +37,7 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 
 	@Override
 	public void clickAction() {
-		this.fireBusinessEvent(controller);
+		this.fireApplicationEvent(controller);
 	}
 	
 	@Override
@@ -61,7 +62,7 @@ public class ConfirmOrderListener extends ClickEventListener implements IBusines
 	}
 
 	@Override
-	public BusinessEvent getBusinessEvent() {
+	public IApplicationEvent getApplicationEvent() {
 		return BusinessEvent.CONFIRM_ORDER;
 	}
 

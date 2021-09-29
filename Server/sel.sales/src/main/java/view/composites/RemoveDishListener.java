@@ -1,12 +1,13 @@
 package view.composites;
 
 import controller.BusinessEvent;
-import controller.IBusinessEventShooter;
+import controller.IApplicationEvent;
+import controller.IApplicationEventShooter;
 import controller.IController;
 import view.repository.HasText;
 import view.repository.uiwrapper.ClickEventListener;
 
-public class RemoveDishListener extends ClickEventListener implements IBusinessEventShooter {
+public class RemoveDishListener extends ClickEventListener implements IApplicationEventShooter {
 	private IController controller;
 	private HasText dishID;
 	
@@ -23,13 +24,13 @@ public class RemoveDishListener extends ClickEventListener implements IBusinessE
 	}
 
 	@Override
-	public BusinessEvent getBusinessEvent() {
+	public IApplicationEvent getApplicationEvent() {
 		return BusinessEvent.REMOVE_DISH;
 	}
 
 	@Override
 	public void clickAction() {
-		this.fireBusinessEvent(controller);
+		this.fireApplicationEvent(controller);
 	}
 
 	private HasText getDishID() {

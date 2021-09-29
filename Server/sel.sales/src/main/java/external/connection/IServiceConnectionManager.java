@@ -7,5 +7,6 @@ public interface IServiceConnectionManager {
 	void acceptIncomingConnection();
 	boolean isConnectionAllowed(String clientAddress);
 	void close();
+	void sendMessageTo(String clientAddress, IMessage message);
 	void broadcastMessage(IMessage message);
 }

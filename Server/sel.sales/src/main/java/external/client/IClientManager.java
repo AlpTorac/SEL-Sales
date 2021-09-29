@@ -3,14 +3,15 @@ package external.client;
 import java.util.Collection;
 
 public interface IClientManager {
-	boolean isAllowedToConnect(String clientAddress);
-	Collection<IClient> discoverClients();
-	ClientDiscoveryStrategy initDiscoveryStrategy();
-	void setDiscoveryStrategy(ClientDiscoveryStrategy cds);
-	void addClient(IClient client);
-	IClient getClient(String clientAddress);
+	void discoverClients();
+	void addClient(String clientAddress);
 	void removeClient(String clientAddress);
 	void allowClient(String clientAddress);
 	void blockClient(String clientAddress);
+	boolean isAllowedToConnect(String clientAddress);
+	Collection<IClient> getDiscoveredClients();
+	IClient getClient(String clientAddress);
+	ClientDiscoveryStrategy initDiscoveryStrategy();
+	void setDiscoveryStrategy(ClientDiscoveryStrategy cds);
 	int getClientCount();
 }

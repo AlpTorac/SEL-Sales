@@ -3,12 +3,13 @@ package view.composites;
 import java.math.BigDecimal;
 
 import controller.BusinessEvent;
-import controller.IBusinessEventShooter;
+import controller.IApplicationEvent;
+import controller.IApplicationEventShooter;
 import controller.IController;
 import view.repository.HasText;
 import view.repository.uiwrapper.ClickEventListener;
 
-public class AddDishListener extends ClickEventListener implements IBusinessEventShooter {
+public class AddDishListener extends ClickEventListener implements IApplicationEventShooter {
 	private IController controller;
 	private HasText dishName;
 	private HasText dishID;
@@ -31,7 +32,7 @@ public class AddDishListener extends ClickEventListener implements IBusinessEven
 
 	@Override
 	public void clickAction() {
-		this.fireBusinessEvent(controller);
+		this.fireApplicationEvent(controller);
 	}
 
 	@Override
@@ -58,7 +59,7 @@ public class AddDishListener extends ClickEventListener implements IBusinessEven
 	}
 
 	@Override
-	public BusinessEvent getBusinessEvent() {
+	public IApplicationEvent getApplicationEvent() {
 		return BusinessEvent.ADD_DISH;
 	}
 

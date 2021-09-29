@@ -14,7 +14,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.BusinessEvent;
 import controller.IController;
-import controller.handler.IBusinessEventHandler;
+import controller.handler.IApplicationEventHandler;
 import external.acknowledgement.IAcknowledger;
 import external.acknowledgement.StandardAcknowledger;
 import external.handler.OrderHandler;

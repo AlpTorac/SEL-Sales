@@ -3,6 +3,8 @@ package model;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import model.connectivity.IClientData;
+import model.connectivity.IClientDataFactory;
 import model.dish.DishMenu;
 import model.dish.DishMenuDataFactory;
 import model.dish.DishMenuItemFinder;
@@ -49,6 +51,8 @@ public class Model implements IModel {
 	 */
 	private IDishMenuSerialiser externalDishMenuSerialiser;
 	
+	private IClientDataFactory clientDataFac;
+	
 	private String orderFolderAddress;
 	private OrderFileWriter orderWriter;
 	
@@ -78,16 +82,28 @@ public class Model implements IModel {
 		this.externalDishMenuSerialiser = new ExternalDishMenuSerialiser();
 	}
 	
+	private void menuChanged() {
+		this.updatables.stream().filter(u -> u instanceof MenuUpdatable).forEach(u -> ((MenuUpdatable) u).refreshMenu());
+	}
+	
+	private void unconfirmedOrdersChanged() {
+		this.updatables.stream().filter(u -> u instanceof OrderUpdatable).forEach(u -> ((OrderUpdatable) u).refreshUnconfirmedOrders());
+	}
+	
+	private void confirmedOrdersChanged() {
+		this.updatables.stream().filter(u -> u instanceof OrderUpdatable).forEach(u -> ((OrderUpdatable) u).refreshConfirmedOrders());
+	}
+	
 	public void addMenuItem(String serialisedItemData) {
 		IDishMenuItemData data = this.dishMenuItemDeserialiser.deserialise(serialisedItemData);
 		if (this.dishMenu.addMenuItem(data)) {
-			this.updatables.forEach(u -> u.refreshMenu());
+			this.menuChanged();
 		}
 	}
 
 	public void removeMenuItem(String id) {
 		if (this.dishMenu.removeMenuItem(id)) {
-			this.updatables.forEach(u -> u.refreshMenu());
+			this.menuChanged();
 		}
 	}
 
@@ -109,7 +125,7 @@ public class Model implements IModel {
 	public void addUnconfirmedOrder(String orderData) {
 		IOrderData order = this.orderDeserialiser.deserialise(orderData);
 		this.orderUnconfirmedCollector.addOrder(order);
-		this.updatables.forEach(u -> u.refreshUnconfirmedOrders());
+		this.unconfirmedOrdersChanged();
 	}
 
 	@Override
@@ -131,14 +147,14 @@ public class Model implements IModel {
 	@Override
 	public void removeAllUnconfirmedOrders() {
 		this.orderUnconfirmedCollector.clearOrders();
-		this.updatables.forEach(u -> u.refreshUnconfirmedOrders());
+		this.unconfirmedOrdersChanged();
 	}
 
 	@Override
 	public void editMenuItem(String serialisedNewItemData) {
 		IDishMenuItemData data = dishMenuItemDeserialiser.deserialise(serialisedNewItemData);
 		this.dishMenu.editMenuItem(data);
-		this.updatables.forEach(u -> u.refreshMenu());
+		this.menuChanged();
 	}
 
 	@Override
@@ -146,8 +162,8 @@ public class Model implements IModel {
 		IOrderData orderData = this.orderDeserialiser.deserialise(serialisedConfirmedOrderData);
 		this.orderUnconfirmedCollector.removeOrder(orderData.getID());
 		this.orderConfirmedCollector.addOrder(orderData);
-		this.updatables.forEach(u -> u.refreshUnconfirmedOrders());
-		this.updatables.forEach(u -> u.refreshConfirmedOrders());
+		this.unconfirmedOrdersChanged();
+		this.confirmedOrdersChanged();
 	}
 
 	@Override
@@ -158,13 +174,13 @@ public class Model implements IModel {
 	@Override
 	public void removeUnconfirmedOrder(String id) {
 		this.orderUnconfirmedCollector.removeOrder(id);
-		this.updatables.forEach(u -> u.refreshUnconfirmedOrders());
+		this.unconfirmedOrdersChanged();
 	}
 
 	@Override
 	public void removeConfirmedOrder(String id) {
 		this.orderConfirmedCollector.removeOrder(id);
-		this.updatables.forEach(u -> u.refreshConfirmedOrders());
+		this.confirmedOrdersChanged();
 	}
 
 	@Override
@@ -180,7 +196,7 @@ public class Model implements IModel {
 	@Override
 	public void removeAllConfirmedOrders() {
 		this.orderConfirmedCollector.clearOrders();
-		this.updatables.forEach(u -> u.refreshConfirmedOrders());
+		this.confirmedOrdersChanged();
 	}
 
 	@Override
@@ -200,5 +216,16 @@ public class Model implements IModel {
 	@Override
 	public IDishMenuSerialiser getExternalDishMenuSerialiser() {
 		return this.externalDishMenuSerialiser;
+	}
+
+	@Override
+	public IClientDataFactory getClientDataFactory() {
+		return this.clientDataFac;
+	}
+
+	@Override
+	public void addKnownClient(IClientData clientData) {
+		// TODO Auto-generated method stub
+		
 	}
 }

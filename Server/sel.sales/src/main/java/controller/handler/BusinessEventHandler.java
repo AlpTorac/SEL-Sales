@@ -2,14 +2,8 @@ package controller.handler;
 
 import controller.IController;
 
-public abstract class BusinessEventHandler implements IBusinessEventHandler {
-	private IController controller;
-	
+public abstract class BusinessEventHandler extends ApplicationEventHandler {
 	BusinessEventHandler(IController controller) {
-		this.controller = controller;
-	}
-	
-	IController getController() {
-		return this.controller;
+		super(controller);
 	}
 }

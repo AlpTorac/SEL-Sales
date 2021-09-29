@@ -9,7 +9,7 @@ public class RemoveOrderHandler extends BusinessEventHandler {
 	}
 
 	@Override
-	public void handleBusinessEvent(Object[] args) {
+	public void handleApplicationEvent(Object[] args) {
 		this.getController().removeOrder((String) args[0]);
 	}
 

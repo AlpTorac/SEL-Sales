@@ -2,9 +2,10 @@ package view;
 
 import controller.IController;
 import model.IModel;
-import model.Updatable;
+import model.MenuUpdatable;
+import model.OrderUpdatable;
 
-public interface IView extends Updatable {
+public interface IView extends MenuUpdatable, OrderUpdatable {
 	IController getController();
 	IModel getModel();
 	void show();

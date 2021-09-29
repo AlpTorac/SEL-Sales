@@ -9,7 +9,7 @@ public class AddDishHandler extends BusinessEventHandler {
 	}
 
 	@Override
-	public void handleBusinessEvent(Object[] args) {
+	public void handleApplicationEvent(Object[] args) {
 		this.getController().addMenuItem((String) args[0]);
 	}
 }

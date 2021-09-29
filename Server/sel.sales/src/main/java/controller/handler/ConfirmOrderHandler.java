@@ -9,7 +9,7 @@ public class ConfirmOrderHandler extends BusinessEventHandler {
 	}
 
 	@Override
-	public void handleBusinessEvent(Object[] args) {
+	public void handleApplicationEvent(Object[] args) {
 		this.getController().confirmOrder((String) args[0]);
 	}
 

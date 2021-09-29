@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 public class ExternalDishMenuItemSerialiser implements IDishMenuItemSerialiser {
 
+	private IDishMenuItemFormat format = new ExternalDishMenuItemFormat();
+	
 	@Override
 	public String serialise(String dishName, String id, BigDecimal portionSize, BigDecimal productionCost,
 			BigDecimal price, BigDecimal discount) {
@@ -19,8 +21,7 @@ public class ExternalDishMenuItemSerialiser implements IDishMenuItemSerialiser {
 
 	@Override
 	public IDishMenuItemFormat getDishMenuFormat() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.format;
 	}
 
 }

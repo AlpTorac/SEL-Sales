@@ -1,20 +1,21 @@
 package external.client;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Stream;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ClientManager implements IClientManager {
 
 	private static boolean INITIAL_CONNECTION_ALLOWANCE = true;
 	private ClientDiscoveryStrategy cds;
-	private Collection<ClientManagerEntry> clients;
+	private Map<String, IClient> discoveredClients;
+	private Map<String, ClientManagerEntry> knownClients;
 	
 	public ClientManager() {
-		this.clients = new CopyOnWriteArrayList<ClientManagerEntry>();
+		this.discoveredClients = new ConcurrentHashMap<String, IClient>();
+		this.knownClients = new ConcurrentHashMap<String, ClientManagerEntry>();
 		this.cds = this.initDiscoveryStrategy();
+		this.discoverClients();
 	}
 	
 	@Override
@@ -27,14 +28,16 @@ public abstract class ClientManager implements IClientManager {
 	}
 
 	@Override
-	public void addClient(IClient client) {
-		ClientManagerEntry e = new ClientManagerEntry(client, INITIAL_CONNECTION_ALLOWANCE);
-		this.clients.add(e);
+	public void addClient(String clientAddress) {
+		IClient client = this.discoveredClients.get(clientAddress);
+		if (client != null) {
+			ClientManagerEntry e = new ClientManagerEntry(client, INITIAL_CONNECTION_ALLOWANCE);
+			this.knownClients.put(clientAddress, e);
+		}
 	}
 
 	private ClientManagerEntry getClientEntry(String clientAddress) {
-		Optional<ClientManagerEntry> soughtEntry = this.clients.stream().filter(e -> e.getClient().getClientAddress().equals(clientAddress)).findFirst();
-		return soughtEntry.isEmpty() ? null : soughtEntry.get();
+		return this.knownClients.get(clientAddress);
 	}
 	
 	@Override
@@ -48,35 +51,35 @@ public abstract class ClientManager implements IClientManager {
 	
 	@Override
 	public void removeClient(String clientAddress) {
-		this.clients.removeIf(e -> e.getClient().getClientAddress().equals(clientAddress));
+		this.knownClients.remove(clientAddress);
 	}
 
 	@Override
 	public void allowClient(String clientAddress) {
-		Iterator<ClientManagerEntry> it = this.clients.iterator();
-		while (it.hasNext()) {
-			ClientManagerEntry current = it.next();
-			if (current.getClient().getClientAddress().equals(clientAddress)) {
-				current.setConnectionAllowance(true);
-				return;
-			}
+		ClientManagerEntry e = this.getClientEntry(clientAddress);
+		if (e != null) {
+			e.setConnectionAllowance(true);
 		}
 	}
 
 	@Override
 	public void blockClient(String clientAddress) {
-		Iterator<ClientManagerEntry> it = this.clients.iterator();
-		while (it.hasNext()) {
-			ClientManagerEntry current = it.next();
-			if (current.getClient().getClientAddress().equals(clientAddress)) {
-				current.setConnectionAllowance(false);
-				return;
-			}
+		ClientManagerEntry e = this.getClientEntry(clientAddress);
+		if (e != null) {
+			e.setConnectionAllowance(false);
 		}
 	}
 
-	public Collection<IClient> discoverClients() {
-		return this.cds.discoverClients();
+	public void discoverClients() {
+		Collection<IClient> discoveredClients = this.cds.discoverClients();
+		
+		//Notify external
+		
+		if (discoveredClients != null) {
+			for (IClient c : discoveredClients) {
+				this.discoveredClients.put(c.getClientAddress(), c);
+			}
+		}
 	}
 	
 	@Override
@@ -86,7 +89,12 @@ public abstract class ClientManager implements IClientManager {
 	
 	@Override
 	public int getClientCount() {
-		return this.clients.size();
+		return this.knownClients.size();
+	}
+	
+	@Override
+	public Collection<IClient> getDiscoveredClients() {
+		return this.discoveredClients.values();
 	}
 	
 	private class ClientManagerEntry {

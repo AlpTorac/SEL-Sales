@@ -38,8 +38,19 @@ class ClientManagerTest {
 		this.client1 = new DummyClient(this.client1Name, this.client1Address);
 		this.client2 = new DummyClient(this.client2Name, this.client2Address);
 		this.manager = new DummyClientManager();
-		manager.addClient(client1);
-		manager.addClient(client2);
+		this.discoverClients();
+		manager.addClient(client1Address);
+		manager.addClient(client2Address);
+	}
+	
+	private void discoverClients() {
+		DummyClientDiscoveryStrategy cds = new DummyClientDiscoveryStrategy();
+		Collection<IClient> cs = new ArrayList<IClient>();
+		cs.add(client1);
+		cs.add(client2);
+		cds.setDiscoveredClients(cs);
+		this.manager.setDiscoveryStrategy(cds);
+		this.manager.discoverClients();
 	}
 	
 	@Test
@@ -52,13 +63,14 @@ class ClientManagerTest {
 	@Test
 	void addClientTest() {
 		this.manager = new DummyClientManager();
+		this.discoverClients();
 		Assertions.assertEquals(0, manager.getClientCount());
-		manager.addClient(client1);
+		manager.addClient(client1Address);
 		Assertions.assertEquals(1, manager.getClientCount());
 		Assertions.assertTrue(client1.equals(manager.getClient(client1.getClientAddress())));
 		
 		Assertions.assertEquals(1, manager.getClientCount());
-		manager.addClient(client2);
+		manager.addClient(client2Address);
 		Assertions.assertEquals(2, manager.getClientCount());
 		Assertions.assertTrue(client1.equals(manager.getClient(client1.getClientAddress())));
 		Assertions.assertTrue(client2.equals(manager.getClient(client2.getClientAddress())));
@@ -102,6 +114,7 @@ class ClientManagerTest {
 		DummyClientDiscoveryStrategy cds = new DummyClientDiscoveryStrategy();
 		cds.setDiscoveredClients(clientCol);
 		manager.setDiscoveryStrategy(cds);
-		Assertions.assertTrue(manager.discoverClients().containsAll(clientCol));
+		manager.discoverClients();
+		Assertions.assertTrue(manager.getDiscoveredClients().containsAll(clientCol));
 	}
 }

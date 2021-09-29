@@ -6,8 +6,8 @@ import controller.handler.ConfirmOrderHandler;
 import controller.handler.EditDishHandler;
 import controller.handler.RemoveDishHandler;
 import controller.handler.RemoveOrderHandler;
-import controller.manager.BusinessEventManager;
-import controller.manager.IBusinessEventManager;
+import controller.manager.ApplicationEventManager;
+import controller.manager.IApplicationEventManager;
 import model.IModel;
 
 public class MainController extends Controller {
@@ -17,14 +17,14 @@ public class MainController extends Controller {
 	}
 
 	@Override
-	protected IBusinessEventManager initEventManager() {
-		BusinessEventManager bem = new BusinessEventManager();
-		bem.addBusinessEventToHandlerMapping(BusinessEvent.ADD_DISH, new AddDishHandler(this));
-		bem.addBusinessEventToHandlerMapping(BusinessEvent.REMOVE_DISH, new RemoveDishHandler(this));
-		bem.addBusinessEventToHandlerMapping(BusinessEvent.EDIT_DISH, new EditDishHandler(this));
-		bem.addBusinessEventToHandlerMapping(BusinessEvent.ADD_ORDER, new AddOrderHandler(this));
-		bem.addBusinessEventToHandlerMapping(BusinessEvent.CONFIRM_ORDER, new ConfirmOrderHandler(this));
-		bem.addBusinessEventToHandlerMapping(BusinessEvent.REMOVE_ORDER, new RemoveOrderHandler(this));
+	protected IApplicationEventManager initEventManager() {
+		ApplicationEventManager bem = new ApplicationEventManager();
+		bem.addApplicationEventToHandlerMapping(BusinessEvent.ADD_DISH, new AddDishHandler(this));
+		bem.addApplicationEventToHandlerMapping(BusinessEvent.REMOVE_DISH, new RemoveDishHandler(this));
+		bem.addApplicationEventToHandlerMapping(BusinessEvent.EDIT_DISH, new EditDishHandler(this));
+		bem.addApplicationEventToHandlerMapping(BusinessEvent.ADD_ORDER, new AddOrderHandler(this));
+		bem.addApplicationEventToHandlerMapping(BusinessEvent.CONFIRM_ORDER, new ConfirmOrderHandler(this));
+		bem.addApplicationEventToHandlerMapping(BusinessEvent.REMOVE_ORDER, new RemoveOrderHandler(this));
 		return bem;
 	}
 }

@@ -23,14 +23,22 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 		this.controller = controller;
 	}
 
-	@Override
-	public IConnection getConnection(String clientAddress) {
+	private IConnectionManager getConnectionManager(String clientAddress) {
 		Iterator<IConnectionManager> it = this.connectionManagers.iterator();
 		while (it.hasNext()) {
-			IConnection current = it.next().getConnection();
-			if (current.getTargetClientAddress().equals(clientAddress)) {
+			IConnectionManager current = it.next();
+			if (current.getConnection().getTargetClientAddress().equals(clientAddress)) {
 				return current;
 			}
+		}
+		return null;
+	}
+	
+	@Override
+	public IConnection getConnection(String clientAddress) {
+		IConnectionManager cm = this.getConnectionManager(clientAddress);
+		if (cm != null) {
+			return cm.getConnection();
 		}
 		return null;
 	}
@@ -86,7 +94,10 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 		this.pool = null;
 		this.manager = null;
 	}
-
+	@Override
+	public void sendMessageTo(String clientAddress, IMessage message) {
+		this.getConnectionManager(clientAddress).sendMessage(message);
+	}
 	@Override
 	public void broadcastMessage(IMessage message) {
 		this.connectionManagers.forEach(cm -> cm.sendMessage(message));

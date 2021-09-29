@@ -1,11 +1,12 @@
 package view.composites;
 
 import controller.BusinessEvent;
-import controller.IBusinessEventShooter;
+import controller.IApplicationEvent;
+import controller.IApplicationEventShooter;
 import controller.IController;
 import view.repository.uiwrapper.ClickEventListener;
 
-public class RemoveOrderListener extends ClickEventListener implements IBusinessEventShooter {
+public class RemoveOrderListener extends ClickEventListener implements IApplicationEventShooter {
 	private IController controller;
 	private OrderInspectionArea oia;
 	
@@ -15,7 +16,7 @@ public class RemoveOrderListener extends ClickEventListener implements IBusiness
 	}
 	
 	public void clickAction() {
-		this.fireBusinessEvent(controller);
+		this.fireApplicationEvent(controller);
 	}
 	
 	@Override
@@ -26,7 +27,7 @@ public class RemoveOrderListener extends ClickEventListener implements IBusiness
 	}
 
 	@Override
-	public BusinessEvent getBusinessEvent() {
+	public IApplicationEvent getApplicationEvent() {
 		return BusinessEvent.REMOVE_ORDER;
 	}
 
