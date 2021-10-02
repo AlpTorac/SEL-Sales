@@ -3,12 +3,16 @@ package test.external.dummy;
 import java.util.concurrent.ExecutorService;
 
 import controller.IController;
-import external.buffer.ISendBuffer;
-import external.buffer.StandardSendBuffer;
+import external.connection.ConnectionListener;
 import external.connection.ConnectionManager;
+import external.connection.DisconnectionListener;
 import external.connection.IConnection;
-import external.connection.IMessageReceptionist;
-import external.connection.MessageReceptionist;
+import external.connection.incoming.IMessageReceptionist;
+import external.connection.incoming.MessageReceptionist;
+import external.connection.outgoing.ISendBuffer;
+import external.connection.outgoing.StandardSendBuffer;
+import external.connection.pingpong.IPingPong;
+import external.connection.pingpong.StandardPingPong;
 
 public class DummyConnectionManager extends ConnectionManager {
 
@@ -23,16 +27,32 @@ public class DummyConnectionManager extends ConnectionManager {
 
 	@Override
 	protected IMessageReceptionist initIncomingMessageListener() {
-		return new MessageReceptionist(this.getConnection(), controller, this.getSendBuffer(), this.getExecutorService());
+		return new MessageReceptionist(this.getConnection(), controller, this.getSendBuffer(), this.getPingPong(), this.getExecutorService());
 	}
 
 	@Override
 	protected Runnable[] initConnectionRunnables() {
 		Runnable[] rs = new Runnable[] {
 				this.initMessageReadingRunnable(),
-				this.initMessageSendingRunnable()
+				this.initMessageSendingRunnable(),
+				this.initPingPongRunnable()
 		};
 		return rs;
+	}
+
+	@Override
+	protected ConnectionListener initConnListener() {
+		return new ConnectionListener(controller);
+	}
+
+	@Override
+	protected DisconnectionListener initDisconListener() {
+		return new DisconnectionListener(controller);
+	}
+
+	@Override
+	protected IPingPong initPingPong() {
+		return new StandardPingPong(this.getConnection(), this.getExecutorService());
 	}
 
 }

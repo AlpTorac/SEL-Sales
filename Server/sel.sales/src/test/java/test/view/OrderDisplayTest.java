@@ -18,9 +18,10 @@ import model.IModel;
 import model.Model;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
-import test.MainViewOperationsUtilityClass;
+import test.UIOperationsUtilityClass;
 import view.IView;
 import view.MainView;
+import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class OrderDisplayTest extends ApplicationTest {
@@ -57,7 +58,7 @@ class OrderDisplayTest extends ApplicationTest {
 	public void start(Stage stage) {
 		model = new Model();
 		controller = new MainController(model);
-		view = new MainView(new FXUIComponentFactory(), controller, model);
+		view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 		view.startUp();
 		view.show();
 		dishMenuItemSerialiser = model.getDishMenuItemSerialiser();
@@ -75,7 +76,7 @@ class OrderDisplayTest extends ApplicationTest {
 		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(unconfirmedOrders.length, 3);
 		
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
 		opHelper.clickOnUnconfirmedOrder(0);
 		opHelper.assertShownOrderEquals(unconfirmedOrders[0]);
 		opHelper.clickOnUnconfirmedOrder(1);

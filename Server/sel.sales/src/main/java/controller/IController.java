@@ -1,7 +1,6 @@
 package controller;
 
 import controller.handler.IApplicationEventHandler;
-import model.connectivity.IClientData;
 import model.dish.IDishMenuItemData;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.serialise.IOrderSerialiser;
@@ -15,7 +14,17 @@ public interface IController {
 	void removeOrder(String id);
 	void removeMenuItem(String id);
 	void confirmOrder(String serialisedConfirmedOrderData);
-	void addKnownClient(IClientData clientData);
+	
+	void addDiscoveredClient(String clientName, String clientAddress);
+	void addKnownClient(String clientAddress);
+	void removeKnownClient(String clientAddress);
+	void allowKnownClient(String clientAddress);
+	void blockKnownClient(String clientAddress);
+	void requestClientRediscovery();
+	
+	void clientConnected(String clientAddress);
+	void clientDisconnected(String clientAddress);
+	
 	IOrderSerialiser getOrderSerialiser();
 	IDishMenuItemSerialiser getDishMenuItemSerialiser();
 	IDishMenuItemData getItem(String id);

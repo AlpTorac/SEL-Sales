@@ -6,12 +6,15 @@ import java.io.InputStream;
 
 import org.junit.jupiter.api.Assertions;
 
-import external.buffer.ISendBuffer;
+import external.connection.outgoing.ISendBuffer;
 import external.message.IMessage;
 
 public final class BufferUtilityClass {
 	public static void assertOutputWrittenEquals(ByteArrayOutputStream os, byte[] written) {
 		Assertions.assertArrayEquals(written, os.toByteArray());
+	}
+	public static void assertOutputWrittenContains(ByteArrayOutputStream os, byte[] written) {
+		Assertions.assertTrue(os.toString().contains(new String(written)));
 	}
 	public static void assertInputStoredEquals(InputStream is, byte[] read) {
 		try {

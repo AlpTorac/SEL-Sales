@@ -32,12 +32,13 @@ import model.dish.IDishMenuItemIDFactory;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
 import test.GeneralTestUtilityClass;
-import test.MainViewOperationsUtilityClass;
+import test.UIOperationsUtilityClass;
 import test.model.order.ClientSimulant;
 import view.IView;
 import view.MainView;
 import view.composites.OrderTrackingArea;
 import view.repository.IListView;
+import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class UnconfirmedOrderTest extends ApplicationTest {
@@ -68,7 +69,7 @@ class UnconfirmedOrderTest extends ApplicationTest {
 	private static IController controller;
 	private static IView view;
 	
-	private static ExecutorService pool = Executors.newFixedThreadPool(10);
+	private static ExecutorService pool = Executors.newCachedThreadPool();
 	
 	@BeforeEach
 	public void prep() {
@@ -84,7 +85,7 @@ class UnconfirmedOrderTest extends ApplicationTest {
 	public void start(Stage stage) {
 		model = new Model();
 		controller = new MainController(model);
-		view = new MainView(new FXUIComponentFactory(), controller, model);
+		view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 		view.startUp();
 		serialiser = model.getDishMenuItemSerialiser();
 		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
@@ -102,7 +103,7 @@ class UnconfirmedOrderTest extends ApplicationTest {
 		
 		Assertions.assertEquals(model.getAllUnconfirmedOrders().length, 1);
 		
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
 		
 		Assertions.assertEquals(opHelper.getUnconfirmedOrders().size(), 1);
 	}
@@ -147,7 +148,7 @@ class UnconfirmedOrderTest extends ApplicationTest {
 		
 		Assertions.assertEquals(model.getAllUnconfirmedOrders().length, 4);
 		
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
 		
 		GeneralTestUtilityClass.performWait(300);
 		

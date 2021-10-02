@@ -7,7 +7,7 @@ import java.time.temporal.ChronoUnit;
 
 import org.junit.jupiter.api.Assertions;
 
-import external.buffer.ITimeoutStrategy;
+import external.connection.timeout.ITimeoutStrategy;
 import test.GeneralTestUtilityClass;
 
 public final class TimeoutTestUtilityClass {

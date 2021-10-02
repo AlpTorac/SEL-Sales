@@ -2,53 +2,62 @@ package view;
 
 import controller.IController;
 import model.IModel;
-import model.order.IOrderData;
-import view.repository.uiwrapper.ClickEventListener;
-import view.repository.uiwrapper.ItemChangeListener;
+import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.UIComponent;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIInnerFrame;
+import view.repository.uiwrapper.UILayout;
 import view.repository.uiwrapper.UIRootComponent;
-import view.composites.AddDishListener;
-import view.composites.ConfirmAllOrdersListener;
-import view.composites.ConfirmOrderListener;
-import view.composites.EditDishListener;
-import view.composites.MainWindow;
-import view.composites.MenuDesignArea;
-import view.composites.OrderInspectionArea;
-import view.composites.OrderInspectionListener;
-import view.composites.OrderTrackingArea;
-import view.composites.RemoveDishListener;
-import view.composites.RemoveOrderListener;
-import view.composites.UnconfirmedOrderListener;
+import view.repository.uiwrapper.UITabPane;
+import view.composites.ConnectionArea;
+import view.composites.MainArea;
 
 public class MainView extends View {
 
 	private UIRootComponent mainWindow;
 	private UIInnerFrame frame;
-	private MainWindow mainDisplay;
 	
-	private MenuDesignArea mda;
-	private OrderTrackingArea ota;
-	private OrderInspectionArea oia;
+	private UILayout tabArea;
+	
+	private UITabPane tabPane;
+	
+	private MainArea mainArea;
+	private ConnectionArea connArea;
+	
+//	private MenuDesignArea mda;
+//	private OrderTrackingArea ota;
+//	private OrderInspectionArea oia;
 	
 	private UIComponentFactory fac;
+	private AdvancedUIComponentFactory advFac;
 	
-	public MainView(UIComponentFactory fac, IController controller, IModel model) {
+	public MainView(UIComponentFactory fac, AdvancedUIComponentFactory advFac, IController controller, IModel model) {
 		super(controller, model);
 		this.fac = fac;
+		this.advFac = advFac;
 		this.initUI();
 		this.initListeners();
 	}
 	
 	private void initUI() {
 		this.mainWindow = this.initMainWindow();
-		this.mainDisplay = this.initMainDisplay();
-		this.frame = this.initFrame(this.mainDisplay);
-		
-		this.mda = this.mainDisplay.getMenuDesignArea();
-		this.ota = this.mainDisplay.getOrderTrackingArea();
-		this.oia = this.mainDisplay.getOrderInspectionArea();
+		this.mainArea = this.initMainArea();
+		this.connArea = this.initConnArea();
+		this.tabArea = this.initTabArea();
+		this.tabPane = this.initTabPane();
+		this.tabPane.attachTo(this.tabArea);
+		this.frame = this.initFrame(this.tabArea);
+	}
+	
+	protected UILayout initTabArea() {
+		return this.fac.createHBoxLayout();
+	}
+	
+	protected UITabPane initTabPane() {
+		UITabPane tp = this.fac.createTabPane();
+		tp.addTab("Menu/Orders", this.mainArea);
+		tp.addTab("Connectivity", this.connArea);
+		return tp;
 	}
 	
 	protected UIRootComponent initMainWindow() {
@@ -56,39 +65,17 @@ public class MainView extends View {
 		rc.setPrefSize(1000, 1000);
 		return rc;
 	}
-	protected MainWindow initMainDisplay() {
-		return new MainWindow(this.fac);
+	protected MainArea initMainArea() {
+		return new MainArea(this.getController(), this.getModel(), this.fac, this.advFac);
+	}
+	protected ConnectionArea initConnArea() {
+		return new ConnectionArea(this.getController(), this.fac, this.advFac);
 	}
 	protected UIInnerFrame initFrame(UIComponent parent) {
 		return this.fac.createInnerFrame(parent);
 	}
 	protected void initListeners() {
-		ClickEventListener addDishListener = new AddDishListener(this.getController(), mda);
-		mda.getAddButton().addClickListener(addDishListener);
-		
-		ClickEventListener removeDishListener = new RemoveDishListener(this.getController(), mda);
-		mda.getRemoveButton().addClickListener(removeDishListener);
-		
-		ClickEventListener editDishListener = new EditDishListener(this.getController(), mda);
-		mda.getEditButton().addClickListener(editDishListener);
-		
-		ClickEventListener unconfirmedOrderInspectionListener = new OrderInspectionListener(ota, oia);
-		ota.getUnconfirmedOrderList().addClickListener(unconfirmedOrderInspectionListener);
-		
-		ClickEventListener pastOrderInspectionListener = new OrderInspectionListener(ota, oia);
-		ota.getConfirmedOrderList().addClickListener(pastOrderInspectionListener);
-		
-		ClickEventListener orderConfirmListener = new ConfirmOrderListener(this.getController(), oia);
-		oia.getAddConfirmButton().addClickListener(orderConfirmListener);
-		
-		ClickEventListener removeOrderListener = new RemoveOrderListener(this.getController(), oia);
-		oia.getRemoveButton().addClickListener(removeOrderListener);
-		
-		ClickEventListener confirmAllOrdersListener = new ConfirmAllOrdersListener(oia, ota);
-		oia.getConfirmAllButton().addClickListener(confirmAllOrdersListener);
-		
-		ItemChangeListener unconfirmedOrderListener = new UnconfirmedOrderListener(ota, oia);
-		ota.getUnconfirmedOrderList().addItemChangeListener(unconfirmedOrderListener);
+
 	}
 	public void show() {
 		this.mainWindow.setInnerFrame(frame);
@@ -96,23 +83,17 @@ public class MainView extends View {
 	}
 	@Override
 	public void refreshMenu() {
-		this.mda.refreshMenuDisplay(this.getModel().getMenuData());
+		this.mainArea.refreshMenu();
 	}
 
 	@Override
 	public void refreshUnconfirmedOrders() {
-		this.ota.clearUnconfirmedOrderList();
-		this.ota.addUnconfirmedOrders(this.getModel().getAllUnconfirmedOrders());
+		this.mainArea.refreshUnconfirmedOrders();
 	}
 
 	@Override
 	public void refreshConfirmedOrders() {
-		this.ota.clearConfirmedOrderList();
-		IOrderData[] confirmedOrders = this.getModel().getAllConfirmedOrders();
-		
-		for (IOrderData order : confirmedOrders) {
-			this.ota.confirmOrder(order);
-		}
+		this.mainArea.refreshConfirmedOrders();
 	}
 
 	@Override
@@ -123,5 +104,15 @@ public class MainView extends View {
 	@Override
 	public void close() {
 		this.mainWindow.close();
+	}
+
+	@Override
+	public void refreshDiscoveredClients() {
+		this.connArea.refreshDiscoveredClients(this.getModel().getAllDiscoveredClientData());
+	}
+
+	@Override
+	public void refreshKnownClients() {
+		this.connArea.refreshKnownClients(this.getModel().getAllKnownClientData());
 	}
 }

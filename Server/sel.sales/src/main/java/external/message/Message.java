@@ -81,4 +81,9 @@ public class Message implements IMessage {
 	public void setSequenceNumber(int sequenceNumber) {
 		this.sequenceNumber = sequenceNumber;
 	}
+
+	@Override
+	public boolean isPingPongMessage() {
+		return this.hasContext(MessageContext.PINGPONG);
+	}
 }

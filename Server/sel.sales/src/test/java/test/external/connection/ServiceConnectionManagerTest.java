@@ -13,10 +13,10 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.IController;
-import external.buffer.ISendBuffer;
 import external.client.IClient;
 import external.client.IClientManager;
 import external.connection.IConnectionManager;
+import external.connection.outgoing.ISendBuffer;
 import external.message.IMessage;
 import external.message.IMessageSerialiser;
 import external.message.Message;
@@ -59,6 +59,8 @@ class ServiceConnectionManagerTest {
 		this.discoverClients();
 		manager.addClient(client1Address);
 		manager.addClient(client2Address);
+		manager.allowClient(client1Address);
+		manager.allowClient(client2Address);
 		controller = initController();
 		serviceConnectionManager = new DummyServiceConnectionManager(manager, controller);
 		isOrderReceivedByController = false;

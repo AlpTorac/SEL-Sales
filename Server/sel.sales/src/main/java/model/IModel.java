@@ -1,7 +1,6 @@
 package model;
 
 import model.connectivity.IClientData;
-import model.connectivity.IClientDataFactory;
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
 import model.dish.serialise.IDishMenuItemSerialiser;
@@ -17,7 +16,6 @@ public interface IModel {
 	void addMenuItem(String serialisedItemData);
 	void editMenuItem(String serialisedNewItemData);
 	void removeMenuItem(String id);
-	void addKnownClient(IClientData clientData);
 	void subscribe(Updatable updatable);
 	IDishMenuItemData getMenuItem(String id);
 	IDishMenuData getMenuData();
@@ -27,7 +25,21 @@ public interface IModel {
 	IDishMenuItemSerialiser getDishMenuItemSerialiser();
 	IDishMenuSerialiser getExternalDishMenuSerialiser();
 	IOrderSerialiser getOrderSerialiser();
-	IClientDataFactory getClientDataFactory();
+	
+	void addDiscoveredClient(String clientName, String clientAddress);
+	void addKnownClient(String clientAddress);
+	void removeKnownClient(String clientAddress);
+	void allowKnownClient(String clientAddress);
+	void blockKnownClient(String clientAddress);
+	boolean isClientRediscoveryRequested();
+	void requestClientRediscovery();
+	
+	void clientConnected(String clientAddress);
+	void clientDisconnected(String clientAddress);
+	
+	IClientData[] getAllKnownClientData();
+	IClientData[] getAllDiscoveredClientData();
+	
 	void removeAllUnconfirmedOrders();
 	void removeAllConfirmedOrders();
 	default void removeAllOrders() {

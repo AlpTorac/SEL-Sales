@@ -16,9 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import external.connection.IMessageReceptionist;
-import external.connection.IMessageReadingStrategy;
-import external.connection.StandardReader;
+import external.connection.incoming.IMessageReadingStrategy;
+import external.connection.incoming.IMessageReceptionist;
+import external.connection.incoming.StandardReader;
 import test.GeneralTestUtilityClass;
 import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyConnection;

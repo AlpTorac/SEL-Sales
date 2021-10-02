@@ -31,15 +31,15 @@ public class BluetoothServerExternal extends ServerExternal {
 	
 	@Override
 	protected BluetoothClientManager initClientManager() {
-		return new BluetoothClientManager();
+		return new BluetoothClientManager(this.getController());
 	}
 	
 	@Override
 	protected BluetoothService initService() {
-		return this.initBluetoothService(new UUID("0x1111", true), "SEL_Service");
+		return this.initBluetoothService(new UUID(0x1111), "SEL_Service");
 	}
 	
 	private BluetoothService initBluetoothService(UUID id, String name) {
-		return new BluetoothService(id, name, this.getClientManager(), this.getController());
+		return new BluetoothService(id, name, this.initClientManager(), this.getController());
 	}
 }

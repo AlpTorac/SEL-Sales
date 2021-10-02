@@ -8,6 +8,7 @@ public interface IMessage {
 	String getSerialisedData();
 	IMessage getMinimalAcknowledgementMessage();
 	boolean isAcknowledgementMessage();
+	boolean isPingPongMessage();
 	boolean hasFlag(MessageFlag f);
 	boolean hasContext(MessageContext c);
 }

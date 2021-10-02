@@ -1,7 +1,8 @@
 package external;
 
-import model.Updatable;
+import model.ExternalUpdatable;
+import model.KnownClientUpdatable;
 
-public interface IExternal extends Updatable {
+public interface IExternal extends ExternalUpdatable, KnownClientUpdatable {
 	
 }

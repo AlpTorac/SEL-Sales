@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -17,10 +18,13 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.IController;
-import external.buffer.ISendBuffer;
-import external.buffer.StandardSendBuffer;
-import external.connection.IMessageReceptionist;
-import external.connection.MessageReceptionist;
+import external.connection.incoming.IMessageReceptionist;
+import external.connection.incoming.MessageReceptionist;
+import external.connection.outgoing.BasicMessageSender;
+import external.connection.outgoing.ISendBuffer;
+import external.connection.outgoing.StandardSendBuffer;
+import external.connection.pingpong.IPingPong;
+import external.connection.timeout.FixTimeoutStrategy;
 import external.message.IMessage;
 import external.message.IMessageSerialiser;
 import external.message.Message;
@@ -32,6 +36,7 @@ import test.GeneralTestUtilityClass;
 import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyController;
+import test.external.dummy.DummyPingPong;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class MessageReceptionistTest {
 	private long waitTime = 300;
@@ -40,8 +45,11 @@ class MessageReceptionistTest {
 	private IController controller;
 	private DummyConnection conn;
 	private ISendBuffer buffer;
+	private IPingPong pingPong;
 	private ExecutorService es;
 	private boolean isOrderReceivedByController;
+	
+	private int resendLimit = 5;
 	
 	private IMessageReceptionist listener;
 	
@@ -52,7 +60,8 @@ class MessageReceptionistTest {
 		controller = initController();
 		es = Executors.newCachedThreadPool();
 		buffer = new StandardSendBuffer(conn, es);
-		listener = new MessageReceptionist(conn, controller, buffer, es);
+		pingPong = new DummyPingPong(conn, new BasicMessageSender(), new FixTimeoutStrategy(10000, ChronoUnit.MILLIS), es, resendLimit);
+		listener = new MessageReceptionist(conn, controller, buffer, pingPong, es);
 	}
 	
 	@AfterEach
@@ -61,6 +70,7 @@ class MessageReceptionistTest {
 			buffer.close();
 			conn.close();
 			listener.close();
+			pingPong.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -139,6 +149,23 @@ class MessageReceptionistTest {
 		String serialisedMessage = serialiser.serialise(m);
 		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialisedMessage);
 		Assertions.assertFalse(listener.checkForMessages());
+	}
+	
+	@Test
+	void handlePingPongMessageTest() {
+		Assertions.assertTrue(pingPong.start());
+		pingPong.timeout();
+		Assertions.assertTrue(resendLimit - 1 == pingPong.getRemainingResendTries());
+		
+		MessageContext context = MessageContext.PINGPONG;
+		MessageFlag[] flags = new MessageFlag[] {};
+		String serialisedData = "";
+		IMessage m = new Message(context, flags, serialisedData);
+		String sm = serialiser.serialise(m);
+		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), sm);
+		Assertions.assertTrue(listener.checkForMessages());
+		
+		Assertions.assertTrue(resendLimit == pingPong.getRemainingResendTries());
 	}
 	
 }

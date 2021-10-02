@@ -13,6 +13,7 @@ public abstract class External implements IExternal {
 	protected External(IController controller, IModel model) {
 		this.controller = controller;
 		this.model = model;
+		this.subscribe();
 	}
 	
 	protected abstract IService initService();
@@ -36,5 +37,13 @@ public abstract class External implements IExternal {
 	
 	protected void setService(IService service) {
 		this.service = service;
+	}
+	@Override
+	public void rediscoverClients() {
+		this.service.getClientManager().discoverClients();
+	}
+	@Override
+	public void refreshKnownClients() {
+		this.service.getClientManager().receiveKnownClientData(this.model.getAllKnownClientData());
 	}
 }

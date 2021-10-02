@@ -4,6 +4,7 @@ import javafx.scene.layout.Pane;
 import view.repository.IUIComponent;
 import view.repository.uiwrapper.ToggleGroupWrapper;
 import view.repository.uiwrapper.UIButton;
+import view.repository.uiwrapper.UICheckBox;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIGridLayout;
 import view.repository.uiwrapper.UIHBoxLayout;
@@ -12,6 +13,7 @@ import view.repository.uiwrapper.UILabel;
 import view.repository.uiwrapper.UIListView;
 import view.repository.uiwrapper.UIRadioButton;
 import view.repository.uiwrapper.UIRootComponent;
+import view.repository.uiwrapper.UITabPane;
 import view.repository.uiwrapper.UITable;
 import view.repository.uiwrapper.UITextBox;
 import view.repository.uiwrapper.UIVBoxLayout;
@@ -92,5 +94,19 @@ public class FXUIComponentFactory extends UIComponentFactory {
 		FXLabel wrapee = new FXLabel();
 		UILabel listView = new UILabel(wrapee);
 		return listView;
+	}
+
+	@Override
+	public UICheckBox createCheckBox() {
+		FXCheckBox wrapee = new FXCheckBox();
+		UICheckBox checkBox = new UICheckBox(wrapee);
+		return checkBox;
+	}
+
+	@Override
+	public UITabPane createTabPane() {
+		FXTabPane wrapee = new FXTabPane();
+		UITabPane tabPane = new UITabPane(wrapee);
+		return tabPane;
 	}
 }

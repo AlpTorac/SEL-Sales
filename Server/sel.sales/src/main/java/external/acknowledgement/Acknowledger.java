@@ -1,7 +1,7 @@
 package external.acknowledgement;
 
 import external.connection.IConnection;
-import external.connection.IMessageSendingStrategy;
+import external.connection.outgoing.IMessageSendingStrategy;
 import external.message.IMessage;
 
 public abstract class Acknowledger implements IAcknowledger {

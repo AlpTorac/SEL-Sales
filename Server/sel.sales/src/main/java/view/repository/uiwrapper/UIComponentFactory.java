@@ -32,6 +32,9 @@ public abstract class UIComponentFactory implements IUIComponentFactory {
 	public abstract UIRadioButton createRadioButton();
 	
 	@Override
+	public abstract UICheckBox createCheckBox();
+	
+	@Override
 	public abstract <T> UIListView<T> createListView();
 	
 	@Override
@@ -39,4 +42,7 @@ public abstract class UIComponentFactory implements IUIComponentFactory {
 	
 	@Override
 	public abstract UILabel createLabel();
+	
+	@Override
+	public abstract UITabPane createTabPane();
 }

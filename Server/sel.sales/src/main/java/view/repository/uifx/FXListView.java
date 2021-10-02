@@ -80,8 +80,6 @@ public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T
 	
 	@Override
 	public void addItemChangeListener(ItemChangeListener l) {
-		ListView<T> ref = this;
-		
 		ListChangeListener<T> listener = new ListChangeListener<T>() {
 			@Override
 			public void onChanged(Change<? extends T> c) {
@@ -105,6 +103,11 @@ public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T
 			}
 		};
 		
-		ref.getItems().addListener(listener);
+		super.getItems().addListener(listener);
+	}
+	
+	@Override
+	public T getSelectedElement() {
+		return super.getSelectionModel().getSelectedItem();
 	}
 }

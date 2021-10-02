@@ -3,7 +3,6 @@ package controller;
 import controller.handler.IApplicationEventHandler;
 import controller.manager.IApplicationEventManager;
 import model.IModel;
-import model.connectivity.IClientData;
 import model.dish.IDishMenuItemData;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.serialise.IOrderSerialiser;
@@ -51,8 +50,8 @@ public abstract class Controller implements IController {
 		this.model.removeConfirmedOrder(id);
 	}
 	
-	public void addKnownClient(IClientData clientData) {
-		this.model.addKnownClient(clientData);
+	public void addKnownClient(String clientAddress) {
+		this.model.addKnownClient(clientAddress);
 	}
 	
 	@Override
@@ -64,5 +63,38 @@ public abstract class Controller implements IController {
 	}
 	public IOrderSerialiser getOrderSerialiser() {
 		return this.model.getOrderSerialiser();
+	}
+	@Override
+	public void addDiscoveredClient(String clientName, String clientAddress) {
+		this.model.addDiscoveredClient(clientName, clientAddress);
+	}
+
+	@Override
+	public void removeKnownClient(String clientAddress) {
+		this.model.removeKnownClient(clientAddress);
+	}
+
+	@Override
+	public void allowKnownClient(String clientAddress) {
+		this.model.allowKnownClient(clientAddress);
+	}
+
+	@Override
+	public void blockKnownClient(String clientAddress) {
+		this.model.blockKnownClient(clientAddress);
+	}
+	
+	@Override
+	public void clientConnected(String clientAddress) {
+		this.model.clientConnected(clientAddress);
+	}
+
+	@Override
+	public void clientDisconnected(String clientAddress) {
+		this.model.clientDisconnected(clientAddress);
+	}
+	@Override
+	public void requestClientRediscovery() {
+		this.model.requestClientRediscovery();
 	}
 }

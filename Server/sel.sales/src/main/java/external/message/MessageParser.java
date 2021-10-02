@@ -13,7 +13,10 @@ public abstract class MessageParser implements IMessageParser {
 		String[] fields = this.parseDataFields(messageBody);
 		int sequenceNumber = this.parseSequenceNumber(fields[0]);
 		MessageContext context = this.parseContext(fields[1]);
-		MessageFlag[] flags = this.parseFlags(fields[2]);
+		MessageFlag[] flags = null;
+		if (fields.length > 2) {
+			flags = this.parseFlags(fields[2]);
+		}
 		String serialisedData = "";
 		if (fields.length > 3) {
 			serialisedData = this.parseSerialisedData(fields[3]);

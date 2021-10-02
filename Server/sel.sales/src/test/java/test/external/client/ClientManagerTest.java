@@ -116,5 +116,7 @@ class ClientManagerTest {
 		manager.setDiscoveryStrategy(cds);
 		manager.discoverClients();
 		Assertions.assertTrue(manager.getDiscoveredClients().containsAll(clientCol));
+		Assertions.assertFalse(manager.isAllowedToConnect(client1Address));
+		Assertions.assertFalse(manager.isAllowedToConnect(client2Address));
 	}
 }

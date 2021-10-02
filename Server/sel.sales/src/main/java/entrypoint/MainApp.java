@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import controller.IController;
 import controller.MainController;
+import external.BluetoothServerExternal;
+import external.IExternal;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -11,12 +13,14 @@ import model.IModel;
 import model.Model;
 import view.IView;
 import view.MainView;
+import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
 public class MainApp extends Application {
 	private static IModel model;
 	private static IController controller;
 	private static IView view;
+	private static IExternal external;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -30,7 +34,8 @@ public class MainApp extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		model = new Model();
 		controller = new MainController(model);
-		view = new MainView(new FXUIComponentFactory(), controller, model);
+		view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
+		external = new BluetoothServerExternal(controller, model);
 		view.startUp();
 		view.show();
 		// ADD FAKE DATA -------------------------------------------------------

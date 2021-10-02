@@ -3,8 +3,9 @@ package model;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import model.connectivity.ConnectivityManager;
 import model.connectivity.IClientData;
-import model.connectivity.IClientDataFactory;
+import model.connectivity.IConnectivityManager;
 import model.dish.DishMenu;
 import model.dish.DishMenuDataFactory;
 import model.dish.DishMenuItemFinder;
@@ -51,7 +52,7 @@ public class Model implements IModel {
 	 */
 	private IDishMenuSerialiser externalDishMenuSerialiser;
 	
-	private IClientDataFactory clientDataFac;
+	private IConnectivityManager connManager;
 	
 	private String orderFolderAddress;
 	private OrderFileWriter orderWriter;
@@ -80,6 +81,8 @@ public class Model implements IModel {
 		this.dishMenuWriter = new StandardDishMenuFileWriter(this.dishMenuFolderAddress);
 		
 		this.externalDishMenuSerialiser = new ExternalDishMenuSerialiser();
+		
+		this.connManager = new ConnectivityManager();
 	}
 	
 	private void menuChanged() {
@@ -92,6 +95,18 @@ public class Model implements IModel {
 	
 	private void confirmedOrdersChanged() {
 		this.updatables.stream().filter(u -> u instanceof OrderUpdatable).forEach(u -> ((OrderUpdatable) u).refreshConfirmedOrders());
+	}
+	
+	private void discoveredClientsChanged() {
+		this.updatables.stream().filter(u -> u instanceof DiscoveredClientUpdatable).forEach(u -> ((DiscoveredClientUpdatable) u).refreshDiscoveredClients());
+	}
+	
+	private void knownClientsChanged() {
+		this.updatables.stream().filter(u -> u instanceof KnownClientUpdatable).forEach(u -> ((KnownClientUpdatable) u).refreshKnownClients());
+	}
+	
+	private void externalStatusChanged() {
+		this.updatables.stream().filter(u -> u instanceof ExternalUpdatable).forEach(u -> ((ExternalUpdatable) u).rediscoverClients());
 	}
 	
 	public void addMenuItem(String serialisedItemData) {
@@ -219,13 +234,65 @@ public class Model implements IModel {
 	}
 
 	@Override
-	public IClientDataFactory getClientDataFactory() {
-		return this.clientDataFac;
+	public void addDiscoveredClient(String clientName, String clientAddress) {
+		this.connManager.addDiscoveredClient(clientName, clientAddress);
+		this.discoveredClientsChanged();
 	}
 
 	@Override
-	public void addKnownClient(IClientData clientData) {
-		// TODO Auto-generated method stub
-		
+	public void addKnownClient(String clientAddress) {
+		this.connManager.addKnownClient(clientAddress);
+		this.knownClientsChanged();
+	}
+
+	@Override
+	public void removeKnownClient(String clientAddress) {
+		this.connManager.removeKnownClient(clientAddress);
+		this.knownClientsChanged();
+	}
+
+	@Override
+	public void allowKnownClient(String clientAddress) {
+		this.connManager.allowKnownClient(clientAddress);
+		this.knownClientsChanged();
+	}
+
+	@Override
+	public void blockKnownClient(String clientAddress) {
+		this.connManager.blockKnownClient(clientAddress);
+		this.knownClientsChanged();
+	}
+
+	@Override
+	public IClientData[] getAllKnownClientData() {
+		return this.connManager.getAllKnownClientData();
+	}
+	
+	@Override
+	public IClientData[] getAllDiscoveredClientData() {
+		return this.connManager.getAllDiscoveredClientData();
+	}
+
+	@Override
+	public void clientConnected(String clientAddress) {
+		this.connManager.clientConnected(clientAddress);
+		this.knownClientsChanged();
+	}
+
+	@Override
+	public void clientDisconnected(String clientAddress) {
+		this.connManager.clientDisconnected(clientAddress);
+		this.knownClientsChanged();
+	}
+
+	@Override
+	public boolean isClientRediscoveryRequested() {
+		return this.connManager.isClientRediscoveryRequested();
+	}
+
+	@Override
+	public void requestClientRediscovery() {
+		this.connManager.requestClientRediscovery();
+		this.externalStatusChanged();
 	}
 }

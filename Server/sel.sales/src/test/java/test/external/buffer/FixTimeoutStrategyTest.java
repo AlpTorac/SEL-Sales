@@ -15,9 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import external.buffer.FixTimeoutStrategy;
-import external.buffer.HasTimeout;
-import external.buffer.ITimeoutStrategy;
+import external.connection.timeout.FixTimeoutStrategy;
+import external.connection.timeout.HasTimeout;
+import external.connection.timeout.ITimeoutStrategy;
 import test.GeneralTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class FixTimeoutStrategyTest {

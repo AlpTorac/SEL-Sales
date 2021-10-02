@@ -18,7 +18,9 @@ public interface IDataCollectingUIComponent<T> extends IUIComponent {
 	
 	@SuppressWarnings("unchecked")
 	default public void addItemIfNotPresent(T item) {
-		((IDataCollectingUIComponent<T>) this.getComponent()).addItemIfNotPresent(item);
+		if (!this.contains(item)) {
+			this.addItem(item);
+		}
 	}
 	
 	default public void addItemsIfNotPresent(T[] item) {
@@ -74,5 +76,10 @@ public interface IDataCollectingUIComponent<T> extends IUIComponent {
 	@SuppressWarnings("unchecked")
 	default public void artificiallySelectItemProperty(int index, int itemPropertyIndex) {
 		((IDataCollectingUIComponent<T>) this.getComponent()).artificiallySelectItemProperty(index, itemPropertyIndex);
+	}
+	
+	@SuppressWarnings("unchecked")
+	default public T getSelectedElement() {
+		return ((IDataCollectingUIComponent<T>) this.getComponent()).getSelectedElement();
 	}
 }

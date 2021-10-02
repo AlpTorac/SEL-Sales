@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import controller.IController;
+import model.connectivity.IClientData;
+
 public abstract class ClientManager implements IClientManager {
 
 	private static boolean INITIAL_CONNECTION_ALLOWANCE = true;
@@ -11,11 +14,24 @@ public abstract class ClientManager implements IClientManager {
 	private Map<String, IClient> discoveredClients;
 	private Map<String, ClientManagerEntry> knownClients;
 	
+	private ClientDiscoveryListener cdl;
+	
 	public ClientManager() {
 		this.discoveredClients = new ConcurrentHashMap<String, IClient>();
 		this.knownClients = new ConcurrentHashMap<String, ClientManagerEntry>();
 		this.cds = this.initDiscoveryStrategy();
-		this.discoverClients();
+	}
+	
+	public ClientManager(IController controller) {
+		this.discoveredClients = new ConcurrentHashMap<String, IClient>();
+		this.knownClients = new ConcurrentHashMap<String, ClientManagerEntry>();
+		this.cds = this.initDiscoveryStrategy();
+		this.cdl = new ClientDiscoveryListener(controller);
+	}
+	
+	@Override
+	public void setClientDiscoveryListener(ClientDiscoveryListener cdl) {
+		this.cdl = cdl;
 	}
 	
 	@Override
@@ -73,11 +89,12 @@ public abstract class ClientManager implements IClientManager {
 	public void discoverClients() {
 		Collection<IClient> discoveredClients = this.cds.discoverClients();
 		
-		//Notify external
-		
 		if (discoveredClients != null) {
 			for (IClient c : discoveredClients) {
 				this.discoveredClients.put(c.getClientAddress(), c);
+				if (this.cdl != null) {
+					this.cdl.clientDiscovered(c.getClientName(), c.getClientAddress());
+				}
 			}
 		}
 	}
@@ -95,6 +112,20 @@ public abstract class ClientManager implements IClientManager {
 	@Override
 	public Collection<IClient> getDiscoveredClients() {
 		return this.discoveredClients.values();
+	}
+	
+	@Override
+	public void receiveKnownClientData(IClientData[] clientData) {
+		for (IClientData d : clientData) {
+			if (!this.knownClients.containsKey(d.getClientAddress())) {
+				this.addClient(d.getClientAddress());
+			}
+			if (d.getIsAllowedToConnect()) {
+				this.allowClient(d.getClientAddress());
+			} else {
+				this.blockClient(d.getClientAddress());
+			}
+		}
 	}
 	
 	private class ClientManagerEntry {

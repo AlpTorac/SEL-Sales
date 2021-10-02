@@ -67,7 +67,9 @@ public interface IUIComponentFactory {
 	public IVBoxLayout createVBoxLayout();
 	public IGridLayout createGridLayout();
 	public IRadioButton createRadioButton();
+	public ICheckBox createCheckBox();
 	public IToggleGroup createToggleGroup();
 	public <T> IListView<T> createListView();
 	public ILabel createLabel();
+	public ITabPane createTabPane();
 }

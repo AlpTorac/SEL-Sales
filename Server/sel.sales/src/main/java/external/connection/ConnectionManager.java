@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
 import controller.IController;
-import external.buffer.ISendBuffer;
+import external.connection.incoming.IMessageReceptionist;
+import external.connection.outgoing.ISendBuffer;
+import external.connection.pingpong.IPingPong;
 import external.message.IMessage;
 
 public abstract class ConnectionManager implements IConnectionManager {
@@ -12,13 +14,21 @@ public abstract class ConnectionManager implements IConnectionManager {
 	private IConnection conn;
 	private IMessageReceptionist iml;
 	private ISendBuffer sb;
+	private IPingPong pingPong;
 	protected IController controller;
+	
+	private ConnectionListener connListener;
+	private DisconnectionListener disconListener;
 	
 	protected ConnectionManager(IController controller, IConnection conn, ExecutorService es) {
 		this.controller = controller;
 		this.conn = conn;
 		this.es = es;
 		this.init();
+	}
+	@Override
+	public IPingPong getPingPong() {
+		return this.pingPong;
 	}
 	
 	@Override
@@ -30,6 +40,12 @@ public abstract class ConnectionManager implements IConnectionManager {
 		return this.es;
 	}
 	
+	protected abstract ConnectionListener initConnListener();
+	
+	protected abstract DisconnectionListener initDisconListener();
+	
+	protected abstract IPingPong initPingPong();
+	
 	protected abstract ISendBuffer initSendBuffer();
 	
 	protected abstract IMessageReceptionist initIncomingMessageListener();
@@ -40,6 +56,10 @@ public abstract class ConnectionManager implements IConnectionManager {
 	
 	private void setSendBuffer(ISendBuffer sb) {
 		this.sb = sb;
+	}
+	
+	private void setPingPong(IPingPong pingPong) {
+		this.pingPong = pingPong;
 	}
 	
 	@Override
@@ -77,11 +97,29 @@ public abstract class ConnectionManager implements IConnectionManager {
 		};
 	}
 	
+	protected Runnable initPingPongRunnable() {
+		return new Runnable() {
+			@Override
+			public void run() {
+				getPingPong().start();
+				while (!getConnection().isClosed() && getPingPong().isRunning()) {
+					
+				}
+				disconListener.connectionLost(conn.getTargetClientAddress());
+			}
+		};
+	}
+	
 	protected void init() {
 		ISendBuffer sendBuffer = initSendBuffer();
 		setSendBuffer(sendBuffer);
 		IMessageReceptionist incomingMessageListener = initIncomingMessageListener();
 		setIncomingMessageListener(incomingMessageListener);
+		IPingPong pingPong = initPingPong();
+		setPingPong(pingPong);
+		this.connListener = initConnListener();
+		this.connListener.connectionEstablished(this.conn.getTargetClientAddress());
+		this.disconListener = initDisconListener();
 		Runnable[] rs = this.initConnectionRunnables();
 		for (Runnable r : rs) {
 			getExecutorService().submit(r);
@@ -97,8 +135,9 @@ public abstract class ConnectionManager implements IConnectionManager {
 	public void close() {
 		try {
 			getSendBuffer().close();
-			conn.close();
-			iml.close();
+			getConnection().close();
+			getIncomingMessageListener().close();
+			getPingPong().close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

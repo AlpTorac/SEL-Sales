@@ -2,7 +2,8 @@ package external.message;
 
 public enum MessageContext {
 	ORDER("order"),
-	MENU("menu");
+	MENU("menu"),
+	PINGPONG("pingpong");
 	
 	private final String message;
 	

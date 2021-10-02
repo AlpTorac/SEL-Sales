@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import external.buffer.ISendBuffer;
-import external.buffer.StandardSendBuffer;
+import external.connection.outgoing.ISendBuffer;
+import external.connection.outgoing.StandardSendBuffer;
 import external.handler.AcknowledgementHandler;
 import external.message.IMessage;
 import external.message.IMessageParser;

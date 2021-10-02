@@ -17,7 +17,7 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	private Collection<IConnectionManager> connectionManagers = new CopyOnWriteArrayList<IConnectionManager>();
 	private IClientManager manager;
 	protected IController controller;
-
+	
 	protected ServiceConnectionManager(IClientManager manager, IController controller) {
 		this.manager = manager;
 		this.controller = controller;

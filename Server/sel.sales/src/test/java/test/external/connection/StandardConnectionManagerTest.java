@@ -16,8 +16,9 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.IController;
-import external.buffer.ISendBuffer;
 import external.connection.StandardConnectionManager;
+import external.connection.outgoing.ISendBuffer;
+import external.connection.pingpong.IPingPong;
 import external.message.IMessage;
 import external.message.IMessageSerialiser;
 import external.message.Message;
@@ -34,7 +35,7 @@ import test.external.dummy.DummyController;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class StandardConnectionManagerTest {
 	private ExecutorService es;
-	private long waitTime = 300;
+	private long waitTime = 500;
 	
 	private IMessageSerialiser serialiser = new MessageSerialiser(new StandardMessageFormat());
 	
@@ -50,6 +51,11 @@ class StandardConnectionManagerTest {
 	
 	private StandardConnectionManager connManager;
 	private ISendBuffer sb;
+	private IPingPong pingPong;
+	
+	private int resendLimit;
+	
+	private boolean isConnected;
 	
 	/*
 	 * Ideas to fix:
@@ -77,8 +83,11 @@ class StandardConnectionManagerTest {
 		controller = initController();
 		conn = new DummyConnection(client1Address);
 		es = Executors.newCachedThreadPool();
+		isConnected = false;
 		connManager = new StandardConnectionManager(controller, conn, es);
 		sb = connManager.getSendBuffer();
+		pingPong = connManager.getPingPong();
+		resendLimit = pingPong.getRemainingResendTries();
 	}
 	@AfterEach
 	void cleanUp() {
@@ -88,10 +97,20 @@ class StandardConnectionManagerTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		isConnected = false;
 	}
 	
 	private IController initController() {
-		return new DummyController();
+		return new DummyController() {
+			@Override
+			public void clientConnected(String clientAddress) {
+				isConnected = true;
+			}
+			@Override
+			public void clientDisconnected(String clientAddress) {
+				isConnected = false;
+			}
+		};
 	}
 	
 	@Test
@@ -101,7 +120,7 @@ class StandardConnectionManagerTest {
 		ByteArrayOutputStream os = conn.getOutputStream();
 		connManager.sendMessage(m);
 		GeneralTestUtilityClass.performWait(waitTime);
-		BufferUtilityClass.assertOutputWrittenEquals(os, serialiser.serialise(m).getBytes());
+		BufferUtilityClass.assertOutputWrittenContains(os, serialiser.serialise(m).getBytes());
 		Assertions.assertTrue(sb.isBlocked());
 	}
 	
@@ -112,7 +131,7 @@ class StandardConnectionManagerTest {
 		ByteArrayOutputStream os = conn.getOutputStream();
 		connManager.sendMessage(m);
 		GeneralTestUtilityClass.performWait(waitTime);
-		BufferUtilityClass.assertOutputWrittenEquals(os, serialiser.serialise(m).getBytes());
+		BufferUtilityClass.assertOutputWrittenContains(os, serialiser.serialise(m).getBytes());
 		Assertions.assertTrue(sb.isBlocked());
 		
 		IMessage incAck = m.getMinimalAcknowledgementMessage();
@@ -128,7 +147,7 @@ class StandardConnectionManagerTest {
 		ByteArrayOutputStream os = conn.getOutputStream();
 		connManager.sendMessage(m);
 		GeneralTestUtilityClass.performWait(waitTime);
-		BufferUtilityClass.assertOutputWrittenEquals(os, serialiser.serialise(m).getBytes());
+		BufferUtilityClass.assertOutputWrittenContains(os, serialiser.serialise(m).getBytes());
 		Assertions.assertTrue(sb.isBlocked());
 		
 		IMessage incAck = m.getMinimalAcknowledgementMessage();
@@ -140,12 +159,25 @@ class StandardConnectionManagerTest {
 		os = conn.getOutputStream();
 		connManager.sendMessage(m2);
 		GeneralTestUtilityClass.performWait(waitTime);
-		BufferUtilityClass.assertOutputWrittenEquals(os, serialiser.serialise(m2).getBytes());
+		BufferUtilityClass.assertOutputWrittenContains(os, serialiser.serialise(m2).getBytes());
 		Assertions.assertTrue(sb.isBlocked());
 		
 		IMessage incAck2 = m2.getMinimalAcknowledgementMessage();
 		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialiser.serialise(incAck2));
 		GeneralTestUtilityClass.performWait(waitTime);
 		Assertions.assertFalse(sb.isBlocked());
+	}
+	
+	@Test
+	void pingPongTest() {
+		Assertions.assertTrue(isConnected);
+		Assertions.assertTrue(resendLimit == pingPong.getRemainingResendTries());
+		while (pingPong.getRemainingResendTries() > 0) {
+			pingPong.timeout();
+		}
+		pingPong.timeout();
+		pingPong.timeout();
+		GeneralTestUtilityClass.performWait(waitTime);
+		Assertions.assertFalse(isConnected);
 	}
 }
