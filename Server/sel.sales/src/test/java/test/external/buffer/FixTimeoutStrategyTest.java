@@ -21,7 +21,7 @@ import external.connection.timeout.ITimeoutStrategy;
 import test.GeneralTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class FixTimeoutStrategyTest {
-	private long testCompensationInMillis = 100;
+	private long testCompensationInMillis = 300;
 	private long toleranceInMillis;
 	private ExecutorService es;
 	private long esTerminationTimeout;

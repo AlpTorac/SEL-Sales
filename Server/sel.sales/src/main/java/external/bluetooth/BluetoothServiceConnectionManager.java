@@ -1,6 +1,7 @@
 package external.bluetooth;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
 
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
@@ -16,8 +17,8 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 	
 	private StreamConnectionNotifier connNotifier;
 	
-	public BluetoothServiceConnectionManager(BluetoothService service, BluetoothClientManager manager, IController controller) {
-		super(manager, controller);
+	public BluetoothServiceConnectionManager(BluetoothService service, BluetoothClientManager manager, IController controller, ExecutorService es) {
+		super(manager, controller, es);
 		try {
 			this.connNotifier = (StreamConnectionNotifier) Connector.open(service.getURL());
 		} catch (IOException e) {
@@ -33,6 +34,7 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 	@Override
 	protected Object getConnectionObject() {
 		try {
+			this.makeNewConnectionThread();
 			return connNotifier.acceptAndOpen();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -42,6 +44,6 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 
 	@Override
 	protected IConnectionManager createConnectionManager(IConnection conn) {
-		return new StandardConnectionManager(controller, conn, pool);
+		return new StandardConnectionManager(controller, conn, es);
 	}
 }

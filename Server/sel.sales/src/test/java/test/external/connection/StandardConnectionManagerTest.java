@@ -20,12 +20,14 @@ import external.connection.StandardConnectionManager;
 import external.connection.outgoing.ISendBuffer;
 import external.connection.pingpong.IPingPong;
 import external.message.IMessage;
+import external.message.IMessageParser;
 import external.message.IMessageSerialiser;
 import external.message.Message;
 import external.message.MessageContext;
 import external.message.MessageFlag;
 import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
+import external.message.StandardMessageParser;
 import test.GeneralTestUtilityClass;
 import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyClient;
@@ -35,9 +37,10 @@ import test.external.dummy.DummyController;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class StandardConnectionManagerTest {
 	private ExecutorService es;
-	private long waitTime = 500;
+	private long waitTime = 300;
 	
 	private IMessageSerialiser serialiser = new MessageSerialiser(new StandardMessageFormat());
+	private IMessageParser parser = new StandardMessageParser();
 	
 	private DummyConnection conn;
 	private DummyClient client1;
@@ -93,10 +96,19 @@ class StandardConnectionManagerTest {
 	void cleanUp() {
 		connManager.close();
 		try {
+			sb.close();
+			pingPong.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
 			es.awaitTermination(waitTime, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		sb = null;
+		pingPong = null;
 		isConnected = false;
 	}
 	
@@ -113,6 +125,18 @@ class StandardConnectionManagerTest {
 		};
 	}
 	
+	/*
+	 * Use to detect ping-pong messages taking the place of normal messages.
+	 */
+	private boolean messageBufferContentCheck(ByteArrayOutputStream os, IMessage m) {
+		IMessage message = parser.parseMessage(os.toString());
+		if (!message.hasContext(MessageContext.PINGPONG)) {
+			BufferUtilityClass.assertOutputWrittenContains(os, serialiser.serialise(m).getBytes());
+			return true;
+		}
+		return false;
+	}
+	
 	@Test
 	void messageSendingTest() {
 		Assertions.assertFalse(sb.isBlocked());
@@ -120,7 +144,12 @@ class StandardConnectionManagerTest {
 		ByteArrayOutputStream os = conn.getOutputStream();
 		connManager.sendMessage(m);
 		GeneralTestUtilityClass.performWait(waitTime);
-		BufferUtilityClass.assertOutputWrittenContains(os, serialiser.serialise(m).getBytes());
+		if (!messageBufferContentCheck(os, m)) {
+			cleanUp();
+			prep();
+			messageSendingTest();
+			return;
+		}
 		Assertions.assertTrue(sb.isBlocked());
 	}
 	
@@ -131,7 +160,12 @@ class StandardConnectionManagerTest {
 		ByteArrayOutputStream os = conn.getOutputStream();
 		connManager.sendMessage(m);
 		GeneralTestUtilityClass.performWait(waitTime);
-		BufferUtilityClass.assertOutputWrittenContains(os, serialiser.serialise(m).getBytes());
+		if (!messageBufferContentCheck(os, m)) {
+			cleanUp();
+			prep();
+			messageReadingTest();
+			return;
+		}
 		Assertions.assertTrue(sb.isBlocked());
 		
 		IMessage incAck = m.getMinimalAcknowledgementMessage();
@@ -147,7 +181,13 @@ class StandardConnectionManagerTest {
 		ByteArrayOutputStream os = conn.getOutputStream();
 		connManager.sendMessage(m);
 		GeneralTestUtilityClass.performWait(waitTime);
-		BufferUtilityClass.assertOutputWrittenContains(os, serialiser.serialise(m).getBytes());
+//		System.out.println("OutputStream was: " + os.toString() + "\nexpected was: " + new String(serialiser.serialise(m).getBytes()));
+		if (!messageBufferContentCheck(os, m)) {
+			cleanUp();
+			prep();
+			messageSendReadCycleTest();
+			return;
+		}
 		Assertions.assertTrue(sb.isBlocked());
 		
 		IMessage incAck = m.getMinimalAcknowledgementMessage();
@@ -159,7 +199,12 @@ class StandardConnectionManagerTest {
 		os = conn.getOutputStream();
 		connManager.sendMessage(m2);
 		GeneralTestUtilityClass.performWait(waitTime);
-		BufferUtilityClass.assertOutputWrittenContains(os, serialiser.serialise(m2).getBytes());
+		if (!messageBufferContentCheck(os, m2)) {
+			cleanUp();
+			prep();
+			messageSendReadCycleTest();
+			return;
+		}
 		Assertions.assertTrue(sb.isBlocked());
 		
 		IMessage incAck2 = m2.getMinimalAcknowledgementMessage();

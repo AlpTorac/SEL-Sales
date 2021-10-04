@@ -3,12 +3,14 @@ package external.client;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 
 import controller.IController;
 import model.connectivity.IClientData;
 
 public abstract class ClientManager implements IClientManager {
 
+	protected ExecutorService es;
 	private static boolean INITIAL_CONNECTION_ALLOWANCE = true;
 	private ClientDiscoveryStrategy cds;
 	private Map<String, IClient> discoveredClients;
@@ -16,15 +18,17 @@ public abstract class ClientManager implements IClientManager {
 	
 	private ClientDiscoveryListener cdl;
 	
-	public ClientManager() {
+	public ClientManager(ExecutorService es) {
 		this.discoveredClients = new ConcurrentHashMap<String, IClient>();
 		this.knownClients = new ConcurrentHashMap<String, ClientManagerEntry>();
+		this.es = es;
 		this.cds = this.initDiscoveryStrategy();
 	}
 	
-	public ClientManager(IController controller) {
+	public ClientManager(ExecutorService es, IController controller) {
 		this.discoveredClients = new ConcurrentHashMap<String, IClient>();
 		this.knownClients = new ConcurrentHashMap<String, ClientManagerEntry>();
+		this.es = es;
 		this.cds = this.initDiscoveryStrategy();
 		this.cdl = new ClientDiscoveryListener(controller);
 	}
@@ -87,16 +91,21 @@ public abstract class ClientManager implements IClientManager {
 	}
 
 	public void discoverClients() {
-		Collection<IClient> discoveredClients = this.cds.discoverClients();
-		
-		if (discoveredClients != null) {
-			for (IClient c : discoveredClients) {
-				this.discoveredClients.put(c.getClientAddress(), c);
-				if (this.cdl != null) {
-					this.cdl.clientDiscovered(c.getClientName(), c.getClientAddress());
+		es.submit(new Runnable() {
+			@Override
+			public void run() {
+				Collection<IClient> dcs = cds.discoverClients();
+				
+				if (discoveredClients != null) {
+					for (IClient c : dcs) {
+						discoveredClients.put(c.getClientAddress(), c);
+						if (cdl != null) {
+							cdl.clientDiscovered(c.getClientName(), c.getClientAddress());
+						}
+					}
 				}
 			}
-		}
+		});
 	}
 	
 	@Override

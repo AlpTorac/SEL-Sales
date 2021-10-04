@@ -4,7 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,19 +32,31 @@ class ClientManagerTest {
 	private IClient client1;
 	private IClient client2;
 	private IClientManager manager;
+	private ExecutorService es;
 	
 	@BeforeEach
 	void prep() {
+		this.es = Executors.newCachedThreadPool();
 		this.client1Name = "client1";
 		this.client1Address = "client1Address";
 		this.client2Name = "client2";
 		this.client2Address = "client2Address";
 		this.client1 = new DummyClient(this.client1Name, this.client1Address);
 		this.client2 = new DummyClient(this.client2Name, this.client2Address);
-		this.manager = new DummyClientManager();
+		this.manager = new DummyClientManager(es);
 		this.discoverClients();
 		manager.addClient(client1Address);
 		manager.addClient(client2Address);
+	}
+	
+	@AfterEach
+	void cleanUp() {
+		try {
+			this.es.awaitTermination(100, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private void discoverClients() {
@@ -51,6 +67,7 @@ class ClientManagerTest {
 		cds.setDiscoveredClients(cs);
 		this.manager.setDiscoveryStrategy(cds);
 		this.manager.discoverClients();
+		GeneralTestUtilityClass.performWait(300);
 	}
 	
 	@Test
@@ -62,7 +79,7 @@ class ClientManagerTest {
 	
 	@Test
 	void addClientTest() {
-		this.manager = new DummyClientManager();
+		this.manager = new DummyClientManager(es);
 		this.discoverClients();
 		Assertions.assertEquals(0, manager.getClientCount());
 		manager.addClient(client1Address);
@@ -107,7 +124,7 @@ class ClientManagerTest {
 	
 	@Test
 	void discoverClientsTest() {
-		this.manager = new DummyClientManager();
+		this.manager = new DummyClientManager(es);
 		Collection<IClient> clientCol = new ArrayList<IClient>();
 		clientCol.add(client1);
 		clientCol.add(client2);
@@ -115,6 +132,7 @@ class ClientManagerTest {
 		cds.setDiscoveredClients(clientCol);
 		manager.setDiscoveryStrategy(cds);
 		manager.discoverClients();
+		GeneralTestUtilityClass.performWait(300);
 		Assertions.assertTrue(manager.getDiscoveredClients().containsAll(clientCol));
 		Assertions.assertFalse(manager.isAllowedToConnect(client1Address));
 		Assertions.assertFalse(manager.isAllowedToConnect(client2Address));

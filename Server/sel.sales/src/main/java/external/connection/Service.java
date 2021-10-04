@@ -1,9 +1,12 @@
 package external.connection;
 
+import java.util.concurrent.ExecutorService;
+
 import controller.IController;
 import external.client.IClientManager;
 
 public abstract class Service implements IService {
+	protected ExecutorService es;
 	private IServiceConnectionManager scm;
 	private IClientManager clientManager;
 	
@@ -13,9 +16,10 @@ public abstract class Service implements IService {
 	
 	private IController controller;
 	
-	public Service(String id, String name, IClientManager clientManager, IController controller) {
+	public Service(String id, String name, IClientManager clientManager, IController controller, ExecutorService es) {
 		this.id = id;
 		this.name = name;
+		this.es = es;
 		this.clientManager = clientManager;
 		this.controller = controller;
 		this.url = this.generateURL();

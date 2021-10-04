@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -46,10 +49,13 @@ class ServiceConnectionManagerTest {
 	private IController controller;
 	private boolean isOrderReceivedByController;
 	
+	private ExecutorService es;
+	
 	private IMessageSerialiser serialiser = new MessageSerialiser(new StandardMessageFormat());
 	@BeforeEach
 	void prep() {
-		manager = new DummyClientManager();
+		es = Executors.newCachedThreadPool();
+		manager = new DummyClientManager(es);
 		client1Name = "client1Name";
 		client1Address = "client1Address";
 		client2Name = "client2Name";
@@ -62,7 +68,7 @@ class ServiceConnectionManagerTest {
 		manager.allowClient(client1Address);
 		manager.allowClient(client2Address);
 		controller = initController();
-		serviceConnectionManager = new DummyServiceConnectionManager(manager, controller);
+		serviceConnectionManager = new DummyServiceConnectionManager(manager, controller, es);
 		isOrderReceivedByController = false;
 	}
 	
@@ -74,12 +80,20 @@ class ServiceConnectionManagerTest {
 		cds.setDiscoveredClients(cs);
 		this.manager.setDiscoveryStrategy(cds);
 		this.manager.discoverClients();
+		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
 	@AfterEach
 	void cleanUp() {
 		serviceConnectionManager.close();
 		isOrderReceivedByController = false;
+		
+		try {
+			es.awaitTermination(waitTime, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private IController initController() {
@@ -92,17 +106,17 @@ class ServiceConnectionManagerTest {
 	@Test
 	void getConnectionTest() {
 		serviceConnectionManager.setCurrentConnectionObject(client1);
-		serviceConnectionManager.acceptIncomingConnection();
+		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime);
 		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
 	}
 	@Test
 	void acceptIncomingConnectionTest() {
 		serviceConnectionManager.setCurrentConnectionObject(client1);
-		serviceConnectionManager.acceptIncomingConnection();
+		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime);
 		serviceConnectionManager.setCurrentConnectionObject(client2);
-		serviceConnectionManager.acceptIncomingConnection();
+		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime);
 		Assertions.assertEquals(client2.getClientAddress(), serviceConnectionManager.getConnection(client2Address).getTargetClientAddress());
 		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
@@ -116,7 +130,7 @@ class ServiceConnectionManagerTest {
 		Assertions.assertNull(manager.getClient(strangerClientAddress));
 		Assertions.assertFalse(manager.isAllowedToConnect(strangerClientAddress));
 		serviceConnectionManager.setCurrentConnectionObject(strangerClient);
-		serviceConnectionManager.acceptIncomingConnection();
+		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime);
 		Assertions.assertFalse(serviceConnectionManager.isConnectionAllowed(strangerClientAddress));
 		Assertions.assertNull(serviceConnectionManager.getConnection(strangerClientAddress));
@@ -128,7 +142,7 @@ class ServiceConnectionManagerTest {
 		Assertions.assertFalse(manager.isAllowedToConnect(client2Address));
 		GeneralTestUtilityClass.performWait(waitTime);
 		serviceConnectionManager.setCurrentConnectionObject(client2);
-		serviceConnectionManager.acceptIncomingConnection();
+		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime);
 		Assertions.assertFalse(serviceConnectionManager.isConnectionAllowed(client2Address));
 		Assertions.assertNull(serviceConnectionManager.getConnection(client2Address));
@@ -137,10 +151,10 @@ class ServiceConnectionManagerTest {
 	@Test
 	void sendMessageToTest() {
 		serviceConnectionManager.setCurrentConnectionObject(client1);
-		serviceConnectionManager.acceptIncomingConnection();
+		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime);
 		serviceConnectionManager.setCurrentConnectionObject(client2);
-		serviceConnectionManager.acceptIncomingConnection();
+		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime);
 		Assertions.assertEquals(client2.getClientAddress(), serviceConnectionManager.getConnection(client2Address).getTargetClientAddress());
 		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
@@ -182,10 +196,10 @@ class ServiceConnectionManagerTest {
 	@Test
 	void broadcastMessageTest() {
 		serviceConnectionManager.setCurrentConnectionObject(client1);
-		serviceConnectionManager.acceptIncomingConnection();
+		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime);
 		serviceConnectionManager.setCurrentConnectionObject(client2);
-		serviceConnectionManager.acceptIncomingConnection();
+		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime);
 		Assertions.assertEquals(client2.getClientAddress(), serviceConnectionManager.getConnection(client2Address).getTargetClientAddress());
 		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());

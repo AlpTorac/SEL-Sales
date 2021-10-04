@@ -13,12 +13,13 @@ import external.message.IMessage;
 
 public abstract class ServiceConnectionManager implements IServiceConnectionManager {
 
-	protected ExecutorService pool = Executors.newCachedThreadPool();
+	protected ExecutorService es;
 	private Collection<IConnectionManager> connectionManagers = new CopyOnWriteArrayList<IConnectionManager>();
 	private IClientManager manager;
 	protected IController controller;
 	
-	protected ServiceConnectionManager(IClientManager manager, IController controller) {
+	protected ServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es) {
+		this.es = es;
 		this.manager = manager;
 		this.controller = controller;
 	}
@@ -77,21 +78,23 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 		};
 	}
 	
-	@Override
-	public void acceptIncomingConnection() {
-		this.pool.submit(this.initConnectionRunnable());
+	protected void acceptIncomingConnection() {
+		this.es.submit(this.initConnectionRunnable());
 	}
 
 	@Override
 	public boolean isConnectionAllowed(String clientAddress) {
 		return this.manager.isAllowedToConnect(clientAddress);
 	}
-
+	@Override
+	public void makeNewConnectionThread() {
+		this.acceptIncomingConnection();
+	}
 	@Override
 	public void close() {
-		this.pool.shutdown();
+		this.es.shutdown();
 		this.connectionManagers.forEach(cm -> cm.close());
-		this.pool = null;
+		this.es = null;
 		this.manager = null;
 	}
 	@Override

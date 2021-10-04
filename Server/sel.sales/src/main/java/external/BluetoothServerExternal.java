@@ -31,7 +31,7 @@ public class BluetoothServerExternal extends ServerExternal {
 	
 	@Override
 	protected BluetoothClientManager initClientManager() {
-		return new BluetoothClientManager(this.getController());
+		return new BluetoothClientManager(es, this.getController());
 	}
 	
 	@Override
@@ -40,6 +40,6 @@ public class BluetoothServerExternal extends ServerExternal {
 	}
 	
 	private BluetoothService initBluetoothService(UUID id, String name) {
-		return new BluetoothService(id, name, this.initClientManager(), this.getController());
+		return new BluetoothService(id, name, this.initClientManager(), this.getController(), es);
 	}
 }

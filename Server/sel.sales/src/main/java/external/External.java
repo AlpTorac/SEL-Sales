@@ -1,11 +1,15 @@
 package external;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import controller.IController;
 import external.connection.IService;
 import model.IModel;
 
 public abstract class External implements IExternal {
 	
+	protected ExecutorService es = Executors.newCachedThreadPool();
 	private IService service;
 	private IModel model;
 	private IController controller;
