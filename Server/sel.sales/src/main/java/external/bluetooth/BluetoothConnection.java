@@ -14,7 +14,7 @@ public class BluetoothConnection implements IConnection {
 	private InputStream is;
 	private OutputStream os;
 	
-	BluetoothConnection(StreamConnection conn) {
+	public BluetoothConnection(StreamConnection conn) {
 		this.conn = conn;
 		try {
 			this.is = this.conn.openInputStream();
