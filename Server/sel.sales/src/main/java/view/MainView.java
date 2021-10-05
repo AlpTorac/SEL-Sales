@@ -1,6 +1,10 @@
 package view;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import controller.IController;
+import javafx.application.Platform;
 import model.IModel;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.UIComponent;
@@ -27,6 +31,8 @@ public class MainView extends View {
 //	private MenuDesignArea mda;
 //	private OrderTrackingArea ota;
 //	private OrderInspectionArea oia;
+	
+	private ExecutorService es = Executors.newCachedThreadPool();
 	
 	private UIComponentFactory fac;
 	private AdvancedUIComponentFactory advFac;
@@ -83,17 +89,17 @@ public class MainView extends View {
 	}
 	@Override
 	public void refreshMenu() {
-		this.mainArea.refreshMenu();
+		Platform.runLater(() -> {this.mainArea.refreshMenu();});
 	}
 
 	@Override
 	public void refreshUnconfirmedOrders() {
-		this.mainArea.refreshUnconfirmedOrders();
+		Platform.runLater(() -> {this.mainArea.refreshUnconfirmedOrders();});
 	}
 
 	@Override
 	public void refreshConfirmedOrders() {
-		this.mainArea.refreshConfirmedOrders();
+		Platform.runLater(() -> {this.mainArea.refreshConfirmedOrders();});
 	}
 
 	@Override
@@ -108,11 +114,11 @@ public class MainView extends View {
 
 	@Override
 	public void refreshDiscoveredClients() {
-		this.connArea.refreshDiscoveredClients(this.getModel().getAllDiscoveredClientData());
+		Platform.runLater(() -> {this.connArea.refreshDiscoveredClients(this.getModel().getAllDiscoveredClientData());});
 	}
 
 	@Override
 	public void refreshKnownClients() {
-		this.connArea.refreshKnownClients(this.getModel().getAllKnownClientData());
+		Platform.runLater(() -> {this.connArea.refreshKnownClients(this.getModel().getAllKnownClientData());});
 	}
 }

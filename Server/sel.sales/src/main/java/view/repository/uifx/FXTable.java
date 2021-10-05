@@ -1,9 +1,8 @@
 package view.repository.uifx;
 
-import java.util.Collection;
-
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -11,7 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import view.repository.ITable;
 import view.repository.uiwrapper.ItemChangeListener;
 
-public class FXTable<T> extends TableView<T> implements FXHasText, ITable<T>, FXEventShooterOnClickUI {
+public class FXTable<T> extends TableView<T> implements FXHasText, ITable<T>, FXEventShooterOnClickUI, FXDataCollectingUIComponent<T> {
 	
 	FXTable() {
 		super();
@@ -47,39 +46,44 @@ public class FXTable<T> extends TableView<T> implements FXHasText, ITable<T>, FX
 		return col;
 	}
 	
-	@Override
-	public void addItem(T item) {
-		super.getItems().add(item);
-	}
+//	@Override
+//	public void addItem(T item) {
+//		super.getItems().add(item);
+//	}
+//	
+//	@Override
+//	public void clear() {
+//		super.getItems().clear();
+//	}
+//	
+//	@Override
+//	public void removeItem(T item) {
+//		super.getItems().remove(item);
+//	}
+//	
+//	@Override
+//	public Collection<T> getItems(int beginIndex, int endIndex) {
+//		return super.getItems().subList(beginIndex, endIndex);
+//	}
+//	
+//	@Override
+//	public T getItem(int index) {
+//		return super.getItems().get(index);
+//	}
+//	
+//	@Override
+//	public int getSize() {
+//		return super.getItems().size();
+//	}
+//	
+//	@Override
+//	public boolean contains(T item) {
+//		return super.getItems().stream().anyMatch(t -> t.equals(item));
+//	}
 	
 	@Override
-	public void clear() {
-		super.getItems().clear();
-	}
-	
-	@Override
-	public void removeItem(T item) {
-		super.getItems().remove(item);
-	}
-	
-	@Override
-	public Collection<T> getItems(int beginIndex, int endIndex) {
-		return super.getItems().subList(beginIndex, endIndex);
-	}
-	
-	@Override
-	public T getItem(int index) {
-		return super.getItems().get(index);
-	}
-	
-	@Override
-	public int getSize() {
-		return super.getItems().size();
-	}
-	
-	@Override
-	public boolean contains(T item) {
-		return super.getItems().stream().anyMatch(t -> t.equals(item));
+	public ObservableList<T> getItemList() {
+		return super.getItems();
 	}
 	
 	@Override

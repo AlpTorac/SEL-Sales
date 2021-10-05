@@ -1,8 +1,7 @@
 package view.repository.uifx;
 
-import java.util.Collection;
-
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
@@ -10,33 +9,33 @@ import view.repository.IListView;
 import view.repository.uiwrapper.ClickEventListener;
 import view.repository.uiwrapper.ItemChangeListener;
 
-public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T>, FXEventShooterOnClickUI {
-	@Override
-	public void addItem(T item) {
-		super.getItems().add(item);
-	}
-	
-	@Override
-	public void clear() {
-		super.getItems().clear();
-	}
-	
-	@Override
-	public void removeItem(T item) {
-		super.getItems().remove(item);
-	}
-	
-	@Override
-	public int getSize() {
-		return super.getItems().size();
-	}
-	
-	@Override
-	public void addItemIfNotPresent(T item) {
-		if (super.getItems().stream().noneMatch(i -> i.equals(item))) {
-			this.addItem(item);
-		}
-	}
+public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T>, FXEventShooterOnClickUI, FXDataCollectingUIComponent<T> {
+//	@Override
+//	public synchronized void addItem(T item) {
+//		super.getItems().add(item);
+//	}
+//	
+//	@Override
+//	public synchronized void clear() {
+//		super.getItems().clear();
+//	}
+//	
+//	@Override
+//	public synchronized void removeItem(T item) {
+//		super.getItems().remove(item);
+//	}
+//	
+//	@Override
+//	public synchronized int getSize() {
+//		return super.getItems().size();
+//	}
+//	
+//	@Override
+//	public synchronized void addItemIfNotPresent(T item) {
+//		if (super.getItems().stream().noneMatch(i -> i.equals(item))) {
+//			this.addItem(item);
+//		}
+//	}
 	@Override
 	public void addClickListener(ClickEventListener l) {
 		ListView<T> ref = this;
@@ -53,28 +52,32 @@ public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T
 		super.setOnMouseClicked(null);
 	}
 	
-	@Override
-	public Collection<T> getItems(int beginIndex, int endIndex) {
-		return super.getItems().subList(beginIndex, endIndex);
+	public ObservableList<T> getItemList() {
+		return super.getItems();
 	}
 	
-	@Override
-	public T getItem(int index) {
-		return super.getItems().get(index);
-	}
+//	@Override
+//	public synchronized Collection<T> getItems(int beginIndex, int endIndex) {
+//		return super.getItems().subList(beginIndex, endIndex);
+//	}
+//	
+//	@Override
+//	public synchronized T getItem(int index) {
+//		return super.getItems().get(index);
+//	}
+//	
+//	@Override
+//	public synchronized boolean contains(T item) {
+//		return super.getItems().stream().anyMatch(t -> t.equals(item));
+//	}
 	
 	@Override
-	public boolean contains(T item) {
-		return super.getItems().stream().anyMatch(t -> t.equals(item));
-	}
-	
-	@Override
-	public void artificiallySelectItem(int index) {
+	public synchronized void artificiallySelectItem(int index) {
 		super.getSelectionModel().select(index);
 	}
 	
 	@Override
-	public void artificiallySelectItemProperty(int index, int itemPropertyIndex) {
+	public synchronized void artificiallySelectItemProperty(int index, int itemPropertyIndex) {
 		super.getSelectionModel().select(index);
 	}
 	
@@ -107,7 +110,7 @@ public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T
 	}
 	
 	@Override
-	public T getSelectedElement() {
+	public synchronized T getSelectedElement() {
 		return super.getSelectionModel().getSelectedItem();
 	}
 }
