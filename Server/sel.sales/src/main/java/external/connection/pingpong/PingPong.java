@@ -38,15 +38,17 @@ public abstract class PingPong implements IPingPong {
 	}
 	
 	protected void sendPingPongMessage() {
+		System.out.println("Sending ping message");
 		this.mss.sendMessage(conn, this.generatePingPongMessage());
-		System.out.println("Ping");
+		System.out.println("Sent ping message");
 	}
 	
 	protected boolean sendPingPongMessageAndStartTimer() {
+		System.out.println("Sending ping message");
 		boolean isSent = this.mss.sendMessage(conn, this.generatePingPongMessage());
 		if (isSent) {
 			this.startTimeoutTimer();
-			System.out.println("Ping");
+			System.out.println("Sent ping message");
 		}
 		return isSent;
 	}
@@ -71,7 +73,7 @@ public abstract class PingPong implements IPingPong {
 	protected void resendPingPongMessage() {
 		this.increaseResendCount();
 		this.sendPingPongMessage();
-		System.out.println("Ping-Again");
+		System.out.println("Sending ping message, resend: " + resendCount);
 	}
 	
 	protected void increaseResendCount() {
@@ -82,8 +84,8 @@ public abstract class PingPong implements IPingPong {
 	public void receiveResponse(IMessage message) {
 		this.resetTimeoutTimer();
 		this.resetResendCount();
+		System.out.println("Received pong");
 		this.sendPingPongMessageAndStartTimer();
-		System.out.println("Pong");
 	}
 	
 	@Override

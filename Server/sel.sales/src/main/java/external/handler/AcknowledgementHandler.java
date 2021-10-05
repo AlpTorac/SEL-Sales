@@ -22,12 +22,15 @@ public class AcknowledgementHandler extends MessageHandler {
 
 	@Override
 	public boolean acknowledge(IMessage message) {
+		System.out.println("Acknowledgement verified");
 		return true;
 	}
 
 	@Override
 	public boolean performNeededAction(IMessage message) {
+		System.out.println("Acknowledgement being sent to send buffer");
 		this.sendBuffer.receiveAcknowledgement(message);
+		System.out.println("Acknowledgement sent to send buffer");
 		return !this.sendBuffer.isBlocked();
 	}
 }

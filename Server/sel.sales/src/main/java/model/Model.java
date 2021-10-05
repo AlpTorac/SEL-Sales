@@ -85,27 +85,27 @@ public class Model implements IModel {
 		this.connManager = new ConnectivityManager();
 	}
 	
-	private synchronized void menuChanged() {
+	private void menuChanged() {
 		this.updatables.stream().filter(u -> u instanceof MenuUpdatable).forEach(u -> ((MenuUpdatable) u).refreshMenu());
 	}
 	
-	private synchronized void unconfirmedOrdersChanged() {
+	private void unconfirmedOrdersChanged() {
 		this.updatables.stream().filter(u -> u instanceof OrderUpdatable).forEach(u -> ((OrderUpdatable) u).refreshUnconfirmedOrders());
 	}
 	
-	private synchronized void confirmedOrdersChanged() {
+	private void confirmedOrdersChanged() {
 		this.updatables.stream().filter(u -> u instanceof OrderUpdatable).forEach(u -> ((OrderUpdatable) u).refreshConfirmedOrders());
 	}
 	
-	private synchronized void discoveredClientsChanged() {
+	private void discoveredClientsChanged() {
 		this.updatables.stream().filter(u -> u instanceof DiscoveredClientUpdatable).forEach(u -> ((DiscoveredClientUpdatable) u).refreshDiscoveredClients());
 	}
 	
-	private synchronized void knownClientsChanged() {
+	private void knownClientsChanged() {
 		this.updatables.stream().filter(u -> u instanceof KnownClientUpdatable).forEach(u -> ((KnownClientUpdatable) u).refreshKnownClients());
 	}
 	
-	private synchronized void externalStatusChanged() {
+	private void externalStatusChanged() {
 		this.updatables.stream().filter(u -> u instanceof ExternalUpdatable).forEach(u -> ((ExternalUpdatable) u).rediscoverClients());
 	}
 	
