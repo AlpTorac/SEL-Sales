@@ -20,7 +20,7 @@ public class BluetoothConnection implements IConnection {
 			this.is = this.conn.openInputStream();
 			this.os = this.conn.openOutputStream();
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 	
@@ -55,7 +55,7 @@ public class BluetoothConnection implements IConnection {
 		try {
 			device = RemoteDevice.getRemoteDevice(conn);
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			return null;
 		}
 		return device.getBluetoothAddress();
@@ -63,21 +63,21 @@ public class BluetoothConnection implements IConnection {
 
 	@Override
 	public void refreshInputStream() {
-		try {
-			this.is.close();
-			this.is = this.conn.openInputStream();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			this.is.close();
+//			this.is = this.conn.openInputStream();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	@Override
 	public void refreshOutputStream() {
-		try {
-			this.os.close();
-			this.os = this.conn.openOutputStream();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			this.os.close();
+//			this.os = this.conn.openOutputStream();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 }

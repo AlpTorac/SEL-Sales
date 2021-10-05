@@ -22,7 +22,7 @@ public class BluetoothClientDiscoveryStrategy extends ClientDiscoveryStrategy {
 		try {
 			lDev = LocalDevice.getLocalDevice();
 		} catch (BluetoothStateException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		
 		final Object lock = new Object();
@@ -58,7 +58,7 @@ public class BluetoothClientDiscoveryStrategy extends ClientDiscoveryStrategy {
 		try {
 			started = lDev.getDiscoveryAgent().startInquiry(DiscoveryAgent.GIAC, l);
 		} catch (BluetoothStateException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 
 		if (started) {
@@ -67,7 +67,7 @@ public class BluetoothClientDiscoveryStrategy extends ClientDiscoveryStrategy {
 					lock.wait();
 				}
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 		}
 		

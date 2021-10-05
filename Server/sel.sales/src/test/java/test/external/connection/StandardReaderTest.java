@@ -33,7 +33,7 @@ class StandardReaderTest {
 	@BeforeEach
 	void prep() {
 		conn = new DummyConnection("clientaddress");
-		mrs = new StandardReader();
+		mrs = new StandardReader(conn.getInputStream());
 		isNotified = false;
 	}
 	
@@ -52,8 +52,8 @@ class StandardReaderTest {
 		String bc = "abcdefg";
 		String bufferContent = bc + "\n";
 		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), bufferContent);
-		String[] sm = mrs.readMessages(conn.getInputStream());
-		Assertions.assertEquals(bc, sm[0]);
+		String sm = mrs.readMessage();
+		Assertions.assertEquals(bc, sm);
 	}
 	
 	@Test
@@ -62,8 +62,13 @@ class StandardReaderTest {
 		String part2 = "gdfshij";
 		String bufferContent = part1 + "\n" + part2 + "\n";
 		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), bufferContent);
-		String[] sm = mrs.readMessages(conn.getInputStream());
-		Assertions.assertEquals(part1, sm[0]);
-		Assertions.assertEquals(part2, sm[1]);
+		String[] sms = new String[2];
+		String sm1 = mrs.readMessage();
+		String sm2 = mrs.readMessage();
+		System.out.println(sm1 + sm2);
+		sms[0] = sm1;
+		sms[1] = sm2;
+		Assertions.assertEquals(part1, sms[0]);
+		Assertions.assertEquals(part2, sms[1]);
 	}
 }

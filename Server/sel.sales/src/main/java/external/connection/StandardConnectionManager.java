@@ -15,10 +15,14 @@ public class StandardConnectionManager extends ConnectionManager {
 	public StandardConnectionManager(IController controller, IConnection conn, ExecutorService es) {
 		super(controller, conn, es);
 	}
+	
+	public StandardConnectionManager(IController controller, IConnection conn, ExecutorService es, long pingPongTimeoutInMillis, long sendTimeoutInMillis, int resendLimit) {
+		super(controller, conn, es, pingPongTimeoutInMillis, sendTimeoutInMillis, resendLimit);
+	}
 
 	@Override
-	protected ISendBuffer initSendBuffer() {
-		return new StandardSendBuffer(this.getConnection(), this.getExecutorService());
+	protected ISendBuffer initSendBuffer(long timeoutInMillis) {
+		return new StandardSendBuffer(this.getConnection(), this.getExecutorService(), timeoutInMillis);
 	}
 
 	@Override
@@ -49,8 +53,7 @@ public class StandardConnectionManager extends ConnectionManager {
 	}
 
 	@Override
-	protected IPingPong initPingPong() {
-		return new StandardPingPong(this.getConnection(), this.getExecutorService());
+	protected IPingPong initPingPong(int resendLimit, long pingPongTimeout) {
+		return new StandardPingPong(this.getConnection(), this.getExecutorService(), resendLimit, pingPongTimeout);
 	}
-
 }

@@ -1,5 +1,7 @@
 package external.handler;
 
+import java.util.concurrent.ExecutorService;
+
 import external.connection.IConnection;
 import external.connection.outgoing.IMessageSendingStrategy;
 import external.connection.pingpong.IPingPong;

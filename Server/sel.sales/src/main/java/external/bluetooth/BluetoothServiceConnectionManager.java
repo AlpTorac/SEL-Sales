@@ -22,7 +22,7 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 		try {
 			this.connNotifier = (StreamConnectionNotifier) Connector.open(service.getURL());
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 
@@ -34,10 +34,11 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 	@Override
 	protected Object getConnectionObject() {
 		try {
+			Object connObject = connNotifier.acceptAndOpen();
 			this.makeNewConnectionThread();
-			return connNotifier.acceptAndOpen();
+			return connObject;
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			return null;
 		}
 	}

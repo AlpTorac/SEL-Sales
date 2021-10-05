@@ -71,7 +71,7 @@ class BasicMessageSenderTest {
 		
 		serialisedData = "gdfkhjlgs";
 		message = new Message(null, null, serialisedData);
-		os = conn.getOutputStream();
+		os.reset();
 		Assertions.assertTrue(mss.sendMessage(conn, message));
 		String serialisedMessage2 = (messageFormat.getMessageStart()+"0"+fieldSeparator +
 				fieldSeparator + fieldSeparator +

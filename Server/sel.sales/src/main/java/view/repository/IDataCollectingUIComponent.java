@@ -16,7 +16,6 @@ public interface IDataCollectingUIComponent<T> extends IUIComponent {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	default public void addItemIfNotPresent(T item) {
 		if (!this.contains(item)) {
 			this.addItem(item);
