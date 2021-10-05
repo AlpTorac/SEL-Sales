@@ -2,6 +2,7 @@ package test.external.connection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -87,28 +88,20 @@ class StandardConnectionManagerTest {
 		conn = new DummyConnection(client1Address);
 		es = Executors.newCachedThreadPool();
 		isConnected = false;
-		connManager = new StandardConnectionManager(controller, conn, es);
+		connManager = new StandardConnectionManager(controller, conn, es, 20000, 2000, 2);
 		sb = connManager.getSendBuffer();
 		pingPong = connManager.getPingPong();
 		resendLimit = pingPong.getRemainingResendTries();
+		conn.getInputStream().reset();
 	}
 	@AfterEach
 	void cleanUp() {
 		connManager.close();
 		try {
-			sb.close();
-			pingPong.close();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
 			es.awaitTermination(waitTime, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		sb = null;
-		pingPong = null;
 		isConnected = false;
 	}
 	
@@ -132,8 +125,10 @@ class StandardConnectionManagerTest {
 		IMessage message = parser.parseMessage(os.toString());
 		if (!message.hasContext(MessageContext.PINGPONG)) {
 			BufferUtilityClass.assertOutputWrittenContains(os, serialiser.serialise(m).getBytes());
+			os.reset();
 			return true;
 		}
+		os.reset();
 		return false;
 	}
 	
@@ -141,10 +136,9 @@ class StandardConnectionManagerTest {
 	void messageSendingTest() {
 		Assertions.assertFalse(sb.isBlocked());
 		IMessage m = new Message(null, null, null);
-		ByteArrayOutputStream os = conn.getOutputStream();
 		connManager.sendMessage(m);
 		GeneralTestUtilityClass.performWait(waitTime);
-		if (!messageBufferContentCheck(os, m)) {
+		if (!messageBufferContentCheck(conn.getOutputStream(), m)) {
 			cleanUp();
 			prep();
 			messageSendingTest();
@@ -158,16 +152,18 @@ class StandardConnectionManagerTest {
 		Assertions.assertFalse(sb.isBlocked());
 		IMessage m = new Message(null, null, null);
 		ByteArrayOutputStream os = conn.getOutputStream();
+		ByteArrayInputStream is = conn.getInputStream();
 		connManager.sendMessage(m);
 		GeneralTestUtilityClass.performWait(waitTime);
 		if (!messageBufferContentCheck(os, m)) {
 			cleanUp();
 			prep();
+			is.reset();
 			messageReadingTest();
 			return;
 		}
 		Assertions.assertTrue(sb.isBlocked());
-		
+		is.reset();
 		IMessage incAck = m.getMinimalAcknowledgementMessage();
 		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialiser.serialise(incAck));
 		GeneralTestUtilityClass.performWait(waitTime);

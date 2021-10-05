@@ -51,7 +51,7 @@ public class MessageReceptionist implements IMessageReceptionist {
 	}
 
 	protected IMessageReadingStrategy initMessageReadingStrategy() {
-		return new StandardReader();
+		return new StandardReader(this.conn.getInputStream());
 	}
 
 	protected IMessageParser initMessageParser() {
@@ -65,12 +65,11 @@ public class MessageReceptionist implements IMessageReceptionist {
 
 	@Override
 	public boolean checkForMessages() {
-		String[] serialisedMessages;
+		String serialisedMessage;
 		boolean allHandled = true;
-		if ((serialisedMessages = this.mrs.readMessages(this.conn.getInputStream())) != null) {
-			for (String m : serialisedMessages) {
-				allHandled = allHandled & this.handleMessage(m);
-			}
+		if ((serialisedMessage = this.mrs.readMessage()) != null) {
+			System.out.println("Message read: " + serialisedMessage);
+			allHandled = this.handleMessage(serialisedMessage);
 			this.conn.refreshInputStream();
 		}
 		return allHandled;

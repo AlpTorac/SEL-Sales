@@ -38,7 +38,7 @@ public class DummyConnection implements IConnection {
 
 	@Override
 	public ByteArrayInputStream getInputStream() {
-		if (this.is == null || this.is.available() == 0) {
+		if (this.is == null) {
 			this.is = new ByteArrayInputStream(buffer);
 		}
 		return this.is;
@@ -64,25 +64,25 @@ public class DummyConnection implements IConnection {
 
 	@Override
 	public void refreshInputStream() {
-		try {
-			this.is.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		buffer = new byte[100];
-		this.is = new ByteArrayInputStream(buffer);
+//		try {
+//			this.is.close();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		buffer = new byte[100];
+//		this.is = new ByteArrayInputStream(buffer);
 	}
 
 	@Override
 	public void refreshOutputStream() {
-		try {
-			this.os.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		this.os = new ByteArrayOutputStream();
+//		try {
+//			this.os.close();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		this.os = new ByteArrayOutputStream();
 	}
 
 }

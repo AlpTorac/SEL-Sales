@@ -19,7 +19,7 @@ public class BluetoothClient implements IClient {
 		try {
 			return this.device.getFriendlyName(false);
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			return null;
 		}
 	}
