@@ -1,0 +1,22 @@
+INDEX VERSION 1.131+C:\Users\SCanGenc\Documents\GitHub\SEL-Sales\.metadata\.plugins\org.eclipse.jdt.core
+1344679121.index
+1715538720.index
+4102729875.index
+958486617.index
+344802604.index
+3650439861.index
+2276770808.index
+2303142809.index
+359772559.index
+3290758523.index
+635160144.index
+2203689859.index
+2284438018.index
+789344348.index
+733190129.index
+2605721813.index
+984879434.index
+1690466794.index
+3319577658.index
+1214682896.index
+3449068273.index

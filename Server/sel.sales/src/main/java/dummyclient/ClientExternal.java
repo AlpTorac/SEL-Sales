@@ -1,6 +1,7 @@
 package dummyclient;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DeviceClass;
@@ -16,23 +17,31 @@ import javax.microedition.io.StreamConnectionNotifier;
 
 import controller.IController;
 import external.External;
+import external.bluetooth.BluetoothClientManager;
 import external.bluetooth.BluetoothConnection;
+import external.bluetooth.BluetoothService;
+import external.bluetooth.BluetoothServiceConnectionManager;
 import external.connection.IConnection;
 import external.connection.IConnectionManager;
 import external.connection.IService;
 import external.connection.StandardConnectionManager;
 import external.message.IMessage;
+import external.message.Message;
 import model.IModel;
 
 public class ClientExternal extends External {
 
 	private RemoteDevice server;
-	private ServiceRecord service;
+	private ServiceRecord serviceRecord;
 	private IConnectionManager connManager;
 	
 	protected ClientExternal(IController controller, IModel model) {
 		super(controller, model);
 		// TODO Auto-generated constructor stub
+	}
+	
+	public IConnectionManager getConnManager() {
+		return this.connManager;
 	}
 	
 	public void sendMessage(IMessage message) {
@@ -72,7 +81,7 @@ public class ClientExternal extends External {
 				for (ServiceRecord sr : servRecord) {
 					try {
 						if (sr.getHostDevice().getFriendlyName(false).equals(server.getFriendlyName(false))) {
-							service = sr;
+							serviceRecord = sr;
 						}
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -119,46 +128,70 @@ public class ClientExternal extends External {
 			}
 		}
 		
-		return service.getConnectionURL(0, false);
+		return serviceRecord.getConnectionURL(0, false);
 	}
 
 	public void connectToService() {
-		es.submit(() -> {
-			StreamConnectionNotifier connNotifier = null;
-			try {
-				connNotifier = (StreamConnectionNotifier) Connector.open(this.getConnectionURL());
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			
-			StreamConnection connectionObject = null;
-			
-			try {
-				connectionObject = connNotifier.acceptAndOpen();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			IConnection conn = new BluetoothConnection((StreamConnection) connectionObject);
-			
-			IConnectionManager connManager = new StandardConnectionManager(this.getController(), conn, es);
-			this.connManager = connManager;
-		});
+		StreamConnection conn = null;
+		try {
+			System.out.println("Connecting to service");
+			conn = (StreamConnection) Connector.open(this.getConnectionURL());
+			System.out.println("Connected to service");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		IConnection connwrapper = new BluetoothConnection((StreamConnection) conn);
+		
+		IConnectionManager connManager = new StandardConnectionManager(this.getController(), connwrapper, es);
+		this.connManager = connManager;
 	}
 
-	@Override
-	protected IService initService() {
-		return null;
+	protected BluetoothServiceConnectionManager getServiceConnectionManager() {
+		return (BluetoothServiceConnectionManager) super.getService().getServiceConnectionManager();
 	}
-	protected void setService(IService service) {
-		
+	
+	protected BluetoothClientManager getClientManager() {
+		return (BluetoothClientManager) super.getService().getClientManager();
+	}
+	
+	@Override
+	protected BluetoothService getService() {
+		return (BluetoothService) super.getService();
+	}
+	
+	protected BluetoothClientManager initClientManager() {
+		return new BluetoothClientManager(es, this.getController());
+	}
+	
+	@Override
+	protected BluetoothService initService() {
+		return this.initBluetoothService(new UUID(0x1111), "SEL_Service");
+	}
+	
+	private BluetoothService initBluetoothService(UUID id, String name) {
+		return new BluetoothService(id, name, this.initClientManager(), this.getController(), es);
 	}
 	@Override
 	public void rediscoverClients() {
-		System.out.println("External rediscovering clients");
+//		this.service.getClientManager().discoverClients();
 	}
 	@Override
 	public void refreshKnownClients() {
-		System.out.println("External refreshing known clients");
+//		this.service.getClientManager().receiveKnownClientData(this.model.getAllKnownClientData());
+	}
+	
+	public void close(IMessage ackMessage) {
+		System.out.println("Closing");
+		this.connManager.getSendBuffer().receiveAcknowledgement(ackMessage);
+		this.connManager.close();
+		System.out.println("ConnManager closing");
+		try {
+			this.es.awaitTermination(3000, TimeUnit.MILLISECONDS);
+			System.out.println("Pool shutdown");
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
