@@ -3,6 +3,7 @@ package external.bluetooth;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
+import javax.bluetooth.RemoteDevice;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
@@ -34,7 +35,11 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 	@Override
 	protected Object getConnectionObject() {
 		try {
-			Object connObject = connNotifier.acceptAndOpen();
+			StreamConnection connObject = connNotifier.acceptAndOpen();
+			while (!this.isConnectionAllowed(RemoteDevice.getRemoteDevice(connObject).getBluetoothAddress())) {
+				connObject.close();
+				connObject = connNotifier.acceptAndOpen();
+			}
 			this.makeNewConnectionThread();
 			return connObject;
 		} catch (IOException e) {
@@ -45,6 +50,6 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 
 	@Override
 	protected IConnectionManager createConnectionManager(IConnection conn) {
-		return new StandardConnectionManager(controller, conn, es);
+		return new StandardConnectionManager(controller, conn, es, 1000, 2000, 3);
 	}
 }

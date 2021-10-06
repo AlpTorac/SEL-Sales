@@ -19,10 +19,12 @@ public class BasicMessageSender implements IMessageSendingStrategy {
 		DataOutputStream os = new DataOutputStream(conn.getOutputStream());
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));
 		try {
-			writer.write(new String(messageSerialiser.serialise(message).getBytes()));
-			writer.flush();
+			if (!conn.isClosed()) {
+				writer.write(new String(messageSerialiser.serialise(message).getBytes()));
+				writer.flush();
+			}
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		conn.refreshOutputStream();
 		return true;

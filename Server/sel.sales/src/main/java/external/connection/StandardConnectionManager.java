@@ -43,16 +43,6 @@ public class StandardConnectionManager extends ConnectionManager {
 	}
 
 	@Override
-	protected ConnectionListener createConnListener() {
-		return new ConnectionListener(controller);
-	}
-
-	@Override
-	protected DisconnectionListener createDisconListener() {
-		return new DisconnectionListener(controller);
-	}
-
-	@Override
 	protected IPingPong createPingPong(int resendLimit, long pingPongTimeout) {
 		return new StandardPingPong(this.getConnection(), this.getExecutorService(), resendLimit, pingPongTimeout);
 	}

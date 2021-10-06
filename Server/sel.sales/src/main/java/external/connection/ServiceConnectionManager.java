@@ -5,11 +5,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import controller.IController;
 import external.client.IClientManager;
 import external.message.IMessage;
+import model.connectivity.IClientData;
 
 public abstract class ServiceConnectionManager implements IServiceConnectionManager {
 
@@ -18,12 +18,21 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	private IClientManager manager;
 	protected IController controller;
 	
+	private ConnectionListener connListener;
+	private DisconnectionListener disconListener;
+	
 	protected ServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es) {
 		this.es = es;
 		this.manager = manager;
 		this.controller = controller;
+		this.connListener = this.createConnListener();
+		this.disconListener = this.createDisconListener();
 	}
 
+	protected void initConnListener() {
+		this.connListener = this.createConnListener();
+	}
+	
 	private IConnectionManager getConnectionManager(String clientAddress) {
 		Iterator<IConnectionManager> it = this.connectionManagers.iterator();
 		while (it.hasNext()) {
@@ -55,6 +64,8 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	protected boolean addConnection(IConnection conn) {
 		if (this.isConnectionAllowed(conn.getTargetClientAddress())) {
 			IConnectionManager connManager = this.createConnectionManager(conn);
+			this.connListener.connectionEstablished(conn.getTargetClientAddress());
+			connManager.setDisconnectionListener(this.disconListener);
 			return this.connectionManagers.add(connManager);
 		} else {
 			try {
@@ -104,5 +115,30 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	@Override
 	public void broadcastMessage(IMessage message) {
 		this.connectionManagers.forEach(cm -> cm.sendMessage(message));
+	}
+	@Override
+	public void receiveKnownClientData(IClientData[] clientData) {
+		for (IClientData d : clientData) {
+			this.connectionManagers.stream()
+			.filter(cm -> cm.getConnection().getTargetClientAddress().equals(d.getClientAddress()))
+			.forEach(cm -> {
+				if (!d.getIsAllowedToConnect() || !d.getIsConnected()) {
+					cm.close();
+					this.connectionManagers.remove(cm);
+					this.disconListener.connectionLost(cm.getConnection().getTargetClientAddress());
+				}
+			});
+		}
+//		this.connectionManagers.stream().filter(cm -> cm.getConnection().isClosed()).forEach(cm -> {
+//
+//		});
+	}
+	
+	protected ConnectionListener createConnListener() {
+		return new ConnectionListener(this.controller);
+	}
+
+	protected DisconnectionListener createDisconListener() {
+		return new DisconnectionListener(this.controller);
 	}
 }

@@ -1,6 +1,7 @@
 package external.connection;
 
 import external.message.IMessage;
+import model.connectivity.IClientData;
 
 public interface IServiceConnectionManager {
 	IConnection getConnection(String clientAddress);
@@ -9,4 +10,5 @@ public interface IServiceConnectionManager {
 	void sendMessageTo(String clientAddress, IMessage message);
 	void broadcastMessage(IMessage message);
 	void makeNewConnectionThread();
+	void receiveKnownClientData(IClientData[] clientData);
 }

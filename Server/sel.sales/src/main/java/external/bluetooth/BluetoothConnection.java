@@ -11,12 +11,14 @@ import external.connection.IConnection;
 
 public class BluetoothConnection implements IConnection {
 	private StreamConnection conn;
+	private String targetAddress;
 	private InputStream is;
 	private OutputStream os;
 	
 	BluetoothConnection(StreamConnection conn) {
 		this.conn = conn;
 		try {
+			this.targetAddress = RemoteDevice.getRemoteDevice(conn).getBluetoothAddress();
 			this.is = this.conn.openInputStream();
 			this.os = this.conn.openOutputStream();
 		} catch (IOException e) {
@@ -27,11 +29,6 @@ public class BluetoothConnection implements IConnection {
 	@Override
 	public void close() throws IOException {
 		this.conn.close();
-		this.conn = null;
-		this.is.close();
-		this.is = null;
-		this.os.close();
-		this.os = null;
 	}
 
 	@Override
@@ -51,14 +48,7 @@ public class BluetoothConnection implements IConnection {
 
 	@Override
 	public String getTargetClientAddress() {
-		RemoteDevice device = null;
-		try {
-			device = RemoteDevice.getRemoteDevice(conn);
-		} catch (IOException e) {
-//			e.printStackTrace();
-			return null;
-		}
-		return device.getBluetoothAddress();
+		return this.targetAddress;
 	}
 
 	@Override

@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.IController;
+import external.connection.IConnection;
 import external.connection.StandardConnectionManager;
 import external.connection.outgoing.ISendBuffer;
 import external.connection.pingpong.IPingPong;
@@ -31,6 +34,7 @@ import external.message.StandardMessageFormat;
 import external.message.StandardMessageParser;
 import test.GeneralTestUtilityClass;
 import test.external.buffer.BufferUtilityClass;
+import test.external.buffer.TimeoutTestUtilityClass;
 import test.external.dummy.DummyClient;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyConnectionManager;
@@ -38,7 +42,7 @@ import test.external.dummy.DummyController;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class StandardConnectionManagerTest {
 	private ExecutorService es;
-	private long waitTime = 500;
+	private long waitTime = 50;
 	
 	private IMessageSerialiser serialiser = new MessageSerialiser(new StandardMessageFormat());
 	private IMessageParser parser = new StandardMessageParser();
@@ -92,6 +96,7 @@ class StandardConnectionManagerTest {
 		sb = connManager.getSendBuffer();
 		pingPong = connManager.getPingPong();
 		resendLimit = pingPong.getRemainingResendTries();
+		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	@AfterEach
 	void cleanUp() {
@@ -118,38 +123,12 @@ class StandardConnectionManagerTest {
 		};
 	}
 	
-	/*
-	 * Use to detect ping-pong messages taking the place of normal messages.
-	 */
-	private boolean messageBufferContentCheck(ByteArrayOutputStream os, IMessage m) {
-		IMessage message = null;
-		String osContent = os.toString();
-		if (osContent != null && osContent != "") {
-			message = parser.parseMessage(osContent);
-			if (!message.hasContext(MessageContext.PINGPONG)) {
-//				Assertions.assertEquals(osContent, serialiser.serialise(m));
-				os.reset();
-				return true;
-			}
-			os.reset();
-			return false;
-		}
-		os.reset();
-		return true;
-	}
-	
 	@Test
 	void messageSendingTest() {
 		Assertions.assertFalse(sb.isBlocked());
 		IMessage m = new Message(null, null, null);
 		connManager.sendMessage(m);
 		GeneralTestUtilityClass.performWait(waitTime);
-		if (!messageBufferContentCheck(conn.getOutputStream(), m)) {
-			cleanUp();
-			prep();
-			messageSendingTest();
-			return;
-		}
 		Assertions.assertTrue(sb.isBlocked());
 	}
 	
@@ -157,75 +136,38 @@ class StandardConnectionManagerTest {
 	void messageReadingTest() {
 		Assertions.assertFalse(sb.isBlocked());
 		IMessage m = new Message(null, null, null);
-		ByteArrayOutputStream os = conn.getOutputStream();
-		ByteArrayInputStream is = conn.getInputStream();
 		connManager.sendMessage(m);
 		GeneralTestUtilityClass.performWait(waitTime);
-		if (!messageBufferContentCheck(os, m)) {
-			cleanUp();
-			prep();
-			messageReadingTest();
-			return;
-		}
 		Assertions.assertTrue(sb.isBlocked());
-		is.reset();
 		IMessage incAck = m.getMinimalAcknowledgementMessage();
-		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialiser.serialise(incAck));
-		GeneralTestUtilityClass.performWait(waitTime);
-		//Works if sb receives acknowledgement itself
-		Assertions.assertFalse(sb.isBlocked());
+		ConnectionManagerTestUtilityClass.assertAckReadAndSentToSendBuffer(conn, sb, serialiser.serialise(incAck), waitTime, 10000);
 	}
 	
 	@Test
 	void messageSendReadCycleTest() {
 		Assertions.assertFalse(sb.isBlocked());
 		IMessage m = new Message(null, null, null);
-		ByteArrayOutputStream os = conn.getOutputStream();
-		ByteArrayInputStream is = conn.getInputStream();
 		connManager.sendMessage(m);
 		GeneralTestUtilityClass.performWait(waitTime);
-//		System.out.println("OutputStream was: " + os.toString() + "\nexpected was: " + new String(serialiser.serialise(m).getBytes()));
-		if (!messageBufferContentCheck(os, m)) {
-			cleanUp();
-			prep();
-			messageSendReadCycleTest();
-			return;
-		}
 		Assertions.assertTrue(sb.isBlocked());
-		is.reset();
 		IMessage incAck = m.getMinimalAcknowledgementMessage();
-		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialiser.serialise(incAck));
-		GeneralTestUtilityClass.performWait(waitTime);
-		Assertions.assertFalse(sb.isBlocked());
+		ConnectionManagerTestUtilityClass.assertAckReadAndSentToSendBuffer(conn, sb, serialiser.serialise(incAck), waitTime, 10000);
 		
 		IMessage m2 = new Message(null, null, null);
-		os = conn.getOutputStream();
-		is = conn.getInputStream();
 		connManager.sendMessage(m2);
 		GeneralTestUtilityClass.performWait(waitTime);
-		if (!messageBufferContentCheck(os, m2)) {
-			cleanUp();
-			prep();
-			messageSendReadCycleTest();
-			return;
-		}
 		Assertions.assertTrue(sb.isBlocked());
-		is.reset();
 		IMessage incAck2 = m2.getMinimalAcknowledgementMessage();
-		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialiser.serialise(incAck2));
-		GeneralTestUtilityClass.performWait(waitTime);
-		Assertions.assertFalse(sb.isBlocked());
+		ConnectionManagerTestUtilityClass.assertAckReadAndSentToSendBuffer(conn, sb, serialiser.serialise(incAck2), waitTime, 10000);
 	}
 	
 	@Test
 	void pingPongTest() {
-		Assertions.assertTrue(isConnected);
+//		Assertions.assertTrue(isConnected);
 		Assertions.assertTrue(resendLimit == pingPong.getRemainingResendTries());
 		while (pingPong.getRemainingResendTries() > 0) {
 			pingPong.timeout();
 		}
-		pingPong.timeout();
-		pingPong.timeout();
 		GeneralTestUtilityClass.performWait(waitTime);
 		Assertions.assertFalse(isConnected);
 	}

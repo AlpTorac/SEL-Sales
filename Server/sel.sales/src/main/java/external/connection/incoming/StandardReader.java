@@ -39,7 +39,7 @@ public class StandardReader implements IMessageReadingStrategy {
 	     try {
 			result = r.readLine();
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	    if (result == null || result.charAt(0) == 0) {
 	    	return null;

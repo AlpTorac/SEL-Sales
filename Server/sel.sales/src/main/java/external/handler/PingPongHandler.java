@@ -26,16 +26,16 @@ public class PingPongHandler extends MessageHandler {
 
 	@Override
 	public boolean acknowledge(IMessage message) {
-		System.out.println("Pingpong message verified");
+//		System.out.println("Pingpong message verified");
 		return true;
 	}
 
 	@Override
 	public boolean performNeededAction(IMessage message) {
-		System.out.println("Pingpong being sent to ping pong");
+//		System.out.println("Pingpong being sent to ping pong");
 		this.pingPong.receiveResponse(message);
-		System.out.println("Pingpong response sent");
-		return this.mss.sendMessage(this.conn, message);
+//		System.out.println("Pingpong response sent");
+		return true;
 	}
 
 }

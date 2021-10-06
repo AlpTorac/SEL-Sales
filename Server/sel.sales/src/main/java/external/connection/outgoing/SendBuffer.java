@@ -46,7 +46,9 @@ public abstract class SendBuffer implements ISendBuffer {
 	 * @return Whether the message is successfully sent.
 	 */
 	protected boolean resendLast() {
-		return this.mss.sendMessage(this.conn, this.buffer.getMessageInLine());
+		boolean result = this.mss.sendMessage(this.conn, this.buffer.getMessageInLine());
+		this.startTimeoutTimer();
+		return result;
 	}
 
 	@Override
@@ -66,6 +68,7 @@ public abstract class SendBuffer implements ISendBuffer {
 	
 	protected void startTimeoutTimer() {
 		this.ts.startTimer();
+		System.out.println("startTimeoutTimer() in " + this);
 	}
 	
 	private void setBlocked(boolean isBlocked) {
@@ -104,6 +107,7 @@ public abstract class SendBuffer implements ISendBuffer {
 	 */
 	protected void unblock() {
 		this.ts.reset();
+		System.out.println("unblock() in " + this);
 		this.setBlocked(false);
 	}
 	@Override

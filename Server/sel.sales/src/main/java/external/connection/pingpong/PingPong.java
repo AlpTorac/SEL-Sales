@@ -15,7 +15,7 @@ public abstract class PingPong implements IPingPong {
 	private IMessageSendingStrategy mss;
 	private ITimeoutStrategy ts;
 	private ExecutorService es;
-	private int resendCount;
+	private volatile int resendCount;
 	private int resendLimit;
 	private IConnection conn;
 	
@@ -38,13 +38,17 @@ public abstract class PingPong implements IPingPong {
 	}
 	
 	protected void block() {
-		this.setBlocked(true);
+		if (!this.isBlocked()) {
+			this.setBlocked(true);
+		}
 	}
 	
 	protected void unblock() {
-		this.resetTimeoutTimer();
-		this.resetResendCount();
-		this.setBlocked(false);
+		if (this.isBlocked() && this.ts.isRunning()) {
+			this.resetTimeoutTimer();
+			this.resetResendCount();
+			this.setBlocked(false);
+		}
 	}
 	
 	@Override
@@ -69,12 +73,11 @@ public abstract class PingPong implements IPingPong {
 	}
 	
 	protected boolean sendPingPongMessageAndStartTimer() {
-		System.out.println("Sending ping message");
 		boolean isSent = this.mss.sendMessage(conn, this.generatePingPongMessage());
 		if (isSent) {
+			System.out.println("Ping pong message sent");
 			this.block();
 			this.startTimeoutTimer();
-			System.out.println("Sent ping message");
 		}
 		return isSent;
 	}
@@ -98,8 +101,7 @@ public abstract class PingPong implements IPingPong {
 	
 	protected void resendPingPongMessage() {
 		this.increaseResendCount();
-		this.sendPingPongMessage();
-		System.out.println("Sending ping message, resend: " + resendCount);
+		this.sendPingPongMessageAndStartTimer();
 	}
 	
 	protected void increaseResendCount() {
@@ -108,27 +110,23 @@ public abstract class PingPong implements IPingPong {
 	
 	@Override
 	public void receiveResponse(IMessage message) {
-		System.out.println("Received pong");
 		this.unblock();
 	}
 	
 	@Override
 	public void timeout() {
-		if (this.resendCount < this.resendLimit) {
+		if (this.getRemainingResendTries() > 0) {
 			this.resendPingPongMessage();
 		} else {
-			this.disconListener.connectionLost(conn.getTargetClientAddress());
+			if (this.disconListener != null) {
+				this.disconListener.connectionLost(conn.getTargetClientAddress());
+			}
 		}
 	}
 	
 	@Override
 	public void close() {
 		this.ts.terminate();
-		try {
-			this.conn.close();
-		} catch (IOException e) {
-//			e.printStackTrace();
-		}
 	}
 	
 	@Override

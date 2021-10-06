@@ -48,6 +48,6 @@ public abstract class External implements IExternal {
 	}
 	@Override
 	public void refreshKnownClients() {
-		this.service.getClientManager().receiveKnownClientData(this.model.getAllKnownClientData());
+		this.service.receiveKnownClientData(this.model.getAllKnownClientData());
 	}
 }

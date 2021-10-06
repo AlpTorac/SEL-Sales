@@ -16,7 +16,7 @@ public class DummyConnection implements IConnection {
 	
 	public DummyConnection(String clientAddress) {
 		this.clientAddress = clientAddress;
-		buffer = new byte[100];
+		buffer = new byte[1000];
 		this.is = new ByteArrayInputStream(buffer);
 		this.os = new ByteArrayOutputStream();
 	}

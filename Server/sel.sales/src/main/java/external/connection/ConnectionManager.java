@@ -23,7 +23,6 @@ public abstract class ConnectionManager implements IConnectionManager {
 	
 	private boolean isClosed = false;
 	
-	private ConnectionListener connListener;
 	private DisconnectionListener disconListener;
 	
 	protected ConnectionManager(IController controller, IConnection conn, ExecutorService es) {
@@ -42,6 +41,11 @@ public abstract class ConnectionManager implements IConnectionManager {
 		this.init();
 	}
 	@Override
+	public void setDisconnectionListener(DisconnectionListener dl) {
+		this.disconListener = dl;
+	}
+	
+	@Override
 	public IPingPong getPingPong() {
 		return this.pingPong;
 	}
@@ -55,26 +59,9 @@ public abstract class ConnectionManager implements IConnectionManager {
 		return this.es;
 	}
 	
-	protected void initConnListener() {
-		this.connListener = this.createConnListener();
-		this.connListener.connectionEstablished(this.conn.getTargetClientAddress());
-	}
-	
-	protected abstract ConnectionListener createConnListener();
-	
-	protected abstract DisconnectionListener createDisconListener();
-	
-	protected void setDisconListener(DisconnectionListener dl) {
-		this.disconListener = dl;
-		this.pingPong.setDisconnectionListener(this.disconListener);
-	}
-	
-	protected void initDisconListener(IPingPong pingPong) {
-		this.setDisconListener(this.createDisconListener());
-	}
-	
 	protected void initPingPong(int resendLimit, long pingPongTimeoutInMillis) {
 		this.pingPong = this.createPingPong(resendLimit, pingPongTimeoutInMillis);
+		this.pingPong.setDisconnectionListener(disconListener);
 	}
 
 	protected abstract IPingPong createPingPong(int resendLimit, long pingPongTimeoutInMillis);
@@ -127,9 +114,7 @@ public abstract class ConnectionManager implements IConnectionManager {
 			public void run() {
 				while (!isClosed && !getConnection().isClosed()) {
 //					System.out.println("Checking for messages to send");
-					if (!getSendBuffer().isBlocked() && !getSendBuffer().isEmpty()) {
-						getSendBuffer().sendMessage();
-					}
+					getSendBuffer().sendMessage();
 //					System.out.println("Checked for messages to send");
 //					try {
 //						Thread.sleep(300);
@@ -137,6 +122,9 @@ public abstract class ConnectionManager implements IConnectionManager {
 //						// TODO Auto-generated catch block
 //						e.printStackTrace();
 //					}
+					if (getSendBuffer() == null) {
+						System.out.println("Send buffer null");
+					}
 				}
 			}
 		};
@@ -148,7 +136,11 @@ public abstract class ConnectionManager implements IConnectionManager {
 			public void run() {
 				while (!isClosed && !getConnection().isClosed()) {
 					if (!getPingPong().isBlocked()) {
+						System.out.println("Ping pong cycle --- sending ping pong");
 						getPingPong().sendPingPongMessage();
+					}
+					if (getPingPong() == null) {
+						System.out.println("Ping Pong null");
 					}
 				}
 			}
@@ -157,13 +149,9 @@ public abstract class ConnectionManager implements IConnectionManager {
 	
 	protected void init() {
 		this.initPingPong(this.getResendLimit(), this.getPingPongTimeout());
-
 		this.initSendBuffer(this.getSendTimeout());
-
 		this.initMessageReceptionist(this.getSendBuffer(), this.getPingPong());
 		
-		this.initConnListener();
-		this.initDisconListener(this.getPingPong());
 		Runnable[] rs = this.initConnectionRunnables();
 		for (Runnable r : rs) {
 			this.getExecutorService().submit(r);
@@ -194,6 +182,7 @@ public abstract class ConnectionManager implements IConnectionManager {
 			this.getSendBuffer().close();
 			this.getPingPong().close();
 			this.getIncomingMessageListener().close();
+//			this.disconListener.connectionLost(conn.getTargetClientAddress());
 			this.getConnection().close();
 		} catch (IOException e) {
 //			e.printStackTrace();
