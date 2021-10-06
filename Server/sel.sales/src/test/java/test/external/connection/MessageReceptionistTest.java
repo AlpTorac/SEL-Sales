@@ -153,7 +153,9 @@ class MessageReceptionistTest {
 	
 	@Test
 	void handlePingPongMessageTest() {
-		Assertions.assertTrue(pingPong.start());
+		pingPong.sendPingPongMessage();
+		GeneralTestUtilityClass.performWait(waitTime);
+		Assertions.assertTrue(pingPong.isRunning());
 		pingPong.timeout();
 		Assertions.assertTrue(resendLimit - 1 == pingPong.getRemainingResendTries());
 		

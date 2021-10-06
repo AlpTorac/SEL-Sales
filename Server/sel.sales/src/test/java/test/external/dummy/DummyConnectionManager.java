@@ -17,7 +17,7 @@ import external.connection.pingpong.StandardPingPong;
 public class DummyConnectionManager extends ConnectionManager {
 
 	public DummyConnectionManager(IController controller, IConnection conn, ExecutorService es) {
-		super(controller, conn, es);
+		super(controller, conn, es, 20000, 2000, 10);
 	}
 
 	@Override
@@ -35,9 +35,9 @@ public class DummyConnectionManager extends ConnectionManager {
 	@Override
 	protected Runnable[] initConnectionRunnables() {
 		Runnable[] rs = new Runnable[] {
-				this.initMessageReadingRunnable(),
+				this.initPingPongRunnable(),
 				this.initMessageSendingRunnable(),
-				this.initPingPongRunnable()
+				this.initMessageReadingRunnable()
 		};
 		return rs;
 	}

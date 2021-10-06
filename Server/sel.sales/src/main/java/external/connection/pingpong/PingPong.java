@@ -19,6 +19,8 @@ public abstract class PingPong implements IPingPong {
 	private int resendLimit;
 	private IConnection conn;
 	
+	private boolean isBlocked = false;
+	
 	private DisconnectionListener disconListener;
 	
 	protected PingPong(IConnection conn, IMessageSendingStrategy mss, ITimeoutStrategy ts, ExecutorService es, int resendLimit) {
@@ -28,12 +30,26 @@ public abstract class PingPong implements IPingPong {
 		this.es = es;
 		this.resendCount = 0;
 		this.resendLimit = resendLimit;
+		this.initTimeoutTimer();
+	}
+	
+	protected void setBlocked(boolean isBlocked) {
+		this.isBlocked = isBlocked;
+	}
+	
+	protected void block() {
+		this.setBlocked(true);
+	}
+	
+	protected void unblock() {
+		this.resetTimeoutTimer();
+		this.resetResendCount();
+		this.setBlocked(false);
 	}
 	
 	@Override
-	public boolean start() {
-		this.initTimeoutTimer();
-		return this.sendPingPongMessageAndStartTimer();
+	public boolean isBlocked() {
+		return this.isBlocked;
 	}
 	
 	@Override
@@ -45,16 +61,18 @@ public abstract class PingPong implements IPingPong {
 		return new Message(MessageContext.PINGPONG, null, null);
 	}
 	
-	protected void sendPingPongMessage() {
-		System.out.println("Sending ping message");
-		this.mss.sendMessage(conn, this.generatePingPongMessage());
-		System.out.println("Sent ping message");
+	public boolean sendPingPongMessage() {
+		if (this.isBlocked()) {
+			return false;
+		}
+		return this.sendPingPongMessageAndStartTimer();
 	}
 	
 	protected boolean sendPingPongMessageAndStartTimer() {
 		System.out.println("Sending ping message");
 		boolean isSent = this.mss.sendMessage(conn, this.generatePingPongMessage());
 		if (isSent) {
+			this.block();
 			this.startTimeoutTimer();
 			System.out.println("Sent ping message");
 		}
@@ -90,13 +108,8 @@ public abstract class PingPong implements IPingPong {
 	
 	@Override
 	public void receiveResponse(IMessage message) {
-		System.out.println("Resetting timeout timer");
-		this.resetTimeoutTimer();
-		System.out.println("Reset timeout timer");
-		this.resetResendCount();
-		System.out.println("Reset resend count");
 		System.out.println("Received pong");
-		this.sendPingPongMessageAndStartTimer();
+		this.unblock();
 	}
 	
 	@Override

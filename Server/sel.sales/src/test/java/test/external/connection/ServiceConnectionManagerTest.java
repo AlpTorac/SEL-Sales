@@ -2,6 +2,7 @@ package test.external.connection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
@@ -35,7 +36,7 @@ import test.external.dummy.DummyController;
 import test.external.dummy.DummyServiceConnectionManager;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class ServiceConnectionManagerTest {
-	private long waitTime = 300;
+	private long waitTime = 500;
 	private DummyServiceConnectionManager serviceConnectionManager;
 	
 	private IClientManager manager;
@@ -176,7 +177,11 @@ class ServiceConnectionManagerTest {
 		connectionManagers.stream().filter(cm -> cm.getConnection().getTargetClientAddress().equals(targetClientAddress)).forEach(cm -> {
 			ISendBuffer sb = cm.getSendBuffer();
 			Assertions.assertTrue(sb.isBlocked());
-			BufferUtilityClass.fillBuffer(((DummyConnection) cm.getConnection()).getInputStreamBuffer(), serialiser.serialise(m.getMinimalAcknowledgementMessage()));
+			
+			DummyConnection conn = (DummyConnection) cm.getConnection();
+			ByteArrayInputStream is = conn.getInputStream();
+			is.reset();
+			BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialiser.serialise(m.getMinimalAcknowledgementMessage()));
 		});
 		
 		// Make sure others do not receive it
@@ -219,6 +224,8 @@ class ServiceConnectionManagerTest {
 			Assertions.assertTrue(sb.isBlocked());
 			
 			DummyConnection conn = (DummyConnection) cm.getConnection();
+			ByteArrayInputStream is = conn.getInputStream();
+			is.reset();
 			BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialiser.serialise(m.getMinimalAcknowledgementMessage()));
 		});
 		

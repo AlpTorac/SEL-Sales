@@ -146,17 +146,11 @@ public abstract class ConnectionManager implements IConnectionManager {
 		return new Runnable() {
 			@Override
 			public void run() {
-				getPingPong().start();
-//				while (!isClosed && !getConnection().isClosed() && getPingPong().isRunning()) {
-//					System.out.println("Checking for ping pong");
-//					try {
-//						Thread.sleep(200);
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}
-//				disconListener.connectionLost(conn.getTargetClientAddress());
+				while (!isClosed && !getConnection().isClosed()) {
+					if (!getPingPong().isBlocked()) {
+						getPingPong().sendPingPongMessage();
+					}
+				}
 			}
 		};
 	}
