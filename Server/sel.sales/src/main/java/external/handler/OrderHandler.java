@@ -20,15 +20,15 @@ public class OrderHandler extends MessageHandler {
 	
 	@Override
 	public boolean acknowledge(IMessage message) {
-		System.out.println("order verified");
+//		System.out.println("order verified");
 		return this.acknowledger.acknowledge(message);
 	}
 
 	@Override
 	public boolean performNeededAction(IMessage message) {
-		System.out.println("order acknowledged");
+//		System.out.println("order acknowledged");
 		this.controller.addOrder(message.getSerialisedData());
-		System.out.println("order action performed");
+//		System.out.println("order action performed");
 		return true;
 	}
 

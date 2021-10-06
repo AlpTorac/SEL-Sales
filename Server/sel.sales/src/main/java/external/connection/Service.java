@@ -4,10 +4,11 @@ import java.util.concurrent.ExecutorService;
 
 import controller.IController;
 import external.client.IClientManager;
+import model.connectivity.IClientData;
 
 public abstract class Service implements IService {
 	protected ExecutorService es;
-	private IServiceConnectionManager scm;
+	protected IServiceConnectionManager scm;
 	private IClientManager clientManager;
 	
 	private String id;
@@ -54,4 +55,13 @@ public abstract class Service implements IService {
 		return this.clientManager;
 	}
 
+	@Override
+	public void receiveKnownClientData(IClientData[] clientData) {
+		if (this.clientManager != null) {
+			this.getClientManager().receiveKnownClientData(clientData);
+		}
+		if (this.scm != null) {
+			this.getServiceConnectionManager().receiveKnownClientData(clientData);
+		}
+	}
 }

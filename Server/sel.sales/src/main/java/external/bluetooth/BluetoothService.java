@@ -16,10 +16,9 @@ public class BluetoothService extends Service {
 	}
 
 	@Override
-	public IServiceConnectionManager publish() {
-		IServiceConnectionManager scm = new BluetoothServiceConnectionManager(this, this.getClientManager(), this.getController(), es);
-		scm.makeNewConnectionThread();
-		return scm;
+	public void publish() {
+		this.scm = new BluetoothServiceConnectionManager(this, this.getClientManager(), this.getController(), es);
+		this.scm.makeNewConnectionThread();
 	}
 
 	@Override

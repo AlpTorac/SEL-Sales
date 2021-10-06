@@ -35,7 +35,7 @@ class FixTimeoutStrategyTest {
 	void prep() {
 		toleranceInMillis = 100;
 		esTerminationTimeout = 100;
-		es = Executors.newFixedThreadPool(10);
+		es = Executors.newCachedThreadPool();
 		timeoutInMillis = 500;
 		shortestRandomDuration = timeoutInMillis / 10;
 		longestRandomDuration = timeoutInMillis;

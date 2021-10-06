@@ -36,7 +36,7 @@ import test.external.dummy.DummyController;
 import test.external.dummy.DummyServiceConnectionManager;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class ServiceConnectionManagerTest {
-	private long waitTime = 500;
+	private long waitTime = 100;
 	private DummyServiceConnectionManager serviceConnectionManager;
 	
 	private IClientManager manager;
@@ -108,7 +108,7 @@ class ServiceConnectionManagerTest {
 	void getConnectionTest() {
 		serviceConnectionManager.setCurrentConnectionObject(client1);
 		serviceConnectionManager.makeNewConnectionThread();
-		GeneralTestUtilityClass.performWait(waitTime);
+		GeneralTestUtilityClass.performWait(waitTime * 2);
 		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
 	}
 	@Test
@@ -156,7 +156,7 @@ class ServiceConnectionManagerTest {
 		GeneralTestUtilityClass.performWait(waitTime);
 		serviceConnectionManager.setCurrentConnectionObject(client2);
 		serviceConnectionManager.makeNewConnectionThread();
-		GeneralTestUtilityClass.performWait(waitTime);
+		GeneralTestUtilityClass.performWait(waitTime*2);
 		Assertions.assertEquals(client2.getClientAddress(), serviceConnectionManager.getConnection(client2Address).getTargetClientAddress());
 		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
 		
@@ -184,17 +184,19 @@ class ServiceConnectionManagerTest {
 			BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialiser.serialise(m.getMinimalAcknowledgementMessage()));
 		});
 		
+		GeneralTestUtilityClass.performWait(waitTime);
+		
 		// Make sure others do not receive it
 		connectionManagers.stream().filter(cm -> !cm.getConnection().getTargetClientAddress().equals(targetClientAddress)).forEach(cm -> {
 			ISendBuffer sb = cm.getSendBuffer();
 			Assertions.assertFalse(sb.isBlocked());
 		});
 		
-		GeneralTestUtilityClass.performWait(waitTime);
-		
 		connectionManagers.stream().filter(cm -> cm.getConnection().getTargetClientAddress().equals(targetClientAddress)).forEach(cm -> {
 			ISendBuffer sb = cm.getSendBuffer();
-			Assertions.assertFalse(sb.isBlocked());
+			DummyConnection conn = (DummyConnection) cm.getConnection();
+			
+			ConnectionManagerTestUtilityClass.assertAckReadAndSentToSendBuffer(conn, sb, serialiser.serialise(m.getMinimalAcknowledgementMessage()), waitTime, 10000);
 		});
 	}
 	
@@ -205,7 +207,7 @@ class ServiceConnectionManagerTest {
 		GeneralTestUtilityClass.performWait(waitTime);
 		serviceConnectionManager.setCurrentConnectionObject(client2);
 		serviceConnectionManager.makeNewConnectionThread();
-		GeneralTestUtilityClass.performWait(waitTime);
+		GeneralTestUtilityClass.performWait(waitTime*2);
 		Assertions.assertEquals(client2.getClientAddress(), serviceConnectionManager.getConnection(client2Address).getTargetClientAddress());
 		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
 		
@@ -222,18 +224,12 @@ class ServiceConnectionManagerTest {
 		connectionManagers.forEach(cm -> {
 			ISendBuffer sb = cm.getSendBuffer();
 			Assertions.assertTrue(sb.isBlocked());
-			
-			DummyConnection conn = (DummyConnection) cm.getConnection();
-			ByteArrayInputStream is = conn.getInputStream();
-			is.reset();
-			BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialiser.serialise(m.getMinimalAcknowledgementMessage()));
 		});
-		
-		GeneralTestUtilityClass.performWait(waitTime);
 		
 		connectionManagers.forEach(cm -> {
 			ISendBuffer sb = cm.getSendBuffer();
-			Assertions.assertFalse(sb.isBlocked());
+			DummyConnection conn = (DummyConnection) cm.getConnection();
+			ConnectionManagerTestUtilityClass.assertAckReadAndSentToSendBuffer(conn, sb, serialiser.serialise(m.getMinimalAcknowledgementMessage()), waitTime, 10000);
 		});
 	}
 }

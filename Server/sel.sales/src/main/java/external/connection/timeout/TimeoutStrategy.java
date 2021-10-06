@@ -21,7 +21,13 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 	}
 
 	@Override
+	public boolean hasStarted() {
+		return this.isTimerStarted;
+	}
+	
+	@Override
 	public void setNotifyTarget(HasTimeout notifyTarget) {
+		System.out.println("notify target hash: " + notifyTarget);
 		this.notifyTarget = notifyTarget;
 	}
 	
@@ -30,13 +36,14 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 		this.startTime = LocalDateTime.now();
 		this.isReset = false;
 		this.isTimerStarted = true;
+		System.out.println("startTimer() in " + notifyTarget);
 	}
 
 	@Override
 	public void reset() {
 		this.startTime = null;
 		this.isReset = true;
-		this.isTimerStarted = false;
+		System.out.println("reset() in " + notifyTarget);
 	}
 
 	protected TemporalUnit getTimeUnit() {
@@ -74,21 +81,37 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 	
 	@Override
 	public void run() {
+		System.out.println("Timer starting to run: " + notifyTarget);
+		boolean started = false;
+		boolean timeUp = false;
 		while (!this.isTerminated) {
-			while (!this.isTimerStarted) {
-				
+			System.out.println("Awaiting timer start: " + notifyTarget);
+			
+			while (!started) {
+				started = this.hasStarted();
 			}
 			
-			while (!this.isTimeUp()) {
+			System.out.println("Timer started: " + notifyTarget);
+			
+			while (!timeUp) {
+				timeUp = this.isTimeUp();
 				if (this.isReset) {
+					System.out.println("Timer reset by notify target: " + notifyTarget);
 					break;
 				}
 			}
 			
+			System.out.println("TimeUp/Reset: " + notifyTarget);
+			
 			if (!this.isReset) {
+				System.out.println("Notifying target: " + this.notifyTarget);
 				this.notifyTarget();
 			}
+			
 			this.reset();
+			this.isTimerStarted = false;
+			System.out.println("Cycle over: " + notifyTarget);
 		}
+		System.out.println("Timer terminated: " + notifyTarget);
 	}
 }
