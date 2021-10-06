@@ -18,16 +18,19 @@ public class ClientMain {
 		external = new ClientExternal(controller, model);
 		external.connectToService();
 		final Object lock = new Object();
+		int i = 4;
 		while (true) {
+			IMessage order = new Message(MessageContext.ORDER, null, "order"+i+"-20210809000000111-1-1:item3,5;");
+			external.sendMessage(order);
+			System.out.println("Message Sent");
+			while (external.getConnManager().getSendBuffer().isBlocked()) {
+				
+			}
+			i++;
 			synchronized (lock) {
-				IMessage order = new Message(MessageContext.ORDER, null, "order10-20210809000000111-1-1:item3,5;");
-				external.sendMessage(order);
-				System.out.println("Message Sent");
-				external.getConnManager().getSendBuffer().receiveAcknowledgement(order.getMinimalAcknowledgementMessage());
 				try {
 					lock.wait(3000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
