@@ -72,12 +72,12 @@ public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T
 //	}
 	
 	@Override
-	public synchronized void artificiallySelectItem(int index) {
+	public void artificiallySelectItem(int index) {
 		super.getSelectionModel().select(index);
 	}
 	
 	@Override
-	public synchronized void artificiallySelectItemProperty(int index, int itemPropertyIndex) {
+	public void artificiallySelectItemProperty(int index, int itemPropertyIndex) {
 		super.getSelectionModel().select(index);
 	}
 	
@@ -110,7 +110,7 @@ public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T
 	}
 	
 	@Override
-	public synchronized T getSelectedElement() {
+	public T getSelectedElement() {
 		return super.getSelectionModel().getSelectedItem();
 	}
 }

@@ -1,7 +1,5 @@
 package external.handler;
 
-import java.util.concurrent.ExecutorService;
-
 import external.connection.IConnection;
 import external.connection.outgoing.IMessageSendingStrategy;
 import external.connection.pingpong.IPingPong;
@@ -35,7 +33,7 @@ public class PingPongHandler extends MessageHandler {
 	@Override
 	public boolean performNeededAction(IMessage message) {
 		System.out.println("Pingpong being sent to ping pong");
-		pingPong.receiveResponse(message);
+		this.pingPong.receiveResponse(message);
 		System.out.println("Pingpong response sent");
 		return this.mss.sendMessage(this.conn, message);
 	}

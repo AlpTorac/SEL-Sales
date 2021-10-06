@@ -1,5 +1,6 @@
 package view.composites;
 
+import controller.BusinessEvent;
 import controller.IController;
 import model.IModel;
 import model.order.IOrderData;
@@ -63,7 +64,7 @@ public class MainArea extends UIHBoxLayout {
 		ClickEventListener removeOrderListener = new RemoveOrderListener(controller, oia);
 		oia.getRemoveButton().addClickListener(removeOrderListener);
 		
-		ClickEventListener confirmAllOrdersListener = new ConfirmAllOrdersListener(oia, ota);
+		ClickEventListener confirmAllOrdersListener = new ConfirmAllOrdersListener(controller);
 		oia.getConfirmAllButton().addClickListener(confirmAllOrdersListener);
 		
 		ItemChangeListener unconfirmedOrderListener = new UnconfirmedOrderListener(ota, oia);
@@ -76,7 +77,15 @@ public class MainArea extends UIHBoxLayout {
 
 	public void refreshUnconfirmedOrders() {
 		this.ota.clearUnconfirmedOrderList();
-		this.ota.addUnconfirmedOrders(model.getAllUnconfirmedOrders());
+		if (this.ota.getAuto().isToggled()) {
+			/*
+			 * ToDo: Make a listener for the auto-confirm radio button and add a variable for auto-confirming in model (?)
+			 */
+			this.controller.handleApplicationEvent(BusinessEvent.CONFIRM_ALL_ORDERS, null);
+			this.ota.addConfirmedOrders(model.getAllConfirmedOrders());
+		} else {
+			this.ota.addUnconfirmedOrders(model.getAllUnconfirmedOrders());
+		}
 	}
 
 	public void refreshConfirmedOrders() {

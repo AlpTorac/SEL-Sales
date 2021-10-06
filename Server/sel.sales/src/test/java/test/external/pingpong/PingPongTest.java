@@ -16,6 +16,7 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.IController;
+import external.connection.DisconnectionListener;
 import external.connection.StandardConnectionManager;
 import external.connection.outgoing.BasicMessageSender;
 import external.connection.outgoing.IMessageSendingStrategy;
@@ -65,6 +66,18 @@ class PingPongTest {
 		ts = new FixTimeoutStrategy(timeoutTime, ChronoUnit.MILLIS);
 		resendLimit = 3;
 		pingPong = new DummyPingPong(conn, mss, ts, es, resendLimit);
+		pingPong.setDisconnectionListener(new DisconnectionListener(null) {
+			@Override
+			public void connectionLost(String clientAddress) {
+				isConnected = false;
+				try {
+					conn.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 		isConnected = true;
 	}
 	@AfterEach

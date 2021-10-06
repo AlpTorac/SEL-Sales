@@ -7,38 +7,32 @@ import view.repository.IDataCollectingUIComponent;
 import view.repository.uiwrapper.ItemChangeListener;
 
 public interface FXDataCollectingUIComponent<T> extends IDataCollectingUIComponent<T> {
-	@SuppressWarnings("unchecked")
 	default public void addItem(T item) {
-		((FXDataCollectingUIComponent<T>) this.getComponent()).getItemList().add(item);
+		this.getItemList().add(item);
 	}
 	
 	default public void clear() {
-		((FXDataCollectingUIComponent<?>) this.getComponent()).getItemList().clear();
+		this.getItemList().clear();
 	}
 	
-	@SuppressWarnings("unchecked")
 	default public void removeItem(T item) {
-		((FXDataCollectingUIComponent<T>) this.getComponent()).getItemList().remove(item);
+		this.getItemList().remove(item);
 	}
 	
 	default public int getSize() {
-		return ((FXDataCollectingUIComponent<?>) this.getComponent()).getItemList().size();
+		return this.getItemList().size();
 	}
 	
-	@SuppressWarnings("unchecked")
 	default public Collection<T> getAllItems() {
-		FXDataCollectingUIComponent<T> component = (FXDataCollectingUIComponent<T>) this.getComponent();
-		return component.getItems(0, component.getSize());
+		return this.getItemList().subList(0, this.getSize());
 	}
 	
-	@SuppressWarnings("unchecked")
 	default public T getItem(int index) {
-		return ((FXDataCollectingUIComponent<T>) this.getComponent()).getItemList().get(index);
+		return this.getItemList().get(index);
 	}
 	
-	@SuppressWarnings("unchecked")
 	default public Collection<T> getItems(int beginIndex, int endIndex) {
-		return ((FXDataCollectingUIComponent<T>) this.getComponent()).getItemList().subList(beginIndex, endIndex);
+		return this.getItemList().subList(beginIndex, endIndex);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -46,9 +40,8 @@ public interface FXDataCollectingUIComponent<T> extends IDataCollectingUICompone
 		return ((FXDataCollectingUIComponent<T>) this.getComponent()).getItemList();
 	}
 	
-	@SuppressWarnings("unchecked")
 	default public boolean contains(T item) {
-		return ((FXDataCollectingUIComponent<T>) this.getComponent()).getItemList().contains(item);
+		return this.getItemList().contains(item);
 	}
 	
 	@SuppressWarnings("unchecked")

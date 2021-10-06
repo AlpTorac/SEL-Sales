@@ -21,13 +21,15 @@ public class DummyConnectionManager extends ConnectionManager {
 	}
 
 	@Override
-	protected ISendBuffer initSendBuffer(long timeoutInMillis) {
+	protected ISendBuffer createSendBuffer(long timeoutInMillis) {
 		return new StandardSendBuffer(this.getConnection(), this.getExecutorService(), timeoutInMillis);
 	}
 
 	@Override
-	protected IMessageReceptionist initIncomingMessageListener() {
-		return new MessageReceptionist(this.getConnection(), controller, this.getSendBuffer(), this.getPingPong(), this.getExecutorService());
+	protected IMessageReceptionist createMessageReceptionist(ISendBuffer sb, IPingPong pingPong) {
+		return new MessageReceptionist(this.getConnection(),
+				controller,
+				sb, pingPong, this.getExecutorService());
 	}
 
 	@Override
@@ -41,18 +43,18 @@ public class DummyConnectionManager extends ConnectionManager {
 	}
 
 	@Override
-	protected ConnectionListener initConnListener() {
+	protected ConnectionListener createConnListener() {
 		return new ConnectionListener(controller);
 	}
 
 	@Override
-	protected DisconnectionListener initDisconListener() {
+	protected DisconnectionListener createDisconListener() {
 		return new DisconnectionListener(controller);
 	}
 
 	@Override
-	protected IPingPong initPingPong(int resendLimit, long timeoutInMillis) {
-		return new StandardPingPong(this.getConnection(), this.getExecutorService(), resendLimit, timeoutInMillis);
+	protected IPingPong createPingPong(int resendLimit, long pingPongTimeout) {
+		return new StandardPingPong(this.getConnection(), this.getExecutorService(), resendLimit, pingPongTimeout);
 	}
 
 }

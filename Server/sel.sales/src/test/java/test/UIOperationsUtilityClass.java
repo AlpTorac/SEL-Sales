@@ -25,6 +25,7 @@ import view.repository.HasText;
 import view.repository.IEventShooterOnClickUIComponent;
 
 public class UIOperationsUtilityClass {
+	private long waitTime = 100;
 	private IModel model;
 	private IController controller;
 	private IView view;
@@ -75,7 +76,11 @@ public class UIOperationsUtilityClass {
 		porSizeBox.setCaption(String.valueOf(portionSize.doubleValue()));
 		discBox.setCaption(String.valueOf(discount.doubleValue()));
 		
+		GeneralTestUtilityClass.performWait(waitTime);
+		
 		addButton.performArtificialClick();
+		
+		GeneralTestUtilityClass.performWait(waitTime);
 		
 		return model.getMenuItem(id);
 	}
@@ -84,7 +89,10 @@ public class UIOperationsUtilityClass {
 		IDishMenuItemData itemToBeRemoved = model.getMenuItem(id);
 		
 		idBox.setCaption(id);
+		
+		GeneralTestUtilityClass.performWait(waitTime);
 		removeButton.performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
 		
 		if (model.getMenuItem(id) == null) {
 			return itemToBeRemoved;
@@ -101,7 +109,11 @@ public class UIOperationsUtilityClass {
 		porSizeBox.setCaption(String.valueOf(portionSize.doubleValue()));
 		discBox.setCaption(String.valueOf(discount.doubleValue()));
 		
+		GeneralTestUtilityClass.performWait(waitTime);
+		
 		editButton.performArtificialClick();
+		
+		GeneralTestUtilityClass.performWait(waitTime);
 		
 		IDishMenuItemData editedItem = model.getMenuItem(id);
 		
@@ -109,17 +121,24 @@ public class UIOperationsUtilityClass {
 	}
 	
 	public IOrderData addConfirmOrder() {
-		IOrderData data = this.getUnconfirmedOrders().stream().findFirst().get();
+		GeneralTestUtilityClass.performWait(waitTime);
+		IOrderData data = this.ota.getUnconfirmedOrderList().getItem(0);
+		GeneralTestUtilityClass.performWait(waitTime);
 		this.oia.displayOrder(data);
+		GeneralTestUtilityClass.performWait(waitTime);
 		this.oia.getAddConfirmButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
 		this.view.refreshUnconfirmedOrders();
+		GeneralTestUtilityClass.performWait(waitTime);
 		this.view.refreshConfirmedOrders();
+		GeneralTestUtilityClass.performWait(waitTime);
 		return data;
 	}
 	
 	public Collection<IOrderData> confirmAllOrders() {
 		Collection<IOrderData> unconfirmedOrders = this.getUnconfirmedOrders();
 		IOrderData[] confirmedOrders = new IOrderData[unconfirmedOrders.size()];
+		GeneralTestUtilityClass.performWait(waitTime);
 		int size = unconfirmedOrders.size();
 		
 		for (int i = 0; i < size; i++) {
@@ -137,50 +156,76 @@ public class UIOperationsUtilityClass {
 	}
 	
 	public void confirmAllOrdersWithoutReturn() {
+		GeneralTestUtilityClass.performWait(waitTime);
 		this.oia.getConfirmAllButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
-	public void toggleAutoConfirm() {
+	public void toggleOnAutoConfirm() {
 		this.ota.getAuto().setToggled(true);
+	}
+	public void toggleOffAutoConfirm() {
+		this.ota.getAuto().setToggled(false);
 	}
 	
 	public IOrderData removeUnconfirmedOrder() {
-		IOrderData data = this.getUnconfirmedOrders().stream().findFirst().get();
+		GeneralTestUtilityClass.performWait(waitTime);
+		IOrderData data = this.ota.getUnconfirmedOrderList().getItem(0);
+		GeneralTestUtilityClass.performWait(waitTime);
 		this.oia.displayOrder(data);
+		GeneralTestUtilityClass.performWait(waitTime);
 		this.oia.getRemoveButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
 		this.view.refreshUnconfirmedOrders();
+		GeneralTestUtilityClass.performWait(waitTime);
 		this.view.refreshConfirmedOrders();
+		GeneralTestUtilityClass.performWait(waitTime);
 		return data;
 	}
 	
 	public IOrderData removeConfirmedOrder() {
-		IOrderData data = this.getConfirmedOrders().stream().findFirst().get();
+		GeneralTestUtilityClass.performWait(waitTime);
+		IOrderData data = this.ota.getConfirmedOrderList().getItem(0);
+		GeneralTestUtilityClass.performWait(waitTime);
 		this.oia.displayOrder(data);
+		GeneralTestUtilityClass.performWait(waitTime);
 		this.oia.getRemoveButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
 		this.view.refreshUnconfirmedOrders();
+		GeneralTestUtilityClass.performWait(waitTime);
 		this.view.refreshConfirmedOrders();
+		GeneralTestUtilityClass.performWait(waitTime);
 		return data;
 	}
 	
 	public Collection<IOrderData> getUnconfirmedOrders() {
+		GeneralTestUtilityClass.performWait(waitTime);
 		return ota.getUnconfirmedOrderList().getAllItems();
 	}
 	
 	public Collection<IOrderData> getConfirmedOrders() {
+		GeneralTestUtilityClass.performWait(waitTime);
 		return ota.getConfirmedOrderList().getAllItems();
 	}
 	
 	public void clickOnUnconfirmedOrder(int index) {
+		GeneralTestUtilityClass.performWait(waitTime);
 		ota.getUnconfirmedOrderList().artificiallySelectItem(index);
 		ota.getUnconfirmedOrderList().performArtificialClicks(2);
+		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
 	public void clickOnConfirmedOrder(int index) {
+		GeneralTestUtilityClass.performWait(waitTime);
 		ota.getConfirmedOrderList().artificiallySelectItem(index);
 		ota.getConfirmedOrderList().performArtificialClicks(2);
+		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
 	public void assertShownOrderEquals(IOrderData orderData) {
+		GeneralTestUtilityClass.performWait(waitTime);
+		oia.displayOrder(orderData);
+		GeneralTestUtilityClass.performWait(waitTime);
 		String dateText = oia.getOrderTimeInDayLabel().getText() + " " + oia.getOrderDateLabel().getText();
 		String orderID = oia.getOrderIDLabel().getText();
 		LocalDateTime ldt = LocalDateTime.parse(dateText, DateTimeFormatter.ofPattern("HH:mm:ss:SSS dd/MM/yyyy"));

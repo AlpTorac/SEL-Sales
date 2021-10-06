@@ -10,13 +10,13 @@ import external.connection.pingpong.IPingPong;
 import external.message.IMessage;
 
 public abstract class ConnectionManager implements IConnectionManager {
-	private long sendTimeoutInMillis;
-	private long pingPongTimeoutInMillis;
-	private int resendLimit;
+	private long sendTimeoutInMillis = 5000;
+	private long pingPongTimeoutInMillis = 1000;
+	private int resendLimit = 10;
 	
 	private ExecutorService es;
 	private IConnection conn;
-	private IMessageReceptionist iml;
+	private IMessageReceptionist mr;
 	private ISendBuffer sb;
 	private IPingPong pingPong;
 	protected IController controller;
@@ -33,10 +33,13 @@ public abstract class ConnectionManager implements IConnectionManager {
 		this.init();
 	}
 	protected ConnectionManager(IController controller, IConnection conn, ExecutorService es, long pingPongTimeoutInMillis, long sendTimeoutInMillis, int resendLimit) {
-		this(controller, conn, es);
+		this.controller = controller;
+		this.conn = conn;
+		this.es = es;
 		this.pingPongTimeoutInMillis = pingPongTimeoutInMillis;
 		this.sendTimeoutInMillis = sendTimeoutInMillis;
 		this.resendLimit = resendLimit;
+		this.init();
 	}
 	@Override
 	public IPingPong getPingPong() {
@@ -52,27 +55,42 @@ public abstract class ConnectionManager implements IConnectionManager {
 		return this.es;
 	}
 	
-	protected abstract ConnectionListener initConnListener();
+	protected void initConnListener() {
+		this.connListener = this.createConnListener();
+		this.connListener.connectionEstablished(this.conn.getTargetClientAddress());
+	}
 	
-	protected abstract DisconnectionListener initDisconListener();
+	protected abstract ConnectionListener createConnListener();
 	
-	protected abstract IPingPong initPingPong(int resendLimit, long pingPongTimeoutInMillis);
+	protected abstract DisconnectionListener createDisconListener();
+	
+	protected void setDisconListener(DisconnectionListener dl) {
+		this.disconListener = dl;
+		this.pingPong.setDisconnectionListener(this.disconListener);
+	}
+	
+	protected void initDisconListener(IPingPong pingPong) {
+		this.setDisconListener(this.createDisconListener());
+	}
+	
+	protected void initPingPong(int resendLimit, long pingPongTimeoutInMillis) {
+		this.pingPong = this.createPingPong(resendLimit, pingPongTimeoutInMillis);
+	}
 
-	protected abstract ISendBuffer initSendBuffer(long timeoutInMillis);
+	protected abstract IPingPong createPingPong(int resendLimit, long pingPongTimeoutInMillis);
 	
-	protected abstract IMessageReceptionist initIncomingMessageListener();
-	
-	private void setIncomingMessageListener(IMessageReceptionist iml) {
-		this.iml = iml;
+	protected void initSendBuffer(long timeoutInMillis) {
+		this.sb = this.createSendBuffer(timeoutInMillis);
 	}
 	
-	private void setSendBuffer(ISendBuffer sb) {
-		this.sb = sb;
+	protected abstract ISendBuffer createSendBuffer(long timeoutInMillis);
+	
+	protected void initMessageReceptionist(ISendBuffer sb, IPingPong pingPong) {
+		IMessageReceptionist mr = this.createMessageReceptionist(sb, pingPong);
+		this.mr = mr;
 	}
 	
-	private void setPingPong(IPingPong pingPong) {
-		this.pingPong = pingPong;
-	}
+	protected abstract IMessageReceptionist createMessageReceptionist(ISendBuffer sb, IPingPong pingPong);
 	
 	@Override
 	public ISendBuffer getSendBuffer() {
@@ -80,7 +98,7 @@ public abstract class ConnectionManager implements IConnectionManager {
 	}
 	@Override
 	public IMessageReceptionist getIncomingMessageListener() {
-		return this.iml;
+		return this.mr;
 	}
 	
 	protected abstract Runnable[] initConnectionRunnables();
@@ -129,7 +147,7 @@ public abstract class ConnectionManager implements IConnectionManager {
 			@Override
 			public void run() {
 				getPingPong().start();
-				while (!isClosed && !getConnection().isClosed() && getPingPong().isRunning()) {
+//				while (!isClosed && !getConnection().isClosed() && getPingPong().isRunning()) {
 //					System.out.println("Checking for ping pong");
 //					try {
 //						Thread.sleep(200);
@@ -137,25 +155,24 @@ public abstract class ConnectionManager implements IConnectionManager {
 //						// TODO Auto-generated catch block
 //						e.printStackTrace();
 //					}
-				}
-				disconListener.connectionLost(conn.getTargetClientAddress());
+//				}
+//				disconListener.connectionLost(conn.getTargetClientAddress());
 			}
 		};
 	}
 	
 	protected void init() {
-		ISendBuffer sendBuffer = initSendBuffer(this.getSendTimeout());
-		setSendBuffer(sendBuffer);
-		IMessageReceptionist incomingMessageListener = initIncomingMessageListener();
-		setIncomingMessageListener(incomingMessageListener);
-		IPingPong pingPong = initPingPong(this.getResendLimit(), this.getPingPongTimeout());
-		setPingPong(pingPong);
-		this.connListener = initConnListener();
-		this.connListener.connectionEstablished(this.conn.getTargetClientAddress());
-		this.disconListener = initDisconListener();
+		this.initPingPong(this.getResendLimit(), this.getPingPongTimeout());
+
+		this.initSendBuffer(this.getSendTimeout());
+
+		this.initMessageReceptionist(this.getSendBuffer(), this.getPingPong());
+		
+		this.initConnListener();
+		this.initDisconListener(this.getPingPong());
 		Runnable[] rs = this.initConnectionRunnables();
 		for (Runnable r : rs) {
-			getExecutorService().submit(r);
+			this.getExecutorService().submit(r);
 		}
 	}
 	
@@ -173,17 +190,17 @@ public abstract class ConnectionManager implements IConnectionManager {
 	
 	@Override
 	public void sendMessage(IMessage message) {
-		getSendBuffer().addMessage(message);
+		this.getSendBuffer().addMessage(message);
 	}
 	
 	@Override
 	public void close() {
 		isClosed = true;
 		try {
-			getConnection().close();
-			getSendBuffer().close();
-			getIncomingMessageListener().close();
-			getPingPong().close();
+			this.getSendBuffer().close();
+			this.getPingPong().close();
+			this.getIncomingMessageListener().close();
+			this.getConnection().close();
 		} catch (IOException e) {
 //			e.printStackTrace();
 		}

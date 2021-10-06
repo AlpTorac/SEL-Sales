@@ -113,4 +113,10 @@ public class OrderTrackingArea extends UIVBoxLayout {
 	public IToggleGroup getGroup() {
 		return group;
 	}
+
+	public void addConfirmedOrders(IOrderData[] allConfirmedOrders) {
+		for (IOrderData d : allConfirmedOrders) {
+			this.addConfirmedOrder(d);
+		}
+	}
 }

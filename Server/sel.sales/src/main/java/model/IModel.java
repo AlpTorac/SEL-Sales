@@ -48,4 +48,5 @@ public interface IModel {
 	}
 	boolean writeOrders();
 	boolean writeDishMenu();
+	void confirmAllOrders();
 }

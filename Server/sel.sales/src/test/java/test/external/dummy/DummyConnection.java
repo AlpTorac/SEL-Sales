@@ -38,17 +38,17 @@ public class DummyConnection implements IConnection {
 
 	@Override
 	public ByteArrayInputStream getInputStream() {
-		if (this.is == null) {
-			this.is = new ByteArrayInputStream(buffer);
-		}
+//		if (this.is == null) {
+//			this.is = new ByteArrayInputStream(buffer);
+//		}
 		return this.is;
 	}
 
 	@Override
 	public ByteArrayOutputStream getOutputStream() {
-		if (this.os == null) {
-			this.os = new ByteArrayOutputStream();
-		}
+//		if (this.os == null) {
+//			this.os = new ByteArrayOutputStream();
+//		}
 		return this.os;
 	}
 

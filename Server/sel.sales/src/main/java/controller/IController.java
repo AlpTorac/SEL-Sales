@@ -28,4 +28,5 @@ public interface IController {
 	IOrderSerialiser getOrderSerialiser();
 	IDishMenuItemSerialiser getDishMenuItemSerialiser();
 	IDishMenuItemData getItem(String id);
+	void confirmAllOrders();
 }
