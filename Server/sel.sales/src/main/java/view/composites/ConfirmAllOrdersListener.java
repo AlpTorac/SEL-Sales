@@ -1,23 +1,18 @@
 package view.composites;
 
-import model.order.IOrderData;
+import controller.BusinessEvent;
+import controller.IController;
 import view.repository.uiwrapper.ClickEventListener;
 
 public class ConfirmAllOrdersListener extends ClickEventListener {
-	private OrderInspectionArea oia;
-	private OrderTrackingArea ota;
+	private IController controller;
 	
-	public ConfirmAllOrdersListener(OrderInspectionArea oia, OrderTrackingArea ota) {
+	public ConfirmAllOrdersListener(IController controller) {
 		super();
-		this.oia = oia;
-		this.ota = ota;
+		this.controller = controller;
 	}
 	
 	public void clickAction() {
-		while (this.ota.getUnconfirmedOrderList().getSize() > 0) {
-			IOrderData data = this.ota.getUnconfirmedOrderList().getItem(0);
-			this.oia.displayOrder(data);
-			this.oia.getAddConfirmButton().performArtificialClick();
-		}
+		this.controller.handleApplicationEvent(BusinessEvent.CONFIRM_ALL_ORDERS, null);
 	}
 }

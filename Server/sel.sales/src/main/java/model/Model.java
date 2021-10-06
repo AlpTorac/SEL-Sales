@@ -295,4 +295,15 @@ public class Model implements IModel {
 		this.connManager.requestClientRediscovery();
 		this.externalStatusChanged();
 	}
+
+	@Override
+	public void confirmAllOrders() {
+		IOrderData[] unconfirmedOrders = this.orderUnconfirmedCollector.getAllOrders();
+		for (IOrderData uco : unconfirmedOrders) {
+			this.orderConfirmedCollector.addOrder(uco);
+		}
+		this.orderUnconfirmedCollector.clearOrders();
+		this.confirmedOrdersChanged();
+		this.unconfirmedOrdersChanged();
+	}
 }

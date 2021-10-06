@@ -19,6 +19,7 @@ import model.IModel;
 import model.Model;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
+import test.GeneralTestUtilityClass;
 import test.UIOperationsUtilityClass;
 import test.model.order.OrderTestUtilityClass;
 import view.IView;
@@ -27,6 +28,8 @@ import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class OrderInspectionAreaTest extends ApplicationTest {
+	private long waitTime = 100;
+	
 	private static IModel model;
 	private static IController controller;
 	private static IView view;
@@ -198,11 +201,11 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		
 		unconfirmedOrders = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(unconfirmedOrders.length, 0);
-		
+		GeneralTestUtilityClass.performWait(waitTime);
 		for (IOrderData cod : confirmedOrders) {
 			boolean contains = false;
 			for (IOrderData uod : unconfirmedOrderDatas) {
-				contains = contains || uod.equals(cod);
+				contains = contains || cod.equals(uod);
 			}
 			Assertions.assertTrue(contains);
 		}
@@ -211,7 +214,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	@Test
 	void confirmAllOrdersWithAutoTest() {		
 		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
-		opHelper.toggleAutoConfirm();
+		opHelper.toggleOnAutoConfirm();
 		
 		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(unconfirmedOrders.length, 0);
@@ -222,11 +225,13 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		model.addUnconfirmedOrder("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
 		model.addUnconfirmedOrder("order6-20200813000000183-1-1:item3,5;item3,4;");
 		model.addUnconfirmedOrder("order7-20200909112233937-0-0:item1,2;item2,5;");
+
+		GeneralTestUtilityClass.performWait(waitTime);
+		
+		confirmedOrders = model.getAllConfirmedOrders();
+		Assertions.assertEquals(confirmedOrders.length, 3);
 		
 		unconfirmedOrders = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(unconfirmedOrders.length, 0);
-
-		confirmedOrders = model.getAllConfirmedOrders();
-		Assertions.assertEquals(confirmedOrders.length, 3);
 	}
 }

@@ -8,6 +8,7 @@ public enum BusinessEvent implements IApplicationEvent {
 	
 	ADD_ORDER,
 	CONFIRM_ORDER,
+	CONFIRM_ALL_ORDERS,
 	REMOVE_ORDER,
 	
 	DISCOVER_CLIENTS;

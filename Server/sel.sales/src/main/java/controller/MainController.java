@@ -7,6 +7,7 @@ import controller.handler.AllowKnownClientHandler;
 import controller.handler.BlockKnownClientHandler;
 import controller.handler.ClientConnectedHandler;
 import controller.handler.ClientDisconnectedHandler;
+import controller.handler.ConfirmAllOrdersHandler;
 import controller.handler.ConfirmOrderHandler;
 import controller.handler.DiscoverClientsHandler;
 import controller.handler.AddDiscoveredClientHandler;
@@ -32,6 +33,7 @@ public class MainController extends Controller {
 		bem.addApplicationEventToHandlerMapping(BusinessEvent.EDIT_DISH, new EditDishHandler(this));
 		bem.addApplicationEventToHandlerMapping(BusinessEvent.ADD_ORDER, new AddOrderHandler(this));
 		bem.addApplicationEventToHandlerMapping(BusinessEvent.CONFIRM_ORDER, new ConfirmOrderHandler(this));
+		bem.addApplicationEventToHandlerMapping(BusinessEvent.CONFIRM_ALL_ORDERS, new ConfirmAllOrdersHandler(this));
 		bem.addApplicationEventToHandlerMapping(BusinessEvent.REMOVE_ORDER, new RemoveOrderHandler(this));
 		
 		bem.addApplicationEventToHandlerMapping(BusinessEvent.DISCOVER_CLIENTS, new DiscoverClientsHandler(this));

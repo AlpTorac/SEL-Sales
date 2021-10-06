@@ -97,4 +97,9 @@ public abstract class Controller implements IController {
 	public void requestClientRediscovery() {
 		this.model.requestClientRediscovery();
 	}
+	
+	@Override
+	public void confirmAllOrders() {
+		this.model.confirmAllOrders();
+	}
 }

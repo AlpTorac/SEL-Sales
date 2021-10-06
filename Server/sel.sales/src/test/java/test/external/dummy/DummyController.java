@@ -66,4 +66,9 @@ public class DummyController implements IController {
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void confirmAllOrders() {
+		// TODO Auto-generated method stub
+		
+	}
 }

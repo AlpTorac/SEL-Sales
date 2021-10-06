@@ -3,6 +3,7 @@ package external.connection.pingpong;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
+import external.connection.DisconnectionListener;
 import external.connection.IConnection;
 import external.connection.outgoing.IMessageSendingStrategy;
 import external.connection.timeout.ITimeoutStrategy;
@@ -14,9 +15,11 @@ public abstract class PingPong implements IPingPong {
 	private IMessageSendingStrategy mss;
 	private ITimeoutStrategy ts;
 	private ExecutorService es;
-	private volatile int resendCount;
+	private int resendCount;
 	private int resendLimit;
 	private IConnection conn;
+	
+	private DisconnectionListener disconListener;
 	
 	protected PingPong(IConnection conn, IMessageSendingStrategy mss, ITimeoutStrategy ts, ExecutorService es, int resendLimit) {
 		this.conn = conn;
@@ -25,12 +28,17 @@ public abstract class PingPong implements IPingPong {
 		this.es = es;
 		this.resendCount = 0;
 		this.resendLimit = resendLimit;
-		this.initTimeoutTimer();
 	}
 	
 	@Override
 	public boolean start() {
+		this.initTimeoutTimer();
 		return this.sendPingPongMessageAndStartTimer();
+	}
+	
+	@Override
+	public void setDisconnectionListener(DisconnectionListener dl) {
+		this.disconListener = dl;
 	}
 	
 	protected IMessage generatePingPongMessage() {
@@ -82,8 +90,11 @@ public abstract class PingPong implements IPingPong {
 	
 	@Override
 	public void receiveResponse(IMessage message) {
+		System.out.println("Resetting timeout timer");
 		this.resetTimeoutTimer();
+		System.out.println("Reset timeout timer");
 		this.resetResendCount();
+		System.out.println("Reset resend count");
 		System.out.println("Received pong");
 		this.sendPingPongMessageAndStartTimer();
 	}
@@ -93,7 +104,7 @@ public abstract class PingPong implements IPingPong {
 		if (this.resendCount < this.resendLimit) {
 			this.resendPingPongMessage();
 		} else {
-			this.close();
+			this.disconListener.connectionLost(conn.getTargetClientAddress());
 		}
 	}
 	
