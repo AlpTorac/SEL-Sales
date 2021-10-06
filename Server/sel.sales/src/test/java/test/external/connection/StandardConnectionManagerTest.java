@@ -38,7 +38,7 @@ import test.external.dummy.DummyController;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class StandardConnectionManagerTest {
 	private ExecutorService es;
-	private long waitTime = 300;
+	private long waitTime = 100;
 	
 	private IMessageSerialiser serialiser = new MessageSerialiser(new StandardMessageFormat());
 	private IMessageParser parser = new StandardMessageParser();
@@ -99,6 +99,7 @@ class StandardConnectionManagerTest {
 		connManager.close();
 		try {
 			es.awaitTermination(waitTime, TimeUnit.MILLISECONDS);
+			es.shutdownNow();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -167,6 +168,7 @@ class StandardConnectionManagerTest {
 		IMessage incAck = m.getMinimalAcknowledgementMessage();
 		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialiser.serialise(incAck));
 		GeneralTestUtilityClass.performWait(waitTime);
+		//Works if sb receives acknowledgement itself
 		Assertions.assertFalse(sb.isBlocked());
 	}
 	

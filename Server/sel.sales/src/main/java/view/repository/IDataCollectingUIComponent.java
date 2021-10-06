@@ -2,7 +2,6 @@ package view.repository;
 
 import java.util.Collection;
 
-import javafx.collections.ObservableList;
 import view.repository.uiwrapper.ItemChangeListener;
 
 public interface IDataCollectingUIComponent<T> extends IUIComponent {
@@ -44,8 +43,7 @@ public interface IDataCollectingUIComponent<T> extends IUIComponent {
 	
 	@SuppressWarnings("unchecked")
 	default public Collection<T> getAllItems() {
-		IDataCollectingUIComponent<T> component = (IDataCollectingUIComponent<T>) this.getComponent();
-		return component.getItems(0, component.getSize());
+		return ((IDataCollectingUIComponent<T>) this.getComponent()).getAllItems();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -56,11 +54,6 @@ public interface IDataCollectingUIComponent<T> extends IUIComponent {
 	@SuppressWarnings("unchecked")
 	default public Collection<T> getItems(int beginIndex, int endIndex) {
 		return ((IDataCollectingUIComponent<T>) this.getComponent()).getItems(beginIndex, endIndex);
-	}
-	
-	@SuppressWarnings("unchecked")
-	default public ObservableList<T> getItemList() {
-		return ((IDataCollectingUIComponent<T>) this.getComponent()).getItemList();
 	}
 	
 	@SuppressWarnings("unchecked")

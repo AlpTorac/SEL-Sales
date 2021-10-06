@@ -18,6 +18,7 @@ import model.IModel;
 import model.Model;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
+import test.GeneralTestUtilityClass;
 import test.UIOperationsUtilityClass;
 import view.IView;
 import view.MainView;
@@ -25,6 +26,7 @@ import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class OrderDisplayTest extends ApplicationTest {
+	private long waitTime = 100;
 	private static IModel model;
 	private static IController controller;
 	private static IView view;
@@ -77,11 +79,11 @@ class OrderDisplayTest extends ApplicationTest {
 		Assertions.assertEquals(unconfirmedOrders.length, 3);
 		
 		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
-		opHelper.clickOnUnconfirmedOrder(0);
+//		opHelper.clickOnUnconfirmedOrder(0);
 		opHelper.assertShownOrderEquals(unconfirmedOrders[0]);
-		opHelper.clickOnUnconfirmedOrder(1);
+//		opHelper.clickOnUnconfirmedOrder(1);
 		opHelper.assertShownOrderEquals(unconfirmedOrders[1]);
-		opHelper.clickOnUnconfirmedOrder(2);
+//		opHelper.clickOnUnconfirmedOrder(2);
 		opHelper.assertShownOrderEquals(unconfirmedOrders[2]);
 		//
 		//						UNCONFIRMED ORDER SHOWING TEST - END
@@ -89,18 +91,17 @@ class OrderDisplayTest extends ApplicationTest {
 		//
 		//						CONFIRMED ORDER SHOWING TEST - START
 		//
-		IOrderData d1 = opHelper.addConfirmOrder();
-		IOrderData d2 = opHelper.addConfirmOrder();
-		IOrderData d3 = opHelper.addConfirmOrder();
+		
+		opHelper.confirmAllOrdersWithoutReturn();
 		
 		IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
 		Assertions.assertEquals(confirmedOrders.length, 3);
 		
-		opHelper.clickOnConfirmedOrder(0);
+//		opHelper.clickOnConfirmedOrder(0);
 		opHelper.assertShownOrderEquals(confirmedOrders[0]);
-		opHelper.clickOnConfirmedOrder(1);
+//		opHelper.clickOnConfirmedOrder(1);
 		opHelper.assertShownOrderEquals(confirmedOrders[1]);
-		opHelper.clickOnConfirmedOrder(2);
+//		opHelper.clickOnConfirmedOrder(2);
 		opHelper.assertShownOrderEquals(confirmedOrders[2]);
 		//
 		//						CONFIRMED ORDER SHOWING TEST - END
