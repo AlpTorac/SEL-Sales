@@ -1,4 +1,4 @@
-package test.external.buffer;
+package test.external.timeout;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -9,19 +9,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import external.connection.timeout.FixTimeoutStrategy;
-import external.connection.timeout.HasTimeout;
 import external.connection.timeout.ITimeoutStrategy;
-import test.GeneralTestUtilityClass;
-@Execution(value = ExecutionMode.SAME_THREAD)
-class FixTimeoutStrategyTest {
-	private long testCompensationInMillis = 300;
+import external.connection.timeout.PingPongTimeoutStrategy;
+
+class PingPongTimeoutStrategyTest {
+	private long testCompensationInMillis = 100;
 	private long toleranceInMillis;
 	private ExecutorService es;
 	private long esTerminationTimeout;
@@ -31,9 +26,12 @@ class FixTimeoutStrategyTest {
 	private long longestRandomDuration;
 	private ITimeoutStrategy ts;
 	
+	private long minimalDelay;
+	
 	@BeforeEach
 	void prep() {
-		toleranceInMillis = 200;
+		minimalDelay = 0;
+		toleranceInMillis = 100;
 		esTerminationTimeout = 100;
 		es = Executors.newCachedThreadPool();
 		timeoutInMillis = 500;
@@ -41,12 +39,9 @@ class FixTimeoutStrategyTest {
 		longestRandomDuration = timeoutInMillis;
 	}
 	
-	/**
-	 * Not in prep() to allow last minute custom settings changes.
-	 */
 	private void initTimeoutStrategy() {
 		startTime = LocalDateTime.now();
-		ts = new FixTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS, es);
+		ts = new PingPongTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS, es, minimalDelay);
 		ts.startTimer();
 	}
 	
@@ -64,7 +59,8 @@ class FixTimeoutStrategyTest {
 	void noResetTest() {
 		this.initTimeoutStrategy();
 		TimeoutTestUtilityClass.failIfToleranceViolated(ts, startTime, timeoutInMillis, toleranceInMillis);
-		TimeoutTestUtilityClass.assertTimeoutLonger(startTime, timeoutInMillis, toleranceInMillis);
+		System.out.println("Took " + startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS) + " ms to terminate - Ping Pong timeout strategy");
+		TimeoutTestUtilityClass.assertTimeoutCorrect(startTime, timeoutInMillis, toleranceInMillis);
 	}
 	
 	@Test
@@ -84,11 +80,29 @@ class FixTimeoutStrategyTest {
 	@Test
 	void multipleUseTest() {
 		timeoutInMillis = 100;
+		
 		shortestRandomDuration = timeoutInMillis / 10;
 		longestRandomDuration = timeoutInMillis;
 		this.initTimeoutStrategy();
 		TimeoutTestUtilityClass.assertRandomTimeoutResetSuccessful(ts, startTime, timeoutInMillis, toleranceInMillis, shortestRandomDuration, longestRandomDuration);
+		this.initTimeoutStrategy();
 		TimeoutTestUtilityClass.assertRandomTimeoutResetSuccessful(ts, startTime, timeoutInMillis, toleranceInMillis, shortestRandomDuration, longestRandomDuration);
+		this.initTimeoutStrategy();
 		TimeoutTestUtilityClass.assertRandomTimeoutResetSuccessful(ts, startTime, timeoutInMillis, toleranceInMillis, shortestRandomDuration, longestRandomDuration);
+	}
+	
+	@Test
+	void minimalWaitTest() {
+		timeoutInMillis = 100;
+		minimalDelay = 300;
+		
+		shortestRandomDuration = timeoutInMillis / 10;
+		longestRandomDuration = timeoutInMillis;
+		this.initTimeoutStrategy();
+		TimeoutTestUtilityClass.assertRandomTimeoutResetSuccessful(ts, startTime, minimalDelay+timeoutInMillis, toleranceInMillis, shortestRandomDuration, longestRandomDuration);
+		this.initTimeoutStrategy();
+		TimeoutTestUtilityClass.assertRandomTimeoutResetSuccessful(ts, startTime, minimalDelay+timeoutInMillis, toleranceInMillis, shortestRandomDuration, longestRandomDuration);
+		this.initTimeoutStrategy();
+		TimeoutTestUtilityClass.assertRandomTimeoutResetSuccessful(ts, startTime, minimalDelay+timeoutInMillis, toleranceInMillis, shortestRandomDuration, longestRandomDuration);
 	}
 }

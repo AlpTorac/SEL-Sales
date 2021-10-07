@@ -26,7 +26,8 @@ import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyConnection;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class StandardAcknowledgerTest {
-	private DummyConnection conn;
+	private DummyConnection senderConn;
+	private DummyConnection receiverConn;
 	private IAcknowledger acknowledger;
 	private int sequenceNumber;
 	private MessageContext context;
@@ -36,8 +37,10 @@ class StandardAcknowledgerTest {
 	
 	@BeforeEach
 	void prep() {
-		this.conn = new DummyConnection("clientaddress");
-		this.acknowledger = new StandardAcknowledger(conn);
+		this.senderConn = new DummyConnection("clientAddress");
+		this.receiverConn = new DummyConnection("senderAddress");
+		this.senderConn.setInputTarget(this.receiverConn.getInputStream());
+		this.acknowledger = new StandardAcknowledger(senderConn);
 		sequenceNumber = 1;
 		context = MessageContext.MENU;
 		flags = new MessageFlag[] {};
@@ -48,7 +51,8 @@ class StandardAcknowledgerTest {
 	@AfterEach
 	void cleanUp() {
 		try {
-			this.conn.close();
+			this.senderConn.close();
+			this.receiverConn.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -56,10 +60,9 @@ class StandardAcknowledgerTest {
 	
 	@Test
 	void acknowledgeTest() {
-		ByteArrayOutputStream os = conn.getOutputStream();
 		Assertions.assertTrue(this.acknowledger.acknowledge(message));
 		IMessageSerialiser ms = new MessageSerialiser(new StandardMessageFormat());
 		String serialisedAcknowledgementMessage = ms.serialise(message.getMinimalAcknowledgementMessage());
-		BufferUtilityClass.assertOutputWrittenEquals(os, serialisedAcknowledgementMessage.getBytes());
+		BufferUtilityClass.assertInputStoredEquals(this.receiverConn.getInputStream(), serialisedAcknowledgementMessage.getBytes());
 	}
 }

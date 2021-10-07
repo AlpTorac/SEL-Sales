@@ -37,7 +37,7 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 	@Override
 	public void startTimer() {
 		if (this.timer == null && !this.es.isShutdown()) {
-			this.es.submit((this.timer = new TimeoutTimer(LocalDateTime.now(), this.getTimeUnitAmount(), this.getTimeUnit(), this.notifyTarget)));
+			this.es.submit((this.timer = this.createTimer()));
 		}
 	}
 
@@ -60,19 +60,36 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 	protected void setTimeUnitAmount(long timeUnitAmount) {
 		this.timeUnitAmount = timeUnitAmount;
 	}
+	
+	protected TimeoutTimer createTimer() {
+		return new TimeoutTimer(LocalDateTime.now(), this.getTimeUnitAmount(), this.getTimeUnit(), this.notifyTarget);
+	}
+	
+	protected HasTimeout getNotifyTarget() {
+		return this.notifyTarget;
+	}
+	
 	@Override
-	public boolean isRunning() {
+	public boolean hasRunningTimer() {
 		return this.timer != null;
+	}
+	
+	@Override
+	public long getTimeElapsed() {
+		if (this.timer != null) {
+			return this.timer.getTimeElapsed();
+		}
+		return -1;
 	}
 	
 	protected class TimeoutTimer implements Runnable {
 		
-		private LocalDateTime startTime;
-		private long timeUnitAmount;
-		private TemporalUnit timeUnit;
-		private HasTimeout notifyTarget;
+		private final LocalDateTime startTime;
+		private final long timeUnitAmount;
+		private final TemporalUnit timeUnit;
+		private final HasTimeout notifyTarget;
 		
-		private boolean isReset = false;
+		private volatile boolean isReset = false;
 		
 		protected TimeoutTimer(LocalDateTime startTime, long timeUnitAmount, TemporalUnit timeUnit, HasTimeout notifyTarget) {
 			this.startTime = startTime;
@@ -81,8 +98,12 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 			this.notifyTarget = notifyTarget;
 		}
 		
+		protected long getTimeElapsed() {
+			return this.getStartTime().until(LocalDateTime.now(), this.getTimeUnit());
+		}
+		
 		protected boolean isTimeUp() {
-			return this.getTimeUnitAmount() <= this.getStartTime().until(LocalDateTime.now(), this.getTimeUnit());
+			return this.getTimeUnitAmount() <= this.getTimeElapsed();
 		}
 		
 		protected void reset() {
@@ -97,6 +118,12 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 		protected void notifyTarget() {
 			if (this.getNotifyTarget() != null) {
 				this.getNotifyTarget().timeout();
+			}
+		}
+		
+		protected void notifyStop() {
+			if (this.getNotifyTarget() != null) {
+				this.getNotifyTarget().timeoutTimerStopped();
 			}
 		}
 		
@@ -116,25 +143,35 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 			return this.startTime;
 		}
 
-		@Override
-		public void run() {
-//			System.out.println(this + " Timer started: " + this.getNotifyTarget());
-			
+		protected void waitTillTimeIsUp() {
 			while (!this.isTimeUp()) {
 				if (this.isReset()) {
 //					System.out.println(this + " Timer reset by notify target: " + this.getNotifyTarget());
 					break;
 				}
 			}
-			
-//			System.out.println(this + " TimeUp/Reset: " + this.getNotifyTarget());
-			
+		}
+		
+		protected void notifyAlgorithm() {
 			if (!this.isReset()) {
 //				System.out.println(this + " Notifying target: " + this.getNotifyTarget());
 				this.notifyTarget();
 			}
-//			System.out.println(this + " Cycle over: " + this.getNotifyTarget());
+		}
+		
+		protected void endAlgorithm() {
 			timer = null;
+			this.notifyStop();
+		}
+		
+		@Override
+		public void run() {
+//			System.out.println(this + " Timer started: " + this.getNotifyTarget());
+			this.waitTillTimeIsUp();
+//			System.out.println(this + " TimeUp/Reset: " + this.getNotifyTarget());
+			this.notifyAlgorithm();
+//			System.out.println(this + " Cycle over: " + this.getNotifyTarget());
+			this.endAlgorithm();
 		}
 	}
 }

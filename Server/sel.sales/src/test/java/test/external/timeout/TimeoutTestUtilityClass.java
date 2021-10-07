@@ -1,4 +1,4 @@
-package test.external.buffer;
+package test.external.timeout;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -12,7 +12,7 @@ import test.GeneralTestUtilityClass;
 
 public final class TimeoutTestUtilityClass {
 	public static void failIfToleranceViolated(ITimeoutStrategy ts, LocalDateTime startTime, long timeoutInMillis, long toleranceInMillis) {
-		while (ts.isRunning()) {
+		while (ts.hasRunningTimer()) {
 			if (startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS) > timeoutInMillis + toleranceInMillis) {
 				fail("Timer exceeds the tolerated delay.");
 			}
@@ -20,16 +20,16 @@ public final class TimeoutTestUtilityClass {
 	}
 	
 	public static void assertTimeoutCorrect(LocalDateTime startTime, long durationInMillis, long toleranceInMillis) {
-		assertTimeoutLonger(startTime, durationInMillis, toleranceInMillis);
 		assertTimeoutShorter(startTime, durationInMillis, toleranceInMillis);
+		assertTimeoutLonger(startTime, durationInMillis);
 	}
 	
-	public static void assertTimeoutLonger(LocalDateTime startTime, long durationInMillis, long toleranceInMillis) {
-		Assertions.assertTrue(startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS) > durationInMillis - toleranceInMillis);
+	public static void assertTimeoutLonger(LocalDateTime startTime, long durationInMillis) {
+		Assertions.assertTrue(startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS) >= durationInMillis);
 	}
 	
 	public static void assertTimeoutShorter(LocalDateTime startTime, long durationInMillis, long toleranceInMillis) {
-		Assertions.assertTrue(startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS) < durationInMillis + toleranceInMillis);
+		Assertions.assertTrue(startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS) <= durationInMillis + toleranceInMillis);
 	}
 	
 	public static void assertTimeoutResetSuccessful(ITimeoutStrategy ts, long waitDuration, LocalDateTime startTime, long timeoutInMillis, long toleranceInMillis) {

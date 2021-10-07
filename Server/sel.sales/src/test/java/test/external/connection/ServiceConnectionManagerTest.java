@@ -179,9 +179,7 @@ class ServiceConnectionManagerTest {
 			Assertions.assertTrue(sb.isBlocked());
 			
 			DummyConnection conn = (DummyConnection) cm.getConnection();
-			ByteArrayInputStream is = conn.getInputStream();
-			is.reset();
-			BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialiser.serialise(m.getMinimalAcknowledgementMessage()));
+			conn.fillInputBuffer(serialiser.serialise(m.getMinimalAcknowledgementMessage()));
 		});
 		
 		GeneralTestUtilityClass.performWait(waitTime);

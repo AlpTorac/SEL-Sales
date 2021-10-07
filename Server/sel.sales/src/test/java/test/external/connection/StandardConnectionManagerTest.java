@@ -35,15 +35,15 @@ import external.message.StandardMessageFormat;
 import external.message.StandardMessageParser;
 import test.GeneralTestUtilityClass;
 import test.external.buffer.BufferUtilityClass;
-import test.external.buffer.TimeoutTestUtilityClass;
 import test.external.dummy.DummyClient;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyConnectionManager;
 import test.external.dummy.DummyController;
+import test.external.timeout.TimeoutTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class StandardConnectionManagerTest {
 	private ExecutorService es;
-	private long waitTime = 50;
+	private long waitTime = 200;
 	
 	private IMessageSerialiser serialiser = new MessageSerialiser(new StandardMessageFormat());
 	private IMessageParser parser = new StandardMessageParser();
@@ -92,7 +92,7 @@ class StandardConnectionManagerTest {
 		controller = initController();
 		conn = new DummyConnection(client1Address);
 		es = Executors.newCachedThreadPool();
-		connManager = new StandardConnectionManager(controller, conn, es, 20000, 2000, 10);
+		connManager = new StandardConnectionManager(controller, conn, es, 20000, 2000, 10, 1000);
 		sb = connManager.getSendBuffer();
 		pingPong = connManager.getPingPong();
 		pingPong.setDisconnectionListener(new DisconnectionListener(null) {
@@ -113,7 +113,7 @@ class StandardConnectionManagerTest {
 	}
 	@AfterEach
 	void cleanUp() {
-		connManager.close();
+//		connManager.close();
 		try {
 			es.awaitTermination(waitTime, TimeUnit.MILLISECONDS);
 			es.shutdownNow();

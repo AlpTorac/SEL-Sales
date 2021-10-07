@@ -43,13 +43,16 @@ class OrderHandlerTest extends MessageHandlerTest {
 	private IMessageParser parser;
 	private IAcknowledger acknowledger;
 	private IController controller;
-	private DummyConnection conn;
+	private DummyConnection senderConn;
+	private DummyConnection receiverConn;
 	private boolean isOrderReceivedByController;
 	
 	@BeforeEach
 	void prep() {
-		conn = new DummyConnection("clientaddress");
-		acknowledger = new StandardAcknowledger(conn);
+		senderConn = new DummyConnection("clientAddress");
+		receiverConn = new DummyConnection("receiverAddress");
+		senderConn.setInputTarget(receiverConn.getInputStream());
+		acknowledger = new StandardAcknowledger(senderConn);
 		parser = new StandardMessageParser();
 		controller = initDummyController();
 		setHandler(new OrderHandler(parser, acknowledger, controller));
@@ -59,7 +62,7 @@ class OrderHandlerTest extends MessageHandlerTest {
 	@AfterEach
 	void cleanUp() {
 		try {
-			conn.close();
+			senderConn.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -114,12 +117,13 @@ class OrderHandlerTest extends MessageHandlerTest {
 		MessageFlag[] flags = null;
 		String serialisedData = "";
 		IMessage message = new Message(sequenceNumber, context, flags, serialisedData);
-		ByteArrayOutputStream os = conn.getOutputStream();
+//		ByteArrayOutputStream os = senderConn.getOutputStream();
 		this.acknowledgementSuccessfulTest(message);
 		String serialisedExpected = (format.getMessageStart() + sequenceNumber + fieldSeparator +
 				context.toString() + fieldSeparator + MessageFlag.ACKNOWLEDGEMENT.toString() +
 				fieldSeparator + serialisedData + format.getMessageEnd());
-		BufferUtilityClass.assertOutputWrittenEquals(os, serialisedExpected.getBytes());
+		BufferUtilityClass.assertInputStoredEquals(this.receiverConn.getInputStream(), serialisedExpected.getBytes());
+//		BufferUtilityClass.assertOutputWrittenEquals(os, serialisedExpected.getBytes());
 	}
 	
 	@Test

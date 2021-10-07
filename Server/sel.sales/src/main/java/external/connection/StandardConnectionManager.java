@@ -16,8 +16,8 @@ public class StandardConnectionManager extends ConnectionManager {
 		super(controller, conn, es);
 	}
 	
-	public StandardConnectionManager(IController controller, IConnection conn, ExecutorService es, long pingPongTimeoutInMillis, long sendTimeoutInMillis, int resendLimit) {
-		super(controller, conn, es, pingPongTimeoutInMillis, sendTimeoutInMillis, resendLimit);
+	public StandardConnectionManager(IController controller, IConnection conn, ExecutorService es, long pingPongTimeoutInMillis, long sendTimeoutInMillis, int resendLimit, long minimalPingPongDelay) {
+		super(controller, conn, es, pingPongTimeoutInMillis, sendTimeoutInMillis, resendLimit, minimalPingPongDelay);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class StandardConnectionManager extends ConnectionManager {
 	}
 
 	@Override
-	protected IPingPong createPingPong(int resendLimit, long pingPongTimeout) {
-		return new StandardPingPong(this.getConnection(), this.getExecutorService(), resendLimit, pingPongTimeout);
+	protected IPingPong createPingPong(long minimalDelay, int resendLimit, long pingPongTimeout) {
+		return new StandardPingPong(this.getConnection(), this.getExecutorService(), minimalDelay, resendLimit, pingPongTimeout);
 	}
 }

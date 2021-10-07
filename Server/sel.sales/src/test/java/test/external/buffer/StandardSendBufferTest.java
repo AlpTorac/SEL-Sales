@@ -26,16 +26,19 @@ import test.external.dummy.DummyConnection;
 class StandardSendBufferTest {
 	private ISendBuffer sb;
 	private ExecutorService es;
-	private DummyConnection conn;
+	private DummyConnection senderConn;
+	private DummyConnection receiverConn;
 	private MessageFormat messageFormat = new StandardMessageFormat();
 	private String fieldSeparator;
 	private String fieldElementSeparator;
 	
 	@BeforeEach
 	void prep() {
-		conn = new DummyConnection("clientaddress");
-		es = Executors.newFixedThreadPool(3);
-		sb = new StandardSendBuffer(conn, es);
+		senderConn = new DummyConnection("clientAddress");
+		receiverConn = new DummyConnection("receiverAddress");
+		senderConn.setInputTarget(receiverConn.getInputStream());
+		es = Executors.newCachedThreadPool();
+		sb = new StandardSendBuffer(senderConn, es);
 		this.fieldSeparator = this.messageFormat.getDataFieldSeparatorForString();
 		this.fieldElementSeparator = this.messageFormat.getDataFieldElementSeparatorForString();
 	}
@@ -43,7 +46,8 @@ class StandardSendBufferTest {
 	void cleanUp() {
 		try {
 			sb.close();
-			conn.close();
+			receiverConn.close();
+			senderConn.close();
 			es.shutdown();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -129,11 +133,10 @@ class StandardSendBufferTest {
 				fieldSeparator + fieldSeparator +
 				m1.getSerialisedData() + messageFormat.getMessageEnd();
 		Assertions.assertTrue(sb.isEmpty());
-		ByteArrayOutputStream os = conn.getOutputStream();
 		BufferUtilityClass.assertMessageSent(sb, 0, m1);
 		Assertions.assertFalse(sb.isEmpty());
 		
-		BufferUtilityClass.assertOutputWrittenEquals(os, sentMessage.getBytes());
+		BufferUtilityClass.assertInputStoredEquals(this.receiverConn.getInputStream(), sentMessage.getBytes());
 		
 		long waitDuration = 2100;
 		long remainingWait = 600;

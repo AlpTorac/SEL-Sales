@@ -14,11 +14,8 @@ import test.external.dummy.DummyConnection;
 public final class ConnectionManagerTestUtilityClass {
 	public static void assertAckReadAndSentToSendBuffer(DummyConnection conn, ISendBuffer sb, String serialisedIncAck, long readWaitTime, long totalWaitTime) {
 		LocalDateTime now = LocalDateTime.now();
-		ByteArrayInputStream is = conn.getInputStream();
 		while (sb.isBlocked()) {
-			is = conn.getInputStream();
-			is.reset();
-			BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialisedIncAck);
+			conn.fillInputBuffer(serialisedIncAck);
 			GeneralTestUtilityClass.performWait(readWaitTime);
 			if (now.until(LocalDateTime.now(), ChronoUnit.MILLIS) > totalWaitTime) {
 				fail("Send buffer took too long to get unblocked");

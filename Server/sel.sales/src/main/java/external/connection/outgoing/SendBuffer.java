@@ -37,6 +37,7 @@ public abstract class SendBuffer implements ISendBuffer {
 		if (this.isBlocked() || this.buffer.isEmpty()) {
 			return false;
 		}
+		this.block();
 		return this.sendMessageAndStartTimeoutTimer();
 	}
 	/**
@@ -59,6 +60,9 @@ public abstract class SendBuffer implements ISendBuffer {
 		this.resendLast();
 	}
 	
+	@Override
+	public void timeoutTimerStopped() {}
+	
 	protected void startTimeoutTimer() {
 		this.ts.startTimer();
 		System.out.println("startTimeoutTimer() in " + this);
@@ -69,7 +73,6 @@ public abstract class SendBuffer implements ISendBuffer {
 	}
 	
 	private boolean sendMessageAndStartTimeoutTimer() {
-		this.block();
 		IMessage messageInLine = this.buffer.getMessageInLine();
 		messageInLine.setSequenceNumber(this.currentSequenceNumber);
 		boolean isSent = this.mss.sendMessage(this.conn, messageInLine);
@@ -83,6 +86,7 @@ public abstract class SendBuffer implements ISendBuffer {
 	public void receiveAcknowledgement(IMessage message) {
 		if (!this.isEmpty() && message.isAcknowledgementMessage() 
 				&& this.buffer.getMessageInLine().getSequenceNumber() == message.getSequenceNumber()) {
+			this.ts.reset();
 			this.buffer.removeMessageInLine();
 			this.currentSequenceNumber = this.currentSequenceNumber + 1;
 			this.unblock();
@@ -99,7 +103,6 @@ public abstract class SendBuffer implements ISendBuffer {
 	 * Allow the buffer to send messages.
 	 */
 	protected void unblock() {
-		this.ts.reset();
 		System.out.println("unblock() in " + this);
 		this.setBlocked(false);
 	}
