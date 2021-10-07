@@ -21,6 +21,10 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	private ConnectionListener connListener;
 	private DisconnectionListener disconListener;
 	
+	private long pingPongTimeout = 1000;
+	private long sendTimeout = 5000;
+	private int resendLimit = 5;
+	
 	protected ServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es) {
 		this.es = es;
 		this.manager = manager;
@@ -28,9 +32,39 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 		this.connListener = this.createConnListener();
 		this.disconListener = this.createDisconListener();
 	}
+	protected ServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es, long pingPongTimeout, long sendTimeout, int resendLimit) {
+		this(manager, controller, es);
+		this.pingPongTimeout = pingPongTimeout;
+		this.sendTimeout = sendTimeout;
+		this.resendLimit = resendLimit;
+	}
 
 	protected void initConnListener() {
 		this.connListener = this.createConnListener();
+	}
+	
+	protected void setPingPongTimeout(long pingPongTimeout) {
+		this.pingPongTimeout = pingPongTimeout;
+	}
+	
+	protected void setSendTimeout(long sendTimeout) {
+		this.sendTimeout = sendTimeout;
+	}
+	
+	protected void setResendLimit(int resendLimit) {
+		this.resendLimit = resendLimit;
+	}
+	
+	protected long getPingPongTimeout() {
+		return this.pingPongTimeout;
+	}
+	
+	protected long getSendTimeout() {
+		return this.sendTimeout;
+	}
+	
+	protected int getResendLimit() {
+		return this.resendLimit;
 	}
 	
 	private IConnectionManager getConnectionManager(String clientAddress) {
@@ -59,11 +93,11 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	
 	protected abstract Object getConnectionObject();
 	
-	protected abstract IConnectionManager createConnectionManager(IConnection conn);
+	protected abstract IConnectionManager createConnectionManager(IConnection conn, long pingPongTimeout, long sendTimeout, int resendLimit);
 	
 	protected boolean addConnection(IConnection conn) {
 		if (this.isConnectionAllowed(conn.getTargetClientAddress())) {
-			IConnectionManager connManager = this.createConnectionManager(conn);
+			IConnectionManager connManager = this.createConnectionManager(conn, this.getPingPongTimeout(), this.getSendTimeout(), this.getResendLimit());
 			this.connListener.connectionEstablished(conn.getTargetClientAddress());
 			connManager.setDisconnectionListener(this.disconListener);
 			return this.connectionManagers.add(connManager);

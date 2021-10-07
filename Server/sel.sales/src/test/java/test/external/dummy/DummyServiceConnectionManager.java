@@ -15,6 +15,10 @@ public class DummyServiceConnectionManager extends ServiceConnectionManager {
 	public DummyServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es) {
 		super(manager, controller, es);
 	}
+	
+	public DummyServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es, long pingPongTimeout, long sendTimeout, int resendLimit) {
+		super(manager, controller, es, pingPongTimeout, sendTimeout, resendLimit);
+	}
 
 	public void setCurrentConnectionObject(DummyClient currentClient) {
 		this.currentClient = currentClient;
@@ -38,8 +42,8 @@ public class DummyServiceConnectionManager extends ServiceConnectionManager {
 	}
 
 	@Override
-	protected IConnectionManager createConnectionManager(IConnection conn) {
-		return new DummyConnectionManager(controller, conn, es);
+	protected IConnectionManager createConnectionManager(IConnection conn, long pingPongTimeout, long sendTimeout, int resendLimit) {
+		return new DummyConnectionManager(controller, conn, es, this.getPingPongTimeout(), this.getSendTimeout(), this.getResendLimit());
 	}
 
 }

@@ -1,6 +1,5 @@
 package external.connection.pingpong;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
 import external.connection.DisconnectionListener;
@@ -14,12 +13,9 @@ import external.message.MessageContext;
 public abstract class PingPong implements IPingPong {
 	private IMessageSendingStrategy mss;
 	private ITimeoutStrategy ts;
-	private ExecutorService es;
 	private volatile int resendCount;
 	private int resendLimit;
 	private IConnection conn;
-	
-	private boolean isBlocked = false;
 	
 	private DisconnectionListener disconListener;
 	
@@ -27,33 +23,9 @@ public abstract class PingPong implements IPingPong {
 		this.conn = conn;
 		this.mss = mss;
 		this.ts = ts;
-		this.es = es;
 		this.resendCount = 0;
 		this.resendLimit = resendLimit;
-		this.initTimeoutTimer();
-	}
-	
-	protected void setBlocked(boolean isBlocked) {
-		this.isBlocked = isBlocked;
-	}
-	
-	protected void block() {
-		if (!this.isBlocked()) {
-			this.setBlocked(true);
-		}
-	}
-	
-	protected void unblock() {
-		if (this.isBlocked() && this.ts.isRunning()) {
-			this.resetTimeoutTimer();
-			this.resetResendCount();
-			this.setBlocked(false);
-		}
-	}
-	
-	@Override
-	public boolean isBlocked() {
-		return this.isBlocked;
+		this.ts.setNotifyTarget(this);
 	}
 	
 	@Override
@@ -66,76 +38,96 @@ public abstract class PingPong implements IPingPong {
 	}
 	
 	public boolean sendPingPongMessage() {
-		if (this.isBlocked()) {
+		if (this.getRemainingResendTries() <= 0) {
+			this.reportDisconnection();
 			return false;
 		}
 		return this.sendPingPongMessageAndStartTimer();
 	}
 	
 	protected boolean sendPingPongMessageAndStartTimer() {
+		if (this.getRemainingResendTries() <= 0) {
+			this.reportDisconnection();
+			return false;
+		}
+		if (ts.isRunning()) {
+			return false;
+		}
+		this.startTimeoutTimer();
 		boolean isSent = this.mss.sendMessage(conn, this.generatePingPongMessage());
 		if (isSent) {
 			System.out.println("Ping pong message sent");
-			this.block();
-			this.startTimeoutTimer();
 		}
 		return isSent;
 	}
-	
-	protected void initTimeoutTimer() {
-		this.ts.setNotifyTarget(this);
-		this.es.submit(this.ts);
-	}
-	
-	protected void startTimeoutTimer() {
+	@Override
+	public void startTimeoutTimer() {
+		System.out.println("Ping pong start timer");
 		this.ts.startTimer();
 	}
 	
 	protected void resetTimeoutTimer() {
+		System.out.println("Ping pong reset timer");
 		this.ts.reset();
 	}
 	
 	protected void resetResendCount() {
+		System.out.println("Ping pong reset resend count");
 		this.resendCount = 0;
 	}
 	
 	protected void resendPingPongMessage() {
+		System.out.println("Ping pong resend, count = " + this.resendCount);
 		this.increaseResendCount();
 		this.sendPingPongMessageAndStartTimer();
 	}
 	
 	protected void increaseResendCount() {
+		System.out.println("Ping pong resend count ++");
 		this.resendCount = this.resendCount + 1;
+	}
+	
+	protected void reportDisconnection() {
+		System.out.println("Reporting disconnection");
+		if (this.disconListener != null) {
+			System.out.println("Disconnection listener not null");
+			this.disconListener.connectionLost(conn.getTargetClientAddress());
+			System.out.println("Reported disconnection");
+		}
 	}
 	
 	@Override
 	public void receiveResponse(IMessage message) {
-		this.unblock();
+		System.out.println("Ping pong receive response");
+		this.resetTimeoutTimer();
+		this.resetResendCount();
 	}
 	
 	@Override
 	public void timeout() {
+		System.out.println("Ping pong timeout");
 		if (this.getRemainingResendTries() > 0) {
 			this.resendPingPongMessage();
 		} else {
-			if (this.disconListener != null) {
-				this.disconListener.connectionLost(conn.getTargetClientAddress());
-			}
+			this.reportDisconnection();
 		}
 	}
 	
 	@Override
 	public void close() {
-		this.ts.terminate();
+		System.out.println("Ping pong close");
+		this.ts.reset();
 	}
 	
 	@Override
 	public boolean isRunning() {
+//		System.out.println("Ping pong isRunning");
 		return this.ts.isRunning();
 	}
 	
 	@Override
 	public int getRemainingResendTries() {
+//		System.out.println("Ping pong getRemainingTries");
 		return this.resendLimit - this.resendCount;
 	}
 }

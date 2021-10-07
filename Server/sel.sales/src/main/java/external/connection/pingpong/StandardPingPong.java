@@ -9,9 +9,9 @@ import external.connection.timeout.FixTimeoutStrategy;
 
 public class StandardPingPong extends PingPong {
 	public StandardPingPong(IConnection conn, ExecutorService es) {
-		super(conn, new BasicMessageSender(), new FixTimeoutStrategy(1000, ChronoUnit.MILLIS), es, 10);
+		super(conn, new BasicMessageSender(), new FixTimeoutStrategy(1000, ChronoUnit.MILLIS, es), es, 10);
 	}
 	public StandardPingPong(IConnection conn, ExecutorService es, int resendLimit, long pingPongTimeoutInMillis) {
-		super(conn, new BasicMessageSender(), new FixTimeoutStrategy(pingPongTimeoutInMillis, ChronoUnit.MILLIS), es, resendLimit);
+		super(conn, new BasicMessageSender(), new FixTimeoutStrategy(pingPongTimeoutInMillis, ChronoUnit.MILLIS, es), es, resendLimit);
 	}
 }

@@ -20,6 +20,11 @@ public class DummyConnectionManager extends ConnectionManager {
 		super(controller, conn, es, 20000, 2000, 10);
 	}
 
+	public DummyConnectionManager(IController controller, IConnection conn, ExecutorService es, long pingPongTimeout,
+			long sendTimeout, int resendLimit) {
+		super(controller, conn, es, pingPongTimeout, sendTimeout, resendLimit);
+	}
+
 	@Override
 	protected ISendBuffer createSendBuffer(long timeoutInMillis) {
 		return new StandardSendBuffer(this.getConnection(), this.getExecutorService(), timeoutInMillis);
@@ -30,16 +35,6 @@ public class DummyConnectionManager extends ConnectionManager {
 		return new MessageReceptionist(this.getConnection(),
 				controller,
 				sb, pingPong, this.getExecutorService());
-	}
-
-	@Override
-	protected Runnable[] initConnectionRunnables() {
-		Runnable[] rs = new Runnable[] {
-				this.initPingPongRunnable(),
-				this.initMessageSendingRunnable(),
-				this.initMessageReadingRunnable()
-		};
-		return rs;
 	}
 
 	@Override
