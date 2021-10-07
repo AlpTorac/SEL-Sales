@@ -2,48 +2,51 @@ package external.connection.timeout;
 
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalUnit;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 
+	private ExecutorService es;
+	
 	private HasTimeout notifyTarget;
 	
 	private long timeUnitAmount;
 	private TemporalUnit timeUnit;
 	
-	private LocalDateTime startTime;
-	private boolean isTerminated = false;
-	private boolean isReset = false;
-	private boolean isTimerStarted = false;
+	private TimeoutTimer timer;
 	
-	public TimeoutStrategy(long timeUnitAmount, TemporalUnit timeUnit) {
+	public TimeoutStrategy(long timeUnitAmount, TemporalUnit timeUnit, ExecutorService es) {
 		this.timeUnitAmount = timeUnitAmount;
 		this.timeUnit = timeUnit;
+		this.es = es;
 	}
 
 	@Override
 	public boolean hasStarted() {
-		return this.isTimerStarted;
+		return this.timer != null;
 	}
 	
 	@Override
 	public void setNotifyTarget(HasTimeout notifyTarget) {
-		System.out.println("notify target hash: " + notifyTarget);
+//		System.out.println(this + " notify target hash: " + notifyTarget);
 		this.notifyTarget = notifyTarget;
 	}
 	
 	@Override
 	public void startTimer() {
-		this.startTime = LocalDateTime.now();
-		this.isReset = false;
-		this.isTimerStarted = true;
-		System.out.println("startTimer() in " + notifyTarget);
+		if (this.timer == null && !this.es.isShutdown()) {
+			this.es.submit((this.timer = new TimeoutTimer(LocalDateTime.now(), this.getTimeUnitAmount(), this.getTimeUnit(), this.notifyTarget)));
+		}
 	}
 
 	@Override
 	public void reset() {
-		this.startTime = null;
-		this.isReset = true;
-		System.out.println("reset() in " + notifyTarget);
+		if (this.timer != null) {
+			this.timer.reset();
+		}
+//		System.out.println(this + " reset() in " + notifyTarget);
 	}
 
 	protected TemporalUnit getTimeUnit() {
@@ -59,59 +62,79 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 	}
 	@Override
 	public boolean isRunning() {
-		return !this.isTerminated && this.isTimerStarted && !this.isReset;
+		return this.timer != null;
 	}
 	
-	@Override
-	public boolean isTimeUp() {
-		return this.timeUnitAmount <= this.startTime.until(LocalDateTime.now(), this.timeUnit);
-	}
-	
-	@Override
-	public void terminate() {
-		this.isTerminated = true;
-	}
-	
-	@Override
-	public void notifyTarget() {
-		if (this.notifyTarget != null) {
-			this.notifyTarget.timeout();
+	protected class TimeoutTimer implements Runnable {
+		
+		private LocalDateTime startTime;
+		private long timeUnitAmount;
+		private TemporalUnit timeUnit;
+		private HasTimeout notifyTarget;
+		
+		private boolean isReset = false;
+		
+		protected TimeoutTimer(LocalDateTime startTime, long timeUnitAmount, TemporalUnit timeUnit, HasTimeout notifyTarget) {
+			this.startTime = startTime;
+			this.timeUnitAmount = timeUnitAmount;
+			this.timeUnit = timeUnit;
+			this.notifyTarget = notifyTarget;
 		}
-	}
-	
-	@Override
-	public void run() {
-		System.out.println("Timer starting to run: " + notifyTarget);
-		boolean started = false;
-		boolean timeUp = false;
-		while (!this.isTerminated) {
-			System.out.println("Awaiting timer start: " + notifyTarget);
-			
-			while (!started) {
-				started = this.hasStarted();
+		
+		protected boolean isTimeUp() {
+			return this.getTimeUnitAmount() <= this.getStartTime().until(LocalDateTime.now(), this.getTimeUnit());
+		}
+		
+		protected void reset() {
+			this.isReset = true;
+//			System.out.println(this + " reset() in " + this.getNotifyTarget());
+		}
+		
+		protected HasTimeout getNotifyTarget() {
+			return this.notifyTarget;
+		}
+		
+		protected void notifyTarget() {
+			if (this.getNotifyTarget() != null) {
+				this.getNotifyTarget().timeout();
 			}
+		}
+		
+		protected boolean isReset() {
+			return this.isReset;
+		}
+		
+		protected TemporalUnit getTimeUnit() {
+			return this.timeUnit;
+		}
+		
+		protected long getTimeUnitAmount() {
+			return this.timeUnitAmount;
+		}
+		
+		protected LocalDateTime getStartTime() {
+			return this.startTime;
+		}
+
+		@Override
+		public void run() {
+//			System.out.println(this + " Timer started: " + this.getNotifyTarget());
 			
-			System.out.println("Timer started: " + notifyTarget);
-			
-			while (!timeUp) {
-				timeUp = this.isTimeUp();
-				if (this.isReset) {
-					System.out.println("Timer reset by notify target: " + notifyTarget);
+			while (!this.isTimeUp()) {
+				if (this.isReset()) {
+//					System.out.println(this + " Timer reset by notify target: " + this.getNotifyTarget());
 					break;
 				}
 			}
 			
-			System.out.println("TimeUp/Reset: " + notifyTarget);
+//			System.out.println(this + " TimeUp/Reset: " + this.getNotifyTarget());
 			
-			if (!this.isReset) {
-				System.out.println("Notifying target: " + this.notifyTarget);
+			if (!this.isReset()) {
+//				System.out.println(this + " Notifying target: " + this.getNotifyTarget());
 				this.notifyTarget();
 			}
-			
-			this.reset();
-			this.isTimerStarted = false;
-			System.out.println("Cycle over: " + notifyTarget);
+//			System.out.println(this + " Cycle over: " + this.getNotifyTarget());
+			timer = null;
 		}
-		System.out.println("Timer terminated: " + notifyTarget);
 	}
 }

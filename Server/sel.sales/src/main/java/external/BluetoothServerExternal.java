@@ -1,7 +1,5 @@
 package external;
 
-import javax.bluetooth.UUID;
-
 import controller.IController;
 import external.bluetooth.BluetoothClientManager;
 import external.bluetooth.BluetoothService;
@@ -36,10 +34,6 @@ public class BluetoothServerExternal extends ServerExternal {
 	
 	@Override
 	protected BluetoothService initService() {
-		return this.initBluetoothService(new UUID(0x1111), "SEL_Service");
-	}
-	
-	private BluetoothService initBluetoothService(UUID id, String name) {
-		return new BluetoothService(id, name, this.initClientManager(), this.getController(), es);
+		return new BluetoothServerService(this.initClientManager(), this.getController(), es);
 	}
 }

@@ -19,6 +19,7 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.IController;
+import external.connection.DisconnectionListener;
 import external.connection.IConnection;
 import external.connection.StandardConnectionManager;
 import external.connection.outgoing.ISendBuffer;
@@ -91,10 +92,22 @@ class StandardConnectionManagerTest {
 		controller = initController();
 		conn = new DummyConnection(client1Address);
 		es = Executors.newCachedThreadPool();
-		isConnected = false;
 		connManager = new StandardConnectionManager(controller, conn, es, 20000, 2000, 10);
 		sb = connManager.getSendBuffer();
 		pingPong = connManager.getPingPong();
+		pingPong.setDisconnectionListener(new DisconnectionListener(null) {
+			@Override
+			public void connectionLost(String clientAddress) {
+				isConnected = false;
+				try {
+					conn.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		isConnected = true;
 		resendLimit = pingPong.getRemainingResendTries();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
@@ -163,11 +176,16 @@ class StandardConnectionManagerTest {
 	
 	@Test
 	void pingPongTest() {
-//		Assertions.assertTrue(isConnected);
+		Assertions.assertTrue(isConnected);
 		Assertions.assertTrue(resendLimit == pingPong.getRemainingResendTries());
-		while (pingPong.getRemainingResendTries() > 0) {
+		int remainingResendTries = resendLimit;
+		while (remainingResendTries > 0) {
+			Assertions.assertEquals(remainingResendTries, pingPong.getRemainingResendTries());
 			pingPong.timeout();
+			remainingResendTries--;
 		}
+		Assertions.assertEquals(0, remainingResendTries);
+		pingPong.timeout();
 		GeneralTestUtilityClass.performWait(waitTime);
 		Assertions.assertFalse(isConnected);
 	}

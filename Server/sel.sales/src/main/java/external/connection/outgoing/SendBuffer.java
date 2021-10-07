@@ -14,7 +14,6 @@ public abstract class SendBuffer implements ISendBuffer {
 	private ISendBufferDataContainer buffer;
 	private IConnection conn;
 	
-	private ExecutorService es;
 	private ITimeoutStrategy ts;
 	
 	private int currentSequenceNumber;
@@ -25,8 +24,7 @@ public abstract class SendBuffer implements ISendBuffer {
 		this.mss = mss;
 		this.buffer = buffer;
 		this.ts = ts;
-		this.es = es;
-		this.initTimeoutTimer();
+		this.ts.setNotifyTarget(this);
 	}
 	
 	@Override
@@ -61,11 +59,6 @@ public abstract class SendBuffer implements ISendBuffer {
 		this.resendLast();
 	}
 	
-	protected void initTimeoutTimer() {
-		this.ts.setNotifyTarget(this);
-		this.es.submit(this.ts);
-	}
-	
 	protected void startTimeoutTimer() {
 		this.ts.startTimer();
 		System.out.println("startTimeoutTimer() in " + this);
@@ -88,7 +81,7 @@ public abstract class SendBuffer implements ISendBuffer {
 	
 	@Override
 	public void receiveAcknowledgement(IMessage message) {
-		if (message.isAcknowledgementMessage() 
+		if (!this.isEmpty() && message.isAcknowledgementMessage() 
 				&& this.buffer.getMessageInLine().getSequenceNumber() == message.getSequenceNumber()) {
 			this.buffer.removeMessageInLine();
 			this.currentSequenceNumber = this.currentSequenceNumber + 1;
@@ -112,7 +105,7 @@ public abstract class SendBuffer implements ISendBuffer {
 	}
 	@Override
 	public void close() {
-		this.ts.terminate();
+		
 	}
 	@Override
 	public boolean isEmpty() {

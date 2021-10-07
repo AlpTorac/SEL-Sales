@@ -33,7 +33,7 @@ class FixTimeoutStrategyTest {
 	
 	@BeforeEach
 	void prep() {
-		toleranceInMillis = 100;
+		toleranceInMillis = 200;
 		esTerminationTimeout = 100;
 		es = Executors.newCachedThreadPool();
 		timeoutInMillis = 500;
@@ -46,15 +46,14 @@ class FixTimeoutStrategyTest {
 	 */
 	private void initTimeoutStrategy() {
 		startTime = LocalDateTime.now();
-		ts = new FixTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS);
+		ts = new FixTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS, es);
 		ts.startTimer();
-		es.submit(ts);
 	}
 	
 	@AfterEach
 	void cleanUp() {
-		ts.terminate();
 		try {
+			ts.reset();
 			es.awaitTermination(esTerminationTimeout, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();

@@ -11,8 +11,8 @@ import external.message.IMessage;
 
 public abstract class ConnectionManager implements IConnectionManager {
 	private long sendTimeoutInMillis = 5000;
-	private long pingPongTimeoutInMillis = 1000;
-	private int resendLimit = 10;
+	private long pingPongTimeoutInMillis = 10000;
+	private int resendLimit = 5;
 	
 	private ExecutorService es;
 	private IConnection conn;
@@ -43,6 +43,7 @@ public abstract class ConnectionManager implements IConnectionManager {
 	@Override
 	public void setDisconnectionListener(DisconnectionListener dl) {
 		this.disconListener = dl;
+		this.pingPong.setDisconnectionListener(this.disconListener);
 	}
 	
 	@Override
@@ -88,63 +89,18 @@ public abstract class ConnectionManager implements IConnectionManager {
 		return this.mr;
 	}
 	
-	protected abstract Runnable[] initConnectionRunnables();
-	
-	protected Runnable initMessageReadingRunnable() {
-		return new Runnable() {
-			@Override
-			public void run() {
-				while (!isClosed && !getConnection().isClosed()) {
-//					System.out.println("Checking for messages");
-					getIncomingMessageListener().checkForMessages();
-//					System.out.println("Checked for messages");
-//					try {
-//						Thread.sleep(500);
-//					} catch (InterruptedException e) {
-//						e.printStackTrace();
-//					}
-				}
-			}
-		};
+	protected void checkForMessagesToBeRead() {
+		this.getIncomingMessageListener().checkForMessages();
 	}
 	
-	protected Runnable initMessageSendingRunnable() {
-		return new Runnable() {
-			@Override
-			public void run() {
-				while (!isClosed && !getConnection().isClosed()) {
-//					System.out.println("Checking for messages to send");
-					getSendBuffer().sendMessage();
-//					System.out.println("Checked for messages to send");
-//					try {
-//						Thread.sleep(300);
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-					if (getSendBuffer() == null) {
-						System.out.println("Send buffer null");
-					}
-				}
-			}
-		};
+	protected void checkForMessagesToBeSent() {
+		if (!this.getSendBuffer().isEmpty()) {
+			this.getSendBuffer().sendMessage();
+		}
 	}
 	
-	protected Runnable initPingPongRunnable() {
-		return new Runnable() {
-			@Override
-			public void run() {
-				while (!isClosed && !getConnection().isClosed()) {
-					if (!getPingPong().isBlocked()) {
-						System.out.println("Ping pong cycle --- sending ping pong");
-						getPingPong().sendPingPongMessage();
-					}
-					if (getPingPong() == null) {
-						System.out.println("Ping Pong null");
-					}
-				}
-			}
-		};
+	protected void sendPingPongMessage() {
+		this.getPingPong().sendPingPongMessage();
 	}
 	
 	protected void init() {
@@ -152,10 +108,18 @@ public abstract class ConnectionManager implements IConnectionManager {
 		this.initSendBuffer(this.getSendTimeout());
 		this.initMessageReceptionist(this.getSendBuffer(), this.getPingPong());
 		
-		Runnable[] rs = this.initConnectionRunnables();
-		for (Runnable r : rs) {
-			this.getExecutorService().submit(r);
-		}
+		Thread t = new Thread() {
+			@Override
+			public void run() {
+				while (!isClosed && !getConnection().isClosed()) {
+					checkForMessagesToBeRead();
+					checkForMessagesToBeSent();
+					sendPingPongMessage();
+				}
+			}
+		};
+		t.setDaemon(true);
+		t.start();
 	}
 	
 	protected int getResendLimit() {
@@ -182,7 +146,6 @@ public abstract class ConnectionManager implements IConnectionManager {
 			this.getSendBuffer().close();
 			this.getPingPong().close();
 			this.getIncomingMessageListener().close();
-//			this.disconListener.connectionLost(conn.getTargetClientAddress());
 			this.getConnection().close();
 		} catch (IOException e) {
 //			e.printStackTrace();

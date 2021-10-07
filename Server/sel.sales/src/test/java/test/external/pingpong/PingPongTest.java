@@ -63,10 +63,10 @@ class PingPongTest {
 		conn = new DummyConnection(client1Address);
 		es = Executors.newCachedThreadPool();
 		mss = new BasicMessageSender();
-		ts = new FixTimeoutStrategy(timeoutTime, ChronoUnit.MILLIS);
-		resendLimit = 3;
+		ts = new FixTimeoutStrategy(timeoutTime, ChronoUnit.MILLIS, es);
+		resendLimit = 10;
 		pingPong = new DummyPingPong(conn, mss, ts, es, resendLimit);
-		pingPong.setDisconnectionListener(new DisconnectionListener(null) {
+		pingPong.setDisconnectionListener(new DisconnectionListener(controller) {
 			@Override
 			public void connectionLost(String clientAddress) {
 				isConnected = false;
@@ -89,7 +89,6 @@ class PingPongTest {
 			e1.printStackTrace();
 		}
 		try {
-			ts.terminate();
 			es.awaitTermination(waitTime, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -119,10 +118,11 @@ class PingPongTest {
 			pingPong.timeout();
 			remainingResendTries--;
 		}
+		GeneralTestUtilityClass.performWait(waitTime);
 		Assertions.assertEquals(0, pingPong.getRemainingResendTries());
 		pingPong.receiveResponse(new Message(null, null, null));
 		Assertions.assertEquals(resendLimit, pingPong.getRemainingResendTries());
-		Assertions.assertFalse(conn.isClosed());
+		Assertions.assertTrue(conn.isClosed());
 	}
 	
 	@Test

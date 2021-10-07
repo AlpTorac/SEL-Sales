@@ -33,16 +33,6 @@ public class StandardConnectionManager extends ConnectionManager {
 	}
 
 	@Override
-	protected Runnable[] initConnectionRunnables() {
-		Runnable[] rs = new Runnable[] {
-				this.initPingPongRunnable(),
-				this.initMessageSendingRunnable(),
-				this.initMessageReadingRunnable()
-		};
-		return rs;
-	}
-
-	@Override
 	protected IPingPong createPingPong(int resendLimit, long pingPongTimeout) {
 		return new StandardPingPong(this.getConnection(), this.getExecutorService(), resendLimit, pingPongTimeout);
 	}

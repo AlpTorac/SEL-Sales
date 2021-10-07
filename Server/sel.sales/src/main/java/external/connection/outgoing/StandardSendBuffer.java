@@ -8,10 +8,10 @@ import external.connection.timeout.FixTimeoutStrategy;
 
 public class StandardSendBuffer extends SendBuffer {
 	public StandardSendBuffer(IConnection conn, ExecutorService es) {
-		super(conn, new BasicMessageSender(), new FIFOBuffer(), new FixTimeoutStrategy(2000, ChronoUnit.MILLIS), es);
+		super(conn, new BasicMessageSender(), new FIFOBuffer(), new FixTimeoutStrategy(2000, ChronoUnit.MILLIS, es), es);
 	}
 	
 	public StandardSendBuffer(IConnection conn, ExecutorService es, long timeoutInMillis) {
-		super(conn, new BasicMessageSender(), new FIFOBuffer(), new FixTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS), es);
+		super(conn, new BasicMessageSender(), new FIFOBuffer(), new FixTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS, es), es);
 	}
 }

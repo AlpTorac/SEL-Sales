@@ -26,6 +26,14 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 //			e.printStackTrace();
 		}
 	}
+	
+	public BluetoothServiceConnectionManager(BluetoothService service, BluetoothClientManager manager, IController controller, ExecutorService es,
+			long pingPongTimeout, long sendTimeout, int resendLimit) {
+		this(service, manager, controller, es);
+		this.setPingPongTimeout(pingPongTimeout);
+		this.setSendTimeout(sendTimeout);
+		this.setResendLimit(resendLimit);
+	}
 
 	@Override
 	protected IConnection initConnection(Object connectionObject) {
@@ -49,7 +57,7 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 	}
 
 	@Override
-	protected IConnectionManager createConnectionManager(IConnection conn) {
-		return new StandardConnectionManager(controller, conn, es, 1000, 2000, 3);
+	protected IConnectionManager createConnectionManager(IConnection conn, long pingPongTimeout, long sendTimeout, int resendLimit) {
+		return new StandardConnectionManager(controller, conn, es, pingPongTimeout, sendTimeout, resendLimit);
 	}
 }

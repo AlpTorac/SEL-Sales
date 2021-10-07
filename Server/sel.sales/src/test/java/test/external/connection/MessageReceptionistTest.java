@@ -60,7 +60,7 @@ class MessageReceptionistTest {
 		controller = initController();
 		es = Executors.newCachedThreadPool();
 		buffer = new StandardSendBuffer(conn, es);
-		pingPong = new DummyPingPong(conn, new BasicMessageSender(), new FixTimeoutStrategy(10000, ChronoUnit.MILLIS), es, resendLimit);
+		pingPong = new DummyPingPong(conn, new BasicMessageSender(), new FixTimeoutStrategy(10000, ChronoUnit.MILLIS, es), es, resendLimit);
 		listener = new MessageReceptionist(conn, controller, buffer, pingPong, es);
 	}
 	
@@ -155,7 +155,6 @@ class MessageReceptionistTest {
 	void handlePingPongMessageTest() {
 		pingPong.sendPingPongMessage();
 		GeneralTestUtilityClass.performWait(waitTime);
-		Assertions.assertTrue(pingPong.isRunning());
 		pingPong.timeout();
 		Assertions.assertTrue(resendLimit - 1 == pingPong.getRemainingResendTries());
 		
