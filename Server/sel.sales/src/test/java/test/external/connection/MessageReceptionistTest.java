@@ -43,11 +43,14 @@ class MessageReceptionistTest {
 	
 	private IMessageSerialiser serialiser = new MessageSerialiser(new StandardMessageFormat());
 	private IController controller;
-	private DummyConnection conn;
+	private DummyConnection senderConn;
+	private DummyConnection receiverConn;
 	private ISendBuffer buffer;
 	private IPingPong pingPong;
 	private ExecutorService es;
 	private boolean isOrderReceivedByController;
+	
+	private long minimalPingPongDelay = 1000;
 	
 	private int resendLimit = 5;
 	
@@ -56,19 +59,21 @@ class MessageReceptionistTest {
 	@BeforeEach
 	void prep() {
 		isOrderReceivedByController = false;
-		conn = new DummyConnection("clientaddress");
+		senderConn = new DummyConnection("clientaddress");
+		receiverConn = new DummyConnection("receiverAddress");
+		senderConn.setInputTarget(receiverConn.getInputStream());
 		controller = initController();
 		es = Executors.newCachedThreadPool();
-		buffer = new StandardSendBuffer(conn, es);
-		pingPong = new DummyPingPong(conn, new BasicMessageSender(), new FixTimeoutStrategy(10000, ChronoUnit.MILLIS, es), es, resendLimit);
-		listener = new MessageReceptionist(conn, controller, buffer, pingPong, es);
+		buffer = new StandardSendBuffer(senderConn, es);
+		pingPong = new DummyPingPong(senderConn, new BasicMessageSender(), new FixTimeoutStrategy(10000, ChronoUnit.MILLIS, es), es, minimalPingPongDelay, resendLimit);
+		listener = new MessageReceptionist(senderConn, controller, buffer, pingPong, es);
 	}
 	
 	@AfterEach
 	void cleanUp() {
 		try {
 			buffer.close();
-			conn.close();
+			senderConn.close();
 			listener.close();
 			pingPong.close();
 		} catch (IOException e) {
@@ -98,12 +103,13 @@ class MessageReceptionistTest {
 		String serialisedData = "someOrderData";
 		IMessage orderDataMessage = new Message(sequenceNumber, context, flags, serialisedData);
 		String serialisedMessage = serialiser.serialise(orderDataMessage);
-		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialisedMessage);
-		ByteArrayOutputStream os = conn.getOutputStream();
+		senderConn.fillInputBuffer(serialisedMessage);
+//		ByteArrayOutputStream os = senderConn.getOutputStream();
 		Assertions.assertTrue(listener.checkForMessages());
 		
 		String serialisedAckMessage = serialiser.serialise(orderDataMessage.getMinimalAcknowledgementMessage());
-		BufferUtilityClass.assertOutputWrittenEquals(os, serialisedAckMessage.getBytes());
+		BufferUtilityClass.assertInputStoredEquals(this.receiverConn.getInputStream(), serialisedAckMessage.getBytes());
+//		BufferUtilityClass.assertOutputWrittenEquals(os, serialisedAckMessage.getBytes());
 		Assertions.assertTrue(isOrderReceivedByController);
 	}
 
@@ -119,7 +125,7 @@ class MessageReceptionistTest {
 		String serialisedData = "";
 		IMessage orderAckMessage = new Message(sequenceNumber, context, flags, serialisedData);
 		String serialisedMessage = serialiser.serialise(orderAckMessage);
-		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialisedMessage);
+		senderConn.fillInputBuffer(serialisedMessage);
 		Assertions.assertTrue(listener.checkForMessages());
 		
 		Assertions.assertFalse(buffer.isBlocked());
@@ -137,7 +143,7 @@ class MessageReceptionistTest {
 		String serialisedData = "";
 		IMessage menuAckMessage = new Message(sequenceNumber, context, flags, serialisedData);
 		String serialisedMessage = serialiser.serialise(menuAckMessage);
-		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialisedMessage);
+		senderConn.fillInputBuffer(serialisedMessage);
 		Assertions.assertTrue(listener.checkForMessages());
 		
 		Assertions.assertFalse(buffer.isBlocked());
@@ -147,7 +153,7 @@ class MessageReceptionistTest {
 	void unhandleableMessageTest() {
 		IMessage m = new Message(null, null, null);
 		String serialisedMessage = serialiser.serialise(m);
-		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), serialisedMessage);
+		senderConn.fillInputBuffer(serialisedMessage);
 		Assertions.assertFalse(listener.checkForMessages());
 	}
 	
@@ -163,7 +169,7 @@ class MessageReceptionistTest {
 		String serialisedData = "";
 		IMessage m = new Message(context, flags, serialisedData);
 		String sm = serialiser.serialise(m);
-		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), sm);
+		senderConn.fillInputBuffer(sm);
 		Assertions.assertTrue(listener.checkForMessages());
 		
 		Assertions.assertTrue(resendLimit == pingPong.getRemainingResendTries());

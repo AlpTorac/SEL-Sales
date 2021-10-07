@@ -21,7 +21,8 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	private ConnectionListener connListener;
 	private DisconnectionListener disconListener;
 	
-	private long pingPongTimeout = 1000;
+	private long pingPongTimeout = 10000;
+	private long minimalPingPongDelay = 1000;
 	private long sendTimeout = 5000;
 	private int resendLimit = 5;
 	
@@ -67,6 +68,10 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 		return this.resendLimit;
 	}
 	
+	protected long getMinimalPingPongDelay() {
+		return this.minimalPingPongDelay;
+	}
+	
 	private IConnectionManager getConnectionManager(String clientAddress) {
 		Iterator<IConnectionManager> it = this.connectionManagers.iterator();
 		while (it.hasNext()) {
@@ -93,11 +98,11 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	
 	protected abstract Object getConnectionObject();
 	
-	protected abstract IConnectionManager createConnectionManager(IConnection conn, long pingPongTimeout, long sendTimeout, int resendLimit);
+	protected abstract IConnectionManager createConnectionManager(IConnection conn, long pingPongTimeout, long sendTimeout, int resendLimit, long minimalPingPongDelay);
 	
 	protected boolean addConnection(IConnection conn) {
 		if (this.isConnectionAllowed(conn.getTargetClientAddress())) {
-			IConnectionManager connManager = this.createConnectionManager(conn, this.getPingPongTimeout(), this.getSendTimeout(), this.getResendLimit());
+			IConnectionManager connManager = this.createConnectionManager(conn, this.getPingPongTimeout(), this.getSendTimeout(), this.getResendLimit(), this.getMinimalPingPongDelay());
 			this.connListener.connectionEstablished(conn.getTargetClientAddress());
 			connManager.setDisconnectionListener(this.disconListener);
 			return this.connectionManagers.add(connManager);

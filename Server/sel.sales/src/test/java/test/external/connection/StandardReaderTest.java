@@ -51,7 +51,7 @@ class StandardReaderTest {
 	void readSingleLineTest() {
 		String bc = "abcdefg";
 		String bufferContent = bc + "\n";
-		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), bufferContent);
+		conn.fillInputBuffer(bufferContent);
 		String sm = mrs.readMessage();
 		Assertions.assertEquals(bc, sm);
 	}
@@ -61,7 +61,7 @@ class StandardReaderTest {
 		String part1 = "abcdefg";
 		String part2 = "gdfshij";
 		String bufferContent = part1 + "\n" + part2 + "\n";
-		BufferUtilityClass.fillBuffer(conn.getInputStreamBuffer(), bufferContent);
+		conn.fillInputBuffer(bufferContent);
 		String[] sms = new String[2];
 		String sm1 = mrs.readMessage();
 		String sm2 = mrs.readMessage();

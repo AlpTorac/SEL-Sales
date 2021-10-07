@@ -9,7 +9,7 @@ import external.connection.timeout.ITimeoutStrategy;
 
 public class DummyPingPong extends PingPong {
 	public DummyPingPong(IConnection conn, IMessageSendingStrategy mss, ITimeoutStrategy ts, ExecutorService es,
-			int resendLimit) {
-		super(conn, mss, ts, es, resendLimit);
+			long minimalDelay, int resendLimit) {
+		super(conn, mss, ts, es, minimalDelay, resendLimit);
 	}
 }

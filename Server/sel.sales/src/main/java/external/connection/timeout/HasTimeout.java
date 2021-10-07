@@ -3,8 +3,13 @@ package external.connection.timeout;
 public interface HasTimeout {
 
 	/**
-	 * Perform the needed actions when no acknowledgement has been received during the acknowledgement timer.
+	 * Call when there is a timeout according to {@link TimeoutStrategy}
 	 */
 	void timeout();
 
+	/**
+	 * Call when a timer created by {@link TimeoutStrategy} stops running 
+	 */
+	void timeoutTimerStopped();
+	
 }

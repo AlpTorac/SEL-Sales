@@ -52,6 +52,8 @@ class PingPongTest {
 	private ITimeoutStrategy ts;
 	private int resendLimit;
 	
+	private long minimalPingPongDelay = 1000;
+	
 	private boolean isConnected;
 	
 	@BeforeEach
@@ -65,7 +67,7 @@ class PingPongTest {
 		mss = new BasicMessageSender();
 		ts = new FixTimeoutStrategy(timeoutTime, ChronoUnit.MILLIS, es);
 		resendLimit = 10;
-		pingPong = new DummyPingPong(conn, mss, ts, es, resendLimit);
+		pingPong = new DummyPingPong(conn, mss, ts, es, minimalPingPongDelay, resendLimit);
 		pingPong.setDisconnectionListener(new DisconnectionListener(controller) {
 			@Override
 			public void connectionLost(String clientAddress) {

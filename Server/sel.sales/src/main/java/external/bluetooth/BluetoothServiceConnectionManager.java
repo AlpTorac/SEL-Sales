@@ -57,7 +57,7 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 	}
 
 	@Override
-	protected IConnectionManager createConnectionManager(IConnection conn, long pingPongTimeout, long sendTimeout, int resendLimit) {
-		return new StandardConnectionManager(controller, conn, es, pingPongTimeout, sendTimeout, resendLimit);
+	protected IConnectionManager createConnectionManager(IConnection conn, long pingPongTimeout, long sendTimeout, int resendLimit, long minimalPingPongDelay) {
+		return new StandardConnectionManager(controller, conn, es, pingPongTimeout, sendTimeout, resendLimit, minimalPingPongDelay);
 	}
 }

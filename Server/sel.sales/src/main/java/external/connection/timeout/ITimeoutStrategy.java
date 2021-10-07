@@ -3,7 +3,8 @@ package external.connection.timeout;
 public interface ITimeoutStrategy {
 	void startTimer();
 	void reset();
+	boolean hasRunningTimer();
 	boolean hasStarted();
-	boolean isRunning();
+	long getTimeElapsed();
 	void setNotifyTarget(HasTimeout notifyTarget);
 }

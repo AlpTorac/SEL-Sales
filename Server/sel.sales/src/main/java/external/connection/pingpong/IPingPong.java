@@ -8,9 +8,10 @@ import external.message.IMessage;
 
 public interface IPingPong extends HasTimeout, Closeable {
 	boolean sendPingPongMessage();
-	boolean isRunning();
+//	boolean isRunning();
 	void receiveResponse(IMessage message);
 	int getRemainingResendTries();
 	void setDisconnectionListener(DisconnectionListener dl);
 	void startTimeoutTimer();
+	boolean isBlocked();
 }
