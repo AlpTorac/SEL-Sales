@@ -1,56 +1,49 @@
 package external.connection.outgoing;
 
 import java.util.LinkedList;
-import java.util.Queue;
-
 import external.message.IMessage;
 
 public class FIFOBuffer implements ISendBufferDataContainer {
 
-	private Queue<IMessage> queue;
+	private LinkedList<IMessage> list;
 	
 	public FIFOBuffer() {
-		this.queue = new LinkedList<IMessage>();
+		this.list = new LinkedList<IMessage>();
 	}
 	
 	@Override
 	public int size() {
-		return this.queue.size();
+		return this.list.size();
 	}
 	
 	@Override
 	public boolean add(IMessage message) {
-		return this.queue.add(message);
+		return this.list.add(message);
 	}
 
 	@Override
 	public boolean remove(int sequenceNumber) {
-		return this.queue.removeIf(m -> m.getSequenceNumber() == sequenceNumber);
+		return this.list.removeIf(m -> m.getSequenceNumber() == sequenceNumber);
 	}
 
 	@Override
 	public IMessage getMessageInLine() {
-		return this.queue.peek();
-	}
-
-	@Override
-	public IMessage removeMessageInLine() {
-		return this.queue.remove();
+		return this.list.getFirst();
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return queue.isEmpty();
+		return this.list.isEmpty();
 	}
 
 	@Override
 	public void clear() {
-		this.queue.clear();
+		this.list.clear();
 	}
 
 	@Override
 	public boolean remove(IMessage message) {
-		return this.queue.remove(message);
+		return this.list.remove(message);
 	}
 
 }

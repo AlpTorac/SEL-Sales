@@ -16,10 +16,11 @@ public abstract class SendBuffer implements ISendBuffer {
 	
 	private ITimeoutStrategy ts;
 	
-	private int currentSequenceNumber;
+	private volatile int currentSequenceNumber = 0;
+	
+	private IMessage messageInLine = null;
 	
 	SendBuffer(IConnection conn, IMessageSendingStrategy mss, ISendBufferDataContainer buffer, ITimeoutStrategy ts, ExecutorService es) {
-		this.currentSequenceNumber = 0;
 		this.conn = conn;
 		this.mss = mss;
 		this.buffer = buffer;
@@ -29,15 +30,19 @@ public abstract class SendBuffer implements ISendBuffer {
 	
 	@Override
 	public void addMessage(IMessage message) {
-		this.buffer.add(message);
+		IMessage m = message.clone();
+		m.setSequenceNumber(this.getCurrentSequenceNumber());
+		this.buffer.add(m);
 	}
 	
 	@Override
 	public boolean sendMessage() {
-		if (this.isBlocked() || this.buffer.isEmpty()) {
+		if (this.messageInLine != null || this.isBlocked() || this.buffer.isEmpty()) {
 			return false;
 		}
 		this.block();
+		this.messageInLine = this.buffer.getMessageInLine();
+		this.messageInLine.setSequenceNumber(this.getCurrentSequenceNumber());
 		return this.sendMessageAndStartTimeoutTimer();
 	}
 	/**
@@ -45,9 +50,7 @@ public abstract class SendBuffer implements ISendBuffer {
 	 * @return Whether the message is successfully sent.
 	 */
 	protected boolean resendLast() {
-		boolean result = this.mss.sendMessage(this.conn, this.buffer.getMessageInLine());
-		this.startTimeoutTimer();
-		return result;
+		return this.sendMessageAndStartTimeoutTimer();
 	}
 
 	@Override
@@ -57,15 +60,23 @@ public abstract class SendBuffer implements ISendBuffer {
 
 	@Override
 	public void timeout() {
-		this.resendLast();
+
 	}
 	
 	@Override
-	public void timeoutTimerStopped() {}
+	public void timeoutTimerStopped(boolean wasReset) {
+		if (!wasReset) {
+//			System.out.println("Timeout, resending last in " + this);
+			this.resendLast();
+		}
+	}
 	
 	protected void startTimeoutTimer() {
+		while (this.ts.hasRunningTimer()) {
+			
+		}
 		this.ts.startTimer();
-		System.out.println("startTimeoutTimer() in " + this);
+//		System.out.println("startTimeoutTimer() in " + this);
 	}
 	
 	private void setBlocked(boolean isBlocked) {
@@ -73,23 +84,27 @@ public abstract class SendBuffer implements ISendBuffer {
 	}
 	
 	private boolean sendMessageAndStartTimeoutTimer() {
-		IMessage messageInLine = this.buffer.getMessageInLine();
-		messageInLine.setSequenceNumber(this.currentSequenceNumber);
-		boolean isSent = this.mss.sendMessage(this.conn, messageInLine);
+		boolean isSent = this.mss.sendMessage(this.conn, this.messageInLine);
 		if (isSent) {
 			this.startTimeoutTimer();
 		}
 		return isSent;
 	}
 	
+	protected void prepareNext() {
+		this.buffer.remove(this.messageInLine);
+		this.messageInLine = null;
+		this.currentSequenceNumber = this.currentSequenceNumber + 1;
+		this.unblock();
+	}
+	
 	@Override
 	public void receiveAcknowledgement(IMessage message) {
-		if (!this.isEmpty() && message.isAcknowledgementMessage() 
-				&& this.buffer.getMessageInLine().getSequenceNumber() == message.getSequenceNumber()) {
+//		System.out.println("Acknowledgement received, verifying in " + this);
+		if (this.messageInLine != null && message.isAcknowledgementMessage() && this.messageInLine.getSequenceNumber() == message.getSequenceNumber()) {
+//			System.out.println("Acknowledgement received, unblocking " + this);
 			this.ts.reset();
-			this.buffer.removeMessageInLine();
-			this.currentSequenceNumber = this.currentSequenceNumber + 1;
-			this.unblock();
+			this.prepareNext();
 		}
 	}
 	/**
@@ -103,7 +118,7 @@ public abstract class SendBuffer implements ISendBuffer {
 	 * Allow the buffer to send messages.
 	 */
 	protected void unblock() {
-		System.out.println("unblock() in " + this);
+//		System.out.println("unblock() in " + this);
 		this.setBlocked(false);
 	}
 	@Override
@@ -113,5 +128,10 @@ public abstract class SendBuffer implements ISendBuffer {
 	@Override
 	public boolean isEmpty() {
 		return this.buffer.isEmpty();
+	}
+	
+	@Override
+	public int getCurrentSequenceNumber() {
+		return this.currentSequenceNumber;
 	}
 }

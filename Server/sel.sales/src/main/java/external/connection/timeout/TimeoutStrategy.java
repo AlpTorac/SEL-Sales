@@ -36,8 +36,9 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 	
 	@Override
 	public void startTimer() {
-		if (this.timer == null && !this.es.isShutdown()) {
-			this.es.submit((this.timer = this.createTimer()));
+		if (!this.hasRunningTimer()) {
+			this.timer = this.createTimer();
+			this.timer.start();
 		}
 	}
 
@@ -71,7 +72,7 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 	
 	@Override
 	public boolean hasRunningTimer() {
-		return this.timer != null;
+		return this.timer != null && this.timer.isAlive();
 	}
 	
 	@Override
@@ -82,7 +83,7 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 		return -1;
 	}
 	
-	protected class TimeoutTimer implements Runnable {
+	protected class TimeoutTimer extends Thread {
 		
 		private final LocalDateTime startTime;
 		private final long timeUnitAmount;
@@ -123,7 +124,7 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 		
 		protected void notifyStop() {
 			if (this.getNotifyTarget() != null) {
-				this.getNotifyTarget().timeoutTimerStopped();
+				this.getNotifyTarget().timeoutTimerStopped(this.isReset());
 			}
 		}
 		

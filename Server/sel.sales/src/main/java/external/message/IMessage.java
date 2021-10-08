@@ -1,6 +1,8 @@
 package external.message;
 
-public interface IMessage {
+public interface IMessage extends Cloneable {
+	public static final int DEFAULT_SEQUENCE_NUMBER = 0;
+	
 	int getSequenceNumber();
 	void setSequenceNumber(int sequenceNumber);
 	MessageContext getMessageContext();
@@ -11,4 +13,5 @@ public interface IMessage {
 	boolean isPingPongMessage();
 	boolean hasFlag(MessageFlag f);
 	boolean hasContext(MessageContext c);
+	IMessage clone();
 }

@@ -1,5 +1,7 @@
 package external.message;
 
+import model.exceptions.NoSuchMessageFlagException;
+
 public enum MessageFlag {
 	ACKNOWLEDGEMENT("ack");
 	
@@ -15,7 +17,7 @@ public enum MessageFlag {
 				return t;
 			}
 		}
-		throw new IllegalArgumentException("No message type " + serialisedFlag);
+		throw new NoSuchMessageFlagException(serialisedFlag);
 	}
 	
 	@Override

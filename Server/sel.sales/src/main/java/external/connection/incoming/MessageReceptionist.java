@@ -11,6 +11,7 @@ import external.connection.outgoing.BasicMessageSender;
 import external.connection.outgoing.ISendBuffer;
 import external.connection.pingpong.IPingPong;
 import external.handler.AcknowledgementHandler;
+import external.handler.AcknowledgingHandler;
 import external.handler.IMessageHandler;
 import external.handler.OrderHandler;
 import external.handler.PingPongHandler;
@@ -39,14 +40,15 @@ public class MessageReceptionist implements IMessageReceptionist {
 	}
 	
 	protected boolean handleMessage(String message) {
-		return this.messageHandlers.stream().anyMatch(h -> h.handleMessage(message));
+		return this.messageHandlers.stream().map(h -> h.handleMessage(message)).reduce(false, (a,b) -> Boolean.logicalOr(a, b));
 	}
 
 	protected Collection<IMessageHandler> initMessageHandlers() {
 		Collection<IMessageHandler> col = new CopyOnWriteArrayList<IMessageHandler>();
-		col.add(new OrderHandler(this.messageParser, new StandardAcknowledger(this.conn), this.controller));
+		col.add(new OrderHandler(this.messageParser, this.controller));
 		col.add(new AcknowledgementHandler(this.messageParser, this.sendBuffer));
-		col.add(new PingPongHandler(this.messageParser, this.pingPong, this.conn, new BasicMessageSender()));
+		col.add(new PingPongHandler(this.messageParser, this.pingPong));
+		col.add(new AcknowledgingHandler(this.messageParser, new StandardAcknowledger(this.conn)));
 		return col;
 	}
 
@@ -65,12 +67,14 @@ public class MessageReceptionist implements IMessageReceptionist {
 
 	@Override
 	public boolean checkForMessages() {
-		String serialisedMessage;
+		String[] serialisedMessages;
 		boolean allHandled = true;
-		if ((serialisedMessage = this.mrs.readMessage()) != null) {
-			System.out.println("Message read: " + serialisedMessage);
-			allHandled = this.handleMessage(serialisedMessage);
-			System.out.println("Message handled: " + serialisedMessage);
+		if ((serialisedMessages = this.mrs.readMessages()) != null) {
+			for (String sm : serialisedMessages) {
+				System.out.println("Message read: " + sm);
+				allHandled = allHandled && this.handleMessage(sm);
+				System.out.println("Message handled: " + sm);
+			}
 			this.conn.refreshInputStream();
 		}
 		return allHandled;

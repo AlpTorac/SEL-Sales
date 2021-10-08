@@ -106,7 +106,7 @@ class StandardSendBufferTest {
 		Assertions.assertTrue(sb.isEmpty());
 		
 		String sd2 = "hjhgdfhkgf";
-		IMessage m2 = new Message(null, null, sd2);
+		IMessage m2 = new Message(1, null, null, sd2);
 		BufferUtilityClass.assertMessageAcknowledgementCycleSuccessful(sb, 1, m2);
 		Assertions.assertTrue(sb.isEmpty());
 	}

@@ -12,6 +12,6 @@ public class StandardPingPong extends PingPong {
 		super(conn, new BasicMessageSender(), new PingPongTimeoutStrategy(10000, ChronoUnit.MILLIS, es, 1000), es, 1000, 10);
 	}
 	public StandardPingPong(IConnection conn, ExecutorService es, long minimalDelay, int resendLimit, long pingPongTimeoutInMillis) {
-		super(conn, new BasicMessageSender(), new PingPongTimeoutStrategy(pingPongTimeoutInMillis, ChronoUnit.MILLIS, es, 1000), es, minimalDelay, resendLimit);
+		super(conn, new BasicMessageSender(), new PingPongTimeoutStrategy(pingPongTimeoutInMillis, ChronoUnit.MILLIS, es, minimalDelay), es, minimalDelay, resendLimit);
 	}
 }

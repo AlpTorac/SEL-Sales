@@ -86,4 +86,20 @@ public class Message implements IMessage {
 	public boolean isPingPongMessage() {
 		return this.hasContext(MessageContext.PINGPONG);
 	}
+	
+	@Override
+	public Message clone() {
+		MessageContext c = null;
+		if (this.context != null) {
+			c = MessageContext.stringToMessageContext(this.context.toString());
+		}
+		MessageFlag[] fs = null;
+		if (this.flags != null) {
+			fs = new MessageFlag[this.flags.length];
+			for (int i = 0; i < fs.length; i++) {
+				fs[i] = MessageFlag.stringToMessageFlag(this.flags[i].toString());
+			}
+		}
+		return new Message(this.sequenceNumber, c, fs, this.serialisedData);
+	}
 }

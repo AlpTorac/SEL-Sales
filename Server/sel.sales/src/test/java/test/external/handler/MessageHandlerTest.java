@@ -23,12 +23,6 @@ public abstract class MessageHandlerTest {
 	protected void verificationFailTest(IMessage message) {
 		Assertions.assertFalse(handler.verify(message));
 	}
-	protected void acknowledgementSuccessfulTest(IMessage message) {
-		Assertions.assertTrue(handler.acknowledge(message));
-	}
-	protected void acknowledgementFailTest(IMessage message) {
-		Assertions.assertFalse(handler.acknowledge(message));
-	}
 	protected void actionSuccessfulTest(IMessage message) {
 		Assertions.assertTrue(handler.performNeededAction(message));
 	}

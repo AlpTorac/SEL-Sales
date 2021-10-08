@@ -29,4 +29,9 @@ public interface ISendBuffer extends HasTimeout, Closeable {
 	void receiveAcknowledgement(IMessage message);
 	boolean isEmpty();
 	void addMessage(IMessage message);
+	/**
+	 * Note: The send buffer already sets the sequence number itself,
+	 * no need to set it before {@link #addMessage(IMessage)}
+	 */
+	int getCurrentSequenceNumber();
 }

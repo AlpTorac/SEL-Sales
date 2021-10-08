@@ -150,14 +150,6 @@ class MessageReceptionistTest {
 	}
 	
 	@Test
-	void unhandleableMessageTest() {
-		IMessage m = new Message(null, null, null);
-		String serialisedMessage = serialiser.serialise(m);
-		senderConn.fillInputBuffer(serialisedMessage);
-		Assertions.assertFalse(listener.checkForMessages());
-	}
-	
-	@Test
 	void handlePingPongMessageTest() {
 		pingPong.sendPingPongMessage();
 		GeneralTestUtilityClass.performWait(waitTime);

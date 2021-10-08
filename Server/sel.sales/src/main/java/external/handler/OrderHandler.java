@@ -9,19 +9,11 @@ import external.message.IMessageParser;
 import external.message.MessageContext;
 
 public class OrderHandler extends MessageHandler {
-	private IAcknowledger acknowledger;
 	private IController controller;
 	
-	public OrderHandler(IMessageParser parser, IAcknowledger acknowledger, IController controller) {
+	public OrderHandler(IMessageParser parser,  IController controller) {
 		super(parser);
-		this.acknowledger = acknowledger;
 		this.controller = controller;
-	}
-	
-	@Override
-	public boolean acknowledge(IMessage message) {
-//		System.out.println("order verified");
-		return this.acknowledger.acknowledge(message);
 	}
 
 	@Override
