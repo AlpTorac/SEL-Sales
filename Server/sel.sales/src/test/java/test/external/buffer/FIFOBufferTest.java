@@ -102,19 +102,19 @@ class FIFOBufferTest {
 		Assertions.assertEquals(buffer.size(), 4);
 		
 		Assertions.assertEquals(m1, buffer.getMessageInLine());
-		Assertions.assertEquals(m1, buffer.removeMessageInLine());
+		Assertions.assertEquals(true, buffer.remove(m1));
 		Assertions.assertEquals(buffer.size(), 3);
 		
 		Assertions.assertEquals(m2, buffer.getMessageInLine());
-		Assertions.assertEquals(m2, buffer.removeMessageInLine());
+		Assertions.assertEquals(true, buffer.remove(m2));
 		Assertions.assertEquals(buffer.size(), 2);
 		
 		Assertions.assertEquals(m3, buffer.getMessageInLine());
-		Assertions.assertEquals(m3, buffer.removeMessageInLine());
+		Assertions.assertEquals(true, buffer.remove(m3));
 		Assertions.assertEquals(buffer.size(), 1);
 		
 		Assertions.assertEquals(m4, buffer.getMessageInLine());
-		Assertions.assertEquals(m4, buffer.removeMessageInLine());
+		Assertions.assertEquals(true, buffer.remove(m4));
 		Assertions.assertEquals(buffer.size(), 0);
 		Assertions.assertTrue(buffer.isEmpty());
 	}

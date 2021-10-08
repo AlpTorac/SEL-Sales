@@ -166,7 +166,7 @@ class StandardConnectionManagerTest {
 		IMessage incAck = m.getMinimalAcknowledgementMessage();
 		ConnectionManagerTestUtilityClass.assertAckReadAndSentToSendBuffer(conn, sb, serialiser.serialise(incAck), waitTime, 10000);
 		
-		IMessage m2 = new Message(null, null, null);
+		IMessage m2 = new Message(1, null, null, null);
 		connManager.sendMessage(m2);
 		GeneralTestUtilityClass.performWait(waitTime);
 		Assertions.assertTrue(sb.isBlocked());

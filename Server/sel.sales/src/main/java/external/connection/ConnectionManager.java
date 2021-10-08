@@ -103,15 +103,12 @@ public abstract class ConnectionManager implements IConnectionManager {
 	}
 	
 	protected void checkForMessagesToBeSent() {
-		if (!this.getSendBuffer().isEmpty()) {
-			this.getSendBuffer().sendMessage();
-		}
+		this.getSendBuffer().sendMessage();
 	}
 	
 	protected void sendPingPongMessage() {
 		this.getPingPong().sendPingPongMessage();
 	}
-	
 	protected void init() {
 		this.initPingPong(this.getMinimalPingPongDelay(), this.getResendLimit(), this.getPingPongTimeout());
 		this.initSendBuffer(this.getSendTimeout());
@@ -158,6 +155,11 @@ public abstract class ConnectionManager implements IConnectionManager {
 			this.getPingPong().close();
 			this.getIncomingMessageListener().close();
 			this.getConnection().close();
+			try {
+				cycleThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

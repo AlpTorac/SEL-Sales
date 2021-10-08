@@ -5,6 +5,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class StandardReader implements IMessageReadingStrategy {
 	
@@ -14,6 +16,11 @@ public class StandardReader implements IMessageReadingStrategy {
 	public StandardReader(InputStream is) {
 		this.is = new DataInputStream(is);
 		this.r = new BufferedReader(new InputStreamReader(this.is));
+//		try {
+//			this.r.mark(Integer.MAX_VALUE);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 	
 	// Check the first character of the stream to decide, whether it is time to read.
@@ -37,13 +44,30 @@ public class StandardReader implements IMessageReadingStrategy {
 	public String readMessage() {
 		String result = null;
 	     try {
+//	    	r.reset();
 			result = r.readLine();
+//			r.mark(Integer.MAX_VALUE);
 		} catch (IOException e) {
 //			e.printStackTrace();
 		}
-	    if (result == null || result.charAt(0) == 0) {
+	    if (result == null || result.length() == 0 || result.charAt(0) == 0) {
 	    	return null;
 	    }
 		return result;
+	}
+
+	@Override
+	public String[] readMessages() {
+		Collection<String> lines = new ArrayList<String>();
+		String currentMessage = this.readMessage();
+		while (currentMessage != null && currentMessage != "") {
+			lines.add(currentMessage);
+			currentMessage = this.readMessage();
+		}
+		if (lines.isEmpty()) {
+			return null;
+		} else {
+			return lines.toArray(String[]::new);
+		}
 	}
 }

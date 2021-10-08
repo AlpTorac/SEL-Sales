@@ -71,4 +71,42 @@ class StandardReaderTest {
 		Assertions.assertEquals(part1, sms[0]);
 		Assertions.assertEquals(part2, sms[1]);
 	}
+	
+	@Test
+	void readMessagesTest() {
+		String part1 = "abcdefg";
+		String part2 = "gdfshij";
+		String bufferContent = part1 + "\n" + part2 + "\n";
+		conn.fillInputBuffer(bufferContent);
+		String[] sms = mrs.readMessages();
+		Assertions.assertEquals(2, sms.length);
+		System.out.println(sms[0] + sms[1]);
+		Assertions.assertEquals(part1, sms[0]);
+		Assertions.assertEquals(part2, sms[1]);
+	}
+	
+	@Test
+	void readMessagesMultipleTimesTest() {
+		String part1 = "abcdefg";
+		String part2 = "gdfshij";
+		String bufferContent = part1 + "\n" + part2 + "\n";
+		conn.fillInputBuffer(bufferContent);
+		String[] sms = mrs.readMessages();
+		Assertions.assertEquals(2, sms.length);
+		System.out.println(sms[0] + sms[1]);
+		Assertions.assertEquals(part1, sms[0]);
+		Assertions.assertEquals(part2, sms[1]);
+		
+		String part3 = "abcdefg";
+		String part4 = "gdfshij";
+		String part5 = "fjhjhsdffsd";
+		String bufferContent2 = part3 + "\n" + part4 + "\n" + part5 + "\n";
+		conn.fillInputBuffer(bufferContent2);
+		String[] sms2 = mrs.readMessages();
+		Assertions.assertEquals(3, sms2.length);
+		System.out.println(sms2[0] + sms2[1] + sms2[2]);
+		Assertions.assertEquals(part3, sms2[0]);
+		Assertions.assertEquals(part4, sms2[1]);
+		Assertions.assertEquals(part5, sms2[2]);
+	}
 }

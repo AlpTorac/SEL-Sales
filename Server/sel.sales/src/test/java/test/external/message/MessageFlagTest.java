@@ -8,11 +8,12 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import external.message.MessageFlag;
+import model.exceptions.NoSuchMessageFlagException;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class MessageFlagTest {
 	@Test
 	void stringToMessageFlagTest() {
 		Assertions.assertEquals(MessageFlag.ACKNOWLEDGEMENT, MessageFlag.stringToMessageFlag("ack"));
-		Assertions.assertThrows(IllegalArgumentException.class, () -> {MessageFlag.stringToMessageFlag("asdfkhjgsdf");});
+		Assertions.assertThrows(NoSuchMessageFlagException.class, () -> {MessageFlag.stringToMessageFlag("asdfkhjgsdf");});
 	}
 }

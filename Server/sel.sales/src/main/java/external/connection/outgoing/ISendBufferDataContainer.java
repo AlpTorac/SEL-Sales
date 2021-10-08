@@ -13,8 +13,4 @@ public interface ISendBufferDataContainer {
 	 * @return The message to be sent without removing it.
 	 */
 	IMessage getMessageInLine();
-	/**
-	 * @return The message in line.
-	 */
-	IMessage removeMessageInLine();
 }

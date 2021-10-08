@@ -1,9 +1,9 @@
 package external.handler;
 
-import java.util.concurrent.ExecutorService;
-
 import external.message.IMessage;
 import external.message.IMessageParser;
+import model.exceptions.NoSuchMessageContextException;
+import model.exceptions.NoSuchMessageFlagException;
 
 public abstract class MessageHandler implements IMessageHandler {
 	private IMessageParser parser;
@@ -14,8 +14,13 @@ public abstract class MessageHandler implements IMessageHandler {
 	
 	@Override
 	public boolean handleMessage(String message) {
-		IMessage m = this.verifyMessageFormat(message);
-		return this.verify(m) && this.acknowledge(m) && this.performNeededAction(m);
+		IMessage m = null;
+		try {
+			m = this.verifyMessageFormat(message);
+		} catch (NumberFormatException | NoSuchMessageContextException | NoSuchMessageFlagException e) {
+			return false;
+		}
+		return this.verify(m) && this.performNeededAction(m);
 	}
 	
 	@Override
@@ -28,6 +33,5 @@ public abstract class MessageHandler implements IMessageHandler {
 	}
 	
 	public abstract boolean verify(IMessage message);
-	public abstract boolean acknowledge(IMessage message);
 	public abstract boolean performNeededAction(IMessage message);
 }

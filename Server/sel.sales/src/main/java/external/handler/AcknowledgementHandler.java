@@ -1,7 +1,5 @@
 package external.handler;
 
-import java.util.concurrent.ExecutorService;
-
 import external.connection.outgoing.ISendBuffer;
 import external.message.IMessage;
 import external.message.IMessageParser;
@@ -18,12 +16,6 @@ public class AcknowledgementHandler extends MessageHandler {
 	@Override
 	public boolean verify(IMessage message) {
 		return message.isAcknowledgementMessage();
-	}
-
-	@Override
-	public boolean acknowledge(IMessage message) {
-//		System.out.println("Acknowledgement verified");
-		return true;
 	}
 
 	@Override

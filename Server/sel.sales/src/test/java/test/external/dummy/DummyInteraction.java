@@ -9,6 +9,7 @@ import external.connection.DisconnectionListener;
 import external.connection.IConnectionManager;
 import external.connection.outgoing.ISendBuffer;
 import external.connection.pingpong.IPingPong;
+import external.message.IMessage;
 
 public class DummyInteraction {
 	protected IController controllerServer;
@@ -34,8 +35,8 @@ public class DummyInteraction {
 	protected DummyConnection serverClientConn;
 	protected DummyConnection clientServerConn;
 	
-	protected IConnectionManager serverClientConnManager;
-	protected IConnectionManager clientServerConnManager;
+	protected DummyConnectionManager serverClientConnManager;
+	protected DummyConnectionManager clientServerConnManager;
 	
 	protected DisconnectionListener dlServer;
 	protected DisconnectionListener dlClient;
@@ -47,7 +48,8 @@ public class DummyInteraction {
 	private IPingPong clientPP;
 	
 	public DummyInteraction(String clientName, String clientAddress, long pingPongTimeout,
-			long sendTimeout, int resendLimit) {
+			long sendTimeout, int resendLimit, long minimalPingPongDelay) {
+		this.minimalPingPongDelay = minimalPingPongDelay;
 		this.pingPongTimeout = pingPongTimeout;
 		this.sendTimeout = sendTimeout;
 		this.resendLimit = resendLimit;
@@ -145,4 +147,36 @@ public class DummyInteraction {
 		}
 	}
 	
+	public int getPingPongSuccessfulConsecutiveCycleCount() {
+		return Math.min(this.serverClientConnManager.getPingPongSuccessfulConsecutiveCycleCount(), this.clientServerConnManager.getPingPongSuccessfulConsecutiveCycleCount());
+	}
+
+	public int getPingPongSuccessfulCycleCount() {
+		return Math.min(this.serverClientConnManager.getPingPongSuccessfulCycleCount(), this.clientServerConnManager.getPingPongSuccessfulCycleCount());
+	}
+	public int getSendBufferSuccessfulConsecutiveCycleCount() {
+		return Math.min(this.serverClientConnManager.getSendBufferSuccessfulConsecutiveCycleCount(), this.clientServerConnManager.getSendBufferSuccessfulConsecutiveCycleCount());
+	}
+	public int getSendBufferSuccessfulCycleCount() {
+		return Math.min(this.serverClientConnManager.getSendBufferSuccessfulCycleCount(), this.clientServerConnManager.getSendBufferSuccessfulCycleCount());
+	}
+	
+	public void messageToClient(IMessage message) {
+		this.serverClientConnManager.sendMessage(message);
+	}
+	public void messageToServer(IMessage message) {
+		this.clientServerConnManager.sendMessage(message);
+	}
+	
+	public void serverWaitTillAcknowledgement() {
+		while (this.serverClientConnManager.getSendBuffer().isBlocked()) {
+			
+		}
+	}
+	
+	public void clientWaitTillAcknowledgement() {
+		while (this.clientServerConnManager.getSendBuffer().isBlocked()) {
+			
+		}
+	}
 }

@@ -41,7 +41,6 @@ class OrderHandlerTest extends MessageHandlerTest {
 	
 	private IMessageSerialiser serialiser = new MessageSerialiser(new StandardMessageFormat());
 	private IMessageParser parser;
-	private IAcknowledger acknowledger;
 	private IController controller;
 	private DummyConnection senderConn;
 	private DummyConnection receiverConn;
@@ -52,10 +51,9 @@ class OrderHandlerTest extends MessageHandlerTest {
 		senderConn = new DummyConnection("clientAddress");
 		receiverConn = new DummyConnection("receiverAddress");
 		senderConn.setInputTarget(receiverConn.getInputStream());
-		acknowledger = new StandardAcknowledger(senderConn);
 		parser = new StandardMessageParser();
 		controller = initDummyController();
-		setHandler(new OrderHandler(parser, acknowledger, controller));
+		setHandler(new OrderHandler(parser, controller));
 		isOrderReceivedByController = false;
 	}
 	
@@ -108,42 +106,6 @@ class OrderHandlerTest extends MessageHandlerTest {
 		
 		IMessage message3 = new Message(null, null, null);
 		this.verificationFailTest(message3);
-	}
-	
-	@Test
-	void acknowledgementSuccessfulTest() {
-		int sequenceNumber = 5;
-		MessageContext context = MessageContext.ORDER;
-		MessageFlag[] flags = null;
-		String serialisedData = "";
-		IMessage message = new Message(sequenceNumber, context, flags, serialisedData);
-//		ByteArrayOutputStream os = senderConn.getOutputStream();
-		this.acknowledgementSuccessfulTest(message);
-		String serialisedExpected = (format.getMessageStart() + sequenceNumber + fieldSeparator +
-				context.toString() + fieldSeparator + MessageFlag.ACKNOWLEDGEMENT.toString() +
-				fieldSeparator + serialisedData + format.getMessageEnd());
-		BufferUtilityClass.assertInputStoredEquals(this.receiverConn.getInputStream(), serialisedExpected.getBytes());
-//		BufferUtilityClass.assertOutputWrittenEquals(os, serialisedExpected.getBytes());
-	}
-	
-	@Test
-	void acknowledgementFailTest() {
-		int sequenceNumber = 5;
-		MessageContext context = MessageContext.ORDER;
-		MessageFlag[] flags = new MessageFlag[] {MessageFlag.ACKNOWLEDGEMENT};
-		String serialisedData = null;
-		IMessage message = new Message(sequenceNumber, context, flags, serialisedData);
-		this.acknowledgementFailTest(message);
-		
-//		int sequenceNumber2 = 5;
-//		MessageContext context2 = MessageContext.MENU;
-//		MessageFlag[] flags2 = null;
-//		String serialisedData2 = null;
-//		IMessage message2 = new Message(sequenceNumber2, context2, flags2, serialisedData2);
-//		this.acknowledgementFailTest(message2);
-//		
-//		IMessage message3 = new Message(null, null, null);
-//		this.acknowledgementFailTest(message3);
 	}
 	
 	@Test

@@ -1,5 +1,7 @@
 package external.message;
 
+import model.exceptions.NoSuchMessageContextException;
+
 public enum MessageContext {
 	ORDER("order"),
 	MENU("menu"),
@@ -17,7 +19,7 @@ public enum MessageContext {
 				return t;
 			}
 		}
-		return null;
+		throw new NoSuchMessageContextException(serialisedContext);
 	}
 	
 	@Override

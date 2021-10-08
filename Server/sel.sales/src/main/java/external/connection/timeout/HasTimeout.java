@@ -10,6 +10,6 @@ public interface HasTimeout {
 	/**
 	 * Call when a timer created by {@link TimeoutStrategy} stops running 
 	 */
-	void timeoutTimerStopped();
+	void timeoutTimerStopped(boolean wasReset);
 	
 }

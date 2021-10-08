@@ -167,9 +167,9 @@ public class DummyConnection implements IConnection {
 		public void flush() throws IOException {
 			if (targetInputBuffer != null) {
 				String content = getValidString(new String(this.buf));
-				System.out.println("Writing to target: " + content);
+//				System.out.println("Writing to target: " + content);
 				targetInputBuffer.fillInputBuffer(content);
-				System.out.println("flushing: " + content);
+//				System.out.println("flushing: " + content);
 			}
 			this.refresh();
 		}

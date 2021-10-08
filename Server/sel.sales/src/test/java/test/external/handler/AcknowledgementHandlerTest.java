@@ -109,12 +109,6 @@ class AcknowledgementHandlerTest extends MessageHandlerTest {
 	}
 	
 	@Test
-	void acknowledgementTest() {
-		IMessage message = new Message(0, null, null, null);
-		this.acknowledgementSuccessfulTest(message);
-	}
-	
-	@Test
 	void actionSuccessfulTest() {
 		buffer.addMessage(new Message(null, null, null));
 		Assertions.assertTrue(buffer.sendMessage());
