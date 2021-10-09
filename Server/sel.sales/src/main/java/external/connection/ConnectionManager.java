@@ -125,7 +125,7 @@ public abstract class ConnectionManager implements IConnectionManager {
 			}
 		};
 		
-		cycleThread.setDaemon(true);
+		cycleThread.setDaemon(false);
 		cycleThread.start();
 	}
 	

@@ -20,14 +20,11 @@ public class ClientMain {
 		final Object lock = new Object();
 		int i = 4;
 		while (true) {
-			IMessage order = new Message(MessageContext.ORDER, null, "order"+i+"-20210809000000111-1-1:item3,5;");
-			external.sendMessage(order);
-			System.out.println("Message Sent");
-			while (external.getConnManager().getSendBuffer().isBlocked()) {
-				
-			}
-			i++;
 			synchronized (lock) {
+				IMessage order = new Message(MessageContext.ORDER, null, "order"+i+"-20210809000000111-1-1:item3,5;");
+				external.sendMessage(order);
+				System.out.println("Message Sent");
+				i++;
 				try {
 					lock.wait(3000);
 				} catch (InterruptedException e) {
