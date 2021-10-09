@@ -15,4 +15,5 @@ public interface IConnectionManager extends Closeable {
 	void sendMessage(IMessage message);
 	void close();
 	void setDisconnectionListener(DisconnectionListener dl);
+	boolean isClosed();
 }

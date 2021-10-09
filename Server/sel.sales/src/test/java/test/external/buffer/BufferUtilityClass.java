@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 
 import external.connection.outgoing.ISendBuffer;
 import external.message.IMessage;
+import test.GeneralTestUtilityClass;
 
 public final class BufferUtilityClass {
 //	public static void assertOutputWrittenEquals(ByteArrayOutputStream os, byte[] written) {
@@ -38,6 +39,9 @@ public final class BufferUtilityClass {
 	}
 	public static void assertAcknowledgementReceived(ISendBuffer sb, IMessage ackMessage) {
 		sb.receiveAcknowledgement(ackMessage);
+		while (sb.hasRunningTimer()) {
+			
+		}
 		Assertions.assertFalse(sb.isBlocked());
 	}
 	

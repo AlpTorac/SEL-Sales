@@ -1,4 +1,4 @@
-package test.external.connection;
+package external.connection.connectivity;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,12 +26,11 @@ import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
 import external.message.StandardMessageParser;
 import test.GeneralTestUtilityClass;
-import test.external.dummy.DummyClient;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyController;
 import test.external.dummy.DummyInteraction;
 @Execution(value = ExecutionMode.SAME_THREAD)
-class ConnectivityTest {
+class ConnectivityPingPongTest {
 	private ExecutorService esServer;
 	private ExecutorService esClient;
 	
@@ -65,12 +64,12 @@ class ConnectivityTest {
 		clientName = "clientName";
 		clientAddress = "clientAddress";
 		cyclesToWait = 10;
-		pingPongTimeout = 1500;
-		minimalPingPongDelay = 1000;
+		pingPongTimeout = 1000;
+		minimalPingPongDelay = 200;
 		sendTimeout = 500;
-		resendLimit = 5;
+		resendLimit = 50;
 		
-		maximalWaitTime = 15000;
+		maximalWaitTime = 10000;
 		
 		isServerConnected = true;
 		isClientConnected = true;
@@ -172,43 +171,15 @@ class ConnectivityTest {
 		return startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS);
 	}
 	
-//	@Test
-//	void pingPongTest() {
-//		int currentCycles = 0;
-//		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles < cyclesToWait) {
-//			currentCycles = this.interaction.getPingPongSuccessfulCycleCount();
-//			Assertions.assertTrue(this.isClientConnected());
-//			Assertions.assertTrue(this.isServerConnected());
-//		}
-//		Assertions.assertTrue(currentCycles >= cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
-//		
-//		cleanUp();
-//		prep();
-//		
-//		currentCycles = 0;
-//		IMessage m = new Message(null, null, null);
-//		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles < cyclesToWait) {
-//			this.interaction.messageToServer(m);
-//			this.interaction.messageToClient(m);
-//			currentCycles = this.interaction.getSendBufferSuccessfulCycleCount();
-//			Assertions.assertTrue(this.isClientConnected());
-//			Assertions.assertTrue(this.isServerConnected());
-//		}
-//		Assertions.assertTrue(currentCycles >= cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
-//	}
-
-//	@Test
-//	void sendBufferTest() {
-//		int currentCycles = 0;
-//		IMessage m = new Message(null, null, null);
-//		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles < cyclesToWait) {
-//			this.interaction.messageToServer(m);
-//			this.interaction.messageToClient(m);
-//			currentCycles = this.interaction.getSendBufferSuccessfulCycleCount();
-//			Assertions.assertTrue(this.isClientConnected());
-//			Assertions.assertTrue(this.isServerConnected());
-//		}
-//		Assertions.assertEquals(currentCycles, cyclesToWait);
-//	}
+	@Test
+	void pingPongTest() {
+		int currentCycles = 0;
+		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles <= cyclesToWait) {
+			currentCycles = this.interaction.getPingPongSuccessfulConsecutiveCycleCount();
+			Assertions.assertTrue(this.isClientConnected());
+			Assertions.assertTrue(this.isServerConnected());
+		}
+		Assertions.assertTrue(currentCycles >= cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
+	}
 	
 }

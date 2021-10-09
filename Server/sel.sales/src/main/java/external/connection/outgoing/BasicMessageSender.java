@@ -18,9 +18,10 @@ public class BasicMessageSender implements IMessageSendingStrategy {
 	public boolean sendMessage(IConnection conn, IMessage message) {
 		DataOutputStream os = new DataOutputStream(conn.getOutputStream());
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));
+//		System.out.println("Wrote: " + messageSerialiser.serialise(message));
 		try {
 			if (!conn.isClosed()) {
-				writer.write(new String(messageSerialiser.serialise(message).getBytes()));
+				writer.write(messageSerialiser.serialise(message));
 				writer.flush();
 			}
 		} catch (IOException e) {

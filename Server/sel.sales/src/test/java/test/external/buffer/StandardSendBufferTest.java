@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,16 +20,19 @@ import external.connection.outgoing.StandardSendBuffer;
 import external.message.IMessage;
 import external.message.Message;
 import external.message.MessageFormat;
+import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
 import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyConnection;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class StandardSendBufferTest {
+	private long timeout = 200;
 	private ISendBuffer sb;
 	private ExecutorService es;
 	private DummyConnection senderConn;
 	private DummyConnection receiverConn;
 	private MessageFormat messageFormat = new StandardMessageFormat();
+	private MessageSerialiser serialiser = new MessageSerialiser(messageFormat);
 	private String fieldSeparator;
 	private String fieldElementSeparator;
 	
@@ -38,7 +42,7 @@ class StandardSendBufferTest {
 		receiverConn = new DummyConnection("receiverAddress");
 		senderConn.setInputTarget(receiverConn.getInputStream());
 		es = Executors.newCachedThreadPool();
-		sb = new StandardSendBuffer(senderConn, es);
+		sb = new StandardSendBuffer(senderConn, es, timeout);
 		this.fieldSeparator = this.messageFormat.getDataFieldSeparatorForString();
 		this.fieldElementSeparator = this.messageFormat.getDataFieldElementSeparatorForString();
 	}
@@ -105,6 +109,10 @@ class StandardSendBufferTest {
 		
 		Assertions.assertTrue(sb.isEmpty());
 		
+		while (sb.hasRunningTimer()) {
+			
+		}
+		
 		String sd2 = "hjhgdfhkgf";
 		IMessage m2 = new Message(1, null, null, sd2);
 		BufferUtilityClass.assertMessageAcknowledgementCycleSuccessful(sb, 1, m2);
@@ -118,7 +126,7 @@ class StandardSendBufferTest {
 		BufferUtilityClass.assertMessageSent(sb, 0, m1);
 		Assertions.assertFalse(sb.isEmpty());
 		
-		long waitDuration = 500;
+		long waitDuration = timeout / 4;
 		GeneralTestUtilityClass.performWait(waitDuration);
 		
 		Assertions.assertFalse(sb.isEmpty());
@@ -129,20 +137,19 @@ class StandardSendBufferTest {
 	void timeoutTest() {
 		String sd1 = "abcdefg";
 		IMessage m1 = new Message(null, null, sd1);
-		String sentMessage = messageFormat.getMessageStart()+"0"+fieldSeparator +
-				fieldSeparator + fieldSeparator +
-				m1.getSerialisedData() + messageFormat.getMessageEnd();
+		String sentMessage = serialiser.serialise(m1);
 		Assertions.assertTrue(sb.isEmpty());
 		BufferUtilityClass.assertMessageSent(sb, 0, m1);
 		Assertions.assertFalse(sb.isEmpty());
 		
 		BufferUtilityClass.assertInputStoredEquals(this.receiverConn.getInputStream(), sentMessage.getBytes());
 		
-		long waitDuration = 2100;
-		long remainingWait = 600;
-		GeneralTestUtilityClass.performWait(waitDuration - remainingWait);
+		long waitDuration = timeout + timeout / 4;
+//		long remainingWait = 600;
+		GeneralTestUtilityClass.performWait(waitDuration);
+//		GeneralTestUtilityClass.performWait(waitDuration - remainingWait);
 //		os = conn.getOutputStream();
-		GeneralTestUtilityClass.performWait(remainingWait);
+//		GeneralTestUtilityClass.performWait(remainingWait);
 		
 		Assertions.assertTrue(sb.isBlocked());
 		Assertions.assertFalse(sb.isEmpty());
@@ -172,5 +179,63 @@ class StandardSendBufferTest {
 		IMessage nonAck = new Message(null, null, null);
 		sb.receiveAcknowledgement(nonAck);
 		Assertions.assertTrue(sb.isBlocked());
+	}
+	
+	@Test
+	void recoveryTest() {
+		long waitDuration = timeout / 4;
+		long timeoutDuration = timeout + timeout / 4;
+		int sequenceNumber = 0;
+		int successfulCyclesToWait = 20;
+		ArrayList<Boolean> cycleStatuses = new ArrayList<Boolean>();
+		boolean successfulCycle = false;
+		String sd1 = "abcdefg";
+		IMessage m1 = new Message(sequenceNumber, null, null, sd1);
+		for (;sequenceNumber < successfulCyclesToWait;) {
+			if (GeneralTestUtilityClass.generateRandomNumber(1, 5) < 3) {
+				successfulCycle = false;
+			} else {
+				successfulCycle = true;
+			}
+			if (cycleStatuses.size() == 0 || cycleStatuses.get(cycleStatuses.size()-1)) {
+				sd1 = "abcdefg";
+				m1 = new Message(sequenceNumber, null, null, sd1);
+				
+				Assertions.assertTrue(sb.isEmpty());
+				BufferUtilityClass.assertMessageSent(sb, sequenceNumber, m1);
+				Assertions.assertFalse(sb.isEmpty());
+				
+				BufferUtilityClass.assertInputStoredEquals(this.receiverConn.getInputStream(), serialiser.serialise(m1).getBytes());
+				
+				Assertions.assertTrue(sb.isBlocked());
+				Assertions.assertFalse(sb.isEmpty());
+			}
+			cycleStatuses.add(successfulCycle);
+			
+			if (!successfulCycle) {
+				GeneralTestUtilityClass.performWait(timeoutDuration);
+				
+				Assertions.assertEquals(sequenceNumber, sb.getCurrentSequenceNumber());
+				
+//				BufferUtilityClass.assertInputStoredEquals(this.receiverConn.getInputStream(), serialiser.serialise(m1).getBytes());
+				
+//				GeneralTestUtilityClass.performWait(timeoutDuration);
+			} else {
+				GeneralTestUtilityClass.performWait(waitDuration);
+				Assertions.assertFalse(sb.isEmpty());
+				BufferUtilityClass.assertAcknowledgementOfMessageReceived(sb, m1);
+				Assertions.assertTrue(sb.isEmpty());
+				sequenceNumber++;
+			}
+			
+			while (sb.hasRunningTimer()) {
+				
+			}
+		}
+		System.out.print("Successful with: " + "[");
+		for (int i = 0; i < cycleStatuses.size() - 1; i++) {
+			System.out.print(cycleStatuses.get(i) + ",");
+		}
+		System.out.println(cycleStatuses.get(cycleStatuses.size() - 1) + "]");
 	}
 }

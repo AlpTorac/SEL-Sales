@@ -62,6 +62,11 @@ public class DummyConnectionManager extends StandardConnectionManager {
 		};
 	}
 	
+//	@Override
+//	protected void sendPingPongMessage() {
+//		
+//	}
+	
 	public int getPingPongSuccessfulConsecutiveCycleCount() {
 		return pingPongSuccessfulConsecutiveCycleCount;
 	}

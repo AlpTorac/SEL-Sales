@@ -11,12 +11,12 @@ import external.message.Message;
 import external.message.MessageContext;
 
 public abstract class PingPong implements IPingPong {
-	
+	private volatile boolean isClosed = false;
 	private volatile boolean isBlocked = false;
 	
 	private IMessageSendingStrategy mss;
 	private ITimeoutStrategy ts;
-	private volatile int resendCount;
+	private volatile int resendCount = 0;
 	private int resendLimit;
 	private IConnection conn;
 	
@@ -26,9 +26,17 @@ public abstract class PingPong implements IPingPong {
 		this.conn = conn;
 		this.mss = mss;
 		this.ts = ts;
-		this.resendCount = 0;
 		this.resendLimit = resendLimit;
 		this.ts.setNotifyTarget(this);
+	}
+	@Override
+	public boolean isClosed() {
+		return this.isClosed;
+	}
+	
+	@Override
+	public boolean hasRunningTimer() {
+		return this.ts.hasRunningTimer();
 	}
 	
 	@Override
@@ -53,7 +61,10 @@ public abstract class PingPong implements IPingPong {
 	}
 	
 	public boolean sendPingPongMessage() {
-		if (this.isBlocked()) {
+		if (!this.hasRunningTimer() && this.isBlocked()) {
+			this.resendPingPongMessage();
+		}
+		if (this.hasRunningTimer() || this.isBlocked() || this.isClosed()) {
 			return false;
 		}
 		this.block();
@@ -69,77 +80,94 @@ public abstract class PingPong implements IPingPong {
 //			this.reportDisconnection();
 //			return false;
 //		}
+		if (this.isClosed()) {
+			return false;
+		}
 		boolean isSent = this.mss.sendMessage(conn, this.generatePingPongMessage());
 		if (isSent) {
 			this.startTimeoutTimer();
-//			System.out.println("Ping pong message sent");
+			System.out.println("Ping pong message sent");
 		}
 		return isSent;
 	}
 	@Override
 	public void startTimeoutTimer() {
-//		System.out.println("Ping pong start timer");
+		System.out.println("Ping pong start timer");
 		this.ts.startTimer();
 	}
 	
 	protected void resetTimeoutTimer() {
-//		System.out.println("Ping pong reset timer");
+		System.out.println("Ping pong reset timer");
 		this.ts.reset();
 	}
 	
 	protected void resetResendCount() {
-//		System.out.println("Ping pong reset resend count");
+		System.out.println("Ping pong reset resend count");
 		this.resendCount = 0;
 	}
 	
 	protected void resendPingPongMessage() {
-//		System.out.println("Ping pong resend, count = " + this.resendCount);
 		this.increaseResendCount();
+		System.out.println("Ping pong resend, count = " + this.resendCount);
 		this.sendPingPongMessageAndStartTimer();
 	}
 	
 	protected void increaseResendCount() {
-//		System.out.println("Ping pong resend count ++");
+		System.out.println("Ping pong resend count ++");
 		this.resendCount = this.resendCount + 1;
 	}
 	
 	protected void reportDisconnection() {
-//		System.out.println("Reporting disconnection");
+		System.out.println("Reporting disconnection");
 		if (this.disconListener != null) {
-//			System.out.println("Disconnection listener not null");
+			System.out.println("Disconnection listener not null");
 			this.disconListener.connectionLost(conn.getTargetClientAddress());
-//			System.out.println("Reported disconnection");
+			System.out.println("Reported disconnection");
 		}
 	}
 	
 	@Override
 	public void receiveResponse(IMessage message) {
-//		System.out.println("Ping pong receive response");
+		System.out.println("Ping pong receive response");
 		this.resetTimeoutTimer();
 		this.resetResendCount();
+		this.unblock();
 	}
 	
 	@Override
 	public void timeout() {
 //		System.out.println("Ping pong timeout");
-		if (this.getRemainingResendTries() > 0) {
-			this.resendPingPongMessage();
-		} else {
-			this.reportDisconnection();
-		}
+//		if (!this.isClosed()) {
+//			if (this.getRemainingResendTries() > 0) {
+//				this.resendPingPongMessage();
+//			} else {
+//				this.reportDisconnection();
+//			}
+//		}
 	}
 	
 	@Override
-	public void timeoutTimerStopped(boolean wasReset) {
-		if (wasReset) {
-			this.unblock();
-		}
+	public void timeoutTimerStopped(boolean wasReset, boolean wasTerminated) {
+		if (!wasReset && !wasTerminated && !this.isClosed()) {
+			System.out.println("Ping pong timeout: " + this.getRemainingResendTries());
+			if (this.getRemainingResendTries() > 0) {
+//				this.resendPingPongMessage();
+			} else {
+				this.reportDisconnection();
+			}
+		} 
+//		else if (wasReset && !wasTerminated && !this.isClosed()) {
+//			this.unblock();
+//		}
 	}
 	
 	@Override
 	public void close() {
-//		System.out.println("Ping pong close");
-		this.ts.reset();
+		this.isClosed = true;
+		this.resendCount = this.resendLimit;
+		System.out.println("Ping pong close");
+		this.ts.terminateTimer();
+		this.ts = null;
 	}
 	
 //	@Override

@@ -71,9 +71,9 @@ public class MessageReceptionist implements IMessageReceptionist {
 		boolean allHandled = true;
 		if ((serialisedMessages = this.mrs.readMessages()) != null) {
 			for (String sm : serialisedMessages) {
-				System.out.println("Message read: " + sm);
+//				System.out.println("Message read: " + sm);
 				allHandled = allHandled && this.handleMessage(sm);
-				System.out.println("Message handled: " + sm);
+//				System.out.println("Message handled: " + sm);
 			}
 			this.conn.refreshInputStream();
 		}

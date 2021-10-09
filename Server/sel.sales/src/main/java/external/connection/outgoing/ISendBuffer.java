@@ -34,4 +34,6 @@ public interface ISendBuffer extends HasTimeout, Closeable {
 	 * no need to set it before {@link #addMessage(IMessage)}
 	 */
 	int getCurrentSequenceNumber();
+	boolean isClosed();
+	boolean hasRunningTimer();
 }

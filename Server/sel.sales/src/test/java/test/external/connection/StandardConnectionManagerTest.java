@@ -43,7 +43,7 @@ import test.external.timeout.TimeoutTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class StandardConnectionManagerTest {
 	private ExecutorService es;
-	private long waitTime = 200;
+	private long waitTime = 110;
 	
 	private IMessageSerialiser serialiser = new MessageSerialiser(new StandardMessageFormat());
 	private IMessageParser parser = new StandardMessageParser();
@@ -62,7 +62,7 @@ class StandardConnectionManagerTest {
 	private ISendBuffer sb;
 	private IPingPong pingPong;
 	
-	private int resendLimit;
+	private int resendLimit = 10;
 	
 	private boolean isConnected;
 	
@@ -92,7 +92,7 @@ class StandardConnectionManagerTest {
 		controller = initController();
 		conn = new DummyConnection(client1Address);
 		es = Executors.newCachedThreadPool();
-		connManager = new StandardConnectionManager(controller, conn, es, 20000, 2000, 10, 1000);
+		connManager = new StandardConnectionManager(controller, conn, es, 100, 2000, resendLimit, 0);
 		sb = connManager.getSendBuffer();
 		pingPong = connManager.getPingPong();
 		pingPong.setDisconnectionListener(new DisconnectionListener(null) {
@@ -108,12 +108,11 @@ class StandardConnectionManagerTest {
 			}
 		});
 		isConnected = true;
-		resendLimit = pingPong.getRemainingResendTries();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	@AfterEach
 	void cleanUp() {
-//		connManager.close();
+		connManager.close();
 		try {
 			es.awaitTermination(waitTime, TimeUnit.MILLISECONDS);
 			es.shutdownNow();
@@ -177,16 +176,15 @@ class StandardConnectionManagerTest {
 	@Test
 	void pingPongTest() {
 		Assertions.assertTrue(isConnected);
-		Assertions.assertTrue(resendLimit == pingPong.getRemainingResendTries());
-		int remainingResendTries = resendLimit;
-		while (remainingResendTries > 0) {
-			Assertions.assertEquals(remainingResendTries, pingPong.getRemainingResendTries());
-			pingPong.timeout();
+		int remainingResendTries = pingPong.getRemainingResendTries();
+		while (remainingResendTries >= 0) {
+			pingPong.sendPingPongMessage();
+//			Assertions.assertEquals(remainingResendTries, pingPong.getRemainingResendTries());
+			GeneralTestUtilityClass.performWait(waitTime);
 			remainingResendTries--;
 		}
-		Assertions.assertEquals(0, remainingResendTries);
-		pingPong.timeout();
+//		Assertions.assertEquals(0, pingPong.getRemainingResendTries());
 		GeneralTestUtilityClass.performWait(waitTime);
-		Assertions.assertFalse(isConnected);
+		Assertions.assertTrue(conn.isClosed());
 	}
 }
