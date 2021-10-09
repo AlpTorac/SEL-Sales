@@ -13,5 +13,7 @@ public interface IPingPong extends HasTimeout, Closeable {
 	int getRemainingResendTries();
 	void setDisconnectionListener(DisconnectionListener dl);
 	void startTimeoutTimer();
+	boolean isClosed();
 	boolean isBlocked();
+	boolean hasRunningTimer();
 }

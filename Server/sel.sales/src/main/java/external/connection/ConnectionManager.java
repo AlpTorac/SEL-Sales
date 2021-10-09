@@ -23,11 +23,11 @@ public abstract class ConnectionManager implements IConnectionManager {
 	private IPingPong pingPong;
 	protected IController controller;
 	
-	private boolean isClosed = false;
+	private volatile boolean isClosed = false;
 	
 	private DisconnectionListener disconListener;
 	
-	private Thread cycleThread;
+//	private Thread cycleThread;
 	
 	protected ConnectionManager(IController controller, IConnection conn, ExecutorService es) {
 		this.controller = controller;
@@ -100,33 +100,51 @@ public abstract class ConnectionManager implements IConnectionManager {
 	
 	protected void checkForMessagesToBeRead() {
 		this.getIncomingMessageListener().checkForMessages();
+//		System.out.println("Read attempt");
 	}
 	
 	protected void checkForMessagesToBeSent() {
 		this.getSendBuffer().sendMessage();
+//		System.out.println("Send attempt");
 	}
 	
 	protected void sendPingPongMessage() {
 		this.getPingPong().sendPingPongMessage();
+//		System.out.println("PingPong attempt");
 	}
+	@Override
+	public boolean isClosed() {
+		return this.isClosed;
+	}
+	
 	protected void init() {
 		this.initPingPong(this.getMinimalPingPongDelay(), this.getResendLimit(), this.getPingPongTimeout());
 		this.initSendBuffer(this.getSendTimeout());
 		this.initMessageReceptionist(this.getSendBuffer(), this.getPingPong());
 		
-		cycleThread = new Thread() {
+//		cycleThread = new Thread() {
+//			@Override
+//			public void run() {
+//				while (!isClosed && !getConnection().isClosed()) {
+//					checkForMessagesToBeRead();
+//					checkForMessagesToBeSent();
+//					sendPingPongMessage();
+//				}
+//			}
+//		};
+//		
+//		cycleThread.setDaemon(false);
+//		cycleThread.start();
+		this.es.submit(new Runnable() {
 			@Override
 			public void run() {
-				while (!isClosed && !getConnection().isClosed()) {
+				while (!isClosed() && !getConnection().isClosed()) {
 					checkForMessagesToBeRead();
 					checkForMessagesToBeSent();
 					sendPingPongMessage();
 				}
 			}
-		};
-		
-		cycleThread.setDaemon(true);
-		cycleThread.start();
+		});
 	}
 	
 	protected int getResendLimit() {
@@ -155,11 +173,11 @@ public abstract class ConnectionManager implements IConnectionManager {
 			this.getPingPong().close();
 			this.getIncomingMessageListener().close();
 			this.getConnection().close();
-			try {
-				cycleThread.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				cycleThread.join();
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

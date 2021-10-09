@@ -1,6 +1,7 @@
 package external.connection.timeout;
 
 public interface ITimeoutStrategy {
+	void terminateTimer();
 	void startTimer();
 	void reset();
 	boolean hasRunningTimer();

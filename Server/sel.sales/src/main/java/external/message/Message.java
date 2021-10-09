@@ -1,7 +1,7 @@
 package external.message;
 
 public class Message implements IMessage {
-	private int sequenceNumber;
+	private volatile int sequenceNumber;
 	private MessageContext context;
 	private MessageFlag[] flags;
 	private String serialisedData;

@@ -24,6 +24,13 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 	}
 
 	@Override
+	public void terminateTimer() {
+		if (this.timer != null) {
+			this.timer.isRunning = false;
+		}
+	}
+	
+	@Override
 	public boolean hasStarted() {
 		return this.timer != null;
 	}
@@ -38,7 +45,7 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 	public void startTimer() {
 		if (!this.hasRunningTimer()) {
 			this.timer = this.createTimer();
-			this.timer.start();
+			this.es.submit(this.timer);
 		}
 	}
 
@@ -72,7 +79,7 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 	
 	@Override
 	public boolean hasRunningTimer() {
-		return this.timer != null && this.timer.isAlive();
+		return this.timer != null && this.timer.isRunning();
 	}
 	
 	@Override
@@ -83,7 +90,7 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 		return -1;
 	}
 	
-	protected class TimeoutTimer extends Thread {
+	protected class TimeoutTimer implements Runnable {
 		
 		private final LocalDateTime startTime;
 		private final long timeUnitAmount;
@@ -91,6 +98,7 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 		private final HasTimeout notifyTarget;
 		
 		private volatile boolean isReset = false;
+		private volatile boolean isRunning = true;
 		
 		protected TimeoutTimer(LocalDateTime startTime, long timeUnitAmount, TemporalUnit timeUnit, HasTimeout notifyTarget) {
 			this.startTime = startTime;
@@ -124,7 +132,7 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 		
 		protected void notifyStop() {
 			if (this.getNotifyTarget() != null) {
-				this.getNotifyTarget().timeoutTimerStopped(this.isReset());
+				this.getNotifyTarget().timeoutTimerStopped(this.isReset(), !this.isRunning());
 			}
 		}
 		
@@ -144,25 +152,30 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 			return this.startTime;
 		}
 
+		protected boolean isRunning() {
+			return this.isRunning;
+		}
+		
 		protected void waitTillTimeIsUp() {
-			while (!this.isTimeUp()) {
-				if (this.isReset()) {
+			while (!this.isTimeUp() && this.isRunning() && !this.isReset()) {
+//				if (this.isReset()) {
 //					System.out.println(this + " Timer reset by notify target: " + this.getNotifyTarget());
-					break;
-				}
+//					break;
+//				}
 			}
 		}
 		
 		protected void notifyAlgorithm() {
-			if (!this.isReset()) {
+			if (!this.isReset() && this.isRunning()) {
 //				System.out.println(this + " Notifying target: " + this.getNotifyTarget());
 				this.notifyTarget();
 			}
 		}
 		
 		protected void endAlgorithm() {
-			timer = null;
+//			timer = null;
 			this.notifyStop();
+			this.isRunning = false;
 		}
 		
 		@Override

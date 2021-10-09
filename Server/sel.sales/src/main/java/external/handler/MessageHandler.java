@@ -18,6 +18,7 @@ public abstract class MessageHandler implements IMessageHandler {
 		try {
 			m = this.verifyMessageFormat(message);
 		} catch (NumberFormatException | NoSuchMessageContextException | NoSuchMessageFlagException e) {
+			System.out.println("Message format rejected: " + message);
 			return false;
 		}
 		return this.verify(m) && this.performNeededAction(m);

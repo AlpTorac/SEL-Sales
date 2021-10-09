@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -38,7 +39,7 @@ import test.external.dummy.DummyPingPong;
 class PingPongTest {
 	private ExecutorService es;
 	private long timeoutTime = 100;
-	private long waitTime = timeoutTime + 10;
+	private long waitTime = 110;
 	
 	private DummyConnection conn;
 	private DummyClient client1;
@@ -48,11 +49,9 @@ class PingPongTest {
 	private IController controller;
 	
 	private IPingPong pingPong;
-	private IMessageSendingStrategy mss;
-	private ITimeoutStrategy ts;
-	private int resendLimit;
+	private int resendLimit = 10;
 	
-	private long minimalPingPongDelay = 1000;
+	private long minimalPingPongDelay = 0;
 	
 	private boolean isConnected;
 	
@@ -64,10 +63,7 @@ class PingPongTest {
 		controller = initController();
 		conn = new DummyConnection(client1Address);
 		es = Executors.newCachedThreadPool();
-		mss = new BasicMessageSender();
-		ts = new FixTimeoutStrategy(timeoutTime, ChronoUnit.MILLIS, es);
-		resendLimit = 10;
-		pingPong = new DummyPingPong(conn, mss, ts, es, minimalPingPongDelay, resendLimit);
+		pingPong = new DummyPingPong(conn, es, minimalPingPongDelay, resendLimit, timeoutTime);
 		pingPong.setDisconnectionListener(new DisconnectionListener(controller) {
 			@Override
 			public void connectionLost(String clientAddress) {
@@ -95,7 +91,6 @@ class PingPongTest {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		resendLimit = 3;
 	}
 	
 	private IController initController() {
@@ -115,12 +110,12 @@ class PingPongTest {
 	void resendCountResetTest() {
 		Assertions.assertEquals(resendLimit, pingPong.getRemainingResendTries());
 		int remainingResendTries = resendLimit;
-		while (remainingResendTries > 0) {
+		while (remainingResendTries >= 0) {
+			pingPong.sendPingPongMessage();
 			Assertions.assertEquals(remainingResendTries, pingPong.getRemainingResendTries());
-			pingPong.timeout();
+			GeneralTestUtilityClass.performWait(waitTime);
 			remainingResendTries--;
 		}
-		GeneralTestUtilityClass.performWait(waitTime);
 		Assertions.assertEquals(0, pingPong.getRemainingResendTries());
 		pingPong.receiveResponse(new Message(null, null, null));
 		Assertions.assertEquals(resendLimit, pingPong.getRemainingResendTries());
@@ -130,14 +125,64 @@ class PingPongTest {
 	@Test
 	void disconnectTest() {
 		int remainingResendTries = resendLimit;
-		while (remainingResendTries > 0) {
+		while (remainingResendTries >= 0) {
+			pingPong.sendPingPongMessage();
 			Assertions.assertEquals(remainingResendTries, pingPong.getRemainingResendTries());
-			pingPong.timeout();
+			GeneralTestUtilityClass.performWait(waitTime);
 			remainingResendTries--;
 		}
-		Assertions.assertEquals(0, remainingResendTries);
-		pingPong.timeout();
+		Assertions.assertEquals(0, pingPong.getRemainingResendTries());
+		GeneralTestUtilityClass.performWait(waitTime);
 		Assertions.assertTrue(conn.isClosed());
 	}
 
+	@Test
+	void recoveryTest() {
+		int cyclesToWait = 20;
+		ArrayList<Boolean> cycleStatuses = new ArrayList<Boolean>();
+		boolean cycleStatus = false;
+		int resendLimit = 20;
+		int resendCount = resendLimit;
+		pingPong = new DummyPingPong(conn, es, minimalPingPongDelay, resendLimit, timeoutTime);
+		Assertions.assertFalse(pingPong.isBlocked());
+		Assertions.assertFalse(pingPong.isClosed());
+		Assertions.assertFalse(pingPong.hasRunningTimer());
+		for (int successfulCycles = 0; successfulCycles < cyclesToWait;) {
+			if (GeneralTestUtilityClass.generateRandomNumber(1, 5) < 3) {
+				cycleStatus = false;
+			} else {
+				cycleStatus = true;
+			}
+//			while (pingPong.hasRunningTimer()) {
+//				pingPong.sendPingPongMessage();
+//			}
+			if (!pingPong.isBlocked()) {
+				while (pingPong.hasRunningTimer()) {
+					
+				}
+				pingPong.sendPingPongMessage();
+			}
+			cycleStatuses.add(cycleStatus);
+			if (cycleStatuses.size() == 0 || cycleStatus) {
+				GeneralTestUtilityClass.performWait(timeoutTime / 2);
+				pingPong.receiveResponse(new Message(null, null, null));
+				Assertions.assertFalse(pingPong.isBlocked());
+				resendCount = resendLimit;
+				Assertions.assertEquals(resendCount, pingPong.getRemainingResendTries());
+				successfulCycles++;
+			} else {
+				pingPong.sendPingPongMessage();
+				Assertions.assertEquals(resendCount, pingPong.getRemainingResendTries());
+				GeneralTestUtilityClass.performWait(waitTime);
+				resendCount--;
+				Assertions.assertTrue(pingPong.isBlocked());
+			}
+		}
+		System.out.print("Successful with: " + "[");
+		for (int i = 0; i < cycleStatuses.size() - 1; i++) {
+			System.out.print(cycleStatuses.get(i) + ",");
+		}
+		System.out.println(cycleStatuses.get(cycleStatuses.size() - 1) + "]");
+	}
+	
 }

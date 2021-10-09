@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutorService;
 
 public class PingPongTimeoutStrategy extends TimeoutStrategy {
 
-	protected long minimalTimeToWait;
+	protected final long minimalTimeToWait;
 	
 	public PingPongTimeoutStrategy(long timeUnitAmount, TemporalUnit timeUnit, ExecutorService es, long minimalTimeToWait) {
 		super(timeUnitAmount, timeUnit, es);
@@ -29,14 +29,11 @@ public class PingPongTimeoutStrategy extends TimeoutStrategy {
 		
 		@Override
 		protected void waitTillTimeIsUp() {
-			while (!this.isTimeUp()) {
-				if (this.isReset()) {
-//					System.out.println(this + " Timer reset by notify target: " + this.getNotifyTarget());
-					break;
-				}
+			while (!this.isTimeUp() && this.isRunning() && !this.isReset()) {
+				
 			}
 			
-			while (this.getTimeElapsed() < this.minimalTimeToWait) {
+			while ((this.getTimeElapsed() < this.minimalTimeToWait) && this.isRunning()) {
 				
 			}
 		}

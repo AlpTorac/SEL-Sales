@@ -15,8 +15,8 @@ public class DummyInteraction {
 	protected IController controllerServer;
 	protected IController controllerClient;
 	
-	protected ExecutorService esServer = Executors.newCachedThreadPool();
-	protected ExecutorService esClient = Executors.newCachedThreadPool();
+	protected ExecutorService esServer;
+	protected ExecutorService esClient;
 	
 	protected long minimalPingPongDelay;
 	protected long pingPongTimeout;
@@ -41,14 +41,16 @@ public class DummyInteraction {
 	protected DisconnectionListener dlServer;
 	protected DisconnectionListener dlClient;
 	
-	private ISendBuffer serverSB;
-	private ISendBuffer clientSB;
+	protected ISendBuffer serverSB;
+	protected ISendBuffer clientSB;
 	
-	private IPingPong serverPP;
-	private IPingPong clientPP;
+	protected IPingPong serverPP;
+	protected IPingPong clientPP;
 	
-	public DummyInteraction(String clientName, String clientAddress, long pingPongTimeout,
+	public DummyInteraction(ExecutorService esServer, ExecutorService esClient, String clientName, String clientAddress, long pingPongTimeout,
 			long sendTimeout, int resendLimit, long minimalPingPongDelay) {
+		this.esServer = esServer;
+		this.esClient = esClient;
 		this.minimalPingPongDelay = minimalPingPongDelay;
 		this.pingPongTimeout = pingPongTimeout;
 		this.sendTimeout = sendTimeout;
@@ -139,26 +141,31 @@ public class DummyInteraction {
 	public void close() {
 		this.serverClientConnManager.close();
 		this.clientServerConnManager.close();
-		try {
-			this.esServer.awaitTermination(1000, TimeUnit.MILLISECONDS);
-			this.esClient.awaitTermination(1000, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public int getPingPongSuccessfulConsecutiveCycleCount() {
-		return Math.min(this.serverClientConnManager.getPingPongSuccessfulConsecutiveCycleCount(), this.clientServerConnManager.getPingPongSuccessfulConsecutiveCycleCount());
+		return Math.max(this.serverClientConnManager.getPingPongSuccessfulConsecutiveCycleCount(), this.clientServerConnManager.getPingPongSuccessfulConsecutiveCycleCount());
 	}
-
 	public int getPingPongSuccessfulCycleCount() {
-		return Math.min(this.serverClientConnManager.getPingPongSuccessfulCycleCount(), this.clientServerConnManager.getPingPongSuccessfulCycleCount());
+		return Math.max(this.serverClientConnManager.getPingPongSuccessfulCycleCount(), this.clientServerConnManager.getPingPongSuccessfulCycleCount());
 	}
 	public int getSendBufferSuccessfulConsecutiveCycleCount() {
-		return Math.min(this.serverClientConnManager.getSendBufferSuccessfulConsecutiveCycleCount(), this.clientServerConnManager.getSendBufferSuccessfulConsecutiveCycleCount());
+		return Math.max(this.serverClientConnManager.getSendBufferSuccessfulConsecutiveCycleCount(), this.clientServerConnManager.getSendBufferSuccessfulConsecutiveCycleCount());
 	}
 	public int getSendBufferSuccessfulCycleCount() {
-		return Math.min(this.serverClientConnManager.getSendBufferSuccessfulCycleCount(), this.clientServerConnManager.getSendBufferSuccessfulCycleCount());
+		return Math.max(this.serverClientConnManager.getSendBufferSuccessfulCycleCount(), this.clientServerConnManager.getSendBufferSuccessfulCycleCount());
+	}
+	public int getServerSendBufferSuccessfulConsecutiveCycleCount() {
+		return this.serverClientConnManager.getSendBufferSuccessfulConsecutiveCycleCount();
+	}
+	public int getServerSendBufferSuccessfulCycleCount() {
+		return this.serverClientConnManager.getSendBufferSuccessfulCycleCount();
+	}
+	public int getClientSendBufferSuccessfulConsecutiveCycleCount() {
+		return this.clientServerConnManager.getSendBufferSuccessfulConsecutiveCycleCount();
+	}
+	public int getClientSendBufferSuccessfulCycleCount() {
+		return this.clientServerConnManager.getSendBufferSuccessfulCycleCount();
 	}
 	
 	public void messageToClient(IMessage message) {

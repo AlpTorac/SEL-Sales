@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import external.connection.IConnection;
+import test.GeneralTestUtilityClass;
 import test.external.buffer.BufferUtilityClass;
 
 public class DummyConnection implements IConnection {
@@ -18,6 +19,8 @@ public class DummyConnection implements IConnection {
 	private OSwithBuffer os;
 	private String clientAddress;
 	private boolean isClosed = false;
+	
+	private long lag = 150;
 	
 	public DummyConnection(String clientAddress) {
 		this.clientAddress = clientAddress;
@@ -42,6 +45,7 @@ public class DummyConnection implements IConnection {
 	}
 	
 	public void fillInputBuffer(String string) {
+		GeneralTestUtilityClass.performWait(lag);
 		this.is.refresh();
 		this.is.fillInputBuffer(string);
 	}

@@ -15,7 +15,7 @@ public class AcknowledgingHandler extends MessageHandler {
 
 	@Override
 	public boolean verify(IMessage message) {
-		return !message.isPingPongMessage();
+		return !message.isPingPongMessage() && !message.isAcknowledgementMessage();
 	}
 
 	@Override
