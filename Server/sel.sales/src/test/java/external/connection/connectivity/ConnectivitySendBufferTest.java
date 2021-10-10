@@ -181,7 +181,7 @@ class ConnectivitySendBufferTest {
 			Assertions.assertTrue(this.isClientConnected());
 			Assertions.assertTrue(this.isServerConnected());
 		}
-		Assertions.assertEquals(currentCycles, cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
+		Assertions.assertTrue(currentCycles >= cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
 	}
 	
 	@Test
@@ -194,7 +194,7 @@ class ConnectivitySendBufferTest {
 			Assertions.assertTrue(this.isClientConnected());
 			Assertions.assertTrue(this.isServerConnected());
 		}
-		Assertions.assertEquals(currentCycles, cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
+		Assertions.assertTrue(currentCycles >= cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
 	}
 	
 	@Test
