@@ -50,6 +50,10 @@ public class DummyConnection implements IConnection {
 		this.is.fillInputBuffer(string);
 	}
 	
+	public long getLag() {
+		return this.lag;
+	}
+	
 	public byte[] getOutputStreamBuffer() {
 		return this.os.getBuffer();
 	}

@@ -147,6 +147,15 @@ class StandardReaderTest {
 		final Object lock = new Object();
 		ArrayList<String> sentMessages = new ArrayList<String>();
 		ArrayList<String> readMessages = new ArrayList<String>();
+		
+		/*
+		 * 3 Runnables run concurrently:
+		 * 1) Fills the input stream of conn
+		 * 2) Checks for messages to read
+		 * 3) Stops the cycles within other runnables after waiting
+		 */
+		
+		// add random messages to the input stream of conn
 		es.submit(() -> {
 			IMessage m = null;
 			String sm = null;
@@ -158,6 +167,7 @@ class StandardReaderTest {
 			}
 		});
 		
+		// Check for messages to read and count how many loops it took
 		Future<Integer> cycleCount = es.submit(() -> {
 			int cc = 0;
 			String[] messages = null;
@@ -172,6 +182,7 @@ class StandardReaderTest {
 			return cc;
 		});
 		
+		// Wait for a random amount of time and break the cycles
 		es.submit(() -> {
 			synchronized (lock) {
 				try {
@@ -183,6 +194,7 @@ class StandardReaderTest {
 			}
 		});
 		
+		// Wait till the runnables stop
 		while (!cycleCount.isDone()) {
 			
 		}
@@ -202,5 +214,6 @@ class StandardReaderTest {
 		}
 		Assertions.assertTrue(cycleC > sentMessages.size(), "Cycle Count: " + cycleC + " ,sent message count: " + sentMessages.size());
 		System.out.println("In a total of " + cycleC + " cycles, " + readMessages.size() + " messages were read");
+//		readMessages.forEach(message -> System.out.println(message));
 	}
 }

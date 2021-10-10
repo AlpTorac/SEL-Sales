@@ -79,24 +79,26 @@ public final class GeneralTestUtilityClass {
 		return randomNumber;
 	}
 	public static byte generateRandomByte() {
-		int factor = (int) Math.round(Math.random());
 		int intervalLength = 0;
 		if (Math.round(Math.random()) < 0.5) {
 			intervalLength = Byte.MAX_VALUE;
 		} else {
 			intervalLength = Byte.MIN_VALUE;
 		}
-		return (byte) Math.round(factor * intervalLength);
+		return (byte) Math.round(Math.random() * intervalLength);
 	}
-	public static String generateRandomString(int length) {
+	public static String generateRandomWord(int length) {
 		if (length <= 0) {
 			return "";
 		} else {
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < length; i++) {
-				sb.append(generateRandomByte());
+			byte[] bytes = new byte[length];
+			for (int i = 0; i < bytes.length; i++) {
+				while (!new String(new byte[] {bytes[i]}).matches("\\w")) {
+					bytes[i] = generateRandomByte();
+				}
 			}
-			return sb.toString();
+			
+			return new String(bytes);
 		}
 	}
 }
