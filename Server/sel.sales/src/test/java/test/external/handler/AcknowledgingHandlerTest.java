@@ -75,8 +75,11 @@ class AcknowledgingHandlerTest extends MessageHandlerTest {
 	
 	@Test
 	void verificationFailTest() {
-		IMessage message = new Message(MessageContext.PINGPONG, null, null);
+		IMessage message = new Message(MessageContext.ORDER, new MessageFlag[] {MessageFlag.ACKNOWLEDGEMENT}, null);
 		this.verificationFailTest(message);
+		
+		IMessage message2 = new Message(MessageContext.PINGPONG, null, null);
+		this.verificationFailTest(message2);
 	}
 	
 	@Test
