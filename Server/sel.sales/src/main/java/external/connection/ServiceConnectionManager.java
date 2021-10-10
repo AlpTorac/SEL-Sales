@@ -102,9 +102,11 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	
 	protected boolean addConnection(IConnection conn) {
 		if (this.isConnectionAllowed(conn.getTargetClientAddress())) {
+			System.out.println("Connection added");
 			IConnectionManager connManager = this.createConnectionManager(conn, this.getPingPongTimeout(), this.getSendTimeout(), this.getResendLimit(), this.getMinimalPingPongDelay());
 			this.connListener.connectionEstablished(conn.getTargetClientAddress());
 			connManager.setDisconnectionListener(this.disconListener);
+			System.out.println("Connection manager added");
 			return this.connectionManagers.add(connManager);
 		} else {
 			try {

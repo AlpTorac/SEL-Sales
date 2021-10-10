@@ -60,9 +60,6 @@ class AcknowledgingHandlerTest extends MessageHandlerTest {
 	
 	@Test
 	void verificationSuccessfulTest() {
-		IMessage message = new Message(MessageContext.ORDER, new MessageFlag[] {MessageFlag.ACKNOWLEDGEMENT}, null);
-		this.verificationSuccessfulTest(message);
-		
 		IMessage message2 = new Message(MessageContext.MENU, null, null);
 		this.verificationSuccessfulTest(message2);
 		
@@ -76,7 +73,7 @@ class AcknowledgingHandlerTest extends MessageHandlerTest {
 	@Test
 	void verificationFailTest() {
 		IMessage message = new Message(MessageContext.ORDER, new MessageFlag[] {MessageFlag.ACKNOWLEDGEMENT}, null);
-		this.verificationFailTest(message);
+		this.verificationSuccessfulTest(message);
 		
 		IMessage message2 = new Message(MessageContext.PINGPONG, null, null);
 		this.verificationFailTest(message2);

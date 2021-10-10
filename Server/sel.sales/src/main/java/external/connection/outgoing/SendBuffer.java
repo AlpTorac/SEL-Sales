@@ -49,7 +49,7 @@ public abstract class SendBuffer implements ISendBuffer {
 	
 	@Override
 	public boolean sendMessage() {
-		if (!this.hasRunningTimer() && this.isBlocked()) {
+		if (!this.hasRunningTimer() && this.messageInLine != null && this.isBlocked()) {
 			return this.resendLast();
 		}
 		if (this.isClosed() || this.isBlocked() || this.hasRunningTimer() || this.messageInLine != null  || this.buffer.isEmpty()) {
