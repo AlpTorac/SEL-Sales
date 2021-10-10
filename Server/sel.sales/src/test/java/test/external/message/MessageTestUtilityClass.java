@@ -39,6 +39,6 @@ public final class MessageTestUtilityClass {
 		case 1: flags = new MessageFlag[] {MessageFlag.ACKNOWLEDGEMENT}; break;
 		default: flags = null; break;
 		}
-		return new Message(sequenceNumber, context, flags, GeneralTestUtilityClass.generateRandomString(GeneralTestUtilityClass.generateRandomNumber(0, maximumTextLength)));
+		return new Message(sequenceNumber, context, flags, GeneralTestUtilityClass.generateRandomWord(GeneralTestUtilityClass.generateRandomNumber(0, maximumTextLength)));
 	}
 }
