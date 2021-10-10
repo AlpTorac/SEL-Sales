@@ -5,8 +5,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
@@ -19,22 +22,44 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import external.connection.incoming.IMessageReadingStrategy;
 import external.connection.incoming.IMessageReceptionist;
 import external.connection.incoming.StandardReader;
+import external.message.IMessage;
+import external.message.IMessageSerialiser;
+import external.message.Message;
+import external.message.MessageContext;
+import external.message.MessageFlag;
+import external.message.MessageSerialiser;
+import external.message.StandardMessageFormat;
 import test.GeneralTestUtilityClass;
 import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyConnection;
+import test.external.message.MessageTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class StandardReaderTest {
+	private volatile boolean continueCycle = true;
+	private ExecutorService es;
 	private long waitTime = 300;
 	
+	private int minimumNonBlockingWaitTime = 3000;
+	private int maximumNonBlockingWaitTime = 5000;
+	private int maximumNonBlockingSequenceNumber = 100;
+	private int maximumNonBlockingTextLength = 100;
+	
+	private IMessageSerialiser serialiser = new MessageSerialiser(new StandardMessageFormat());
 	private IMessageReadingStrategy mrs;
 	private DummyConnection conn;
 	private boolean isNotified = false;
 	
+	private boolean continueCycle() {
+		return this.continueCycle;
+	}
+	
 	@BeforeEach
 	void prep() {
+		es = Executors.newCachedThreadPool();
 		conn = new DummyConnection("clientaddress");
 		mrs = new StandardReader(conn.getInputStream());
 		isNotified = false;
+		continueCycle = true;
 	}
 	
 	@AfterEach
@@ -44,7 +69,14 @@ class StandardReaderTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		try {
+			es.awaitTermination(waitTime, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		isNotified = false;
+		continueCycle = true;
 	}
 	
 	@Test
@@ -108,5 +140,67 @@ class StandardReaderTest {
 		Assertions.assertEquals(part3, sms2[0]);
 		Assertions.assertEquals(part4, sms2[1]);
 		Assertions.assertEquals(part5, sms2[2]);
+	}
+	
+	@Test
+	void nonBlockingReadTest() {
+		final Object lock = new Object();
+		ArrayList<String> sentMessages = new ArrayList<String>();
+		ArrayList<String> readMessages = new ArrayList<String>();
+		es.submit(() -> {
+			IMessage m = null;
+			String sm = null;
+			while (continueCycle()) {
+				m = MessageTestUtilityClass.generateRandomMessage(maximumNonBlockingSequenceNumber, maximumNonBlockingTextLength);
+				sm = serialiser.serialise(m);
+				conn.fillInputBuffer(sm);
+				sentMessages.add(sm.substring(0, sm.length() - 1)); // remove the new line
+			}
+		});
+		
+		Future<Integer> cycleCount = es.submit(() -> {
+			int cc = 0;
+			String[] messages = null;
+			while (continueCycle()) {
+				if ((messages = mrs.readMessages()) != null) {
+					for (String m : messages) {
+						readMessages.add(m);
+					}
+				}
+				cc++;
+			}
+			return cc;
+		});
+		
+		es.submit(() -> {
+			synchronized (lock) {
+				try {
+					lock.wait(GeneralTestUtilityClass.generateRandomNumber(minimumNonBlockingWaitTime, maximumNonBlockingWaitTime));
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				continueCycle = false;
+			}
+		});
+		
+		while (!cycleCount.isDone()) {
+			
+		}
+		
+		Assertions.assertTrue(readMessages.containsAll(sentMessages), "read message count: " + readMessages.size() + ", sent message count: " + sentMessages.size());
+		System.out.println("A total of " + sentMessages.size() + " messages were sent and " + readMessages.size() + " were read and equal to sent ones");
+		
+		int cycleC = 0;
+		try {
+			cycleC = cycleCount.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Assertions.assertTrue(cycleC > sentMessages.size(), "Cycle Count: " + cycleC + " ,sent message count: " + sentMessages.size());
+		System.out.println("In a total of " + cycleC + " cycles, " + readMessages.size() + " messages were read");
 	}
 }

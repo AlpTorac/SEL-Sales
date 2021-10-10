@@ -69,7 +69,34 @@ public final class GeneralTestUtilityClass {
 	public static long generateRandomNumber(long lowerLimit, long upperLimit) {
 		long intervallLength = upperLimit - lowerLimit;
 		double factor = Math.random();
-		long randomNumber = Math.round(factor * intervallLength);
+		long randomNumber = lowerLimit + Math.round(factor * intervallLength);
 		return randomNumber;
+	}
+	public static int generateRandomNumber(int lowerLimit, int upperLimit) {
+		int intervallLength = upperLimit - lowerLimit;
+		float factor = (float) Math.random();
+		int randomNumber = lowerLimit + Math.round(factor * intervallLength);
+		return randomNumber;
+	}
+	public static byte generateRandomByte() {
+		int factor = (int) Math.round(Math.random());
+		int intervalLength = 0;
+		if (Math.round(Math.random()) < 0.5) {
+			intervalLength = Byte.MAX_VALUE;
+		} else {
+			intervalLength = Byte.MIN_VALUE;
+		}
+		return (byte) Math.round(factor * intervalLength);
+	}
+	public static String generateRandomString(int length) {
+		if (length <= 0) {
+			return "";
+		} else {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < length; i++) {
+				sb.append(generateRandomByte());
+			}
+			return sb.toString();
+		}
 	}
 }

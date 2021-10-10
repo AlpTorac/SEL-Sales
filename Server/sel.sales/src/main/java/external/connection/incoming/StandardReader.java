@@ -25,16 +25,12 @@ public class StandardReader implements IMessageReadingStrategy {
 	
 	// Check the first character of the stream to decide, whether it is time to read.
 	protected boolean checkReadCondition() {
-		int readChar = -1;
 		try {
-			r.mark(1);
-			readChar = r.read();
-			r.reset();
+			return r.ready();
 		} catch (IOException e) {
-//			e.printStackTrace();
+			e.printStackTrace();
 			return false;
 		}
-		return readChar > 0;
 	}
 
 	/**
@@ -46,7 +42,7 @@ public class StandardReader implements IMessageReadingStrategy {
 //		System.out.println("Reading message");
 	     try {
 //	    	r.reset();
-	    	if (r.ready()) {
+	    	if (this.checkReadCondition()) {
 	    		result = r.readLine();
 	    	}
 //			r.mark(Integer.MAX_VALUE);
