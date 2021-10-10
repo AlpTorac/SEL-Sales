@@ -171,31 +171,31 @@ class ConnectivitySendBufferTest {
 		return startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS);
 	}
 
-//	@Test
-//	void serverSendBufferTest() {
-//		int currentCycles = 0;
-//		IMessage m = new Message(null, null, null);
-//		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles < cyclesToWait) {
-//			this.interaction.messageToServer(m);
-//			currentCycles = this.interaction.getSendBufferSuccessfulCycleCount();
-//			Assertions.assertTrue(this.isClientConnected());
-//			Assertions.assertTrue(this.isServerConnected());
-//		}
-//		Assertions.assertEquals(currentCycles, cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
-//	}
+	@Test
+	void serverSendBufferTest() {
+		int currentCycles = 0;
+		IMessage m = new Message(null, null, null);
+		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles < cyclesToWait) {
+			this.interaction.messageToServer(m);
+			currentCycles = this.interaction.getSendBufferSuccessfulCycleCount();
+			Assertions.assertTrue(this.isClientConnected());
+			Assertions.assertTrue(this.isServerConnected());
+		}
+		Assertions.assertEquals(currentCycles, cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
+	}
 	
-//	@Test
-//	void clientSendBufferTest() {
-//		int currentCycles = 0;
-//		IMessage m = new Message(null, null, null);
-//		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles < cyclesToWait) {
-//			this.interaction.messageToClient(m);
-//			currentCycles = this.interaction.getSendBufferSuccessfulCycleCount();
-//			Assertions.assertTrue(this.isClientConnected());
-//			Assertions.assertTrue(this.isServerConnected());
-//		}
-//		Assertions.assertEquals(currentCycles, cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
-//	}
+	@Test
+	void clientSendBufferTest() {
+		int currentCycles = 0;
+		IMessage m = new Message(null, null, null);
+		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles < cyclesToWait) {
+			this.interaction.messageToClient(m);
+			currentCycles = this.interaction.getSendBufferSuccessfulCycleCount();
+			Assertions.assertTrue(this.isClientConnected());
+			Assertions.assertTrue(this.isServerConnected());
+		}
+		Assertions.assertEquals(currentCycles, cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
+	}
 	
 	@Test
 	void sendBufferCycleTest() {

@@ -18,11 +18,12 @@ public class BasicMessageSender implements IMessageSendingStrategy {
 	public boolean sendMessage(IConnection conn, IMessage message) {
 		DataOutputStream os = new DataOutputStream(conn.getOutputStream());
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));
-//		System.out.println("Wrote: " + messageSerialiser.serialise(message));
 		try {
 			if (!conn.isClosed()) {
+				System.out.println("Writing: " + messageSerialiser.serialise(message));
 				writer.write(messageSerialiser.serialise(message));
 				writer.flush();
+				System.out.println("Wrote: " + messageSerialiser.serialise(message));
 			}
 		} catch (IOException e) {
 //			e.printStackTrace();

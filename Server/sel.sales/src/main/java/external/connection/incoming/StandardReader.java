@@ -43,13 +43,17 @@ public class StandardReader implements IMessageReadingStrategy {
 	@Override
 	public String readMessage() {
 		String result = null;
+//		System.out.println("Reading message");
 	     try {
 //	    	r.reset();
-			result = r.readLine();
+	    	if (r.ready()) {
+	    		result = r.readLine();
+	    	}
 //			r.mark(Integer.MAX_VALUE);
 		} catch (IOException e) {
 //			e.printStackTrace();
 		}
+//		System.out.println("Read message: " + result);
 	    if (result == null || result.length() == 0 || result.charAt(0) == 0) {
 	    	return null;
 	    }
@@ -61,6 +65,7 @@ public class StandardReader implements IMessageReadingStrategy {
 		Collection<String> lines = new ArrayList<String>();
 		String currentMessage = this.readMessage();
 		while (currentMessage != null && currentMessage != "") {
+//			System.out.println("Reading message: " + currentMessage);
 			lines.add(currentMessage);
 			currentMessage = this.readMessage();
 		}

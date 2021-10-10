@@ -118,10 +118,11 @@ public abstract class ConnectionManager implements IConnectionManager {
 	}
 	
 	protected void init() {
+		System.out.println("Connection manager init");
 		this.initPingPong(this.getMinimalPingPongDelay(), this.getResendLimit(), this.getPingPongTimeout());
 		this.initSendBuffer(this.getSendTimeout());
 		this.initMessageReceptionist(this.getSendBuffer(), this.getPingPong());
-		
+		System.out.println("Connection manager init end");
 //		cycleThread = new Thread() {
 //			@Override
 //			public void run() {
@@ -135,16 +136,20 @@ public abstract class ConnectionManager implements IConnectionManager {
 //		
 //		cycleThread.setDaemon(false);
 //		cycleThread.start();
+		System.out.println("Connection manager submitting runnable");
 		this.es.submit(new Runnable() {
 			@Override
 			public void run() {
+				System.out.println("Connection manager runnable being executed");
 				while (!isClosed() && !getConnection().isClosed()) {
+//					System.out.println("Connection manager cycle entered");
 					checkForMessagesToBeRead();
 					checkForMessagesToBeSent();
 					sendPingPongMessage();
 				}
 			}
 		});
+		System.out.println("Connection manager submitted runnable");
 	}
 	
 	protected int getResendLimit() {

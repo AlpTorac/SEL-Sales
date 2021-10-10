@@ -44,11 +44,13 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 	protected Object getConnectionObject() {
 		try {
 			StreamConnection connObject = connNotifier.acceptAndOpen();
-			while (!this.isConnectionAllowed(RemoteDevice.getRemoteDevice(connObject).getBluetoothAddress())) {
+			if (!this.isConnectionAllowed(RemoteDevice.getRemoteDevice(connObject).getBluetoothAddress())) {
 				connObject.close();
 				connObject = connNotifier.acceptAndOpen();
 			}
+			System.out.println("Connection established");
 			this.makeNewConnectionThread();
+			System.out.println("New connection thread created");
 			return connObject;
 		} catch (IOException e) {
 //			e.printStackTrace();
