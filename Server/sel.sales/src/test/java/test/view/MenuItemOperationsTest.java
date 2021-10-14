@@ -22,7 +22,7 @@ import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemIDFactory;
 import test.GeneralTestUtilityClass;
 import test.UIOperationsUtilityClass;
-import test.model.DishMenuItemTestUtilityClass;
+import test.model.dish.DishMenuItemTestUtilityClass;
 import view.IView;
 import view.MainView;
 import view.composites.MenuDesignArea;

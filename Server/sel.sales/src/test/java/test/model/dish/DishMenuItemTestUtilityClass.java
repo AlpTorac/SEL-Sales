@@ -1,4 +1,4 @@
-package test.model;
+package test.model.dish;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

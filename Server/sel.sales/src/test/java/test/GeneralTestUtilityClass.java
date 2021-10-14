@@ -1,6 +1,9 @@
 package test;
 
 import java.lang.reflect.Field;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 import entrypoint.MainApp;
 import view.IView;
@@ -100,5 +103,25 @@ public final class GeneralTestUtilityClass {
 			
 			return new String(bytes);
 		}
+	}
+	/**
+	 * first argument is the element in array, second argument is the element
+	 * that is assumed to be inside the array
+	 */
+	public static <T> boolean arrayContains(T[] array, T element, BiFunction<T,T,Boolean> comparer) {
+		if (array == null) {
+			return false;
+		}
+		for (T t : array) {
+			if (comparer.apply(t, element)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public static <T> boolean arrayContains(T[] array, T element) {
+		return arrayContains(array, element, (t1,t2) -> {
+			return t1.equals(t2);
+		});
 	}
 }

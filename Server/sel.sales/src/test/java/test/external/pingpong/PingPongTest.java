@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
@@ -26,6 +28,7 @@ import external.connection.pingpong.IPingPong;
 import external.connection.pingpong.StandardPingPong;
 import external.connection.timeout.FixTimeoutStrategy;
 import external.connection.timeout.ITimeoutStrategy;
+import external.message.IMessage;
 import external.message.IMessageSerialiser;
 import external.message.Message;
 import external.message.MessageSerialiser;
@@ -35,11 +38,23 @@ import test.external.dummy.DummyClient;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyController;
 import test.external.dummy.DummyPingPong;
+import test.external.message.MessageTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class PingPongTest {
+	private volatile boolean continueCycle = true;
 	private ExecutorService es;
-	private long timeoutTime = 100;
-	private long waitTime = 110;
+	private long timeoutTime = 200;
+	private long waitTime = 220;
+	
+	private int minimumNonBlockingWaitTime = 3000;
+	private int maximumNonBlockingWaitTime = 5000;
+	private int maximumNonBlockingSequenceNumber = 100;
+	private int maximumNonBlockingTextLength = 100;
+	
+	/**
+	 * ONLY FOR NON BLOCKING TEST
+	 */
+	private int sendCount = 0;
 	
 	private DummyConnection conn;
 	private DummyClient client1;
@@ -51,9 +66,13 @@ class PingPongTest {
 	private IPingPong pingPong;
 	private int resendLimit = 10;
 	
-	private long minimalPingPongDelay = 0;
+	private long minimalPingPongDelay = 100;
 	
 	private boolean isConnected;
+	
+	private boolean continueCycle() {
+		return this.continueCycle;
+	}
 	
 	@BeforeEach
 	void prep() {
@@ -63,6 +82,12 @@ class PingPongTest {
 		controller = initController();
 		conn = new DummyConnection(client1Address);
 		es = Executors.newCachedThreadPool();
+		initPingPong();
+		isConnected = true;
+		sendCount = 0;
+	}
+	
+	private void initPingPong() {
 		pingPong = new DummyPingPong(conn, es, minimalPingPongDelay, resendLimit, timeoutTime);
 		pingPong.setDisconnectionListener(new DisconnectionListener(controller) {
 			@Override
@@ -76,10 +101,11 @@ class PingPongTest {
 				}
 			}
 		});
-		isConnected = true;
 	}
+	
 	@AfterEach
 	void cleanUp() {
+		sendCount = 0;
 		try {
 			pingPong.close();
 			conn.close();
@@ -185,4 +211,56 @@ class PingPongTest {
 		System.out.println(cycleStatuses.get(cycleStatuses.size() - 1) + "]");
 	}
 	
+	@Test
+	void nonBlockingReadTest() {
+		resendLimit = 10;
+		waitTime = 110;
+		minimalPingPongDelay = 0;
+		
+		initPingPong();
+		
+		final Object lock = new Object();
+		// Check for messages to read and count how many loops it took
+		Future<Integer> cycleCount = es.submit(() -> {
+			int cc = 0;
+			while (continueCycle()) {
+				if (pingPong.sendPingPongMessage()) {
+					sendCount++;
+				}
+				cc++;
+			}
+			return cc;
+		});
+		
+		// Wait for a random amount of time and break the cycles
+		es.submit(() -> {
+			synchronized (lock) {
+				try {
+					lock.wait(GeneralTestUtilityClass.generateRandomNumber(minimumNonBlockingWaitTime, maximumNonBlockingWaitTime));
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				continueCycle = false;
+			}
+		});
+		
+		// Wait till the runnables stop
+		while (!cycleCount.isDone()) {
+			
+		}
+		
+		int cycleC = 0;
+		try {
+			cycleC = cycleCount.get();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Assertions.assertTrue(cycleC > sendCount, "Cycle Count: " + cycleC + " ,sent message count: " + sendCount);
+		System.out.println("In a total of " + cycleC + " cycles, " + sendCount + " messages were sent");
+//		readMessages.forEach(message -> System.out.println(message));
+	}
 }

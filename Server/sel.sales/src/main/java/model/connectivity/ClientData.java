@@ -7,7 +7,7 @@ public class ClientData implements IClientData {
 	private boolean isAllowedToConnect;
 	private boolean isConnected;
 	
-	ClientData(String clientName, String clientAddress, boolean isAllowedToConnect, boolean isConnected) {
+	public ClientData(String clientName, String clientAddress, boolean isAllowedToConnect, boolean isConnected) {
 		this.clientName = clientName;
 		this.clientAddress = clientAddress;
 		this.isAllowedToConnect = isAllowedToConnect;
@@ -33,5 +33,15 @@ public class ClientData implements IClientData {
 	public boolean getIsConnected() {
 		return this.isConnected;
 	}
-	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof IClientData)) {
+			return false;
+		}
+		IClientData castedO = (IClientData) o;
+		return this.getClientName().equals(castedO.getClientName()) &&
+				this.getClientAddress().equals(castedO.getClientAddress()) &&
+				this.getIsConnected() == castedO.getIsConnected() && 
+				this.getIsAllowedToConnect() == castedO.getIsAllowedToConnect();
+	}
 }

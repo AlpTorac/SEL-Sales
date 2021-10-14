@@ -5,4 +5,5 @@ public interface IClientData {
 	String getClientAddress();
 	boolean getIsAllowedToConnect();
 	boolean getIsConnected();
+	boolean equals(Object o);
 }

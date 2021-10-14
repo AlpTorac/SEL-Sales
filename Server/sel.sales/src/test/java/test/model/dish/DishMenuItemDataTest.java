@@ -1,4 +1,4 @@
-package test.model;
+package test.model.dish;
 
 import static org.junit.jupiter.api.Assertions.*;
 

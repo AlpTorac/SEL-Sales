@@ -73,12 +73,12 @@ public class ConnectivityManager implements IConnectivityManager {
 	
 	@Override
 	public void clientConnected(String clientAddress) {
-//		this.knownClients.get(clientAddress).setConnectionStatus(true);
+		this.knownClients.get(clientAddress).setConnectionStatus(true);
 	}
 
 	@Override
 	public void clientDisconnected(String clientAddress) {
-//		this.knownClients.get(clientAddress).setConnectionStatus(false);
+		this.knownClients.get(clientAddress).setConnectionStatus(false);
 	}
 	
 	@Override
