@@ -1,6 +1,7 @@
 package view.composites;
 
 import model.order.IOrderData;
+import view.repository.IButton;
 import view.repository.IListView;
 import view.repository.IRadioButton;
 import view.repository.IToggleGroup;
@@ -15,6 +16,7 @@ public class OrderTrackingArea extends UIVBoxLayout {
 	private IRadioButton auto;
 	private IRadioButton manual;
 	private IToggleGroup group;
+	private IButton writeButton;
 	
 	private UIComponentFactory fac;
 	
@@ -35,8 +37,15 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		this.addUIComponents(new IUIComponent[] {
 				this.getUnconfirmedOrderList(),
 				this.initConfirmationSettings(),
-				this.getConfirmedOrderList()
+				this.getConfirmedOrderList(),
+				this.writeButton = this.initWriteButton()
 		});
+	}
+	
+	protected IButton initWriteButton() {
+		IButton button = fac.createButton();
+		button.setCaption("Write Orders");
+		return button;
 	}
 	
 	protected IListView<IOrderData> initOrderConfirmationTrackingList() {
@@ -120,5 +129,9 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		for (IOrderData d : allConfirmedOrders) {
 			this.addConfirmedOrder(d);
 		}
+	}
+	
+	public IButton getWriteButton() {
+		return this.writeButton;
 	}
 }

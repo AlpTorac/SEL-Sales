@@ -27,7 +27,8 @@ public class MainApp extends Application {
 	}
 
 	public static void close() {
-		Platform.exit();
+		external.close();
+		view.close();
 	}
 	
 	@Override
@@ -41,7 +42,7 @@ public class MainApp extends Application {
 		// ADD FAKE DATA -------------------------------------------------------
 		// ADD FAKE DATA -------------------------------------------------------
 		
-		model.addMenuItem(controller.getDishMenuItemSerialiser().serialise(
+		model.addMenuItem(model.getDishMenuItemSerialiser().serialise(
 				"aaa",
 				"item1",
 				BigDecimal.valueOf(2.34),
@@ -50,7 +51,7 @@ public class MainApp extends Application {
 				BigDecimal.valueOf(0)
 				));
 		
-		model.addMenuItem(controller.getDishMenuItemSerialiser().serialise(
+		model.addMenuItem(model.getDishMenuItemSerialiser().serialise(
 				"bbb",
 				"item2",
 				BigDecimal.valueOf(1),
@@ -59,7 +60,7 @@ public class MainApp extends Application {
 				BigDecimal.valueOf(0.5)
 				));
 		
-		model.addMenuItem(controller.getDishMenuItemSerialiser().serialise(
+		model.addMenuItem(model.getDishMenuItemSerialiser().serialise(
 				"ccc",
 				"item3",
 				BigDecimal.valueOf(2.5),
@@ -73,5 +74,8 @@ public class MainApp extends Application {
 		model.addUnconfirmedOrder("order3-20201201000000999-1-1:item3,5;");
 		// ADD FAKE DATA -------------------------------------------------------
 		// ADD FAKE DATA -------------------------------------------------------
+		primaryStage.setOnCloseRequest(e -> {
+			close();
+		});
 	}
 }

@@ -10,7 +10,7 @@ public class AddDiscoveredClientHandler extends StatusEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().addDiscoveredClient((String) args[0], (String) args[1]);
+		this.getController().getModel().addDiscoveredClient((String) args[0], (String) args[1]);
 	}
 
 }

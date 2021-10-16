@@ -6,6 +6,16 @@ import model.IModel;
 import model.order.IOrderData;
 import view.DateSettings;
 import view.IDateSettings;
+import view.composites.listeners.AddDishListener;
+import view.composites.listeners.ConfirmAllOrdersListener;
+import view.composites.listeners.ConfirmOrderListener;
+import view.composites.listeners.EditDishListener;
+import view.composites.listeners.OrderInspectionListener;
+import view.composites.listeners.RemoveDishListener;
+import view.composites.listeners.RemoveOrderListener;
+import view.composites.listeners.UnconfirmedOrderListener;
+import view.composites.listeners.WriteDishMenuListener;
+import view.composites.listeners.WriteOrdersListener;
 import view.repository.ILayout;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.ClickEventListener;
@@ -69,6 +79,12 @@ public class MainArea extends UIHBoxLayout {
 		
 		ItemChangeListener unconfirmedOrderListener = new UnconfirmedOrderListener(ota, oia);
 		ota.getUnconfirmedOrderList().addItemChangeListener(unconfirmedOrderListener);
+		
+		ClickEventListener writeOrdersListener = new WriteOrdersListener(controller);
+		ota.getWriteButton().addClickListener(writeOrdersListener);
+		
+		ClickEventListener writeDishMenuListener = new WriteDishMenuListener(controller);
+		mda.getWriteButton().addClickListener(writeDishMenuListener);
 	}
 	
 	public void refreshMenu() {

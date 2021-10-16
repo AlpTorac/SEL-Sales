@@ -10,7 +10,7 @@ public class AllowKnownClientHandler extends StatusEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().allowKnownClient((String) args[0]);
+		this.getController().getModel().allowKnownClient((String) args[0]);
 	}
 
 }

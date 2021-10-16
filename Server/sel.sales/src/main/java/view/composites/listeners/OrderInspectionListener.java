@@ -1,6 +1,8 @@
-package view.composites;
+package view.composites.listeners;
 
 import model.order.IOrderData;
+import view.composites.OrderInspectionArea;
+import view.composites.OrderTrackingArea;
 import view.repository.uiwrapper.ClickEventListener;
 
 public class OrderInspectionListener extends ClickEventListener {

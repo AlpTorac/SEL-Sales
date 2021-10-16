@@ -71,14 +71,14 @@ class OrderFileTest {
 		IOrderData[] ds = model.getAllUnconfirmedOrders();
 		IOrderData d1 = ds[0];
 		String s1 = fos.serialiseOrderData(d1);
-		Assertions.assertEquals(s1, "order1,20200809,112233" +","+i1id+","+o1a1.toPlainString()+".0,"+"0,0,0;\n");
+		Assertions.assertEquals(s1, "order1,20200809112233343" +","+i1id+","+o1a1.toPlainString()+".0,"+"0,0,0;\n");
 		IOrderData d2 = ds[1];
 		String s2 = fos.serialiseOrderData(d2);
-		Assertions.assertEquals(s2, "order2,20200809,235959" +","+i1id+","+o2a1.toPlainString()+".0,"+"1,0,0;\n"
-		+"order2,20200809,235959" +","+i2id+","+o2a2.toPlainString()+".0,"+"1,0,1;\n");
+		Assertions.assertEquals(s2, "order2,20200809235959111" +","+i1id+","+o2a1.toPlainString()+".0,"+"1,0,0;\n"
+		+"order2,20200809235959111" +","+i2id+","+o2a2.toPlainString()+".0,"+"1,0,1;\n");
 		IOrderData d3 = ds[2];
 		String s3 = fos.serialiseOrderData(d3);
-		Assertions.assertEquals(s3, "order3,20200809,000000" +","+i3id+","+o3a3.toPlainString()+".0,"+"1,1,1;\n");
+		Assertions.assertEquals(s3, "order3,20200809000000222" +","+i3id+","+o3a3.toPlainString()+".0,"+"1,1,1;\n");
 	}
 	
 	@Test
@@ -88,36 +88,42 @@ class OrderFileTest {
 		model.confirmOrder("order3-20200809000000222-1-1:item3,"+o3a3.toPlainString()+";");
 		Assertions.assertEquals(model.getAllConfirmedOrders().length, 3);
 		Assertions.assertTrue(model.writeOrders());
-		File f = new File("src/main/resources/orders/file.txt");
+		File f = new File("src/main/resources/orders/orders.txt");
 		try {
 			BufferedReader r = null;
 			try {
 				r = new BufferedReader(new FileReader(f));
 			} catch (FileNotFoundException e) {
-				f.delete();
+				this.deleteFile(f);
 				fail();
 			}
 			String[] ls = r.lines().toArray(String[]::new);
-			Assertions.assertEquals(ls.length, 4);
+			if (ls.length != 4) {
+				this.deleteFile(f);
+				fail();
+			}
 			ArrayList<String> lCol = new ArrayList<String>();
 			for (String l : ls) {
 				lCol.add(l);
 			}
-			Assertions.assertTrue(lCol.contains("order1,20200809,112233,item1,2.0,0,0,0;"));
-			Assertions.assertTrue(lCol.contains("order2,20200809,235959,item1,2.0,1,0,0;"));
-			Assertions.assertTrue(lCol.contains("order2,20200809,235959,item2,3.0,1,0,1;"));
-			Assertions.assertTrue(lCol.contains("order3,20200809,000000,item3,5.0,1,1,1;"));
+			Assertions.assertTrue(lCol.contains("order1,20200809112233343,item1,2.0,0,0,0;"));
+			Assertions.assertTrue(lCol.contains("order2,20200809235959111,item1,2.0,1,0,0;"));
+			Assertions.assertTrue(lCol.contains("order2,20200809235959111,item2,3.0,1,0,1;"));
+			Assertions.assertTrue(lCol.contains("order3,20200809000000222,item3,5.0,1,1,1;"));
 			try {
 				r.close();
 			} catch (IOException e) {
-				f.delete();
+				this.deleteFile(f);
 				fail();
 			}
 		} catch (Exception e) {
-			f.delete();
+			this.deleteFile(f);
 			fail();
 		}
-		f.delete();
+		this.deleteFile(f);
 	}
-	
+	private void deleteFile(File f) {
+		f.delete();
+		f.deleteOnExit();
+	}
 }

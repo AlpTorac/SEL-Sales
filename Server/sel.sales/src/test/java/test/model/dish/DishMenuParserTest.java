@@ -26,9 +26,9 @@ class DishMenuParserTest {
 
 	private IDishMenuFormat format = new IntraAppDishMenuFormat();
 	private IDishMenuItemDataFactory itemDataFac = new DishMenuItemDataFactory();
-	private IDishMenuDataFactory dataFac = new DishMenuDataFactory();
+	private IDishMenuDataFactory dataFac = new DishMenuDataFactory(itemDataFac);
 	
-	private IDishMenuParser parser = new DishMenuParser(format, itemDataFac, dataFac);
+	private IDishMenuParser parser = new DishMenuParser(format, dataFac);
 	private IDishMenuItemSerialiser serialiser = new ExternalDishMenuItemSerialiser();
 	
 	private String i1Name = "aaa";

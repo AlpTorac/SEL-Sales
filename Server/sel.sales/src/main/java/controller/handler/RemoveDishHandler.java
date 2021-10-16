@@ -10,6 +10,6 @@ public class RemoveDishHandler extends BusinessEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().removeMenuItem((String) args[0]);
+		this.getController().getModel().removeMenuItem((String) args[0]);
 	}
 }

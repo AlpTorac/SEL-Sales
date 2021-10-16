@@ -9,7 +9,7 @@ public abstract class DishMenuDeserialiser implements IDishMenuItemDeserialiser 
 	
 	protected IDishMenuFormat format;
 	protected IDishMenuDataFactory menuDataFac;
-	protected IDishMenuItemDataFactory menuItemfDataFac;
+	protected IDishMenuItemDataFactory menuItemDataFac;
 	
 	public DishMenuDeserialiser() {
 		

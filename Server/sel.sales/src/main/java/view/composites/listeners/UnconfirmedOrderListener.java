@@ -1,7 +1,9 @@
-package view.composites;
+package view.composites.listeners;
 
 import java.util.Collection;
 
+import view.composites.OrderInspectionArea;
+import view.composites.OrderTrackingArea;
 import view.repository.uiwrapper.ItemChangeListener;
 
 public class UnconfirmedOrderListener extends ItemChangeListener {

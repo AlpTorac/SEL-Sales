@@ -3,26 +3,34 @@ package model.filewriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 
 public abstract class FileAccess implements IFileAccess {
-	private static String defaultFileName = "file";
 	private File activeFile;
 	private String folderAddress;
 	
 	
 	public FileAccess(String address) {
 		this.folderAddress = address;
-		this.activeFile = new File(address+this.getDefaultFileName()+this.getExtension());
-		if (!this.activeFile.exists()) {
+		this.adaptActiveFile();
+	}
+	protected void adaptActiveFile() {
+		if (this.activeFile == null || !this.activeFile.exists()) {
 			this.activeFile = this.createFile(this.getDefaultFileName());
-			this.setActiveFile(activeFile);
+		} else {
+			this.activeFile = new File(this.getFolderAddress()+File.separator+this.getDefaultFileName()+this.getExtension());	
 		}
+		this.setActiveFile(activeFile);
 	}
-	public String getDefaultFileName() {
-		return defaultFileName;
-	}
+	protected abstract String getDefaultFileName();
+	
 	protected File createFile(String name) {
 		File f = new File(this.getFolderAddress() + File.separator + name + this.getExtension());
+		try {
+			f.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return f;
 	}
 	protected String getExtension() {
@@ -39,6 +47,19 @@ public abstract class FileAccess implements IFileAccess {
 		}
 		return true;
 	}
+	public String readFile() {
+		String result = "";
+		RandomAccessFile w = this.getFileAccessObject();
+		Byte read = 0;
+		try {
+			while ((read = w.readByte()) > -1) {
+				result += new String(new byte[] {read});
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 	protected RandomAccessFile getFileAccessObject() {
 		return this.getFileAccessObjectConstructor(this.getActiveFile());
 	}
@@ -54,6 +75,7 @@ public abstract class FileAccess implements IFileAccess {
 	
 	public void setFolderAddress(String address) {
 		this.folderAddress = address;
+		this.adaptActiveFile();
 	}
 
 	public String getFolderAddress() {

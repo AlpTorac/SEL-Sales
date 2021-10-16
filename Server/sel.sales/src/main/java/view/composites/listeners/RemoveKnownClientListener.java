@@ -1,4 +1,4 @@
-package view.composites;
+package view.composites.listeners;
 
 import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
@@ -8,14 +8,14 @@ import model.connectivity.IClientData;
 import view.repository.ITable;
 import view.repository.uiwrapper.ClickEventListener;
 
-public class AddKnownClientListener extends ClickEventListener implements IApplicationEventShooter {
+public class RemoveKnownClientListener extends ClickEventListener implements IApplicationEventShooter {
 
-	private ITable<IClientData> discoveredClients;
+	private ITable<IClientData> knownClients;
 	private IController controller;
 	
-	AddKnownClientListener(IController controller, ITable<IClientData> discoveredClients) {
+	public RemoveKnownClientListener(IController controller, ITable<IClientData> knownClients) {
 		this.controller = controller;
-		this.discoveredClients = discoveredClients;
+		this.knownClients = knownClients;
 	}
 	
 	public void clickAction() {
@@ -24,11 +24,11 @@ public class AddKnownClientListener extends ClickEventListener implements IAppli
 	
 	@Override
 	public Object[] getArgs() {
-		return new Object[] {this.discoveredClients.getSelectedElement().getClientAddress()};
+		return new Object[] {this.knownClients.getSelectedElement().getClientAddress()};
 	}
 
 	@Override
 	public IApplicationEvent getApplicationEvent() {
-		return StatusEvent.KNOWN_CLIENT_ADDED;
+		return StatusEvent.KNOWN_CLIENT_REMOVED;
 	}
 }

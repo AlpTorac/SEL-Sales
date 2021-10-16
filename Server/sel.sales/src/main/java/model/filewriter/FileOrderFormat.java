@@ -9,8 +9,8 @@ public class FileOrderFormat implements IOrderFormat {
 	private String orderItemDataEnd = ",";
 	private String orderDataFieldSeperator = ",";
 	private String orderDataFieldEnd = ";\n";
-	
-	private String dateFormat = "yyyyMMdd"+this.getOrderDataFieldSeperator()+"HHmmss";
+	// private String dateFormat = "yyyyMMdd"+this.getOrderDataFieldSeperator()+"HHmmss";
+	private String dateFormat = "yyyyMMddHHmmssSSS";
 	
 	@Override
 	public DateTimeFormatter getDateFormatter() {

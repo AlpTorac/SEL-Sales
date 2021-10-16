@@ -45,4 +45,10 @@ public abstract class UIComponentFactory implements IUIComponentFactory {
 	
 	@Override
 	public abstract UITabPane createTabPane();
+	
+	@Override
+	public abstract FileChooserWrapper createFileChooser();
+	
+	@Override
+	public abstract DirectoryChooserWrapper createDirectoryChooser();
 }

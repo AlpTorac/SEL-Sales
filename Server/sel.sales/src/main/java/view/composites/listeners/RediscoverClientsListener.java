@@ -1,4 +1,4 @@
-package view.composites;
+package view.composites.listeners;
 
 import controller.BusinessEvent;
 import controller.IApplicationEvent;
@@ -10,7 +10,7 @@ public class RediscoverClientsListener extends ClickEventListener implements IAp
 
 	private IController controller;
 	
-	RediscoverClientsListener(IController controller) {
+	public RediscoverClientsListener(IController controller) {
 		this.controller = controller;
 	}
 	

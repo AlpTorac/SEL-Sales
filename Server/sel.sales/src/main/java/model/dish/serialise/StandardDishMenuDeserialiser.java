@@ -8,12 +8,11 @@ public class StandardDishMenuDeserialiser extends DishMenuDeserialiser {
 		super();
 		
 		this.format = new IntraAppDishMenuFormat();
-		this.menuItemfDataFac = new DishMenuItemDataFactory();
-		this.menuDataFac = new DishMenuDataFactory();
+		this.menuItemDataFac = new DishMenuItemDataFactory();
+		this.menuDataFac = new DishMenuDataFactory(menuItemDataFac);
 		
 		this.menuParser = new DishMenuParser(
 				this.format,
-				this.menuItemfDataFac,
 				this.menuDataFac);
 	}
 }

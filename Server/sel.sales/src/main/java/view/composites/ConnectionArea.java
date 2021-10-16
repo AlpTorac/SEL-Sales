@@ -2,6 +2,11 @@ package view.composites;
 
 import controller.IController;
 import model.connectivity.IClientData;
+import view.composites.listeners.AddKnownClientListener;
+import view.composites.listeners.ConnectionAllowedListener;
+import view.composites.listeners.ConnectionBlockedListener;
+import view.composites.listeners.RediscoverClientsListener;
+import view.composites.listeners.RemoveKnownClientListener;
 import view.repository.IButton;
 import view.repository.IConnectionDetailsTable;
 import view.repository.ITable;

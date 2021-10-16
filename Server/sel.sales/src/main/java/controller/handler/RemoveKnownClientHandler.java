@@ -12,7 +12,7 @@ public class RemoveKnownClientHandler extends StatusEventHandler {
 	public void handleApplicationEvent(Object[] args) {
 		String clientAddress = (String) args[0];
 		if (clientAddress != null) {
-			this.getController().removeKnownClient(clientAddress);
+			this.getController().getModel().removeKnownClient(clientAddress);
 		}
 	}
 

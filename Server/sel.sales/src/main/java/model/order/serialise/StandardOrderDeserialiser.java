@@ -1,5 +1,7 @@
 package model.order.serialise;
 
+import model.dish.DishMenuItemDataFactory;
+import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemFinder;
 import model.order.IOrderDataFactory;
 import model.order.IOrderItemDataFactory;
@@ -13,6 +15,7 @@ public class StandardOrderDeserialiser extends OrderDeserialiser {
 		IOrderItemDataFactory orderItemDataFac = new OrderItemDataFactory();
 		IOrderDataFactory orderDataFac = new OrderDataFactory(orderItemDataFac);
 		IOrderFormat orderDateParser = new IntraAppOrderFormat();
+		IDishMenuItemDataFactory menuItemDataFac = new DishMenuItemDataFactory();
 		
 		this.finder = finder;
 		this.orderDataFac = orderDataFac;
@@ -23,6 +26,7 @@ public class StandardOrderDeserialiser extends OrderDeserialiser {
 				this.finder,
 				this.orderDataFac,
 				this.orderItemDataFac,
-				this.orderFormat);
+				this.orderFormat,
+				menuItemDataFac);
 	}
 }

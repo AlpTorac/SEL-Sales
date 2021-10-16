@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -25,6 +26,7 @@ import view.MainView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXListView;
 import view.repository.uifx.FXUIComponentFactory;
+
 @Execution(value = ExecutionMode.SAME_THREAD)
 class ParallelDataContainerAccessTest extends ApplicationTest {
 	private static IModel model;
@@ -82,7 +84,7 @@ class ParallelDataContainerAccessTest extends ApplicationTest {
 		final Object lock = new Object();
 		synchronized (lock) {
 			try {
-				lock.wait(3000);
+				lock.wait(500);
 				lock.notifyAll();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -90,6 +92,7 @@ class ParallelDataContainerAccessTest extends ApplicationTest {
 			}
 		}
 		es.shutdown();
+		Platform.runLater(() -> {view.hide();});
 	}
 
 }

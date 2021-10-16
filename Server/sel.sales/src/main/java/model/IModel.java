@@ -46,7 +46,12 @@ public interface IModel {
 		this.removeAllUnconfirmedOrders();
 		this.removeAllConfirmedOrders();
 	}
+	void removeOrder(String id);
+	
 	boolean writeOrders();
 	boolean writeDishMenu();
 	void confirmAllOrders();
+	
+	void setOrderFolderAddress(String address);
+	void setDishMenuFolderAddress(String address);
 }

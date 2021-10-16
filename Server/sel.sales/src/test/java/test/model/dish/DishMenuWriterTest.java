@@ -90,18 +90,18 @@ class DishMenuWriterTest {
 		IDishMenuItemData[] ds = menuData.getAllDishMenuItems();
 		Assertions.assertEquals(ds.length, 3);
 		Assertions.assertTrue(model.writeDishMenu());
-		File f = new File("src/main/resources/dishMenuItems/file.txt");
+		File f = new File("src/main/resources/dishMenu/menu.txt");
 		try {
 			BufferedReader r = null;
 			try {
 				r = new BufferedReader(new FileReader(f));
 			} catch (FileNotFoundException e) {
-				f.delete();
+				this.deleteFile(f);
 				fail();
 			}
 			String[] ls = r.lines().toArray(String[]::new);
 			if (ls.length != 3) {
-				f.delete();
+				this.deleteFile(f);
 				fail();
 			}
 			ArrayList<String> lCol = new ArrayList<String>();
@@ -114,14 +114,17 @@ class DishMenuWriterTest {
 			try {
 				r.close();
 			} catch (IOException e) {
-				f.delete();
+				this.deleteFile(f);
 				fail();
 			}
 		} catch (Exception e) {
-			f.delete();
+			this.deleteFile(f);
 			fail();
 		}
-		f.delete();
+		this.deleteFile(f);
 	}
-	
+	private void deleteFile(File f) {
+		f.delete();
+		f.deleteOnExit();
+	}
 }

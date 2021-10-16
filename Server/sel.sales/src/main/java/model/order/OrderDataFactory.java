@@ -28,4 +28,9 @@ public class OrderDataFactory implements IOrderDataFactory {
 		return data;
 	}
 
+	@Override
+	public IOrderItemDataFactory getItemDataFac() {
+		return this.orderItemDatafac;
+	}
+
 }

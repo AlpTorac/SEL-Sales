@@ -1,9 +1,11 @@
 package test.external.dummy;
 
+import controller.BusinessEvent;
 import controller.IApplicationEvent;
 import controller.IController;
 import controller.StatusEvent;
 import controller.handler.IApplicationEventHandler;
+import model.IModel;
 import model.dish.IDishMenuItemData;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.serialise.IOrderSerialiser;
@@ -20,55 +22,21 @@ public class DummyController implements IController {
 		if (event == StatusEvent.CLIENT_DISCONNECTED) {
 			this.clientDisconnected((String) args[0]);
 		}
+		if (event == BusinessEvent.ADD_ORDER) {
+			this.addOrder(null);
+		}
 	}
-	public void addMenuItem(String serialisedItemData) {}
-	public void editMenuItem(String serialisedNewItemData) {}
-	public void addOrder(String serialisedOrder) {}
-	public void removeOrder(String id) {}
-	public void removeMenuItem(String id) {}
-	public void confirmOrder(String serialisedConfirmedOrderData) {}
-	public IOrderSerialiser getOrderSerialiser() {return null;}
-	public IDishMenuItemSerialiser getDishMenuItemSerialiser() {return null;}
-	public IDishMenuItemData getItem(String id) {return null;}
-	public void addKnownClient(String clientAddress) {}
-	@Override
-	public void addDiscoveredClient(String clientName, String clientAddress) {
-		// TODO Auto-generated method stub
+	public void clientConnected(String arg) {
+		
+	}
+	public void clientDisconnected(String arg) {
 		
 	}
 	@Override
-	public void removeKnownClient(String clientAddress) {
-		// TODO Auto-generated method stub
-		
+	public IModel getModel() {
+		return null;
 	}
-	@Override
-	public void allowKnownClient(String clientAddress) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void blockKnownClient(String clientAddress) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void clientConnected(String clientAddress) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void clientDisconnected(String clientAddress) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void requestClientRediscovery() {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void confirmAllOrders() {
-		// TODO Auto-generated method stub
+	public void addOrder(String serialisedOrder) {
 		
 	}
 }

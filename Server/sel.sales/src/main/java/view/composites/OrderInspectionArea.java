@@ -125,21 +125,53 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		});
 	}
 	
-	protected IGridLayout initDisplayLayout() {
-		IGridLayout layout = this.fac.createGridLayout();
+	protected IVBoxLayout initDisplayLayout() {
+		IVBoxLayout layout = this.fac.createVBoxLayout();
 		
 		this.orderIDLabel = this.initOrderIDDisplay();
 		this.orderTimeInDayLabel = this.initOrderTimeInDayDisplay();
 		this.orderDateLabel = this.initOrderDateDisplay();
 		this.orderDetailsDisplay = this.initOrderDetailsTable();
 		
-		layout.addUIComponent(this.getOrderIDLabel(), 			0, 1, 2, 1);
-		layout.addUIComponent(this.getOrderTimeInDayLabel(), 	2, 0, 3, 1);
-		layout.addUIComponent(this.getOrderDateLabel(), 			2, 1, 3, 1);
-		layout.addUIComponent(this.getOrderDetailsDisplay(), 		0, 2, 7, 1);
-		layout.addUIComponent(this.initPaymentMethodSelection(), 	0, 3, 3, 3);
-		layout.addUIComponent(this.initPlaceSelection(), 			0, 6, 3, 3);
-		layout.addUIComponent(this.initGrossDiscNetSum(), 			3, 3, 3, 5);
+//		layout.addUIComponent(this.getOrderIDLabel(), 			0, 1, 2, 1);
+//		layout.addUIComponent(this.getOrderTimeInDayLabel(), 	2, 0, 3, 1);
+//		layout.addUIComponent(this.getOrderDateLabel(), 			2, 1, 3, 1);
+//		layout.addUIComponent(this.getOrderDetailsDisplay(), 		0, 2, 7, 1);
+//		layout.addUIComponent(this.initPaymentMethodSelection(), 	0, 3, 3, 3);
+//		layout.addUIComponent(this.initPlaceSelection(), 			0, 6, 3, 3);
+//		layout.addUIComponent(this.initGrossDiscNetSum(), 			3, 3, 3, 5);
+		
+		IVBoxLayout orderDateInfoLayout = fac.createVBoxLayout();
+		orderDateInfoLayout.addUIComponents(new IUIComponent[] {
+				this.getOrderTimeInDayLabel(),
+				this.getOrderDateLabel()
+		});
+		
+		IHBoxLayout orderInfoLayout = fac.createHBoxLayout();
+		orderInfoLayout.setSpacing(30);
+		orderInfoLayout.addUIComponents(new IUIComponent[] {
+				this.getOrderIDLabel(),
+				orderDateInfoLayout
+		});
+		
+		IVBoxLayout orderPaymentAndPlaceLayout = fac.createVBoxLayout();
+		orderPaymentAndPlaceLayout.addUIComponents(new IUIComponent[] {
+				this.initPaymentMethodSelection(),
+				this.initPlaceSelection()
+		});
+		
+		IHBoxLayout orderSummaryLayout = fac.createHBoxLayout();
+		orderSummaryLayout.setSpacing(10);
+		orderSummaryLayout.addUIComponents(new IUIComponent[] {
+				orderPaymentAndPlaceLayout,
+				this.initGrossDiscNetSum()
+		});
+		
+		layout.addUIComponents(new IUIComponent[] {
+				orderInfoLayout,
+				this.getOrderDetailsDisplay(),
+				orderSummaryLayout
+		});
 		
 		return layout;
 	}

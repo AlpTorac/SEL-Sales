@@ -73,4 +73,6 @@ public interface IUIComponentFactory {
 	public ILabel createLabel();
 	public ITabPane createTabPane();
 	public IUILibraryHelper createUILibraryHelper();
+	public IFileChooser createFileChooser();
+	public IDirectoryChooser createDirectoryChooser();
 }

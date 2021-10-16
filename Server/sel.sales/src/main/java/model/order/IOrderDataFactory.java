@@ -11,4 +11,5 @@ public interface IOrderDataFactory {
 	}
 	IOrderData constructData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, String id);
 	IOrderData orderToData(IOrder order);
+	IOrderItemDataFactory getItemDataFac();
 }

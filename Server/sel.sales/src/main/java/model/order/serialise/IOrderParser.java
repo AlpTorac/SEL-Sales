@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import model.dish.IDishMenuItemData;
+import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemFinder;
 import model.order.IOrderData;
 import model.order.IOrderDataFactory;
@@ -84,7 +85,7 @@ public interface IOrderParser {
 		String menuItemID = 	orderItemDataParts[0];
 		BigDecimal amount = 			this.parseAmount(orderItemDataParts[1]);
 		
-		IDishMenuItemData menuItemData = this.getFinder().getDish(menuItemID);
+		IDishMenuItemData menuItemData = this.getDishMenuItemDataFactory().menuItemToData(this.getFinder().getDish(menuItemID));
 		
 		return this.getOrderItemDataFactory().constructData(menuItemData, amount);
 	}
@@ -116,6 +117,7 @@ public interface IOrderParser {
 		}
 	}
 	
+	IDishMenuItemDataFactory getDishMenuItemDataFactory();
 	IDishMenuItemFinder getFinder();
 	IOrderDataFactory getOrderDataFactory();
 	IOrderItemDataFactory getOrderItemDataFactory();

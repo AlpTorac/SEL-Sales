@@ -18,4 +18,10 @@ public interface IRootComponent extends IUIComponent, ISizable {
 	default void close() {
 		((IRootComponent) this.getComponent()).close();
 	}
+	default void terminateOnClose() {
+		((IRootComponent) this.getComponent()).terminateOnClose();
+	}
+	default void closeArtificially() {
+		((IRootComponent) this.getComponent()).closeArtificially();
+	}
 }

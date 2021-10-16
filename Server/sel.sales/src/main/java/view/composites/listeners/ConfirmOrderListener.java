@@ -1,4 +1,4 @@
-package view.composites;
+package view.composites.listeners;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -9,6 +9,7 @@ import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
 import controller.IController;
 import model.order.IOrderItemData;
+import view.composites.OrderInspectionArea;
 import view.repository.HasText;
 import view.repository.IRadioButton;
 import view.repository.ITable;
@@ -54,7 +55,7 @@ public class ConfirmOrderListener extends ClickEventListener implements IApplica
 		
 		LocalDateTime date = this.oia.getDisplayedDate();
 		
-		String data = this.controller.getOrderSerialiser().serialiseOrderData(orderItemDataCollection.toArray(IOrderItemData[]::new), date, isCash, isHere, orderDiscount, orderID);
+		String data = this.controller.getModel().getOrderSerialiser().serialiseOrderData(orderItemDataCollection.toArray(IOrderItemData[]::new), date, isCash, isHere, orderDiscount, orderID);
 		
 		this.oia.clearOrderDisplay();
 		

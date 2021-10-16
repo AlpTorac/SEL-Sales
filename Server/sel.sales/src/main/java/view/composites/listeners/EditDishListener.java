@@ -1,4 +1,4 @@
-package view.composites;
+package view.composites.listeners;
 
 import java.math.BigDecimal;
 
@@ -6,6 +6,7 @@ import controller.BusinessEvent;
 import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
 import controller.IController;
+import view.composites.MenuDesignArea;
 import view.repository.HasText;
 import view.repository.uiwrapper.ClickEventListener;
 
@@ -38,7 +39,7 @@ public class EditDishListener extends ClickEventListener implements IApplication
 			discount = BigDecimal.valueOf(Double.valueOf(discountAsText).doubleValue());
 		}
 		
-		String data = this.controller.getDishMenuItemSerialiser().serialise(
+		String data = this.controller.getModel().getDishMenuItemSerialiser().serialise(
 				this.getDishName().getText(),
 				this.getDishID().getText(),
 				BigDecimal.valueOf(Double.valueOf(this.getPortion().getText()).doubleValue()),

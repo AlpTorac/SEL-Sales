@@ -5,7 +5,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 
 public interface IDishMenuItemData extends Comparable<IDishMenuItemData> {
-	default IDishMenuItemData getAssociatedItem(IDishMenuItemFinder finder) {
+	default IDishMenuItem getAssociatedItem(IDishMenuItemFinder finder) {
 		return finder.getDish(this.getId());
 	}
 	

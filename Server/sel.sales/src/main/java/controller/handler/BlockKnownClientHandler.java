@@ -10,7 +10,7 @@ public class BlockKnownClientHandler extends StatusEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().blockKnownClient((String) args[0]);
+		this.getController().getModel().blockKnownClient((String) args[0]);
 	}
 
 }

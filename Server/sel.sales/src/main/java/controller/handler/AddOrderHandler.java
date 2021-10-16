@@ -10,7 +10,7 @@ public class AddOrderHandler extends BusinessEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().addOrder((String) args[0]);
+		this.getController().getModel().addUnconfirmedOrder((String) args[0]);
 	}
 
 }

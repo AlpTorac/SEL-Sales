@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -14,6 +15,7 @@ import org.testfx.framework.junit5.ApplicationTest;
 
 import controller.IController;
 import controller.MainController;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import model.IModel;
 import model.Model;
@@ -26,6 +28,7 @@ import view.IView;
 import view.MainView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
+
 @Execution(value = ExecutionMode.SAME_THREAD)
 class OrderInspectionAreaTest extends ApplicationTest {
 	private long waitTime = 100;
@@ -55,6 +58,8 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	private BigDecimal i3ProCost = BigDecimal.valueOf(3.5);
 	private BigDecimal i3Disc = BigDecimal.valueOf(1);
 	private String i3id = "item3";
+	
+	private boolean autoDone = false;
 	
 	@AfterEach
 	void prep() {
@@ -222,16 +227,25 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
 		Assertions.assertEquals(confirmedOrders.length, 0);
 		
+		GeneralTestUtilityClass.performWait(waitTime);
+		
 		model.addUnconfirmedOrder("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
 		model.addUnconfirmedOrder("order6-20200813000000183-1-1:item3,5;item3,4;");
 		model.addUnconfirmedOrder("order7-20200909112233937-0-0:item1,2;item2,5;");
-
-		GeneralTestUtilityClass.performWait(waitTime);
 		
-		confirmedOrders = model.getAllConfirmedOrders();
-		Assertions.assertEquals(confirmedOrders.length, 3);
+		Platform.runLater(() -> {
+			autoDone = true;
+		});
 		
-		unconfirmedOrders = model.getAllUnconfirmedOrders();
-		Assertions.assertEquals(unconfirmedOrders.length, 0);
+		while (!autoDone) {
+			
+		}
+		
+		IOrderData[] co = model.getAllConfirmedOrders();
+		Assertions.assertEquals(co.length, 3);
+		
+		IOrderData[] uo = model.getAllUnconfirmedOrders();
+		Assertions.assertEquals(uo.length, 0);
+		
 	}
 }

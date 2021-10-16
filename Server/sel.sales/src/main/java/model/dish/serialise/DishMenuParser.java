@@ -5,12 +5,10 @@ import model.dish.IDishMenuItemDataFactory;
 
 public class DishMenuParser implements IDishMenuParser {
 	private IDishMenuFormat format;
-	private IDishMenuItemDataFactory menuItemDataFac;
 	private IDishMenuDataFactory menuDataFac;
 	
-	public DishMenuParser(IDishMenuFormat format, IDishMenuItemDataFactory menuItemDataFac, IDishMenuDataFactory menuDataFac) {
+	public DishMenuParser(IDishMenuFormat format, IDishMenuDataFactory menuDataFac) {
 		this.format = format;
-		this.menuItemDataFac = menuItemDataFac;
 		this.menuDataFac = menuDataFac;
 	}
 	
@@ -21,7 +19,7 @@ public class DishMenuParser implements IDishMenuParser {
 
 	@Override
 	public IDishMenuItemDataFactory getDishMenuItemDataFactory() {
-		return this.menuItemDataFac;
+		return this.menuDataFac.getItemDataFac();
 	}
 
 	@Override

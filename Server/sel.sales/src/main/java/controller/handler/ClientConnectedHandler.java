@@ -11,7 +11,7 @@ public class ClientConnectedHandler extends StatusEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().clientConnected((String) args[0]);
+		this.getController().getModel().clientConnected((String) args[0]);
 	}
 
 }

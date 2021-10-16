@@ -1,9 +1,10 @@
-package view.composites;
+package view.composites.listeners;
 
 import controller.BusinessEvent;
 import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
 import controller.IController;
+import view.composites.MenuDesignArea;
 import view.repository.HasText;
 import view.repository.uiwrapper.ClickEventListener;
 

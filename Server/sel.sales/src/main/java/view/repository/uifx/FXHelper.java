@@ -8,4 +8,8 @@ public class FXHelper implements IUILibraryHelper {
 	public void queueAsynchroneRunnable(Runnable runnable) {
 		Platform.runLater(runnable);
 	}
+	@Override
+	public void setImplicitExit(boolean exitOnClose) {
+		Platform.setImplicitExit(exitOnClose);
+	}
 }

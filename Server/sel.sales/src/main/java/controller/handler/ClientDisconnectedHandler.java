@@ -11,7 +11,7 @@ public class ClientDisconnectedHandler extends StatusEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().clientDisconnected((String) args[0]);
+		this.getController().getModel().clientDisconnected((String) args[0]);
 	}
 
 }

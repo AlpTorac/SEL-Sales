@@ -12,7 +12,7 @@ public class AddKnownClientHandler extends StatusEventHandler {
 	public void handleApplicationEvent(Object[] args) {
 		String clientAddress = (String) args[0];
 		if (clientAddress != null) {
-			this.getController().addKnownClient(clientAddress);
+			this.getController().getModel().addKnownClient(clientAddress);
 		}
 	}
 }

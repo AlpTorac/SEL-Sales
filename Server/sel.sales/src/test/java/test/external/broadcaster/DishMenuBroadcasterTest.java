@@ -125,8 +125,8 @@ class DishMenuBroadcasterTest {
 	
 	private IController initController() {
 		DummyController controller = new DummyController() {
-			@Override
-			public void addOrder(String serialisedOrder) {isOrderReceivedByController = true;}
+//			@Override
+//			public void addOrder(String serialisedOrder) {isOrderReceivedByController = true;}
 		};
 		return controller;
 	}

@@ -3,6 +3,8 @@ package view.repository.uifx;
 import javafx.scene.layout.Pane;
 import view.repository.IUIComponent;
 import view.repository.IUILibraryHelper;
+import view.repository.uiwrapper.DirectoryChooserWrapper;
+import view.repository.uiwrapper.FileChooserWrapper;
 import view.repository.uiwrapper.ToggleGroupWrapper;
 import view.repository.uiwrapper.UIButton;
 import view.repository.uiwrapper.UICheckBox;
@@ -114,5 +116,19 @@ public class FXUIComponentFactory extends UIComponentFactory {
 	@Override
 	public IUILibraryHelper createUILibraryHelper() {
 		return new FXHelper();
+	}
+	
+	@Override
+	public FileChooserWrapper createFileChooser() {
+		FXFileChooser wrapee = new FXFileChooser();
+		FileChooserWrapper wrapper = new FileChooserWrapper(wrapee);
+		return wrapper;
+	}
+	
+	@Override
+	public DirectoryChooserWrapper createDirectoryChooser() {
+		FXDirectoryChooser wrapee = new FXDirectoryChooser();
+		DirectoryChooserWrapper wrapper = new DirectoryChooserWrapper(wrapee);
+		return wrapper;
 	}
 }

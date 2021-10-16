@@ -1,9 +1,7 @@
 package external.handler;
 
-import java.util.concurrent.ExecutorService;
-
+import controller.BusinessEvent;
 import controller.IController;
-import external.acknowledgement.IAcknowledger;
 import external.message.IMessage;
 import external.message.IMessageParser;
 import external.message.MessageContext;
@@ -19,7 +17,7 @@ public class OrderHandler extends MessageHandler {
 	@Override
 	public boolean performNeededAction(IMessage message) {
 //		System.out.println("order acknowledged");
-		this.controller.addOrder(message.getSerialisedData());
+		this.controller.handleApplicationEvent(BusinessEvent.ADD_ORDER, new Object[] {message.getSerialisedData()});
 //		System.out.println("order action performed");
 		return true;
 	}

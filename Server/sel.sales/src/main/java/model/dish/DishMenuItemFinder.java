@@ -8,7 +8,7 @@ public class DishMenuItemFinder implements IDishMenuItemFinder {
 	}
 	
 	@Override
-	public IDishMenuItemData getDish(String id) {
+	public IDishMenuItem getDish(String id) {
 		return this.menu.getItem(id);
 	}
 

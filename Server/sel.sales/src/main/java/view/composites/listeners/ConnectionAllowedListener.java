@@ -1,4 +1,4 @@
-package view.composites;
+package view.composites.listeners;
 
 import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
@@ -8,12 +8,12 @@ import model.connectivity.IClientData;
 import view.repository.ITable;
 import view.repository.uiwrapper.ClickEventListener;
 
-public class ConnectionBlockedListener extends ClickEventListener implements IApplicationEventShooter {
+public class ConnectionAllowedListener extends ClickEventListener implements IApplicationEventShooter {
 
 	private ITable<IClientData> knownClients;
 	private IController controller;
 	
-	ConnectionBlockedListener(IController controller, ITable<IClientData> knownClients) {
+	public ConnectionAllowedListener(IController controller, ITable<IClientData> knownClients) {
 		this.controller = controller;
 		this.knownClients = knownClients;
 	}
@@ -29,6 +29,6 @@ public class ConnectionBlockedListener extends ClickEventListener implements IAp
 
 	@Override
 	public IApplicationEvent getApplicationEvent() {
-		return StatusEvent.KNOWN_CLIENT_BLOCKED;
+		return StatusEvent.KNOWN_CLIENT_ALLOWED;
 	}
 }

@@ -7,13 +7,11 @@ public class DishMenu implements IDishMenu {
 	private Map<IDishMenuItemID, IDishMenuItem> dishes;
 	private IDishMenuItemIDFactory idFac;
 	private IDishMenuItemFactory fac;
-	private IDishMenuItemDataFactory dataFac;
 	
 	public DishMenu() {
 		this.dishes = new ConcurrentSkipListMap<IDishMenuItemID, IDishMenuItem>();
 		this.idFac = new DishMenuItemIDFactory();
 		this.fac = new DishMenuItemFactory(this.idFac);
-		this.dataFac = new DishMenuItemDataFactory();
 	}
 	
 	/**
@@ -46,19 +44,29 @@ public class DishMenu implements IDishMenu {
 		oldItem.setPrice(newItem.getGrossPrice());
 		oldItem.setProductionCost(newItem.getProductionCost());
 	}
-	
+
 	@Override
-	public IDishMenuItemData getItem(String id) {
-		IDishMenuItem item = this.dishes.get(this.idFac.createDishMenuItemID(id));
-		if (item != null) {
-			return this.dataFac.menuItemToData(item);
-		}
-		return null;
+	public IDishMenuItem getItem(String id) {
+		return this.dishes.get(this.idFac.createDishMenuItemID(id));
 	}
 
 	@Override
-	public IDishMenuItemData[] getAllItemData() {
-		return this.dishes.values().stream().map(i -> this.dataFac.menuItemToData(i)).toArray(IDishMenuItemData[]::new);
+	public IDishMenuItem[] getAllItems() {
+		return this.dishes.values().toArray(IDishMenuItem[]::new);
 	}
+	
+//	@Override
+//	public IDishMenuItemData getItem(String id) {
+//		IDishMenuItem item = this.dishes.get(this.idFac.createDishMenuItemID(id));
+//		if (item != null) {
+//			return this.dataFac.menuItemToData(item);
+//		}
+//		return null;
+//	}
+//
+//	@Override
+//	public IDishMenuItemData[] getAllItemData() {
+//		return this.dishes.values().stream().map(i -> this.dataFac.menuItemToData(i)).toArray(IDishMenuItemData[]::new);
+//	}
 	
 }

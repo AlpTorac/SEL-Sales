@@ -33,7 +33,11 @@ public class OrderCollector implements IOrderCollector {
 
 	@Override
 	public IOrderData getOrder(String id) {
-		return this.orderDataFac.orderToData(this.orders.get(this.orderIDFac.createOrderID(id)));
+		IOrder order = this.orders.get(this.orderIDFac.createOrderID(id));
+		if (order != null) {
+			return this.orderDataFac.orderToData(order);	
+		}
+		return null;
 	}
 
 	@Override

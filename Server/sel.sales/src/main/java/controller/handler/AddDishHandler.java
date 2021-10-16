@@ -10,6 +10,6 @@ public class AddDishHandler extends BusinessEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().addMenuItem((String) args[0]);
+		this.getController().getModel().addMenuItem((String) args[0]);
 	}
 }
