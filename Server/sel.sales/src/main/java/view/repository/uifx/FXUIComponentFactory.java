@@ -2,6 +2,7 @@ package view.repository.uifx;
 
 import javafx.scene.layout.Pane;
 import view.repository.IUIComponent;
+import view.repository.IUILibraryHelper;
 import view.repository.uiwrapper.ToggleGroupWrapper;
 import view.repository.uiwrapper.UIButton;
 import view.repository.uiwrapper.UICheckBox;
@@ -108,5 +109,10 @@ public class FXUIComponentFactory extends UIComponentFactory {
 		FXTabPane wrapee = new FXTabPane();
 		UITabPane tabPane = new UITabPane(wrapee);
 		return tabPane;
+	}
+
+	@Override
+	public IUILibraryHelper createUILibraryHelper() {
+		return new FXHelper();
 	}
 }

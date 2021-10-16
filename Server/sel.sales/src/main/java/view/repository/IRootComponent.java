@@ -9,6 +9,12 @@ public interface IRootComponent extends IUIComponent, ISizable {
 	default void setInnerFrame(IInnerFrame scene) {
 		((IRootComponent) this.getComponent()).setInnerFrame(scene);
 	}
+	default void maximise() {
+		((IRootComponent) this.getComponent()).maximise();
+	}
+	default void setFullScreen() {
+		((IRootComponent) this.getComponent()).setFullScreen();
+	}
 	default void close() {
 		((IRootComponent) this.getComponent()).close();
 	}

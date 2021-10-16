@@ -6,7 +6,7 @@ import javafx.collections.ObservableList;
 import view.repository.IDataCollectingUIComponent;
 import view.repository.uiwrapper.ItemChangeListener;
 
-public interface FXDataCollectingUIComponent<T> extends IDataCollectingUIComponent<T> {
+public interface FXDataCollectingUIComponent<T> extends IDataCollectingUIComponent<T>, IFXSizable {
 	default public void addItem(T item) {
 		this.getItemList().add(item);
 	}

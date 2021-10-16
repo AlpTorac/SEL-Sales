@@ -13,6 +13,8 @@ import model.connectivity.IClientData;
 
 public abstract class ServiceConnectionManager implements IServiceConnectionManager {
 
+	private volatile boolean isClosed = false;
+	
 	protected ExecutorService es;
 	private Collection<IConnectionManager> connectionManagers = new CopyOnWriteArrayList<IConnectionManager>();
 	private IClientManager manager;
@@ -140,10 +142,13 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	}
 	@Override
 	public void makeNewConnectionThread() {
-		this.acceptIncomingConnection();
+		if (!this.isClosed()) {
+			this.acceptIncomingConnection();
+		}
 	}
 	@Override
 	public void close() {
+		this.isClosed = true;
 		this.es.shutdown();
 		this.connectionManagers.forEach(cm -> cm.close());
 		this.es = null;
@@ -174,7 +179,10 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 //
 //		});
 	}
-	
+	@Override
+	public boolean isClosed() {
+		return this.isClosed;
+	}
 	protected ConnectionListener createConnListener() {
 		return new ConnectionListener(this.controller);
 	}

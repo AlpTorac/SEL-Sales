@@ -6,7 +6,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import view.repository.IEventShooterOnClickUIComponent;
 
-public interface FXEventShooterOnClickUI extends IEventShooterOnClickUIComponent, FXComponent {
+public interface FXEventShooterOnClickUI extends IEventShooterOnClickUIComponent, FXAttachable {
 	/**
 	 * Performs a click on the middle of the list (the middle of the list component itself,
 	 * not necessarily on an element)

@@ -1,4 +1,4 @@
-package external.connection.connectivity;
+package test.external.connection.connectivity;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,7 +30,7 @@ import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyController;
 import test.external.dummy.DummyInteraction;
 @Execution(value = ExecutionMode.SAME_THREAD)
-class ConnectivityPingPongTest {
+class ConnectivitySendBufferTest {
 	private ExecutorService esServer;
 	private ExecutorService esClient;
 	
@@ -64,12 +64,12 @@ class ConnectivityPingPongTest {
 		clientName = "clientName";
 		clientAddress = "clientAddress";
 		cyclesToWait = 10;
-		pingPongTimeout = 1000;
-		minimalPingPongDelay = 200;
-		sendTimeout = 500;
-		resendLimit = 50;
+		pingPongTimeout = 2000;
+		minimalPingPongDelay = 1000;
+		sendTimeout = 2000;
+		resendLimit = 5;
 		
-		maximalWaitTime = 10000;
+		maximalWaitTime = 20000;
 		
 		isServerConnected = true;
 		isClientConnected = true;
@@ -170,16 +170,44 @@ class ConnectivityPingPongTest {
 	private long getTimeElapsedInMilis() {
 		return startTime.until(LocalDateTime.now(), ChronoUnit.MILLIS);
 	}
-	
+
 	@Test
-	void pingPongTest() {
+	void serverSendBufferTest() {
 		int currentCycles = 0;
-		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles <= cyclesToWait) {
-			currentCycles = this.interaction.getPingPongSuccessfulConsecutiveCycleCount();
+		IMessage m = new Message(null, null, null);
+		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles < cyclesToWait) {
+			this.interaction.messageToServer(m);
+			currentCycles = this.interaction.getSendBufferSuccessfulCycleCount();
 			Assertions.assertTrue(this.isClientConnected());
 			Assertions.assertTrue(this.isServerConnected());
 		}
 		Assertions.assertTrue(currentCycles >= cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
 	}
 	
+	@Test
+	void clientSendBufferTest() {
+		int currentCycles = 0;
+		IMessage m = new Message(null, null, null);
+		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles < cyclesToWait) {
+			this.interaction.messageToClient(m);
+			currentCycles = this.interaction.getSendBufferSuccessfulCycleCount();
+			Assertions.assertTrue(this.isClientConnected());
+			Assertions.assertTrue(this.isServerConnected());
+		}
+		Assertions.assertTrue(currentCycles >= cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
+	}
+	
+	@Test
+	void sendBufferCycleTest() {
+		int currentCycles = 0;
+		IMessage m = new Message(null, null, null);
+		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles < cyclesToWait) {
+			this.interaction.messageToServer(m);
+			this.interaction.messageToClient(m);
+			currentCycles = Math.max(this.interaction.getServerSendBufferSuccessfulCycleCount(), this.interaction.getClientSendBufferSuccessfulCycleCount());
+			Assertions.assertTrue(this.isClientConnected());
+			Assertions.assertTrue(this.isServerConnected());
+		}
+		Assertions.assertTrue(currentCycles >= cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
+	}
 }

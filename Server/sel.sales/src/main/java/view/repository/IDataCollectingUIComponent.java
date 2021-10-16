@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import view.repository.uiwrapper.ItemChangeListener;
 
-public interface IDataCollectingUIComponent<T> extends IUIComponent {
+public interface IDataCollectingUIComponent<T> extends ISizable {
 	@SuppressWarnings("unchecked")
 	default public void addItem(T item) {
 		((IDataCollectingUIComponent<T>) this.getComponent()).addItem(item);

@@ -4,16 +4,17 @@ import external.connection.IServiceConnectionManager;
 import external.message.IMessage;
 import external.message.Message;
 import external.message.MessageContext;
+import model.IModel;
 
 public class DishMenuBroadcaster extends Broadcaster {
-	private String serialisedData;
-	public DishMenuBroadcaster(IServiceConnectionManager scm, String serialisedData) {
+	private IModel model;
+	public DishMenuBroadcaster(IServiceConnectionManager scm, IModel model) {
 		super(scm);
-		this.serialisedData = serialisedData;
+		this.model = model;
 	}
 
 	@Override
-	protected IMessage createMessage() {
-		return new Message(MessageContext.MENU, null, serialisedData);
+	public IMessage createMessage() {
+		return new Message(MessageContext.MENU, null, this.model.getExternalDishMenuSerialiser().serialise(this.model.getMenuData()));
 	}
 }

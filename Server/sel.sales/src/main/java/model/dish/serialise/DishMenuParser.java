@@ -8,7 +8,7 @@ public class DishMenuParser implements IDishMenuParser {
 	private IDishMenuItemDataFactory menuItemDataFac;
 	private IDishMenuDataFactory menuDataFac;
 	
-	DishMenuParser(IDishMenuFormat format, IDishMenuItemDataFactory menuItemDataFac, IDishMenuDataFactory menuDataFac) {
+	public DishMenuParser(IDishMenuFormat format, IDishMenuItemDataFactory menuItemDataFac, IDishMenuDataFactory menuDataFac) {
 		this.format = format;
 		this.menuItemDataFac = menuItemDataFac;
 		this.menuDataFac = menuDataFac;

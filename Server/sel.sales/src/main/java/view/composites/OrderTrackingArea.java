@@ -28,7 +28,9 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		this.setSpacing(20);
 		
 		this.unconfirmedOrderList = this.initOrderConfirmationTrackingList();
+		this.unconfirmedOrderList.setMinWidth(150);
 		this.confirmedOrderList = this.initConfirmedOrdersList();
+		this.confirmedOrderList.setMinWidth(150);
 		
 		this.addUIComponents(new IUIComponent[] {
 				this.getUnconfirmedOrderList(),

@@ -72,4 +72,5 @@ public interface IUIComponentFactory {
 	public <T> IListView<T> createListView();
 	public ILabel createLabel();
 	public ITabPane createTabPane();
+	public IUILibraryHelper createUILibraryHelper();
 }

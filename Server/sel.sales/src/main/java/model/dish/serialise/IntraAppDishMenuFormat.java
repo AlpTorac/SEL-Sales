@@ -1,7 +1,7 @@
 package model.dish.serialise;
 
 public class IntraAppDishMenuFormat extends DishMenuFormat {
-	protected IntraAppDishMenuFormat() {
+	public IntraAppDishMenuFormat() {
 		super(";", new IntraAppDishMenuItemFormat());
 	}
 }

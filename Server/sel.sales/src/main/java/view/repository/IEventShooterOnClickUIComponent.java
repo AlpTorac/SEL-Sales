@@ -2,7 +2,7 @@ package view.repository;
 
 import view.repository.uiwrapper.ClickEventListener;
 
-public interface IEventShooterOnClickUIComponent extends IUIComponent {
+public interface IEventShooterOnClickUIComponent extends Attachable {
 	default void performArtificialClick() {
 		((IEventShooterOnClickUIComponent) this.getComponent()).performArtificialClicks(1);
 	}

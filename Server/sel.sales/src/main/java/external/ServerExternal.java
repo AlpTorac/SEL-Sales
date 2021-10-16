@@ -33,10 +33,8 @@ public abstract class ServerExternal extends External implements IServerExternal
 	}
 	
 	public void sendMenuData() {
-//		IDishMenuData data = this.getModel().getMenuData();
-//		IBroadcaster broadcaster = new DishMenuBroadcaster(this.getServiceConnectionManager(),
-//				this.getModel().getExternalDishMenuSerialiser().serialise(data));
-//		broadcaster.broadcast();
+		IBroadcaster broadcaster = new DishMenuBroadcaster(this.getServiceConnectionManager(), this.getModel());
+		broadcaster.broadcast();
 	}
 	
 	@Override

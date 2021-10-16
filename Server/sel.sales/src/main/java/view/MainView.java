@@ -1,11 +1,8 @@
 package view;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import controller.IController;
-import javafx.application.Platform;
 import model.IModel;
+import view.repository.IUILibraryHelper;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.UIComponent;
 import view.repository.uiwrapper.UIComponentFactory;
@@ -18,6 +15,8 @@ import view.composites.MainArea;
 
 public class MainView extends View {
 
+	private IUILibraryHelper helper;
+	
 	private UIRootComponent mainWindow;
 	private UIInnerFrame frame;
 	
@@ -32,8 +31,6 @@ public class MainView extends View {
 //	private OrderTrackingArea ota;
 //	private OrderInspectionArea oia;
 	
-	private ExecutorService es = Executors.newCachedThreadPool();
-	
 	private UIComponentFactory fac;
 	private AdvancedUIComponentFactory advFac;
 	
@@ -46,6 +43,7 @@ public class MainView extends View {
 	}
 	
 	private void initUI() {
+		this.helper = this.fac.createUILibraryHelper();
 		this.mainWindow = this.initMainWindow();
 		this.mainArea = this.initMainArea();
 		this.connArea = this.initConnArea();
@@ -68,7 +66,7 @@ public class MainView extends View {
 	
 	protected UIRootComponent initMainWindow() {
 		UIRootComponent rc = this.fac.createRootComponent();
-		rc.setPrefSize(1000, 1000);
+		rc.maximise();
 		return rc;
 	}
 	protected MainArea initMainArea() {
@@ -89,17 +87,17 @@ public class MainView extends View {
 	}
 	@Override
 	public void refreshMenu() {
-		Platform.runLater(() -> {this.mainArea.refreshMenu();});
+		this.helper.queueAsynchroneRunnable(() -> {this.mainArea.refreshMenu();});
 	}
 
 	@Override
 	public void refreshUnconfirmedOrders() {
-		Platform.runLater(() -> {this.mainArea.refreshUnconfirmedOrders();});
+		this.helper.queueAsynchroneRunnable(() -> {this.mainArea.refreshUnconfirmedOrders();});
 	}
 
 	@Override
 	public void refreshConfirmedOrders() {
-		Platform.runLater(() -> {this.mainArea.refreshConfirmedOrders();});
+		this.helper.queueAsynchroneRunnable(() -> {this.mainArea.refreshConfirmedOrders();});
 	}
 
 	@Override
@@ -114,11 +112,11 @@ public class MainView extends View {
 
 	@Override
 	public void refreshDiscoveredClients() {
-		Platform.runLater(() -> {this.connArea.refreshDiscoveredClients(this.getModel().getAllDiscoveredClientData());});
+		this.helper.queueAsynchroneRunnable(() -> {this.connArea.refreshDiscoveredClients(this.getModel().getAllDiscoveredClientData());});
 	}
 
 	@Override
 	public void refreshKnownClients() {
-		Platform.runLater(() -> {this.connArea.refreshKnownClients(this.getModel().getAllKnownClientData());});
+		this.helper.queueAsynchroneRunnable(() -> {this.connArea.refreshKnownClients(this.getModel().getAllKnownClientData());});
 	}
 }

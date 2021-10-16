@@ -12,5 +12,5 @@ public abstract class Broadcaster implements IBroadcaster {
 	public void broadcast() {
 		this.scm.broadcastMessage(this.createMessage());
 	}
-	protected abstract IMessage createMessage();
+	public abstract IMessage createMessage();
 }

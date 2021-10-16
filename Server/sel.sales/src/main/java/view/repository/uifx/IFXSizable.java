@@ -4,7 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Region;
 import view.repository.ISizable;
 
-public interface IFXSizable extends FXComponent, ISizable {
+public interface IFXSizable extends FXAttachable, ISizable {
 	@Override
 	default public void setLayoutX(double x) {
 		((Node) this).setLayoutX(x);
@@ -20,5 +20,13 @@ public interface IFXSizable extends FXComponent, ISizable {
 	@Override
 	default public void setPrefHeight(double height) {
 		((Region) this).setPrefHeight(height);
+	}
+	@Override
+	default public void setMinWidth(double width) {
+		((Region) this).setMinWidth(width);
+	}
+	@Override
+	default public void setMinHeight(double height) {
+		((Region) this).setMinHeight(height);
 	}
 }
