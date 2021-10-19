@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import model.dish.IDishMenuItemData;
 
 public interface IDishMenuItemSerialiser {
-	String serialise(String dishName, String id, BigDecimal portionSize, BigDecimal productionCost, BigDecimal price, BigDecimal discount);
+	String serialise(String dishName, String id, BigDecimal portionSize, BigDecimal productionCost, BigDecimal price);
 	
 	default String getDishMenuItemDataFieldSeperator() {
 		return this.getDishMenuFormat().getDishMenuItemDataFieldSeperator();
@@ -31,10 +31,6 @@ public interface IDishMenuItemSerialiser {
 		return this.serialiseBigDecimal(price);
 	}
 	
-	default String serialiseDiscount(BigDecimal discount) {
-		return this.serialiseBigDecimal(discount);
-	}
-	
 	default String serialiseBigDecimal(BigDecimal bd) {
 		return bd.toPlainString();
 	}
@@ -45,8 +41,7 @@ public interface IDishMenuItemSerialiser {
 				menuItemData.getId(),
 				menuItemData.getPortionSize(),
 				menuItemData.getProductionCost(),
-				menuItemData.getGrossPrice(),
-				menuItemData.getDiscount());
+				menuItemData.getGrossPrice());
 	}
 	
 	IDishMenuItemFormat getDishMenuFormat();

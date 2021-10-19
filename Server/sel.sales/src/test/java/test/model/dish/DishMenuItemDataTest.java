@@ -46,19 +46,19 @@ class DishMenuItemDataTest {
 	void startUp() {
 		model = new Model();
 		serialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
-		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
+		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 	}
 	
 	@Test
 	void contentTest() {
 		IDishMenuItemData d1 = model.getMenuItem(i1id);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d1, i1Name, i1id, i1PorSize, i1Price, i1ProCost, i1Disc);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d1, i1Name, i1id, i1PorSize, i1Price, i1ProCost);
 		IDishMenuItemData d2 = model.getMenuItem(i2id);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d2, i2Name, i2id, i2PorSize, i2Price, i2ProCost, i2Disc);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d2, i2Name, i2id, i2PorSize, i2Price, i2ProCost);
 		IDishMenuItemData d3 = model.getMenuItem(i3id);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d3, i3Name, i3id, i3PorSize, i3Price, i3ProCost, i3Disc);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d3, i3Name, i3id, i3PorSize, i3Price, i3ProCost);
 	}
 	
 	@Test
@@ -69,9 +69,9 @@ class DishMenuItemDataTest {
 		IDishMenuItemData d2 = data[1];
 		IDishMenuItemData d3 = data[2];
 		
-		DishMenuItemTestUtilityClass.assertMenuItemDataPricesEqual(d1, i1Disc, i1PorSize, i1Price);
-		DishMenuItemTestUtilityClass.assertMenuItemDataPricesEqual(d2, i2Disc, i2PorSize, i2Price);
-		DishMenuItemTestUtilityClass.assertMenuItemDataPricesEqual(d3, i3Disc, i3PorSize, i3Price);
+		DishMenuItemTestUtilityClass.assertMenuItemDataPricesEqual(d1, i1PorSize, i1Price);
+		DishMenuItemTestUtilityClass.assertMenuItemDataPricesEqual(d2, i2PorSize, i2Price);
+		DishMenuItemTestUtilityClass.assertMenuItemDataPricesEqual(d3, i3PorSize, i3Price);
 	}
 
 }

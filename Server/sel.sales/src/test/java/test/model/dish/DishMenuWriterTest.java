@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,10 @@ import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
 import model.dish.serialise.FileDishMenuSerialiser;
 import model.dish.serialise.IDishMenuItemSerialiser;
+import model.filewriter.DishMenuFile;
 import model.filewriter.FileDishMenuItemSerialiser;
+import model.filewriter.OrderFile;
+import test.GeneralTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class DishMenuWriterTest {
 	private static IModel model;
@@ -49,13 +53,22 @@ class DishMenuWriterTest {
 	private BigDecimal i3Disc = BigDecimal.valueOf(1);
 	private String i3id = "item3";
 	
+	private String testFolder = "src"+File.separator+"test"+File.separator+"resources";
+	
 	@BeforeEach
 	void startUp() {
 		model = new Model();
 		serialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
-		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
+		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+	
+		model.setDishMenuFolderAddress(this.testFolder);
+	}
+	
+	@AfterEach
+	void cleanUp() {
+		GeneralTestUtilityClass.deletePathContent(new File(this.testFolder));
 	}
 
 	@Test
@@ -64,13 +77,13 @@ class DishMenuWriterTest {
 		IDishMenuItemData[] ds = model.getMenuData().getAllDishMenuItems();
 		IDishMenuItemData d1 = ds[0];
 		String s1 = fdmis.serialise(d1);
-		Assertions.assertEquals(s1, i1id+","+i1Name+","+i1Disc.toPlainString()+".0,"+i1Price.toPlainString()+".0,"+i1PorSize.toPlainString()+","+i1ProCost.toPlainString()+".0");
+		Assertions.assertEquals(s1, i1id+","+i1Name+","+i1Price.toPlainString()+".0,"+i1PorSize.toPlainString()+","+i1ProCost.toPlainString()+".0");
 		IDishMenuItemData d2 = ds[1];
 		String s2 = fdmis.serialise(d2);
-		Assertions.assertEquals(s2, i2id+","+i2Name+","+i2Disc.toPlainString()+","+i2Price.toPlainString()+".0,"+i2PorSize.toPlainString()+","+i2ProCost.toPlainString());
+		Assertions.assertEquals(s2, i2id+","+i2Name+","+i2Price.toPlainString()+".0,"+i2PorSize.toPlainString()+","+i2ProCost.toPlainString());
 		IDishMenuItemData d3 = ds[2];
 		String s3 = fdmis.serialise(d3);
-		Assertions.assertEquals(s3, i3id+","+i3Name+","+i3Disc.toPlainString()+".0,"+i3Price.toPlainString()+".0,"+i3PorSize.toPlainString()+","+i3ProCost.toPlainString());
+		Assertions.assertEquals(s3, i3id+","+i3Name+","+i3Price.toPlainString()+".0,"+i3PorSize.toPlainString()+","+i3ProCost.toPlainString());
 	}
 	
 	@Test
@@ -78,9 +91,9 @@ class DishMenuWriterTest {
 		FileDishMenuSerialiser fdmis = new FileDishMenuSerialiser();
 		String s = fdmis.serialise(model.getMenuData());
 		Assertions.assertEquals(s, 
-				i1id+","+i1Name+","+i1Disc.toPlainString()+".0,"+i1Price.toPlainString()+".0,"+i1PorSize.toPlainString()+","+i1ProCost.toPlainString()+".0;\n"+
-				i2id+","+i2Name+","+i2Disc.toPlainString()+","+i2Price.toPlainString()+".0,"+i2PorSize.toPlainString()+","+i2ProCost.toPlainString()+";\n"+
-				i3id+","+i3Name+","+i3Disc.toPlainString()+".0,"+i3Price.toPlainString()+".0,"+i3PorSize.toPlainString()+","+i3ProCost.toPlainString()+";\n"
+				i1id+","+i1Name+","+i1Price.toPlainString()+".0,"+i1PorSize.toPlainString()+","+i1ProCost.toPlainString()+".0;"+System.lineSeparator()+
+				i2id+","+i2Name+","+i2Price.toPlainString()+".0,"+i2PorSize.toPlainString()+","+i2ProCost.toPlainString()+";"+System.lineSeparator()+
+				i3id+","+i3Name+","+i3Price.toPlainString()+".0,"+i3PorSize.toPlainString()+","+i3ProCost.toPlainString()+";"+System.lineSeparator()
 		);
 	}
 	
@@ -90,7 +103,7 @@ class DishMenuWriterTest {
 		IDishMenuItemData[] ds = menuData.getAllDishMenuItems();
 		Assertions.assertEquals(ds.length, 3);
 		Assertions.assertTrue(model.writeDishMenu());
-		File f = new File("src/main/resources/dishMenu/menu.txt");
+		File f = new File(this.testFolder+File.separator+DishMenuFile.getDefaultFileNameForClass()+DishMenuFile.getExtensionForClass());
 		try {
 			BufferedReader r = null;
 			try {
@@ -108,9 +121,9 @@ class DishMenuWriterTest {
 			for (String l : ls) {
 				lCol.add(l);
 			}
-			Assertions.assertTrue(lCol.contains("item1,aaa,0.0,5.0,2.34,4.0;"));
-			Assertions.assertTrue(lCol.contains("item2,bbb,0.1,1.0,5.67,0.5;"));
-			Assertions.assertTrue(lCol.contains("item3,ccc,1.0,4.0,3.34,3.5;"));
+			Assertions.assertTrue(lCol.contains("item1,aaa,5.0,2.34,4.0;"));
+			Assertions.assertTrue(lCol.contains("item2,bbb,1.0,5.67,0.5;"));
+			Assertions.assertTrue(lCol.contains("item3,ccc,4.0,3.34,3.5;"));
 			try {
 				r.close();
 			} catch (IOException e) {
@@ -124,7 +137,7 @@ class DishMenuWriterTest {
 		this.deleteFile(f);
 	}
 	private void deleteFile(File f) {
-		f.delete();
-		f.deleteOnExit();
+//		f.delete();
+//		f.deleteOnExit();
 	}
 }

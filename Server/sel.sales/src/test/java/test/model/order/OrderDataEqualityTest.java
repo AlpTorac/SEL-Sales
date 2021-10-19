@@ -18,6 +18,7 @@ import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemIDFactory;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
+import test.GeneralTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class OrderDataEqualityTest {
 	private static IModel model;
@@ -48,13 +49,13 @@ class OrderDataEqualityTest {
 	void startUp() {
 		model = new Model();
 		serialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
-		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
+		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 		
-		model.addUnconfirmedOrder("order1-20200809112233000-0-0:item1,2;");
-		model.addUnconfirmedOrder("order2-20200809235959866-1-0:item1,2;item2,3;");
-		model.addUnconfirmedOrder("order3-20200809000000675-1-1:item3,5;");
+		model.addUnconfirmedOrder("order1#20200809112233000#0#0:item1,2;");
+		model.addUnconfirmedOrder("order2#20200809235959866#1#0:item1,2;item2,3;");
+		model.addUnconfirmedOrder("order3#20200809000000675#1#1:item3,5;");
 	}
 	
 	@Test
@@ -79,8 +80,12 @@ class OrderDataEqualityTest {
 		Assertions.assertFalse(orderData1[1] == orderData2[1]);
 		Assertions.assertFalse(orderData1[2] == orderData2[2]);
 		
-		Assertions.assertTrue(orderData1[0].equals(orderData2[0]));
-		Assertions.assertTrue(orderData1[1].equals(orderData2[1]));
-		Assertions.assertTrue(orderData1[2].equals(orderData2[2]));
+		for (IOrderData od2 : orderData2) {
+			GeneralTestUtilityClass.arrayContains(orderData1, od2);
+		}
+		
+//		Assertions.assertTrue(orderData1[0].equals(orderData2[0]));
+//		Assertions.assertTrue(orderData1[1].equals(orderData2[1]));
+//		Assertions.assertTrue(orderData1[2].equals(orderData2[2]));
 	}
 }

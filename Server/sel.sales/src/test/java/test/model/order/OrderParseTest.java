@@ -50,20 +50,27 @@ class OrderParseTest {
 	private BigDecimal i3Disc = BigDecimal.valueOf(1);
 	private String i3id = "item3";
 	
+	private String discName = "disc";
+	private BigDecimal discPorSize = BigDecimal.ONE;
+	private BigDecimal discPrice = BigDecimal.valueOf(-1);
+	private BigDecimal discProCost = BigDecimal.ONE;
+	private String discID = "discID";
+	
 	@BeforeEach
 	void startUp() {
 		model = new Model();
 		serialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
-		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
+		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+		model.addMenuItem(serialiser.serialise(discName, discID, discPorSize, discProCost, discPrice));
 	}
 	
 	@Test
 	void orderSpecificDataTest() {
-		model.addUnconfirmedOrder("order1-20200809112233000-0-0:item1,2;");
-		model.addUnconfirmedOrder("order2-20200809235959532-1-0:item1,2;item2,3;");
-		model.addUnconfirmedOrder("order3-20200809000000999-1-1:item3,5;");
+		model.addUnconfirmedOrder("order1#20200809112233000#0#0:item1,2;");
+		model.addUnconfirmedOrder("order2#20200809235959532#1#0:item1,2;item2,3;");
+		model.addUnconfirmedOrder("order3#20200809000000999#1#1:item3,5;");
 		
 		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
@@ -81,9 +88,9 @@ class OrderParseTest {
 	
 	@Test
 	void orderContentTest() {
-		model.addUnconfirmedOrder("order1-20200809112233000-0-0:item1,2;");
-		model.addUnconfirmedOrder("order2-20200809235959532-1-0:item1,2;item2,3;");
-		model.addUnconfirmedOrder("order3-20200809000000999-1-1:item3,5;");
+		model.addUnconfirmedOrder("order1#20200809112233000#0#0:item1,2;");
+		model.addUnconfirmedOrder("order2#20200809235959532#1#0:item1,2;item2,3;");
+		model.addUnconfirmedOrder("order3#20200809000000999#1#1:item3,5;");
 		
 		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
@@ -94,7 +101,7 @@ class OrderParseTest {
 	
 	@Test
 	void discountedOrderTest() {
-		model.addUnconfirmedOrder("order4-20200809112233000-0-1-12:item1,2;");
+		model.addUnconfirmedOrder("order4#20200809112233000#0#1#12:item1,2;discID,12;");
 		
 		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		

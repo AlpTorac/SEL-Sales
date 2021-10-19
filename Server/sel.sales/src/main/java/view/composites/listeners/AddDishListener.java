@@ -17,7 +17,6 @@ public class AddDishListener extends ClickEventListener implements IApplicationE
 	private HasText portion;
 	private HasText productionCost;
 	private HasText price;
-	private HasText discount;
 	
 	public AddDishListener(IController controller, MenuDesignArea mda) {
 		super();
@@ -28,7 +27,6 @@ public class AddDishListener extends ClickEventListener implements IApplicationE
 		this.portion = mda.getPortionBox();
 		this.productionCost = mda.getProductionCostBox();
 		this.price = mda.getPriceBox();
-		this.discount = mda.getDiscountBox();
 	}
 
 	@Override
@@ -38,21 +36,12 @@ public class AddDishListener extends ClickEventListener implements IApplicationE
 
 	@Override
 	public Object[] getArgs() {
-		String discountAsText = this.getDiscount().getText();
-		
-		BigDecimal discount = BigDecimal.ZERO;
-		
-		if (discountAsText != null) {
-			discount = BigDecimal.valueOf(Double.valueOf(discountAsText).doubleValue());
-		}
-		
 		String data = this.controller.getModel().getDishMenuItemSerialiser().serialise(
 				this.getDishName().getText(),
 				this.getDishID().getText(),
-				BigDecimal.valueOf(Double.valueOf(this.getPortion().getText()).doubleValue()), 
-				BigDecimal.valueOf(Double.valueOf(this.getPrice().getText()).doubleValue()),
+				BigDecimal.valueOf(Double.valueOf(this.getPortion().getText()).doubleValue()),
 				BigDecimal.valueOf(Double.valueOf(this.getProductionCost().getText()).doubleValue()),
-				discount);
+				BigDecimal.valueOf(Double.valueOf(this.getPrice().getText()).doubleValue()));
 		
 		this.resetUserInput();
 		
@@ -70,7 +59,6 @@ public class AddDishListener extends ClickEventListener implements IApplicationE
 		this.getPortion().clearText();
 		this.getPrice().clearText();
 		this.getProductionCost().clearText();
-		this.getDiscount().clearText();
 	}
 	
 	private HasText getDishName() {
@@ -91,9 +79,5 @@ public class AddDishListener extends ClickEventListener implements IApplicationE
 
 	private HasText getPrice() {
 		return price;
-	}
-
-	public HasText getDiscount() {
-		return discount;
 	}
 }

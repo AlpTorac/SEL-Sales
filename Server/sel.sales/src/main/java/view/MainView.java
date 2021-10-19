@@ -134,4 +134,22 @@ public class MainView extends View {
 	public void refreshKnownClients() {
 		this.helper.queueAsynchroneRunnable(() -> {this.connArea.refreshKnownClients(this.getModel().getAllKnownClientData());});
 	}
+
+	@Override
+	public void refreshConfirmMode() {
+//		if (this.getModel().getAutoConfirmOrders()) {
+//			this.mainArea.getOrderTrackingArea().getAuto().setEnabled(true);
+//			this.mainArea.getOrderTrackingArea().getManual().setEnabled(false);
+//		} else {
+//			this.mainArea.getOrderTrackingArea().getAuto().setEnabled(false);
+//			this.mainArea.getOrderTrackingArea().getManual().setEnabled(true);
+//		}
+		this.refreshUnconfirmedOrders();
+		this.refreshConfirmedOrders();
+	}
+
+	@Override
+	public void refreshSettings() {
+		this.settingsArea.refreshSettings(this.getModel().getSettings());
+	}
 }

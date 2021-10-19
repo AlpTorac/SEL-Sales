@@ -3,9 +3,11 @@ package model.order.serialise;
 import java.time.format.DateTimeFormatter;
 
 public class IntraAppOrderFormat implements IOrderFormat {
+	private String orderStart = "";
+	private String orderEnd = System.lineSeparator();
 	private String orderItemDataFieldSeperator = ",";
 	private String orderItemDataEnd = ";";
-	private String orderDataFieldSeperator = "-";
+	private String orderDataFieldSeperator = "#";
 	private String orderDataFieldEnd = ":";
 	
 	private String dateFormat = "yyyyMMddHHmmssSSS";
@@ -33,5 +35,15 @@ public class IntraAppOrderFormat implements IOrderFormat {
 	@Override
 	public String getOrderDataFieldEnd() {
 		return this.orderDataFieldEnd;
+	}
+	
+	@Override
+	public String getOrderStart() {
+		return this.orderStart;
+	}
+
+	@Override
+	public String getOrderEnd() {
+		return this.orderEnd;
 	}
 }

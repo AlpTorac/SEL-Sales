@@ -3,6 +3,8 @@ package model.order;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class OrderData implements IOrderData {
@@ -11,7 +13,6 @@ public class OrderData implements IOrderData {
 	private boolean isCash;
 	private boolean isHere;
 	private String id;
-	private BigDecimal orderDiscount = BigDecimal.ZERO;
 	
 	OrderData(Collection<IOrderItemData> orderItems, LocalDateTime date, boolean isCash, boolean isHere, String id) {
 		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>();
@@ -51,7 +52,7 @@ public class OrderData implements IOrderData {
 	@Override
 	public boolean getIsDiscounted() {
 		return this.orderItems.stream()
-				.anyMatch(item -> item.getTotalDiscount().compareTo(BigDecimal.ZERO) > 0);
+				.anyMatch(item -> item.getGrossPrice().compareTo(BigDecimal.ZERO) < 0);
 	}
 
 	@Override
@@ -61,20 +62,15 @@ public class OrderData implements IOrderData {
 
 	@Override
 	public BigDecimal getGrossSum() {
-		BigDecimal result = BigDecimal.ZERO;
-		for (IOrderItemData d : this.orderItems) {
-			result = result.add(d.getNetPrice());
-		}
-		return result;
-	}
-
-	@Override
-	public BigDecimal getTotalDiscount() {
-		BigDecimal result = BigDecimal.ZERO;
-		for (IOrderItemData d : this.orderItems) {
-			result = result.add(d.getTotalDiscount());
-		}
-		return result.add(this.getOrderDiscount());
+//		BigDecimal result = BigDecimal.ZERO;
+//		for (IOrderItemData d : this.orderItems) {
+//			result = result.add(d.getGrossPrice());
+//		}
+//		return result;
+		return this.orderItems.stream()
+				.map(i -> i.getGrossPrice())
+				.filter(gp -> gp.compareTo(BigDecimal.ZERO) > 0)
+				.reduce(BigDecimal.ZERO, (gp1,gp2) -> gp1.add(gp2));
 	}
 
 	@Override
@@ -88,22 +84,36 @@ public class OrderData implements IOrderData {
 	}
 	
 	@Override
+	public Collection<IOrderItemData> getOrderItems() {
+		return new CopyOnWriteArrayList<IOrderItemData>(this.orderItems);
+	}
+	
+	@Override
 	public boolean equals(Object o) {
 		if (o == null || !(o instanceof IOrderData)) {
 			return false;
 		} else {
 			IOrderData otherOrderData = (IOrderData) o;
-			return this.getID().equals(otherOrderData.getID());
+			return this.getID().equals(otherOrderData.getID()) && 
+					this.getIsCash() == otherOrderData.getIsCash() &&
+					this.getIsHere() == this.getIsHere() && 
+					this.getIsDiscounted() == this.getIsDiscounted() &&
+					this.getDate().equals(otherOrderData.getDate()) && 
+					this.getOrderItems().containsAll(otherOrderData.getOrderItems());
 		}
 	}
 
 	@Override
 	public BigDecimal getOrderDiscount() {
-		return this.orderDiscount;
+		return this.orderItems.stream()
+				.map(i -> i.getGrossPrice())
+				.filter(gp -> gp.compareTo(BigDecimal.ZERO) < 0)
+				.reduce(BigDecimal.ZERO, (gp1,gp2) -> gp1.add(gp2))
+				.abs();
 	}
 
 	@Override
-	public void setOrderDiscount(BigDecimal orderDiscount) {
-		this.orderDiscount = orderDiscount;
+	public IOrderData combine(IOrderData data) {
+		return new OrderData(this.combineData(data), this.getDate(), this.getIsCash(), this.getIsHere(), this.getID());
 	}
 }

@@ -8,14 +8,13 @@ import model.order.IOrderData;
 import model.order.IOrderItemData;
 
 public interface IOrderSerialiser {
-	String serialiseOrderData(IOrderItemData[] orderItemsData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, String orderID);
-	
+	String serialiseOrderDatas(IOrderData[] orderDatas);
+	default String serialiseOrderData(IOrderData orderData) {
+		return this.serialiseOrderData(orderData.getOrderedItems(), orderData.getDate(), orderData.getIsCash(), orderData.getIsHere(), orderData.getOrderDiscount(), orderData.getID());
+	}
+	String serialiseOrderData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, String orderID);
 	default String serialiseOrderID(String orderID) {
 		return orderID;
-	}
-	
-	default String serialiseOrderDiscount(BigDecimal orderDiscount) {
-		return this.serialiseBigDecimal(orderDiscount);
 	}
 	
 	default String serialiseOrderItemDatas(IOrderItemData[] orderItemsData) {
@@ -44,10 +43,6 @@ public interface IOrderSerialiser {
 	
 	default String getOrderDataFieldEnd() {
 		return this.getOrderFormat().getOrderDataFieldEnd();
-	}
-	
-	default String serialiseOrderData(IOrderData orderData) {
-		return this.serialiseOrderData(orderData.getOrderedItems(), orderData.getDate(), orderData.getIsCash(), orderData.getIsHere(), orderData.getOrderDiscount(), orderData.getID());
 	}
 	
 	default String serialiseOrderItemData(IOrderItemData orderItemData) {

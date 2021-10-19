@@ -8,13 +8,8 @@ public class OrderID implements IOrderID {
 	}
 	
 	@Override
-	public String getID() {
-		return this.id;
-	}
-	
-	@Override
 	public String toString() {
-		return this.getID();
+		return this.id;
 	}
 	
 	@Override
@@ -24,8 +19,8 @@ public class OrderID implements IOrderID {
 		}
 		
 		IOrderID otherID = (IOrderID) o;
-		String thisIDContent = this.getID();
-		String otherIDContent = otherID.getID();
+		String thisIDContent = this.toString();
+		String otherIDContent = otherID.toString();
 		boolean result = thisIDContent.equals(otherIDContent);
 		return result;
 	}

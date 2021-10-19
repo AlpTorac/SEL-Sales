@@ -77,7 +77,7 @@ public class Order implements IOrder {
 
 	@Override
 	public String getID() {
-		return this.id.getID();
+		return this.id.toString();
 	}
 	
 	@Override
@@ -103,10 +103,5 @@ public class Order implements IOrder {
 	@Override
 	public BigDecimal getOrderDiscount() {
 		return this.orderDiscount;
-	}
-
-	@Override
-	public void setOrderDiscount(BigDecimal orderDiscount) {
-		this.orderDiscount = orderDiscount;
 	}
 }

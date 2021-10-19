@@ -15,9 +15,6 @@ public interface IOrderItem extends Comparable<IOrderItem> {
 	}
 	IDishMenuItemData getMenuItemData();
 	BigDecimal getAmount();
-	default BigDecimal getDiscount() {
-		return this.getMenuItemData().getDiscount().multiply(this.getAmount());
-	}
 	void setAmount(BigDecimal amount);
 	
 	default public int compareTo(IOrderItem o) {

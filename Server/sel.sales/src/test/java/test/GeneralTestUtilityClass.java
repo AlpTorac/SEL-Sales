@@ -1,5 +1,6 @@
 package test;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -123,5 +124,30 @@ public final class GeneralTestUtilityClass {
 		return arrayContains(array, element, (t1,t2) -> {
 			return t1.equals(t2);
 		});
+	}
+	public static <T> boolean arrayContentEquals(T[] array1, T[] array2) {
+		if (array1 == array2) {
+			return true;
+		}
+		if (array1 == null || array2 == null) {
+			return false;
+		}
+		for (T element : array2) {
+			if (!arrayContains(array1, element)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	public static void deletePathContent(File folderToEmpty) {
+		File testFolder = folderToEmpty;
+		File[] subFiles = testFolder.listFiles();
+		if (subFiles != null) {
+			for (File f : subFiles) {
+				while (f.exists() && !f.delete() && f.listFiles() != null && f.listFiles().length > 0) {
+					f = f.listFiles()[0];
+				}
+			}
+		}
 	}
 }

@@ -39,39 +39,47 @@ public class MainApp extends Application {
 		external = new BluetoothServerExternal(controller, model);
 		view.startUp();
 		view.show();
+		model.loadSaved();
 		// ADD FAKE DATA -------------------------------------------------------
 		// ADD FAKE DATA -------------------------------------------------------
 		
-		model.addMenuItem(model.getDishMenuItemSerialiser().serialise(
-				"aaa",
-				"item1",
-				BigDecimal.valueOf(2.34),
-				BigDecimal.valueOf(2),
-				BigDecimal.valueOf(4),
-				BigDecimal.valueOf(0)
-				));
+//		model.addMenuItem(model.getDishMenuItemSerialiser().serialise(
+//				"aaa",
+//				"item1",
+//				BigDecimal.valueOf(2.34),
+//				BigDecimal.valueOf(2),
+//				BigDecimal.valueOf(4)
+//				));
+//		
+//		model.addMenuItem(model.getDishMenuItemSerialiser().serialise(
+//				"bbb",
+//				"item2",
+//				BigDecimal.valueOf(1),
+//				BigDecimal.valueOf(5.67),
+//				BigDecimal.valueOf(10)
+//				));
+//		
+//		model.addMenuItem(model.getDishMenuItemSerialiser().serialise(
+//				"ccc",
+//				"item3",
+//				BigDecimal.valueOf(2.5),
+//				BigDecimal.valueOf(1),
+//				BigDecimal.valueOf(4)
+//				));
+//		
+//		model.addMenuItem(model.getDishMenuItemSerialiser().serialise(
+//				"discount",
+//				"disc",
+//				BigDecimal.valueOf(1),
+//				BigDecimal.valueOf(0),
+//				BigDecimal.valueOf(-1)
+//				));
+//		
+//		model.addUnconfirmedOrder("order1#20200820112233000#0#0:item1,2;");
+//		model.addUnconfirmedOrder("order2#20200110235959153#1#0:item1,2;item2,3;");
+//		model.addUnconfirmedOrder("order3#20201201000000999#1#1:item3,5;");
+//		model.addUnconfirmedOrder("order4#20211201000000999#1#1:item3,5;item1,2;item2,3;disc,12;");
 		
-		model.addMenuItem(model.getDishMenuItemSerialiser().serialise(
-				"bbb",
-				"item2",
-				BigDecimal.valueOf(1),
-				BigDecimal.valueOf(5.67),
-				BigDecimal.valueOf(10),
-				BigDecimal.valueOf(0.5)
-				));
-		
-		model.addMenuItem(model.getDishMenuItemSerialiser().serialise(
-				"ccc",
-				"item3",
-				BigDecimal.valueOf(2.5),
-				BigDecimal.valueOf(1),
-				BigDecimal.valueOf(4),
-				BigDecimal.valueOf(0.5)
-				));
-		
-		model.addUnconfirmedOrder("order1-20200820112233000-0-0:item1,2;");
-		model.addUnconfirmedOrder("order2-20200110235959153-1-0:item1,2;item2,3;");
-		model.addUnconfirmedOrder("order3-20201201000000999-1-1:item3,5;");
 		// ADD FAKE DATA -------------------------------------------------------
 		// ADD FAKE DATA -------------------------------------------------------
 		primaryStage.setOnCloseRequest(e -> {

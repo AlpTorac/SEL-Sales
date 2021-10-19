@@ -14,6 +14,7 @@ import model.IModel;
 import model.Model;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
+import test.GeneralTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class GetOrderTest {
 	private static IModel model;
@@ -53,54 +54,66 @@ class GetOrderTest {
 	void startUp() {
 		model = new Model();
 		serialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
-		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
+		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 		
-		model.addUnconfirmedOrder(o1id+"-20200809112233343-0-0:item1,"+o1a1.toPlainString()+";");
-		model.addUnconfirmedOrder(o2id+"-20200809235959111-1-0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
-		model.addUnconfirmedOrder(o3id+"-20200809000000222-1-1:item3,"+o3a3.toPlainString()+";");
+		model.addUnconfirmedOrder(o1id+"#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";");
+		model.addUnconfirmedOrder(o2id+"#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
+		model.addUnconfirmedOrder(o3id+"#20200809000000222#1#1:item3,"+o3a3.toPlainString()+";");
 	}
 	
 	@Test
 	void getUnconfirmedOrderTest() {
 		IOrderData[] data = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(data.length, 3);
-		Assertions.assertTrue(model.getOrder(o1id).equals(data[0]));
-		Assertions.assertTrue(model.getOrder(o2id).equals(data[1]));
-		Assertions.assertTrue(model.getOrder(o3id).equals(data[2]));
+		IOrderData[] gottenOrders = {model.getOrder(o1id), model.getOrder(o2id), model.getOrder(o3id)};
+		GeneralTestUtilityClass.arrayContentEquals(data, gottenOrders);
+//		Assertions.assertTrue(model.getOrder(o1id).equals(data[0]));
+//		Assertions.assertTrue(model.getOrder(o2id).equals(data[1]));
+//		Assertions.assertTrue(model.getOrder(o3id).equals(data[2]));
 	}
 	@Test
 	void getConfirmedOrderTest() {
 		model.confirmAllOrders();
 		IOrderData[] data = model.getAllConfirmedOrders();
 		Assertions.assertEquals(data.length, 3);
-		Assertions.assertTrue(model.getOrder(o1id).equals(data[0]));
-		Assertions.assertTrue(model.getOrder(o2id).equals(data[1]));
-		Assertions.assertTrue(model.getOrder(o3id).equals(data[2]));
+		IOrderData[] gottenOrders = {model.getOrder(o1id), model.getOrder(o2id), model.getOrder(o3id)};
+		GeneralTestUtilityClass.arrayContentEquals(data, gottenOrders);
+//		Assertions.assertTrue(model.getOrder(o1id).equals(data[0]));
+//		Assertions.assertTrue(model.getOrder(o2id).equals(data[1]));
+//		Assertions.assertTrue(model.getOrder(o3id).equals(data[2]));
 	}
 	@Test
 	void getMixedOrderTest1() {
-		model.confirmOrder(o1id+"-20200809112233343-0-0:item1,"+o1a1.toPlainString()+";");
+		model.confirmOrder(o1id+"#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";");
 		IOrderData[] dataC = model.getAllConfirmedOrders();
 		IOrderData[] dataU = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(dataC.length, 1);
 		Assertions.assertEquals(dataU.length, 2);
-		Assertions.assertTrue(model.getOrder(o1id).equals(dataC[0]));
-		Assertions.assertTrue(model.getOrder(o2id).equals(dataU[0]));
-		Assertions.assertTrue(model.getOrder(o3id).equals(dataU[1]));
+		IOrderData[] gottenCOrders = new IOrderData[] {model.getOrder(o1id)};
+		IOrderData[] gottenUOrders = new IOrderData[] {model.getOrder(o2id), model.getOrder(o3id)};
+		GeneralTestUtilityClass.arrayContentEquals(dataC, gottenCOrders);
+		GeneralTestUtilityClass.arrayContentEquals(dataU, gottenUOrders);
+//		Assertions.assertTrue(model.getOrder(o1id).equals(dataC[0]));
+//		Assertions.assertTrue(model.getOrder(o2id).equals(dataU[0]));
+//		Assertions.assertTrue(model.getOrder(o3id).equals(dataU[1]));
 	}
 	@Test
 	void getMixedOrderTest2() {
-		model.confirmOrder(o1id+"-20200809112233343-0-0:item1,"+o1a1.toPlainString()+";");
-		model.confirmOrder(o2id+"-20200809235959111-1-0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
+		model.confirmOrder(o1id+"#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";");
+		model.confirmOrder(o2id+"#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
 		IOrderData[] dataC = model.getAllConfirmedOrders();
 		IOrderData[] dataU = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(dataC.length, 2);
 		Assertions.assertEquals(dataU.length, 1);
-		Assertions.assertTrue(model.getOrder(o1id).equals(dataC[0]));
-		Assertions.assertTrue(model.getOrder(o2id).equals(dataC[1]));
-		Assertions.assertTrue(model.getOrder(o3id).equals(dataU[0]));
+		IOrderData[] gottenCOrders = new IOrderData[] {model.getOrder(o1id), model.getOrder(o2id)};
+		IOrderData[] gottenUOrders = new IOrderData[] {model.getOrder(o3id)};
+		GeneralTestUtilityClass.arrayContentEquals(dataC, gottenCOrders);
+		GeneralTestUtilityClass.arrayContentEquals(dataU, gottenUOrders);
+//		Assertions.assertTrue(model.getOrder(o1id).equals(dataC[0]));
+//		Assertions.assertTrue(model.getOrder(o2id).equals(dataC[1]));
+//		Assertions.assertTrue(model.getOrder(o3id).equals(dataU[0]));
 	}
 	@Test
 	void getNonExistentOrder() {

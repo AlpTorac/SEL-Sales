@@ -17,4 +17,9 @@ public class DishMenuData implements IDishMenuData {
 		return this.dishMenuItems.toArray(IDishMenuItemData[]::new);
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return dishMenuItems.isEmpty();
+	}
+
 }

@@ -17,25 +17,11 @@ public interface IDishMenuItemData extends Comparable<IDishMenuItemData> {
 		return this.getGrossPrice().divide(this.getPortionSize(), mc);
 	}
 	
-	default BigDecimal getNetPricePerPortion() {
-		return this.getNetPrice().divide(this.getPortionSize(), mc);
-	}
-	
-	default BigDecimal getDiscountPerPortion() {
-		return this.getDiscount().divide(this.getPortionSize(), mc);
-	}
-	
 	BigDecimal getPortionSize();
 
 	BigDecimal getGrossPrice();
 
 	BigDecimal getProductionCost();
-
-	BigDecimal getDiscount();
-	
-	default BigDecimal getNetPrice() {
-		return this.getGrossPrice().subtract(this.getDiscount());
-	}
 	
 	String getId();
 	

@@ -53,4 +53,14 @@ public class ClientView extends View {
 		System.out.println("Known clients refreshed");
 	}
 
+	@Override
+	public void refreshConfirmMode() {
+		System.out.println("Confirm model changed");
+	}
+
+	@Override
+	public void refreshSettings() {
+		System.out.println("Settings changed");
+	}
+
 }

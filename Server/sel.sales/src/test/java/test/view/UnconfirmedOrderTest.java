@@ -90,18 +90,18 @@ class UnconfirmedOrderTest extends ApplicationTest {
 		view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 		view.startUp();
 		serialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
-		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
+		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 	}
 	@Test
 	void duplicateOrderTest() {
-		model.addUnconfirmedOrder("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addUnconfirmedOrder("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addUnconfirmedOrder("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addUnconfirmedOrder("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addUnconfirmedOrder("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addUnconfirmedOrder("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
 		
 		Assertions.assertEquals(model.getAllUnconfirmedOrders().length, 1);
 		
@@ -112,16 +112,16 @@ class UnconfirmedOrderTest extends ApplicationTest {
 
 	@Test
 	void duplicateAsynchroneOrderTest() {
-		ClientSimulant c1 = new ClientSimulant("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1", model);
-		ClientSimulant c2 = new ClientSimulant("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1", model);
-		ClientSimulant c3 = new ClientSimulant("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1", model);
-		ClientSimulant c4 = new ClientSimulant("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1", model);
-		ClientSimulant c5 = new ClientSimulant("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1", model);
-		ClientSimulant c6 = new ClientSimulant("order6-20200813000000183-1-1:item3,5;item3,4;", model);
-		ClientSimulant c7 = new ClientSimulant("order7-20200909112233937-0-0:item1,2;item2,5;", model);
-		ClientSimulant c8 = new ClientSimulant("order6-20200813000000183-1-1:item3,5;item3,4;", model);
-		ClientSimulant c9 = new ClientSimulant("order9-20210709000000745-1-1:item3,5;", model);
-		ClientSimulant c10 = new ClientSimulant("order6-20200813000000183-1-1:item3,5;item3,4;", model);
+		ClientSimulant c1 = new ClientSimulant("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1", model);
+		ClientSimulant c2 = new ClientSimulant("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1", model);
+		ClientSimulant c3 = new ClientSimulant("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1", model);
+		ClientSimulant c4 = new ClientSimulant("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1", model);
+		ClientSimulant c5 = new ClientSimulant("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1", model);
+		ClientSimulant c6 = new ClientSimulant("order6#20200813000000183#1#1:item3,5;item3,4;", model);
+		ClientSimulant c7 = new ClientSimulant("order7#20200909112233937#0#0:item1,2;item2,5;", model);
+		ClientSimulant c8 = new ClientSimulant("order6#20200813000000183#1#1:item3,5;item3,4;", model);
+		ClientSimulant c9 = new ClientSimulant("order9#20210709000000745#1#1:item3,5;", model);
+		ClientSimulant c10 = new ClientSimulant("order6#20200813000000183#1#1:item3,5;item3,4;", model);
 		
 		Collection<ClientSimulant> cs = new ArrayList<ClientSimulant>();
 		cs.add(c1);

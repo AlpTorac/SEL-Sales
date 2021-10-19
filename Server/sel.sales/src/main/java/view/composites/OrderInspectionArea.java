@@ -89,7 +89,7 @@ public class OrderInspectionArea extends UIVBoxLayout {
 	
 	private void displayOrderPriceDetails(IOrderData data) {
 		this.getGrossSumDisplay().setCaption(data.getGrossSum().toPlainString());
-		this.getDiscountDisplay().setCaption(data.getTotalDiscount().toPlainString());
+		this.getDiscountDisplay().setCaption(data.getOrderDiscount().toPlainString());
 		this.getNetSumDisplay().setCaption(data.getNetSum().toPlainString());
 	}
 	
@@ -199,8 +199,6 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		table.addColumn("Menu Item", "ItemData");
 		table.addColumn("Amount", "Amount");
 		table.addColumn("Gross Price", "GrossPrice");
-		table.addColumn("Discount", "TotalDiscount");
-		table.addColumn("Net Price", "NetPrice");
 		return table;
 	}
 	

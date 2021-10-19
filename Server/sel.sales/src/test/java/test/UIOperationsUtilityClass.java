@@ -39,7 +39,6 @@ public class UIOperationsUtilityClass {
 	private HasText idBox;
 	private HasText prodCostBox;
 	private HasText porSizeBox;
-	private HasText discBox;
 	
 	private IEventShooterOnClickUIComponent addButton;
 	private IEventShooterOnClickUIComponent removeButton;
@@ -61,7 +60,6 @@ public class UIOperationsUtilityClass {
 		idBox = mda.getMenuItemIDBox();
 		prodCostBox = mda.getProductionCostBox();
 		porSizeBox = mda.getPortionBox();
-		discBox = mda.getDiscountBox();
 		
 		addButton = mda.getAddButton();
 		removeButton = mda.getRemoveButton();
@@ -74,7 +72,6 @@ public class UIOperationsUtilityClass {
 		idBox.setCaption(id);
 		prodCostBox.setCaption(String.valueOf(productionCost.doubleValue()));
 		porSizeBox.setCaption(String.valueOf(portionSize.doubleValue()));
-		discBox.setCaption(String.valueOf(discount.doubleValue()));
 		
 		GeneralTestUtilityClass.performWait(waitTime);
 		
@@ -107,7 +104,6 @@ public class UIOperationsUtilityClass {
 		idBox.setCaption(id);
 		prodCostBox.setCaption(String.valueOf(productionCost.doubleValue()));
 		porSizeBox.setCaption(String.valueOf(portionSize.doubleValue()));
-		discBox.setCaption(String.valueOf(discount.doubleValue()));
 		
 		GeneralTestUtilityClass.performWait(waitTime);
 		
@@ -237,8 +233,6 @@ public class UIOperationsUtilityClass {
 		String[] itemIDs = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getItemData().getId()).toArray(String[]::new);
 		BigDecimal[] itemAmounts = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getAmount()).toArray(BigDecimal[]::new);
 		BigDecimal[] itemGrossPrices = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getGrossPrice()).toArray(BigDecimal[]::new);
-		BigDecimal[] itemTotalDiscounts = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getTotalDiscount()).toArray(BigDecimal[]::new);
-		BigDecimal[] itemNetPrices = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getNetPrice()).toArray(BigDecimal[]::new);
 		
 		OrderTestUtilityClass.assertOrderDataEqual(
 				orderData,
@@ -248,15 +242,13 @@ public class UIOperationsUtilityClass {
 				isHere,
 				orderData.getOrderDiscount());
 		Assertions.assertEquals(orderData.getGrossSum().compareTo(grossSum), 0);
-		Assertions.assertEquals(orderData.getTotalDiscount().compareTo(totalOrderDiscount), 0);
+		Assertions.assertEquals(orderData.getOrderDiscount().compareTo(totalOrderDiscount), 0);
 		Assertions.assertEquals(orderData.getNetSum().compareTo(netSum), 0);
 		IOrderItemData[] idatas = orderData.getOrderedItems();
 		int orderItemLen = idatas.length;
 		for (int i = 0; i < orderItemLen; i++) {
 			OrderTestUtilityClass.assertOrderItemDataEqual(idatas[i], itemIDs[i], itemAmounts[i]);
 			Assertions.assertEquals(idatas[i].getGrossPrice().compareTo(itemGrossPrices[i]), 0);
-			Assertions.assertEquals(idatas[i].getTotalDiscount().compareTo(itemTotalDiscounts[i]), 0);
-			Assertions.assertEquals(idatas[i].getNetPrice().compareTo(itemNetPrices[i]), 0);
 		}
 	}
 }

@@ -16,7 +16,6 @@ public class EditDishListener extends ClickEventListener implements IApplication
 	private HasText portion;
 	private HasText productionCost;
 	private HasText price;
-	private HasText discount;
 	
 	public EditDishListener(IController controller, MenuDesignArea mda) {
 		super();
@@ -27,25 +26,16 @@ public class EditDishListener extends ClickEventListener implements IApplication
 		this.portion = mda.getPortionBox();
 		this.productionCost = mda.getProductionCostBox();
 		this.price = mda.getPriceBox();
-		this.discount = mda.getDiscountBox();
 	}
 	
 	@Override
 	public Object[] getArgs() {
-		String discountAsText = this.getDiscount().getText();
-		BigDecimal discount = BigDecimal.ZERO;
-		
-		if (discountAsText != null) {
-			discount = BigDecimal.valueOf(Double.valueOf(discountAsText).doubleValue());
-		}
-		
 		String data = this.controller.getModel().getDishMenuItemSerialiser().serialise(
 				this.getDishName().getText(),
 				this.getDishID().getText(),
 				BigDecimal.valueOf(Double.valueOf(this.getPortion().getText()).doubleValue()),
 				BigDecimal.valueOf(Double.valueOf(this.getProductionCost().getText()).doubleValue()),
-				BigDecimal.valueOf(Double.valueOf(this.getPrice().getText()).doubleValue()),
-				discount
+				BigDecimal.valueOf(Double.valueOf(this.getPrice().getText()).doubleValue())
 		);
 		
 		this.resetUserInput();
@@ -89,11 +79,5 @@ public class EditDishListener extends ClickEventListener implements IApplication
 		this.getPortion().clearText();
 		this.getPrice().clearText();
 		this.getProductionCost().clearText();
-		this.getDiscount().clearText();
 	}
-
-	public HasText getDiscount() {
-		return discount;
-	}
-
 }

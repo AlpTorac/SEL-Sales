@@ -54,20 +54,21 @@ class DishMenuParserTest {
 	
 	@Test
 	void parserTest() {
-		IDishMenuData data = parser.parseDishMenuData(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc)
+		String serialisedMenu = serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price)
 				+ format.getDishMenuItemDataFieldEnd()
-				+ serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc)
+				+ serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price)
 				+ format.getDishMenuItemDataFieldEnd()
-				+ serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc)
-				+ format.getDishMenuItemDataFieldEnd());
+				+ serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price)
+				+ format.getDishMenuItemDataFieldEnd();
+		IDishMenuData data = parser.parseDishMenuData(serialisedMenu);
 		
 		IDishMenuItemData[] itemData = data.getAllDishMenuItems();
 		
 		Assertions.assertEquals(3, itemData.length);
 		
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(itemData[0], i1Name, i1id, i1PorSize, i1Price, i1ProCost, i1Disc);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(itemData[1], i2Name, i2id, i2PorSize, i2Price, i2ProCost, i2Disc);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(itemData[2], i3Name, i3id, i3PorSize, i3Price, i3ProCost, i3Disc);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(itemData[0], i1Name, i1id, i1PorSize, i1Price, i1ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(itemData[1], i2Name, i2id, i2PorSize, i2Price, i2ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(itemData[2], i3Name, i3id, i3PorSize, i3Price, i3ProCost);
 	}
 
 }

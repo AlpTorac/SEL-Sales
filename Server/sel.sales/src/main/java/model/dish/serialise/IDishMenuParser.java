@@ -30,10 +30,9 @@ public interface IDishMenuParser {
 		BigDecimal porSize = this.getSerialisedPortionSize(dishMenuItemDataFields);
 		BigDecimal price = this.getSerialisedPrice(dishMenuItemDataFields);
 		BigDecimal prodCost = this.getSerialisedProductionCost(dishMenuItemDataFields);
-		BigDecimal disc = this.getSerialisedDiscount(dishMenuItemDataFields);
 		String id = this.getSerialisedID(dishMenuItemDataFields);
 		
-		return this.getDishMenuItemDataFactory().constructData(name, porSize, price, prodCost, disc, id);
+		return this.getDishMenuItemDataFactory().constructData(name, porSize, price, prodCost, id);
 	}
 	
 	default String getSerialisedName(String[] dishMenuItemDataFields) {
@@ -48,23 +47,20 @@ public interface IDishMenuParser {
 	default BigDecimal getSerialisedProductionCost(String[] dishMenuItemDataFields) {
 		return BigDecimal.valueOf(Double.valueOf(dishMenuItemDataFields[3]));
 	}
-	default BigDecimal getSerialisedDiscount(String[] dishMenuItemDataFields) {
-		return BigDecimal.valueOf(Double.valueOf(dishMenuItemDataFields[5]));
-	}
 	default String getSerialisedID(String[] dishMenuItemDataFields) {
 		return dishMenuItemDataFields[1];
 	}
 	default String[] getSerialisedDishMenuItems(String s) {
 		String serialisedDishMenuItems = s;
 		if (serialisedDishMenuItems.endsWith(this.getDishMenuFormat().getDishMenuItemDataFieldEnd())) {
-			serialisedDishMenuItems = serialisedDishMenuItems.substring(0, serialisedDishMenuItems.length() - 1);
+			serialisedDishMenuItems = serialisedDishMenuItems.substring(0, serialisedDishMenuItems.length() - this.getDishMenuFormat().getDishMenuItemDataFieldEnd().length());
 		}
 		return serialisedDishMenuItems.split(this.getDishMenuFormat().getDishMenuItemDataFieldEnd());
 	}
 	default String[] getSerialisedDishMenuItemFields(String s) {
 		String serialisedDishMenuItemFields = s;
-		if (serialisedDishMenuItemFields.endsWith(this.getDishMenuFormat().getDishMenuItemDataFieldEnd())) {
-			serialisedDishMenuItemFields = serialisedDishMenuItemFields.substring(0, serialisedDishMenuItemFields.length()-1);
+		if (serialisedDishMenuItemFields.endsWith(this.getDishMenuFormat().getDishMenuItemFormat().getDishMenuItemDataFieldSeperator())) {
+			serialisedDishMenuItemFields = serialisedDishMenuItemFields.substring(0, serialisedDishMenuItemFields.length()-this.getDishMenuFormat().getDishMenuItemFormat().getDishMenuItemDataFieldSeperator().length());
 		}
 		return serialisedDishMenuItemFields.split(this.getDishMenuFormat().getDishMenuItemFormat().getDishMenuItemDataFieldSeperator());
 	}

@@ -51,23 +51,23 @@ class OrderConcurrencyTest {
 	void startUp() {
 		model = new Model();
 		serialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
-		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
+		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 	}
 	
 	@Test
 	void test() {
-		ClientSimulant c1 = new ClientSimulant("order1-20200809112233123-0-0:item1,2;", model);
-		ClientSimulant c2 = new ClientSimulant("order2-20200809235959456-1-0:item1,12;item2,3;", model);
-		ClientSimulant c3 = new ClientSimulant("order3-20210809000000789-1-1:item3,5;item1,10;", model);
-		ClientSimulant c4 = new ClientSimulant("order4-20200810112233012-0-0:item1,2;item2,0;", model);
-		ClientSimulant c5 = new ClientSimulant("order5-20200812235959475-1-0:item1,2;item2,3;", model);
-		ClientSimulant c6 = new ClientSimulant("order6-20200813000000183-1-1:item3,5;item3,4;", model);
-		ClientSimulant c7 = new ClientSimulant("order7-20200909112233937-0-0:item1,2;item2,5;", model);
-		ClientSimulant c8 = new ClientSimulant("order8-20210809235959253-1-0:item1,2;item2,3;", model);
-		ClientSimulant c9 = new ClientSimulant("order9-20210709000000745-1-1:item3,5;", model);
-		ClientSimulant c10 = new ClientSimulant("order10-20210809000000111-1-1:item3,5;", model);
+		ClientSimulant c1 = new ClientSimulant("order1#20200809112233123#0#0:item1,2;", model);
+		ClientSimulant c2 = new ClientSimulant("order2#20200809235959456#1#0:item1,12;item2,3;", model);
+		ClientSimulant c3 = new ClientSimulant("order3#20210809000000789#1#1:item3,5;item1,10;", model);
+		ClientSimulant c4 = new ClientSimulant("order4#20200810112233012#0#0:item1,2;item2,0;", model);
+		ClientSimulant c5 = new ClientSimulant("order5#20200812235959475#1#0:item1,2;item2,3;", model);
+		ClientSimulant c6 = new ClientSimulant("order6#20200813000000183#1#1:item3,5;item3,4;", model);
+		ClientSimulant c7 = new ClientSimulant("order7#20200909112233937#0#0:item1,2;item2,5;", model);
+		ClientSimulant c8 = new ClientSimulant("order8#20210809235959253#1#0:item1,2;item2,3;", model);
+		ClientSimulant c9 = new ClientSimulant("order9#20210709000000745#1#1:item3,5;", model);
+		ClientSimulant c10 = new ClientSimulant("order10#20210809000000111#1#1:item3,5;", model);
 		
 		pool.submit(c1);
 		pool.submit(c2);

@@ -2,6 +2,7 @@ package view.composites;
 
 import controller.BusinessEvent;
 import controller.IController;
+import controller.StatusEvent;
 import model.IModel;
 import model.order.IOrderData;
 import view.DateSettings;
@@ -18,6 +19,7 @@ import view.composites.listeners.WriteDishMenuListener;
 import view.composites.listeners.WriteOrdersListener;
 import view.repository.ILayout;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
+import view.repository.uiwrapper.ChangeEventListener;
 import view.repository.uiwrapper.ClickEventListener;
 import view.repository.uiwrapper.ItemChangeListener;
 import view.repository.uiwrapper.UIComponentFactory;
@@ -85,6 +87,20 @@ public class MainArea extends UIHBoxLayout {
 		
 		ClickEventListener writeDishMenuListener = new WriteDishMenuListener(controller);
 		mda.getWriteButton().addClickListener(writeDishMenuListener);
+		
+		mda.getLoadButton().addClickListener(new ClickEventListener() {
+			@Override
+			public void clickAction(Object[] parameter) {
+				System.out.println("NOT IMPLEMENTED");
+			}
+		});
+		
+		ota.getAuto().addChangeEventListener(new ChangeEventListener() {
+			@Override
+			public void changeAction(Object oldValue, Object newValue) {
+				controller.handleApplicationEvent(StatusEvent.ORDER_CONFIRM_MODEL_CHANGED, new Object[] {newValue});
+			}
+		});
 	}
 	
 	public void refreshMenu() {
@@ -93,24 +109,22 @@ public class MainArea extends UIHBoxLayout {
 
 	public void refreshUnconfirmedOrders() {
 		this.ota.clearUnconfirmedOrderList();
-		if (this.ota.getAuto().isToggled()) {
-			/*
-			 * ToDo: Make a listener for the auto-confirm radio button and add a variable for auto-confirming in model (?)
-			 */
-			this.controller.handleApplicationEvent(BusinessEvent.CONFIRM_ALL_ORDERS, null);
-			this.ota.addConfirmedOrders(model.getAllConfirmedOrders());
-		} else {
-			this.ota.addUnconfirmedOrders(model.getAllUnconfirmedOrders());
-		}
+		this.ota.addUnconfirmedOrders(model.getAllUnconfirmedOrders());
+//		if (this.ota.getAuto().isToggled()) {
+//			this.controller.handleApplicationEvent(BusinessEvent.CONFIRM_ALL_ORDERS, null);
+//			this.ota.addConfirmedOrders(model.getAllConfirmedOrders());
+//		} else {
+//			this.ota.addUnconfirmedOrders(model.getAllUnconfirmedOrders());
+//		}
 	}
 
 	public void refreshConfirmedOrders() {
 		this.ota.clearConfirmedOrderList();
 		IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
-		
-		for (IOrderData order : confirmedOrders) {
-			this.ota.confirmOrder(order);
-		}
+		this.ota.addConfirmedOrders(confirmedOrders);
+//		for (IOrderData order : confirmedOrders) {
+//			this.ota.confirmOrder(order);
+//		}
 	}
 	
 	private void initAreas() {

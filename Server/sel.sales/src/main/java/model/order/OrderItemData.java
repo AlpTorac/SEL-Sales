@@ -22,4 +22,12 @@ public class OrderItemData implements IOrderItemData {
 	public IDishMenuItemData getItemData() {
 		return this.menuItemData;
 	}
+
+	@Override
+	public IOrderItemData combine(IOrderItemData data) {
+		if (!data.getItemData().equals(this.menuItemData)) {
+			throw new IllegalArgumentException("Cannot combine order item data containing different dishes.");
+		}
+		return new OrderItemData(this.getItemData(), this.getAmount().add(data.getAmount()));
+	}
 }

@@ -8,7 +8,7 @@ import model.dish.serialise.FileDishMenuSerialiser;
 import model.dish.serialise.IDishMenuParser;
 
 public abstract class DishMenuFile extends FileAccess {
-	private static String fileName = "menu";
+	private final static String defaultName = "menu";
 	private FileDishMenuSerialiser serialiser;
 	private IDishMenuParser parser;
 
@@ -17,8 +17,11 @@ public abstract class DishMenuFile extends FileAccess {
 		this.serialiser = serialiser;
 		this.parser = new DishMenuParser(serialiser.getDishMenuFormat(), menuDataFac);
 	}
-	protected String getDefaultFileName() {
-		return fileName;
+	public String getDefaultFileName() {
+		return defaultName;
+	}
+	public static String getDefaultFileNameForClass() {
+		return defaultName;
 	}
 	protected FileDishMenuSerialiser getSerialiser() {
 		return this.serialiser;
@@ -27,6 +30,10 @@ public abstract class DishMenuFile extends FileAccess {
 		return this.writeToFile(this.getSerialiser().serialise(d));
 	}
 	public IDishMenuData loadDishMenu() {
-		return this.parser.parseDishMenuData(this.readFile());
+		String serialisedContent = this.readFile();
+		if (serialisedContent != null && serialisedContent != "") {
+			return this.parser.parseDishMenuData(serialisedContent);
+		}
+		return null;
 	}
 }

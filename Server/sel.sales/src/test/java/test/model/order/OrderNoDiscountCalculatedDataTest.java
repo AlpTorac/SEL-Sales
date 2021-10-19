@@ -49,26 +49,34 @@ class OrderNoDiscountCalculatedDataTest {
 	private BigDecimal o2a2 = BigDecimal.valueOf(3);
 	private BigDecimal o3a3 = BigDecimal.valueOf(5);
 	
+	private String discName = "disc";
+	private BigDecimal discPorSize = BigDecimal.ONE;
+	private BigDecimal discPrice = BigDecimal.valueOf(-1);
+	private BigDecimal discProCost = BigDecimal.ONE;
+	private String discID = "discID";
+	
 	@BeforeEach
 	void startUp() {
 		model = new Model();
 		serialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
-		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
+		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+		model.addMenuItem(serialiser.serialise(discName, discID, discPorSize, discProCost, discPrice));
 		
-		model.addUnconfirmedOrder("order1-20200809112233343-0-0:item1,"+o1a1.toPlainString()+";");
-		model.addUnconfirmedOrder("order2-20200809235959111-1-0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
-		model.addUnconfirmedOrder("order3-20200809000000222-1-1:item3,"+o3a3.toPlainString()+";");
+		model.addUnconfirmedOrder("order1#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";");
+		model.addUnconfirmedOrder("order2#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";"+discID+",0.3;");
+		model.addUnconfirmedOrder("order3#20200809000000222#1#1:item3,"+o3a3.toPlainString()+";"+discID+",5;");
 	}
+	
 	@Test
-	void totalDiscountTest() {
+	void orderDiscountTest() {
 		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
-		Assertions.assertEquals(BigDecimal.valueOf(0).compareTo(orderData[0].getTotalDiscount()), 0);
-		Assertions.assertEquals(BigDecimal.valueOf(0.3).compareTo(orderData[1].getTotalDiscount()), 0);
-		orderData[2].setOrderDiscount(BigDecimal.valueOf(2));
-		Assertions.assertEquals(BigDecimal.valueOf(5+2).compareTo(orderData[2].getTotalDiscount()), 0);
+		Assertions.assertEquals(BigDecimal.valueOf(0).compareTo(orderData[0].getOrderDiscount()), 0);
+		Assertions.assertEquals(BigDecimal.valueOf(0.3).compareTo(orderData[1].getOrderDiscount()), 0);
+//		orderData[2].setOrderDiscount(BigDecimal.valueOf(2));
+		Assertions.assertEquals(BigDecimal.valueOf(5).compareTo(orderData[2].getOrderDiscount()), 0);
 	}
 
 	@Test
@@ -76,19 +84,19 @@ class OrderNoDiscountCalculatedDataTest {
 		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		Assertions.assertEquals(BigDecimal.valueOf(10).compareTo(orderData[0].getGrossSum()), 0);
-		Assertions.assertEquals(BigDecimal.valueOf(12.7).compareTo(orderData[1].getGrossSum()), 0);
-		Assertions.assertEquals(BigDecimal.valueOf(15).compareTo(orderData[2].getGrossSum()), 0);
+		Assertions.assertEquals(BigDecimal.valueOf(13).compareTo(orderData[1].getGrossSum()), 0);
+		Assertions.assertEquals(BigDecimal.valueOf(20).compareTo(orderData[2].getGrossSum()), 0);
 	}
 	
 	@Test
 	void netSumTest() {
 		IOrderData[] orderData = model.getAllUnconfirmedOrders();
-		orderData[0].setOrderDiscount(BigDecimal.valueOf(2));
-		Assertions.assertEquals(BigDecimal.valueOf(8).compareTo(orderData[0].getNetSum()), 0);
-		orderData[1].setOrderDiscount(BigDecimal.valueOf(1));
-		Assertions.assertEquals(BigDecimal.valueOf(11.7).compareTo(orderData[1].getNetSum()), 0);
-		orderData[2].setOrderDiscount(BigDecimal.valueOf(3));
-		Assertions.assertEquals(BigDecimal.valueOf(12).compareTo(orderData[2].getNetSum()), 0);
+//		orderData[0].setOrderDiscount(BigDecimal.valueOf(2));
+		Assertions.assertEquals(BigDecimal.valueOf(10).compareTo(orderData[0].getNetSum()), 0);
+//		orderData[1].setOrderDiscount(BigDecimal.valueOf(1));
+		Assertions.assertEquals(BigDecimal.valueOf(12.7).compareTo(orderData[1].getNetSum()), 0);
+//		orderData[2].setOrderDiscount(BigDecimal.valueOf(3));
+		Assertions.assertEquals(BigDecimal.valueOf(15).compareTo(orderData[2].getNetSum()), 0);
 	}
 	
 }

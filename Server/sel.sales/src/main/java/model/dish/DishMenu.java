@@ -39,7 +39,6 @@ public class DishMenu implements IDishMenu {
 		IDishMenuItem oldItem = this.dishes.get(this.idFac.createDishMenuItemID(newItem.getId()));
 		
 		oldItem.getDish().setName(newItem.getDishName());
-		oldItem.setDiscount(newItem.getDiscount());
 		oldItem.setPortionSize(newItem.getPortionSize());
 		oldItem.setPrice(newItem.getGrossPrice());
 		oldItem.setProductionCost(newItem.getProductionCost());

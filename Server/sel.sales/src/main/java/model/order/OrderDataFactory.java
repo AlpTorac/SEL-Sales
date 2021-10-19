@@ -23,8 +23,6 @@ public class OrderDataFactory implements IOrderDataFactory {
 				order.getIsHere(),
 				order.getID());
 		
-		data.setOrderDiscount(order.getOrderDiscount());
-		
 		return data;
 	}
 

@@ -13,5 +13,6 @@ public enum BusinessEvent implements IApplicationEvent {
 	REMOVE_ORDER,
 	WRITE_ORDERS,
 	
-	DISCOVER_CLIENTS;
+	DISCOVER_CLIENTS,
+	SAVE_SETTINGS;
 }

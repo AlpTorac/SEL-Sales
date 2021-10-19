@@ -73,14 +73,14 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 		view.startUp();
 		dishMenuItemSerialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(dishMenuItemSerialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
-		model.addMenuItem(dishMenuItemSerialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
-		model.addMenuItem(dishMenuItemSerialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
+		model.addMenuItem(dishMenuItemSerialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(dishMenuItemSerialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(dishMenuItemSerialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 	}
 	
 	@Test
 	void confirmOrderTest() {
-		model.addUnconfirmedOrder("order2-20200809235959890-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
 		
 		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(unconfirmedOrders.length, 1);
@@ -100,7 +100,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	
 	@Test
 	void removeUnconfirmedOrderTest() {
-		model.addUnconfirmedOrder("order2-20200809235959890-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
 		
 		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(unconfirmedOrders.length, 1);
@@ -123,7 +123,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	
 	@Test
 	void removeConfirmedOrderTest() {
-		model.addUnconfirmedOrder("order2-20200809235959890-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
 		
 		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(unconfirmedOrders.length, 1);
@@ -156,9 +156,9 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	
 	@Test
 	void confirmAllOrdersTest() {
-		model.addUnconfirmedOrder("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addUnconfirmedOrder("order6-20200813000000183-1-1:item3,5;item3,4;");
-		model.addUnconfirmedOrder("order7-20200909112233937-0-0:item1,2;item2,5;");
+		model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
+		model.addUnconfirmedOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
 		
 		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(unconfirmedOrders.length, 3);
@@ -177,19 +177,20 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		Assertions.assertEquals(unconfirmedOrders.length, 0);
 		
 		for (IOrderData cod : confirmedOrderDatas) {
-			boolean contains = false;
-			for (IOrderData uod : unconfirmedOrderDatas) {
-				contains = contains || uod.equals(cod);
-			}
-			Assertions.assertTrue(contains);
+//			boolean contains = false;
+//			for (IOrderData uod : unconfirmedOrderDatas) {
+//				contains = contains || uod.equals(cod);
+//			}
+//			Assertions.assertTrue(contains);
+			GeneralTestUtilityClass.arrayContains(unconfirmedOrderDatas, cod);
 		}
 	}
 	
 	@Test
 	void confirmAllOrdersWithButtonTest() {
-		model.addUnconfirmedOrder("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addUnconfirmedOrder("order6-20200813000000183-1-1:item3,5;item3,4;");
-		model.addUnconfirmedOrder("order7-20200909112233937-0-0:item1,2;item2,5;");
+		model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
+		model.addUnconfirmedOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
 		
 		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(unconfirmedOrders.length, 3);
@@ -208,11 +209,12 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		Assertions.assertEquals(unconfirmedOrders.length, 0);
 		GeneralTestUtilityClass.performWait(waitTime);
 		for (IOrderData cod : confirmedOrders) {
-			boolean contains = false;
-			for (IOrderData uod : unconfirmedOrderDatas) {
-				contains = contains || cod.equals(uod);
-			}
-			Assertions.assertTrue(contains);
+//			boolean contains = false;
+//			for (IOrderData uod : unconfirmedOrderDatas) {
+//				contains = contains || cod.equals(uod);
+//			}
+//			Assertions.assertTrue(contains);
+			GeneralTestUtilityClass.arrayContains(unconfirmedOrderDatas, cod);
 		}
 	}
 	
@@ -227,11 +229,9 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
 		Assertions.assertEquals(confirmedOrders.length, 0);
 		
-		GeneralTestUtilityClass.performWait(waitTime);
-		
-		model.addUnconfirmedOrder("order2-20200809235959299-1-0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addUnconfirmedOrder("order6-20200813000000183-1-1:item3,5;item3,4;");
-		model.addUnconfirmedOrder("order7-20200909112233937-0-0:item1,2;item2,5;");
+		model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
+		model.addUnconfirmedOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
 		
 		Platform.runLater(() -> {
 			autoDone = true;

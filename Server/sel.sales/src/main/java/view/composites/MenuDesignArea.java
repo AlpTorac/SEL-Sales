@@ -17,11 +17,11 @@ public class MenuDesignArea extends UIVBoxLayout {
 	private ITextBox portionBox;
 	private ITextBox productionCostBox;
 	private ITextBox priceBox;
-	private ITextBox discountBox;
 	private IButton addButton;
 	private IButton editButton;
 	private IButton removeButton;
 	private IButton writeButton;
+	private IButton loadButton;
 	private ITable<IDishMenuItemData> menuItemTable;
 	
 	private UIComponentFactory fac;
@@ -42,8 +42,8 @@ public class MenuDesignArea extends UIVBoxLayout {
 		this.editButton = this.initEditButton();
 		this.removeButton = this.initRemoveButton();
 		this.menuItemTable = this.initMenuItemTable();
-		this.discountBox = this.initDiscountBox();
 		this.writeButton = this.initWriteButton();
+		this.loadButton = this.initLoadButton();
 		
 		this.addUIComponents(new IUIComponent[] {
 				this.getMenuItemTable(),
@@ -64,6 +64,12 @@ public class MenuDesignArea extends UIVBoxLayout {
 //		this.addUIComponent(this.getWriteButton(), 			6, 2, 2, 1);
 	}
 	
+	protected IButton initLoadButton() {
+		IButton button = fac.createButton();
+		button.setCaption("Load existing menu");
+		return button;
+	}
+
 	protected IHBoxLayout initInputArea() {
 		IHBoxLayout layout = fac.createHBoxLayout();
 		layout.addUIComponents(new IUIComponent[] {
@@ -72,23 +78,27 @@ public class MenuDesignArea extends UIVBoxLayout {
 				this.getPortionBox(),
 				this.getProductionCostBox(),
 				this.getPriceBox(),
-				this.getDiscountBox()
 		});
 		return layout;
 	}
 	
 	protected IHBoxLayout initButtonArea() {
 		IHBoxLayout layout = fac.createHBoxLayout();
-		layout.setSpacing(100);
+		layout.setSpacing(20);
 		layout.addUIComponents(new IUIComponent[] {
 				this.getAddButton(),
 				this.getEditButton(),
 				this.getRemoveButton(),
-				this.getWriteButton()
+				this.getWriteButton(),
+				this.getLoadButton()
 		});
 		return layout;
 	}
 	
+	protected IButton getLoadButton() {
+		return this.loadButton;
+	}
+
 	protected IButton getWriteButton() {
 		return this.writeButton;
 	}
@@ -107,8 +117,6 @@ public class MenuDesignArea extends UIVBoxLayout {
 		table.addColumn("Portion Size", "PortionSize");
 		table.addColumn("Production Cost", "ProductionCost");
 		table.addColumn("Gross Price", "GrossPrice");
-		table.addColumn("Discount", "Discount");
-		table.addColumn("Net Price", "NetPrice");
 //		table.addColumns(new String[] {
 //				"Dish Name",
 //				"ID",
@@ -146,12 +154,6 @@ public class MenuDesignArea extends UIVBoxLayout {
 	protected ITextBox initPriceBox() {
 		ITextBox priceBox = this.fac.createTextBox();
 		priceBox.setCaption("Price");
-		return priceBox;
-	}
-	
-	protected ITextBox initDiscountBox() {
-		ITextBox priceBox = this.fac.createTextBox();
-		priceBox.setCaption("Discount");
 		return priceBox;
 	}
 	
@@ -219,9 +221,5 @@ public class MenuDesignArea extends UIVBoxLayout {
 //		}
 		
 		this.getMenuItemTable().addItems(data.getAllDishMenuItems());
-	}
-
-	public ITextBox getDiscountBox() {
-		return this.discountBox;
 	}
 }

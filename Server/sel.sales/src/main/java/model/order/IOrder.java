@@ -16,7 +16,6 @@ public interface IOrder extends Comparable<IOrder> {
 	IOrderItem[] getAllOrderItems();
 	Collection<IOrderItem> getOrderItemCollection();
 	BigDecimal getOrderDiscount();
-	void setOrderDiscount(BigDecimal orderDiscount);
 	default public int compareTo(IOrder o) {
 		return this.getID().compareTo(o.getID());
 	}

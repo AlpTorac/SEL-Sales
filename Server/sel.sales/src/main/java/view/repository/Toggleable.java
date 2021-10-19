@@ -1,5 +1,7 @@
 package view.repository;
 
+import view.repository.uiwrapper.ChangeEventListener;
+
 public interface Toggleable extends IUIComponent {
 	default public void setToggled(boolean isToggled) {
 		((Toggleable) this.getComponent()).setToggled(isToggled);
@@ -11,5 +13,9 @@ public interface Toggleable extends IUIComponent {
 	
 	default public boolean isToggled() {
 		return ((Toggleable) this.getComponent()).isToggled();
+	}
+	
+	default public void addChangeEventListener(ChangeEventListener cel) {
+		((Toggleable) this.getComponent()).addChangeEventListener(cel);
 	}
 }

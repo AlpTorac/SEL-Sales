@@ -50,7 +50,7 @@ public class ConfirmOrderListener extends ClickEventListener implements IApplica
 		
 		String orderID = this.getOrderID().getText();
 		
-		BigDecimal menuItemDiscounts = orderItemDataCollection.stream().map(i -> i.getTotalDiscount()).reduce(BigDecimal.ZERO, (sum, i) -> sum = sum.add(i));
+		BigDecimal menuItemDiscounts = BigDecimal.valueOf(Double.valueOf(this.oia.getDiscountDisplay().getText()));
 		BigDecimal orderDiscount = BigDecimal.valueOf(Double.valueOf(this.getTotalOrderDiscount().getText())).subtract(menuItemDiscounts);
 		
 		LocalDateTime date = this.oia.getDisplayedDate();

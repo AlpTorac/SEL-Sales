@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemDataFactory;
@@ -14,28 +16,61 @@ import model.order.IOrderItemData;
 import model.order.IOrderItemDataFactory;
 
 public interface IOrderParser {
+	default IOrderData[] parseOrderDatas(String s) {
+		String serialisedOrders = this.removeStartAndEnd(s);
+		String[] serialisedSeparatedOrders = serialisedOrders.split(this.getOrderFormat().getOrderEnd());
+		Collection<IOrderData> orderDatas = new ArrayList<IOrderData>();
+		for (String so : serialisedSeparatedOrders) {
+			orderDatas.add(this.parseOrderData(so));
+		}
+		Map<String, IOrderData> newOrderDatas = new HashMap<String, IOrderData>();
+		orderDatas.forEach(od -> {
+			String id;
+			if (newOrderDatas.containsKey(id = od.getID())) {
+				newOrderDatas.put(id, newOrderDatas.get(id).combine(od));
+			} else {
+				newOrderDatas.put(id, od);
+			}
+		});
+		return newOrderDatas.values().toArray(IOrderData[]::new);
+	}
 	default IOrderData parseOrderData(String s) {
-		String[] serialisedOrderSpecificAndOrderItemData = this.getSerialisedOrderSpecificAndOrderItemData(s);
-		String[] serialisedOrderDataFields = this.getSerialisedOrderSpecificData(this.getSerialisedOrderDataField(serialisedOrderSpecificAndOrderItemData));
+		String serialisedOrderBody = this.removeStartAndEnd(s);
+		String[] serialisedOrderSpecificAndOrderItemData = this.getSerialisedOrderSpecificAndOrderItemData(serialisedOrderBody);
+		String[] serialisedOrderDataFields = this.getSerialisedOrderSpecificData(
+				this.getSerialisedOrderDataField(serialisedOrderSpecificAndOrderItemData));
 		
 		String serialisedOrderID = this.getSerialisedOrderID(serialisedOrderDataFields);
 		String serialisedDate = this.getSerialisedDate(serialisedOrderDataFields);
 		String serialisedIsCash = this.getSerialisedIsCash(serialisedOrderDataFields);
 		String serialisedIsHere = this.getSerialisedIsHere(serialisedOrderDataFields);
-		String serialisedOrderDiscount = this.getSerialisedOrderDiscount(serialisedOrderDataFields);
 		
 		LocalDateTime date = this.parseOrderDate(serialisedDate);
-		boolean IsCash = this.parseIsCash(serialisedIsCash);
-		boolean IsHere = this.parseIsHere(serialisedIsHere);
-		
-		BigDecimal orderDiscount = BigDecimal.valueOf(Double.valueOf(serialisedOrderDiscount));
+		boolean IsCash = this.parseBoolean(serialisedIsCash);
+		boolean IsHere = this.parseBoolean(serialisedIsHere);
 		
 		String serialisedOrderItemData = this.getSerialisedOrderItemData(serialisedOrderSpecificAndOrderItemData);
 		
 		IOrderItemData[] orderItemData = this.parseOrderItems(serialisedOrderItemData);
 		
-		return this.getOrderDataFactory().constructData(orderItemData, date, IsCash, IsHere, orderDiscount, serialisedOrderID);
+		return this.getOrderDataFactory().constructData(orderItemData, date, IsCash, IsHere, serialisedOrderID);
 	}
+	default String removeStartAndEnd(String s) {
+		int begin = 0;
+		int end = s.length();
+		
+		if (s.startsWith(this.getOrderFormat().getOrderStart())) {
+			begin += this.getOrderFormat().getOrderStart().length();
+		}
+		if (s.endsWith(this.getOrderFormat().getOrderEnd())) {
+			end -= this.getOrderFormat().getOrderEnd().length();
+		}
+		
+		return s.substring(begin, end);
+	}
+	/**
+	 * @return {orderData, orderedItems}
+	 */
 	default String[] getSerialisedOrderSpecificAndOrderItemData(String s) {
 		return s.split(this.getOrderFormat().getOrderDataFieldEnd());
 	}
@@ -60,17 +95,10 @@ public interface IOrderParser {
 	default String getSerialisedIsHere(String[] ss) {
 		return ss[3];
 	}
-	default String getSerialisedOrderDiscount(String[] ss) {
-		if (ss.length > 4) {
-			return ss[4];
-		} else {
-			return "0";
-		}
-	}
 	default IOrderItemData[] parseOrderItems(String s) {
 		Collection<IOrderItemData> orderItemData = new ArrayList<IOrderItemData>();
 		
-		this.removeLastNewLine(s);
+//		this.removeLastNewLine(s);
 		String[] orderItems = s.split(this.getOrderFormat().getOrderItemDataFieldEnd());
 		
 		for (String item : orderItems) {
@@ -82,8 +110,8 @@ public interface IOrderParser {
 	default IOrderItemData parseOrderItemData(String s) {
 		String[] orderItemDataParts = s.split(this.getOrderFormat().getOrderItemDataFieldSeperator());
 		
-		String menuItemID = 	orderItemDataParts[0];
-		BigDecimal amount = 			this.parseAmount(orderItemDataParts[1]);
+		String menuItemID = orderItemDataParts[0];
+		BigDecimal amount = this.parseAmount(orderItemDataParts[1]);
 		
 		IDishMenuItemData menuItemData = this.getDishMenuItemDataFactory().menuItemToData(this.getFinder().getDish(menuItemID));
 		
@@ -97,25 +125,18 @@ public interface IOrderParser {
 	default BigDecimal parseAmount(String s) {
 		return BigDecimal.valueOf(Double.valueOf(s));
 	}
-	default boolean parseIsCash(String s) {
+	default boolean parseBoolean(String s) {
 		if (s.equals("0")) {
 			return false;
 		} else {
 			return true;
 		}
 	}
-	default boolean parseIsHere(String s) {
-		if (s.equals("0")) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-	default void removeLastNewLine(String s) {
-		if (s.endsWith(this.getOrderFormat().getOrderItemDataFieldEnd())) {
-			s = s.substring(0, s.length() - 1);
-		}
-	}
+//	default void removeLastNewLine(String s) {
+//		if (s.endsWith(this.getOrderFormat().getOrderItemDataFieldEnd())) {
+//			s = s.substring(0, s.length() - 1);
+//		}
+//	}
 	
 	IDishMenuItemDataFactory getDishMenuItemDataFactory();
 	IDishMenuItemFinder getFinder();

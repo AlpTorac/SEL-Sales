@@ -8,10 +8,6 @@ public interface IOrderItemData extends Comparable<IOrderItemData> {
 	IDishMenuItemData getItemData();
 	BigDecimal getAmount();
 	
-	default BigDecimal getTotalDiscount() {
-		return this.getItemData().getDiscount().multiply(this.getAmount());
-	}
-	
 	default BigDecimal getPortionsInOrder() {
 		return this.getItemData().getPortionSize().multiply(this.getAmount());
 	}
@@ -23,26 +19,14 @@ public interface IOrderItemData extends Comparable<IOrderItemData> {
 	default BigDecimal getGrossPricePerPortion() {
 		return this.getItemData().getGrossPricePerPortion();
 	}
-	default BigDecimal getNetPricePerPortion() {
-		return this.getItemData().getNetPricePerPortion();
-	}
-	default BigDecimal getDiscountPerPortion() {
-		return this.getItemData().getDiscountPerPortion();
-	}
-
-	default BigDecimal getNetPricePerMenuItem() {
-		return this.getItemData().getNetPrice();
-	}
 	
 	default BigDecimal getGrossPrice() {
 		return this.getGrossPricePerMenuItem().multiply(this.getAmount());
 	}
 	
-	default BigDecimal getNetPrice() {
-		return this.getNetPricePerMenuItem().multiply(this.getAmount());
-	}
-	
 	default public int compareTo(IOrderItemData data) {
 		return this.getItemData().getId().compareTo(data.getItemData().getId());
 	}
+	
+	IOrderItemData combine(IOrderItemData data);
 }

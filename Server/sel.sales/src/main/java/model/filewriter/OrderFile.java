@@ -8,7 +8,7 @@ import model.order.serialise.IOrderParser;
 import model.order.serialise.OrderParser;
 
 public abstract class OrderFile extends FileAccess {
-	private static String fileName = "orders";
+	private final static String defaultName = "orders";
 	private FileOrderSerialiser serialiser;
 	private IOrderParser parser;
 	
@@ -19,16 +19,22 @@ public abstract class OrderFile extends FileAccess {
 		this.parser = new OrderParser(finder, orderDataFac, orderDataFac.getItemDataFac(), serialiser.getOrderFormat(),
 				menuItemDataFac);
 	}
-	protected String getDefaultFileName() {
-		return fileName;
+	public String getDefaultFileName() {
+		return defaultName;
+	}
+	public static String getDefaultFileNameForClass() {
+		return defaultName;
 	}
 	protected FileOrderSerialiser getSerialiser() {
 		return this.serialiser;
 	}
+	public boolean writeOrderData(IOrderData[] ds) {
+		return this.writeToFile(this.getSerialiser().serialiseOrderDatas(ds));
+	}
 	public boolean writeOrderData(IOrderData d) {
 		return this.writeToFile(this.getSerialiser().serialiseOrderData(d));
 	}
-	public IOrderData loadOrders() {
-		return this.parser.parseOrderData(this.readFile());
+	public IOrderData[] loadOrders() {
+		return this.parser.parseOrderDatas(this.readFile());
 	}
 }

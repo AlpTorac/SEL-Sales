@@ -48,27 +48,27 @@ class DishMenuTest {
 	void startUp() {
 		model = new Model();
 		serialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
-		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
+		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 	}
 	
 	@Test
 	void addMenuItemTest() {
 		IDishMenuItemData[] data = model.getMenuData().getAllDishMenuItems();
 		
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i1Name, i1id, i1PorSize, i1Price, i1ProCost, i1Disc);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i2Name, i2id, i2PorSize, i2Price, i2ProCost, i2Disc);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[2], i3Name, i3id, i3PorSize, i3Price, i3ProCost, i3Disc);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i1Name, i1id, i1PorSize, i1Price, i1ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i2Name, i2id, i2PorSize, i2Price, i2ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[2], i3Name, i3id, i3PorSize, i3Price, i3ProCost);
 	}
 
 	@Test
 	void removeMenuItemTest() {
 		IDishMenuItemData[] data = model.getMenuData().getAllDishMenuItems();
 		
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i1Name, i1id, i1PorSize, i1Price, i1ProCost, i1Disc);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i2Name, i2id, i2PorSize, i2Price, i2ProCost, i2Disc);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[2], i3Name, i3id, i3PorSize, i3Price, i3ProCost, i3Disc);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i1Name, i1id, i1PorSize, i1Price, i1ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i2Name, i2id, i2PorSize, i2Price, i2ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[2], i3Name, i3id, i3PorSize, i3Price, i3ProCost);
 		
 		Assertions.assertEquals(3, data.length);
 		
@@ -76,8 +76,8 @@ class DishMenuTest {
 		
 		data = model.getMenuData().getAllDishMenuItems();
 		
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i2Name, i2id, i2PorSize, i2Price, i2ProCost, i2Disc);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i3Name, i3id, i3PorSize, i3Price, i3ProCost, i3Disc);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i2Name, i2id, i2PorSize, i2Price, i2ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i3Name, i3id, i3PorSize, i3Price, i3ProCost);
 		
 		Assertions.assertEquals(2, data.length);
 		
@@ -85,7 +85,7 @@ class DishMenuTest {
 		
 		data = model.getMenuData().getAllDishMenuItems();
 		
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i3Name, i3id, i3PorSize, i3Price, i3ProCost, i3Disc);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i3Name, i3id, i3PorSize, i3Price, i3ProCost);
 		
 		Assertions.assertEquals(1, data.length);
 		
@@ -98,13 +98,13 @@ class DishMenuTest {
 	
 	@Test
 	void duplicateAddTest() {
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
+		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 		
 		IDishMenuItemData[] data = model.getMenuData().getAllDishMenuItems();
 		
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i1Name, i1id, i1PorSize, i1Price, i1ProCost, i1Disc);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i2Name, i2id, i2PorSize, i2Price, i2ProCost, i2Disc);
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[2], i3Name, i3id, i3PorSize, i3Price, i3ProCost, i3Disc);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i1Name, i1id, i1PorSize, i1Price, i1ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i2Name, i2id, i2PorSize, i2Price, i2ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[2], i3Name, i3id, i3PorSize, i3Price, i3ProCost);
 		
 		Assertions.assertEquals(3, data.length);
 	}
@@ -112,10 +112,10 @@ class DishMenuTest {
 	@Test
 	void getTest() {
 		IDishMenuItemData i1 = model.getMenuItem("item1");
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(i1, i1Name, i1id, i1PorSize, i1Price, i1ProCost, i1Disc);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(i1, i1Name, i1id, i1PorSize, i1Price, i1ProCost);
 		IDishMenuItemData i2 = model.getMenuItem("item2");
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(i2, i2Name, i2id, i2PorSize, i2Price, i2ProCost, i2Disc);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(i2, i2Name, i2id, i2PorSize, i2Price, i2ProCost);
 		IDishMenuItemData i3 = model.getMenuItem("item3");
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(i3, i3Name, i3id, i3PorSize, i3Price, i3ProCost, i3Disc);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(i3, i3Name, i3id, i3PorSize, i3Price, i3ProCost);
 	}
 }

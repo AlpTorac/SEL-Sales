@@ -2,8 +2,11 @@ package view.composites;
 
 import java.io.File;
 
+import controller.BusinessEvent;
 import controller.IController;
 import controller.StatusEvent;
+import model.settings.ISettings;
+import model.settings.SettingsField;
 import view.repository.IButton;
 import view.repository.ILabel;
 import view.repository.IRootComponent;
@@ -46,6 +49,7 @@ public class SettingsArea extends UIVBoxLayout {
 			public void clickAction() {
 				controller.handleApplicationEvent(StatusEvent.DISH_MENU_FOLDER_CHANGED, new Object[] {menuFolderAddress.getAddress()});
 				controller.handleApplicationEvent(StatusEvent.ORDER_FOLDER_CHANGED, new Object[] {orderFolderAddress.getAddress()});
+				controller.handleApplicationEvent(BusinessEvent.SAVE_SETTINGS, null);
 			}
 		});
 		
@@ -132,6 +136,10 @@ public class SettingsArea extends UIVBoxLayout {
 		private String getAddress() {
 			return this.addressBox.getText();
 		}
+		
+		private void setAddress(String newText) {
+			this.addressBox.setCaption(newText);
+		}
 	}
 
 	private class ConnectivityUI extends UIHBoxLayout {
@@ -165,5 +173,10 @@ public class SettingsArea extends UIVBoxLayout {
 		private ITextBox initAddressBox() {
 			return fac.createTextBox();
 		}
+	}
+
+	public void refreshSettings(ISettings settings) {
+		this.menuFolderAddress.setAddress(settings.getSetting(SettingsField.DISH_MENU_FOLDER));
+		this.orderFolderAddress.setAddress(settings.getSetting(SettingsField.ORDER_FOLDER));
 	}
 }

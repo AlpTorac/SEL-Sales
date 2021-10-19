@@ -12,8 +12,6 @@ public interface IDishMenuItem extends Comparable<IDishMenuItem> {
 	String getID();
 	BigDecimal getProductionCost();
 	void setProductionCost(BigDecimal productionCost);
-	BigDecimal getDiscount();
-	void setDiscount(BigDecimal discount);
 	
 	boolean equals(Object o);
 	default public int compareTo(IDishMenuItem o) {

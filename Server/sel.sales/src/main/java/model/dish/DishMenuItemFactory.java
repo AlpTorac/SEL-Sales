@@ -13,6 +13,6 @@ public class DishMenuItemFactory implements IDishMenuItemFactory {
 
 	@Override
 	public IDishMenuItem createMenuItem(IDishMenuItemData item) {
-		return new DishMenuItem(this.createDish(item.getDishName()), item.getPortionSize(), item.getGrossPrice(), item.getProductionCost(), item.getDiscount(), idFac.createDishMenuItemID(item.getId()));
+		return new DishMenuItem(this.createDish(item.getDishName()), item.getPortionSize(), item.getGrossPrice(), item.getProductionCost(), idFac.createDishMenuItemID(item.getId()));
 	}
 }

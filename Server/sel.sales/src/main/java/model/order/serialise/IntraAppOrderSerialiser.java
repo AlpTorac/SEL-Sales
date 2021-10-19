@@ -3,6 +3,7 @@ package model.order.serialise;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import model.order.IOrderData;
 import model.order.IOrderItemData;
 
 public class IntraAppOrderSerialiser implements IOrderSerialiser {
@@ -18,20 +19,24 @@ public class IntraAppOrderSerialiser implements IOrderSerialiser {
 	}
 	
 	@Override
-	public String serialiseOrderData(IOrderItemData[] orderItemsData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, String orderID) {
+	public String serialiseOrderDatas(IOrderData[] orderDatas) {
+		String result = "";
+		for (IOrderData data : orderDatas) {
+			result += this.getOrderFormat().getOrderStart();
+			result += this.serialiseOrderData(data);
+			result += this.getOrderFormat().getOrderEnd();
+		}
+		return result;
+	}
+	
+	@Override
+	public String serialiseOrderData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, String orderID) {
 		String result = "";
 		result += this.serialiseOrderID(orderID) + this.getOrderDataFieldSeperator();
 		result += this.serialiseOrderDate(date) + this.getOrderDataFieldSeperator();
 		result += this.serialiseIsCash(isCash) + this.getOrderDataFieldSeperator();
-		result += this.serialiseIsHere(isHere);
-		
-		if (orderDiscount.compareTo(BigDecimal.ZERO) != 0) {
-			result += this.getOrderDataFieldSeperator() + this.serialiseOrderDiscount(orderDiscount) + this.getOrderDataFieldEnd();
-		} else {
-			result += this.getOrderDataFieldEnd();
-		}
-		
-		result += this.serialiseOrderItemDatas(orderItemsData);
+		result += this.serialiseIsHere(isHere) + this.getOrderDataFieldEnd();
+		result += this.serialiseOrderItemDatas(orderData);
 		
 		return result;
 	}

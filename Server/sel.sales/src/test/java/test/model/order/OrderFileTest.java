@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,10 @@ import model.IModel;
 import model.Model;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.filewriter.FileOrderSerialiser;
+import model.filewriter.OrderFile;
+import model.filewriter.StandardOrderFile;
 import model.order.IOrderData;
+import test.GeneralTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class OrderFileTest {
 	private static IModel model;
@@ -52,43 +56,52 @@ class OrderFileTest {
 	private BigDecimal o2a2 = BigDecimal.valueOf(3);
 	private BigDecimal o3a3 = BigDecimal.valueOf(5);
 	
+	private String testFolder = "src"+File.separator+"test"+File.separator+"resources";
+	
 	@BeforeEach
 	void startUp() {
 		model = new Model();
 		serialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price, i1Disc));
-		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price, i2Disc));
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price, i3Disc));
+		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 		
-		model.addUnconfirmedOrder("order1-20200809112233343-0-0:item1,"+o1a1.toPlainString()+";");
-		model.addUnconfirmedOrder("order2-20200809235959111-1-0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
-		model.addUnconfirmedOrder("order3-20200809000000222-1-1:item3,"+o3a3.toPlainString()+";");
+		model.addUnconfirmedOrder("order1#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";");
+		model.addUnconfirmedOrder("order2#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
+		model.addUnconfirmedOrder("order3#20200809000000222#1#1:item3,"+o3a3.toPlainString()+";");
+		
+		model.setOrderFolderAddress(testFolder);
 	}
 
+	@AfterEach
+	void cleanUp() {
+		GeneralTestUtilityClass.deletePathContent(new File(this.testFolder));
+	}
+	
 	@Test
 	void fileOrderSerialiserTest() {
 		FileOrderSerialiser fos = new FileOrderSerialiser();
 		IOrderData[] ds = model.getAllUnconfirmedOrders();
 		IOrderData d1 = ds[0];
 		String s1 = fos.serialiseOrderData(d1);
-		Assertions.assertEquals(s1, "order1,20200809112233343" +","+i1id+","+o1a1.toPlainString()+".0,"+"0,0,0;\n");
+		Assertions.assertEquals(s1, "order1#20200809112233343#0#0#0:item1,2.0;"+System.lineSeparator());
 		IOrderData d2 = ds[1];
 		String s2 = fos.serialiseOrderData(d2);
-		Assertions.assertEquals(s2, "order2,20200809235959111" +","+i1id+","+o2a1.toPlainString()+".0,"+"1,0,0;\n"
-		+"order2,20200809235959111" +","+i2id+","+o2a2.toPlainString()+".0,"+"1,0,1;\n");
+		Assertions.assertEquals(s2, "order2#20200809235959111#1#0#0:item1,2.0;" + System.lineSeparator()
+				+ "order2#20200809235959111#1#0#0:item2,3.0;"+System.lineSeparator());
 		IOrderData d3 = ds[2];
 		String s3 = fos.serialiseOrderData(d3);
-		Assertions.assertEquals(s3, "order3,20200809000000222" +","+i3id+","+o3a3.toPlainString()+".0,"+"1,1,1;\n");
+		Assertions.assertEquals(s3, "order3#20200809000000222#1#1#0:item3,5.0;"+System.lineSeparator());
 	}
 	
 	@Test
 	void writeTest() {
-		model.confirmOrder("order1-20200809112233343-0-0:item1,"+o1a1.toPlainString()+";");
-		model.confirmOrder("order2-20200809235959111-1-0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
-		model.confirmOrder("order3-20200809000000222-1-1:item3,"+o3a3.toPlainString()+";");
+		model.confirmOrder("order1#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";");
+		model.confirmOrder("order2#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
+		model.confirmOrder("order3#20200809000000222#1#1:item3,"+o3a3.toPlainString()+";");
 		Assertions.assertEquals(model.getAllConfirmedOrders().length, 3);
 		Assertions.assertTrue(model.writeOrders());
-		File f = new File("src/main/resources/orders/orders.txt");
+		File f = new File(this.testFolder+File.separator+OrderFile.getDefaultFileNameForClass()+OrderFile.getExtensionForClass());
 		try {
 			BufferedReader r = null;
 			try {
@@ -106,10 +119,10 @@ class OrderFileTest {
 			for (String l : ls) {
 				lCol.add(l);
 			}
-			Assertions.assertTrue(lCol.contains("order1,20200809112233343,item1,2.0,0,0,0;"));
-			Assertions.assertTrue(lCol.contains("order2,20200809235959111,item1,2.0,1,0,0;"));
-			Assertions.assertTrue(lCol.contains("order2,20200809235959111,item2,3.0,1,0,1;"));
-			Assertions.assertTrue(lCol.contains("order3,20200809000000222,item3,5.0,1,1,1;"));
+			Assertions.assertTrue(lCol.contains("order1#20200809112233343#0#0#0:item1,2.0;"));
+			Assertions.assertTrue(lCol.contains("order2#20200809235959111#1#0#0:item1,2.0;"));
+			Assertions.assertTrue(lCol.contains("order2#20200809235959111#1#0#0:item2,3.0;"));
+			Assertions.assertTrue(lCol.contains("order3#20200809000000222#1#1#0:item3,5.0;"));
 			try {
 				r.close();
 			} catch (IOException e) {
@@ -123,7 +136,6 @@ class OrderFileTest {
 		this.deleteFile(f);
 	}
 	private void deleteFile(File f) {
-		f.delete();
-		f.deleteOnExit();
+		GeneralTestUtilityClass.deletePathContent(new File(this.testFolder));
 	}
 }

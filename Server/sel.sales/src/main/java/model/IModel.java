@@ -7,6 +7,7 @@ import model.dish.serialise.IDishMenuItemSerialiser;
 import model.dish.serialise.IDishMenuSerialiser;
 import model.order.IOrderData;
 import model.order.serialise.IOrderSerialiser;
+import model.settings.ISettings;
 
 public interface IModel {
 	void addUnconfirmedOrder(String serialisedOrderData);
@@ -54,4 +55,14 @@ public interface IModel {
 	
 	void setOrderFolderAddress(String address);
 	void setDishMenuFolderAddress(String address);
+	
+	void setAutoConfirmOrders(boolean autoConfirm);
+	boolean getAutoConfirmOrders();
+	
+	ISettings getSettings();
+	void setSettings(ISettings settings);
+	void setDishMenu(IDishMenuData menu);
+	
+	void loadSaved();
+	boolean writeSettings();
 }

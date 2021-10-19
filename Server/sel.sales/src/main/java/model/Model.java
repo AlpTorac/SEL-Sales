@@ -36,9 +36,17 @@ import model.order.serialise.IOrderDeserialiser;
 import model.order.serialise.IOrderSerialiser;
 import model.order.serialise.IntraAppOrderSerialiser;
 import model.order.serialise.StandardOrderDeserialiser;
+import model.settings.HasSettingsField;
+import model.settings.ISettings;
+import model.settings.Settings;
+import model.settings.SettingsField;
 
 public class Model implements IModel {
+	
+	private volatile boolean autoConfirmOrders = false;
+	
 	private Collection<Updatable> updatables;
+	private Collection<HasSettingsField> part;
 	
 	private IDishMenu dishMenu;
 	private IDishMenuDataFactory dishMenuDataFac;
@@ -64,8 +72,11 @@ public class Model implements IModel {
 	
 	private IFileManager fileManager;
 
+	private ISettings settings;
+	
 	public Model() {
 		this.updatables = new ArrayList<Updatable>();
+		this.part = new ArrayList<HasSettingsField>();
 		
 		this.dishMenu = new DishMenu();
 		this.dishMenuItemDataFac = new DishMenuItemDataFactory();
@@ -85,7 +96,12 @@ public class Model implements IModel {
 		
 		this.connManager = new ConnectivityManager();
 		
-		this.fileManager = new FileManager(dishMenuDataFac, finder, orderDataFac);
+		this.settings = new Settings();
+//		this.settings.addSetting(SettingsField.ORDER_FOLDER, "src/main/resources/orders");
+//		this.settings.addSetting(SettingsField.DISH_MENU_FOLDER, "src/main/resources/dishMenu");
+		
+		this.fileManager = new FileManager(this, dishMenuDataFac, finder, orderDataFac, "src/main/resources");
+		this.part.add(fileManager);
 	}
 	
 	private void menuChanged() {
@@ -100,6 +116,10 @@ public class Model implements IModel {
 		this.updatables.stream().filter(u -> u instanceof OrderUpdatable).forEach(u -> ((OrderUpdatable) u).refreshConfirmedOrders());
 	}
 	
+	private void orderConfirmModeChanged() {
+		this.updatables.stream().filter(u -> u instanceof OrderUpdatable).forEach(u -> ((OrderUpdatable) u).refreshConfirmMode());
+	}
+	
 	private void discoveredClientsChanged() {
 		this.updatables.stream().filter(u -> u instanceof DiscoveredClientUpdatable).forEach(u -> ((DiscoveredClientUpdatable) u).refreshDiscoveredClients());
 	}
@@ -110,6 +130,11 @@ public class Model implements IModel {
 	
 	private void externalStatusChanged() {
 		this.updatables.stream().filter(u -> u instanceof ExternalUpdatable).forEach(u -> ((ExternalUpdatable) u).rediscoverClients());
+	}
+	
+	private void settingsChanged() {
+		this.part.stream().forEach(p -> p.refreshValue());
+		this.updatables.stream().filter(u -> u instanceof SettingsUpdatable).forEach(u -> ((SettingsUpdatable) u).refreshSettings());
 	}
 	
 	public void addMenuItem(String serialisedItemData) {
@@ -147,7 +172,11 @@ public class Model implements IModel {
 	public void addUnconfirmedOrder(String orderData) {
 		IOrderData order = this.orderDeserialiser.deserialise(orderData);
 		this.orderUnconfirmedCollector.addOrder(order);
-		this.unconfirmedOrdersChanged();
+		if (this.autoConfirmOrders) {
+			this.confirmOrder(orderData);
+		} else {
+			this.unconfirmedOrdersChanged();
+		}
 	}
 
 	@Override
@@ -223,16 +252,19 @@ public class Model implements IModel {
 
 	@Override
 	public boolean writeOrders() {
-		boolean b = true;
-		for (IOrderData d : this.getAllConfirmedOrders()) {
-			b = b && this.fileManager.writeOrderData(d);
-		}
-		return b;
+		return this.fileManager.writeOrderDatas(this.getAllConfirmedOrders());
 	}
 
 	@Override
 	public boolean writeDishMenu() {
 		return this.fileManager.writeDishMenuData(this.dishMenuDataFac.dishMenuToData(this.dishMenu));
+	}
+	
+	@Override
+	public boolean writeSettings() {
+		boolean isWritten = this.fileManager.writeSettings(this.getSettings());
+//		this.settingsChanged();
+		return isWritten;
 	}
 
 	@Override
@@ -316,17 +348,58 @@ public class Model implements IModel {
 
 	@Override
 	public void setOrderFolderAddress(String address) {
-		this.fileManager.setOrderDataFolderAddress(address);
+		this.settings.changeSettingValue(SettingsField.ORDER_FOLDER, address);
+		this.settingsChanged();
 	}
 
 	@Override
 	public void setDishMenuFolderAddress(String address) {
-		this.fileManager.setDishMenuDataFolderAddress(address);
+		this.settings.changeSettingValue(SettingsField.DISH_MENU_FOLDER, address);
+		this.settingsChanged();
 	}
 
 	@Override
 	public void removeOrder(String id) {
 		this.removeConfirmedOrder(id);
 		this.removeUnconfirmedOrder(id);
+	}
+
+	@Override
+	public void setAutoConfirmOrders(boolean autoConfirm) {
+		this.autoConfirmOrders = autoConfirm;
+		if (this.autoConfirmOrders) {
+			this.confirmAllOrders();
+		}
+		this.orderConfirmModeChanged();
+	}
+
+	@Override
+	public boolean getAutoConfirmOrders() {
+		return this.autoConfirmOrders;
+	}
+
+	@Override
+	public ISettings getSettings() {
+		return this.settings;
+	}
+
+	@Override
+	public void setSettings(ISettings settings) {
+		this.settings = settings;
+		this.settingsChanged();
+	}
+
+	@Override
+	public void setDishMenu(IDishMenuData menu) {
+		this.dishMenu = new DishMenu();
+		for (IDishMenuItemData data : menu.getAllDishMenuItems()) {
+			this.dishMenu.addMenuItem(data);
+		}
+		this.menuChanged();
+	}
+
+	@Override
+	public void loadSaved() {
+		this.fileManager.loadSaved();
 	}
 }

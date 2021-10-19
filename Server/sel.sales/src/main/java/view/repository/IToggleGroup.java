@@ -2,6 +2,8 @@ package view.repository;
 
 import java.util.Collection;
 
+import view.repository.uiwrapper.ChangeEventListener;
+
 public interface IToggleGroup {
 	public void addToToggleGroup(Toggleable t);
 	
@@ -25,5 +27,9 @@ public interface IToggleGroup {
 		}
 	}
 	
-	public IToggleGroup getToggleGroup();
+	IToggleGroup getToggleGroup();
+	
+	default public void addChangeEventListener(ChangeEventListener cel) {
+		((IToggleGroup) this.getToggleGroup()).addChangeEventListener(cel);
+	}
 }
