@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 import model.IModel;
 import model.Model;
 import model.dish.serialise.IDishMenuItemSerialiser;
-import test.UIOperationsUtilityClass;
+import test.MainViewOperationsUtilityClass;
 import view.IView;
 import view.MainView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
@@ -70,7 +70,7 @@ class ParallelDataContainerAccessTest extends ApplicationTest {
 	
 	@Test
 	void test() {
-		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		for (int i = 0; i < 10; i++) {
 			final int num = i;
 			final String serialisedOrder = "order"+num+"-20200813000000183-1-1:item3,5;item3,4;";

@@ -22,7 +22,7 @@ import model.Model;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
 import test.GeneralTestUtilityClass;
-import test.UIOperationsUtilityClass;
+import test.MainViewOperationsUtilityClass;
 import test.model.order.OrderTestUtilityClass;
 import view.IView;
 import view.MainView;
@@ -86,7 +86,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		Assertions.assertEquals(unconfirmedOrders.length, 1);
 		IOrderData addedUnconfirmedOrder = unconfirmedOrders[0];
 		
-		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		IOrderData confirmedOrderData = opHelper.addConfirmOrder();
 		
 		OrderTestUtilityClass.assertOrderDatasEqual(addedUnconfirmedOrder, confirmedOrderData);
@@ -106,7 +106,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		Assertions.assertEquals(unconfirmedOrders.length, 1);
 		IOrderData addedUnconfirmedOrder = unconfirmedOrders[0];
 		
-		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		IOrderData removedOrderData = opHelper.removeUnconfirmedOrder();
 		
 		unconfirmedOrders = model.getAllUnconfirmedOrders();
@@ -132,7 +132,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
 		Assertions.assertEquals(confirmedOrders.length, 0);
 		
-		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		IOrderData confirmedOrderData = opHelper.addConfirmOrder();
 		
 		OrderTestUtilityClass.assertOrderDatasEqual(addedUnconfirmedOrder, confirmedOrderData);
@@ -166,7 +166,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
 		Assertions.assertEquals(confirmedOrders.length, 0);
 		
-		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		IOrderData[] unconfirmedOrderDatas = opHelper.getUnconfirmedOrders().toArray(IOrderData[]::new);
 		IOrderData[] confirmedOrderDatas = opHelper.confirmAllOrders().toArray(IOrderData[]::new);
 		
@@ -198,7 +198,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
 		Assertions.assertEquals(confirmedOrders.length, 0);
 		
-		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		IOrderData[] unconfirmedOrderDatas = opHelper.getUnconfirmedOrders().toArray(IOrderData[]::new);
 		opHelper.confirmAllOrdersWithoutReturn();
 		
@@ -220,7 +220,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	
 	@Test
 	void confirmAllOrdersWithAutoTest() {		
-		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		opHelper.toggleOnAutoConfirm();
 		
 		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();

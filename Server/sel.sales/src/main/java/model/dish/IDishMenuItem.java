@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 public interface IDishMenuItem extends Comparable<IDishMenuItem> {
 	IDish getDish();
-	void setDish(IDish dish);
 	BigDecimal getPortionSize();
 	void setPortionSize(BigDecimal portionSize);
 	BigDecimal getPrice();

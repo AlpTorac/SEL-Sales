@@ -5,6 +5,11 @@ public interface ISettings {
 	default String getPlaceholder() {
 		return PLACEHOLDER;
 	}
+	default void initAllSettingsFields() {
+		for (SettingsField sf : SettingsField.values()) {
+			this.addSetting(sf, this.getPlaceholder());
+		}
+	}
 	void addSetting(SettingsField description, String serialisedValue);
 	String getSetting(SettingsField description);
 	void removeSetting(SettingsField description);
@@ -15,4 +20,5 @@ public interface ISettings {
 	String[][] getAllSettings();
 	boolean equals(Object o);
 	boolean isEmpty();
+	boolean settingExists(SettingsField description);
 }

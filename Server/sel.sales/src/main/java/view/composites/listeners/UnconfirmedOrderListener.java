@@ -23,9 +23,9 @@ public class UnconfirmedOrderListener extends ItemChangeListener {
 	
 	@Override
 	public void itemAddedAction(Collection<?> items) {
-		if (this.ota.getAuto().isToggled()) {
-			this.oia.getConfirmAllButton().performArtificialClick();
-		}
+//		if (this.ota.getAuto().isToggled()) {
+//			this.oia.getConfirmAllButton().performArtificialClick();
+//		}
 	}
 	
 	@Override

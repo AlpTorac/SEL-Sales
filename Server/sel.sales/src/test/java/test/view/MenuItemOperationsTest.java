@@ -22,7 +22,7 @@ import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemIDFactory;
 import test.GeneralTestUtilityClass;
-import test.UIOperationsUtilityClass;
+import test.MainViewOperationsUtilityClass;
 import test.model.dish.DishMenuItemTestUtilityClass;
 import view.IView;
 import view.MainView;
@@ -73,7 +73,7 @@ class MenuItemOperationsTest extends ApplicationTest {
 	
 	@Test
 	void addMenuItemtest() {
-		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
 		
 		IDishMenuItemData[] datas = model.getMenuData().getAllDishMenuItems();
@@ -84,7 +84,7 @@ class MenuItemOperationsTest extends ApplicationTest {
 	
 	@Test
 	void removeMenuItemTest() {
-		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1ProCost, i1PorSize, i1Disc);
 		IDishMenuItemData[] datas = model.getMenuData().getAllDishMenuItems();
 		Assertions.assertEquals(datas.length, 1);
@@ -100,7 +100,7 @@ class MenuItemOperationsTest extends ApplicationTest {
 	
 	@Test
 	void editMenuItemTest() {
-		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
 		
 		IDishMenuItemData[] datas = model.getMenuData().getAllDishMenuItems();

@@ -79,8 +79,8 @@ public class MainArea extends UIHBoxLayout {
 		ClickEventListener confirmAllOrdersListener = new ConfirmAllOrdersListener(controller);
 		oia.getConfirmAllButton().addClickListener(confirmAllOrdersListener);
 		
-		ItemChangeListener unconfirmedOrderListener = new UnconfirmedOrderListener(ota, oia);
-		ota.getUnconfirmedOrderList().addItemChangeListener(unconfirmedOrderListener);
+//		ItemChangeListener unconfirmedOrderListener = new UnconfirmedOrderListener(ota, oia);
+//		ota.getUnconfirmedOrderList().addItemChangeListener(unconfirmedOrderListener);
 		
 		ClickEventListener writeOrdersListener = new WriteOrdersListener(controller);
 		ota.getWriteButton().addClickListener(writeOrdersListener);

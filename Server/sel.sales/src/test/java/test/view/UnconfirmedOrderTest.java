@@ -33,7 +33,7 @@ import model.dish.IDishMenuItemIDFactory;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
 import test.GeneralTestUtilityClass;
-import test.UIOperationsUtilityClass;
+import test.MainViewOperationsUtilityClass;
 import test.model.order.ClientSimulant;
 import view.IView;
 import view.MainView;
@@ -105,7 +105,7 @@ class UnconfirmedOrderTest extends ApplicationTest {
 		
 		Assertions.assertEquals(model.getAllUnconfirmedOrders().length, 1);
 		
-		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		
 		Assertions.assertEquals(opHelper.getUnconfirmedOrders().size(), 1);
 	}
@@ -150,7 +150,7 @@ class UnconfirmedOrderTest extends ApplicationTest {
 		
 		Assertions.assertEquals(model.getAllUnconfirmedOrders().length, 4);
 		
-		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 		
 		GeneralTestUtilityClass.performWait(300);
 		

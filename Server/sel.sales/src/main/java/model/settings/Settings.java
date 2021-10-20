@@ -9,9 +9,10 @@ public class Settings implements ISettings {
 	
 	public Settings() {
 		this.settings = new ConcurrentHashMap<SettingsField, String>();
-		for (SettingsField sf : SettingsField.values()) {
-			this.settings.put(sf, this.getPlaceholder());
-		}
+	}
+	
+	protected boolean valueExists(String value) {
+		return value == null || value.equals(this.getPlaceholder());
 	}
 	
 	@Override
@@ -25,7 +26,9 @@ public class Settings implements ISettings {
 
 	@Override
 	public void removeSetting(SettingsField description) {
-		this.settings.remove(description);
+		if (this.settings.containsKey(description)) {
+			this.settings.remove(description);
+		}
 	}
 
 	@Override
@@ -39,7 +42,7 @@ public class Settings implements ISettings {
 	@Override
 	public String getSetting(SettingsField description) {
 		String result = this.settings.get(description);
-		return result.equals(this.getPlaceholder()) ? null : result;
+		return this.valueExists(result) ? null : result;
 	}
 	
 	@Override
@@ -68,6 +71,11 @@ public class Settings implements ISettings {
 
 	@Override
 	public boolean isEmpty() {
-		return this.settings.values().stream().allMatch(i -> i.equals(this.getPlaceholder()));
+		return this.settings.isEmpty() || this.settings.values().stream().allMatch(i -> this.valueExists(i));
+	}
+
+	@Override
+	public boolean settingExists(SettingsField description) {
+		return this.getSetting(description) != null;
 	}
 }

@@ -23,11 +23,6 @@ public class DishMenuItem implements IDishMenuItem {
 	}
 
 	@Override
-	public void setDish(IDish dish) {
-		this.dish = dish;
-	}
-
-	@Override
 	public BigDecimal getPortionSize() {
 		return portionSize;
 	}

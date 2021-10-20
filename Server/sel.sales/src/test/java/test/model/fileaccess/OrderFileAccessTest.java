@@ -23,7 +23,7 @@ import model.order.IOrderData;
 import test.GeneralTestUtilityClass;
 
 @Execution(value = ExecutionMode.SAME_THREAD)
-class OrderFileTest {
+class OrderFileAccessTest {
 	private IModel model;
 	private static IDishMenuItemSerialiser serialiser;
 	
@@ -49,13 +49,13 @@ class OrderFileTest {
 	
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	
-	private String orderFileNAE = OrderFile.getDefaultFileNameForClass()+FileAccess.getExtensionForClass();
+//	private String orderFileNAE = OrderFile.getDefaultFileNameForClass()+FileAccess.getExtensionForClass();
 	
 	private IOrderData[] orderData;
 	
-	private String getOrderAddress() {
-		return this.testFolderAddress+File.separator+this.orderFileNAE;
-	}
+//	private String getOrderAddress() {
+//		return this.testFolderAddress+File.separator+this.orderFileNAE;
+//	}
 	
 	@BeforeEach
 	void prep() {
@@ -87,10 +87,10 @@ class OrderFileTest {
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 	}
 	
-	@Test
-	void addressTest() {
-		Assertions.assertEquals(this.getOrderAddress(), of.getFilePath());
-	}
+//	@Test
+//	void addressTest() {
+//		Assertions.assertEquals(this.getOrderAddress(), of.getFilePath());
+//	}
 	
 	@Test
 	void loadTest() {
@@ -100,34 +100,34 @@ class OrderFileTest {
 		}
 	}
 	
-	@Test
-	void deleteTest() {
-		Assertions.assertTrue((new File(this.getOrderAddress())).exists());
-		Assertions.assertTrue(of.deleteFile());
-		Assertions.assertTrue(!(new File(this.getOrderAddress())).exists());
-	}
+//	@Test
+//	void deleteTest() {
+//		Assertions.assertTrue((new File(this.getOrderAddress())).exists());
+//		Assertions.assertTrue(of.deleteFile());
+//		Assertions.assertTrue(!(new File(this.getOrderAddress())).exists());
+//	}
 	
-	@Test
-	void changeFolderAddressTest() {
-		String newFolderAddress = this.testFolderAddress+File.separator+"subfolder";
-		File folder = new File(newFolderAddress);
-		folder.mkdir();
-		Assertions.assertTrue(folder.exists() && folder.isDirectory());
-		of.setFolderAddress(folder.getPath());
-		Assertions.assertEquals(of.getFolderAddress(), newFolderAddress);
-	}
+//	@Test
+//	void changeFolderAddressTest() {
+//		String newFolderAddress = this.testFolderAddress+File.separator+"subfolder";
+//		File folder = new File(newFolderAddress);
+//		folder.mkdir();
+//		Assertions.assertTrue(folder.exists() && folder.isDirectory());
+//		of.setFolderAddress(folder.getPath());
+//		Assertions.assertEquals(of.getFolderAddress(), newFolderAddress);
+//	}
 	
-	@Test
-	void migrationTest() {
-		String newFolderAddress = this.testFolderAddress+File.separator+"subfolder";
-		File folder = new File(newFolderAddress);
-		folder.mkdir();
-		Assertions.assertTrue(folder.exists() && folder.isDirectory());
-		of.setFolderAddress(folder.getPath());
-		String newFileAddress = newFolderAddress+File.separator+this.orderFileNAE;
-		Assertions.assertEquals(of.getFilePath(), newFileAddress);
-		this.fillOrderFile();
-//		Assertions.assertTrue(orderData.equals(of.loadOrders()));
-		Assertions.assertTrue(of.deleteFile());
-	}
+//	@Test
+//	void migrationTest() {
+//		String newFolderAddress = this.testFolderAddress+File.separator+"subfolder";
+//		File folder = new File(newFolderAddress);
+//		folder.mkdir();
+//		Assertions.assertTrue(folder.exists() && folder.isDirectory());
+//		of.setFolderAddress(folder.getPath());
+//		String newFileAddress = newFolderAddress+File.separator+this.orderFileNAE;
+//		Assertions.assertEquals(of.getFilePath(), newFileAddress);
+//		this.fillOrderFile();
+////		Assertions.assertTrue(orderData.equals(of.loadOrders()));
+//		Assertions.assertTrue(of.deleteFile());
+//	}
 }

@@ -24,7 +24,7 @@ import view.composites.OrderTrackingArea;
 import view.repository.HasText;
 import view.repository.IEventShooterOnClickUIComponent;
 
-public class UIOperationsUtilityClass {
+public class MainViewOperationsUtilityClass {
 	private long waitTime = 100;
 	private IModel model;
 	private IController controller;
@@ -46,7 +46,7 @@ public class UIOperationsUtilityClass {
 	
 	private IDateSettings ds;
 	
-	public UIOperationsUtilityClass(MainView view, IController controller, IModel model) {
+	public MainViewOperationsUtilityClass(MainView view, IController controller, IModel model) {
 		this.model = model;
 		this.controller = controller;
 		this.view = view;

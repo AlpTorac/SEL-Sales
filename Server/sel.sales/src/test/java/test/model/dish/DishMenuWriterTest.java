@@ -77,13 +77,13 @@ class DishMenuWriterTest {
 		IDishMenuItemData[] ds = model.getMenuData().getAllDishMenuItems();
 		IDishMenuItemData d1 = ds[0];
 		String s1 = fdmis.serialise(d1);
-		Assertions.assertEquals(s1, i1id+","+i1Name+","+i1Price.toPlainString()+".0,"+i1PorSize.toPlainString()+","+i1ProCost.toPlainString()+".0");
+		Assertions.assertEquals(s1, i1Name+","+i1id+","+i1Price.toPlainString()+".0,"+i1PorSize.toPlainString()+","+i1ProCost.toPlainString()+".0");
 		IDishMenuItemData d2 = ds[1];
 		String s2 = fdmis.serialise(d2);
-		Assertions.assertEquals(s2, i2id+","+i2Name+","+i2Price.toPlainString()+".0,"+i2PorSize.toPlainString()+","+i2ProCost.toPlainString());
+		Assertions.assertEquals(s2, i2Name+","+i2id+","+i2Price.toPlainString()+".0,"+i2PorSize.toPlainString()+","+i2ProCost.toPlainString());
 		IDishMenuItemData d3 = ds[2];
 		String s3 = fdmis.serialise(d3);
-		Assertions.assertEquals(s3, i3id+","+i3Name+","+i3Price.toPlainString()+".0,"+i3PorSize.toPlainString()+","+i3ProCost.toPlainString());
+		Assertions.assertEquals(s3, i3Name+","+i3id+","+i3Price.toPlainString()+".0,"+i3PorSize.toPlainString()+","+i3ProCost.toPlainString());
 	}
 	
 	@Test
@@ -91,9 +91,9 @@ class DishMenuWriterTest {
 		FileDishMenuSerialiser fdmis = new FileDishMenuSerialiser();
 		String s = fdmis.serialise(model.getMenuData());
 		Assertions.assertEquals(s, 
-				i1id+","+i1Name+","+i1Price.toPlainString()+".0,"+i1PorSize.toPlainString()+","+i1ProCost.toPlainString()+".0;"+System.lineSeparator()+
-				i2id+","+i2Name+","+i2Price.toPlainString()+".0,"+i2PorSize.toPlainString()+","+i2ProCost.toPlainString()+";"+System.lineSeparator()+
-				i3id+","+i3Name+","+i3Price.toPlainString()+".0,"+i3PorSize.toPlainString()+","+i3ProCost.toPlainString()+";"+System.lineSeparator()
+				i1Name+","+i1id+","+i1Price.toPlainString()+".0,"+i1PorSize.toPlainString()+","+i1ProCost.toPlainString()+".0;"+System.lineSeparator()+
+				i2Name+","+i2id+","+i2Price.toPlainString()+".0,"+i2PorSize.toPlainString()+","+i2ProCost.toPlainString()+";"+System.lineSeparator()+
+				i3Name+","+i3id+","+i3Price.toPlainString()+".0,"+i3PorSize.toPlainString()+","+i3ProCost.toPlainString()+";"+System.lineSeparator()
 		);
 	}
 	
@@ -121,9 +121,9 @@ class DishMenuWriterTest {
 			for (String l : ls) {
 				lCol.add(l);
 			}
-			Assertions.assertTrue(lCol.contains("item1,aaa,5.0,2.34,4.0;"));
-			Assertions.assertTrue(lCol.contains("item2,bbb,1.0,5.67,0.5;"));
-			Assertions.assertTrue(lCol.contains("item3,ccc,4.0,3.34,3.5;"));
+			Assertions.assertTrue(lCol.contains("aaa,item1,5.0,2.34,4.0;"));
+			Assertions.assertTrue(lCol.contains("bbb,item2,1.0,5.67,0.5;"));
+			Assertions.assertTrue(lCol.contains("ccc,item3,4.0,3.34,3.5;"));
 			try {
 				r.close();
 			} catch (IOException e) {

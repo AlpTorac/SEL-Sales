@@ -21,7 +21,7 @@ import model.IModel;
 import model.Model;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
-import test.UIOperationsUtilityClass;
+import test.MainViewOperationsUtilityClass;
 import view.IView;
 import view.MainView;
 import view.repository.IUILibraryHelper;
@@ -81,7 +81,7 @@ class OrderDisplayTest extends ApplicationTest {
 		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(unconfirmedOrders.length, 3);
 		
-		UIOperationsUtilityClass opHelper = new UIOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
 //		opHelper.clickOnUnconfirmedOrder(0);
 		opHelper.assertShownOrderEquals(unconfirmedOrders[0]);
 //		opHelper.clickOnUnconfirmedOrder(1);
