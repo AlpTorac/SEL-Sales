@@ -23,21 +23,26 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	private ConnectionListener connListener;
 	private DisconnectionListener disconListener;
 	
-	private long pingPongTimeout = 10000;
-	private long minimalPingPongDelay = 1000;
-	private long sendTimeout = 5000;
-	private int resendLimit = 5;
+	private long pingPongTimeout;
+	private long minimalPingPongDelay;
+	private long sendTimeout;
+	private int resendLimit;
 	
-	protected ServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es) {
+//	protected ServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es) {
+//		this.es = es;
+//		this.manager = manager;
+//		this.controller = controller;
+//		this.connListener = this.createConnListener();
+//		this.disconListener = this.createDisconListener();
+//	}
+	protected ServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es, long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		this.es = es;
 		this.manager = manager;
 		this.controller = controller;
 		this.connListener = this.createConnListener();
 		this.disconListener = this.createDisconListener();
-	}
-	protected ServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es, long pingPongTimeout, long sendTimeout, int resendLimit) {
-		this(manager, controller, es);
 		this.pingPongTimeout = pingPongTimeout;
+		this.minimalPingPongDelay = minimalPingPongDelay;
 		this.sendTimeout = sendTimeout;
 		this.resendLimit = resendLimit;
 	}

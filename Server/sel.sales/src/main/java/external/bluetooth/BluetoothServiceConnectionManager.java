@@ -18,21 +18,26 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 	
 	private StreamConnectionNotifier connNotifier;
 	
-	public BluetoothServiceConnectionManager(BluetoothService service, BluetoothClientManager manager, IController controller, ExecutorService es) {
-		super(manager, controller, es);
+//	public BluetoothServiceConnectionManager(BluetoothService service, BluetoothClientManager manager, IController controller, ExecutorService es) {
+//		super(manager, controller, es);
+//		try {
+//			this.connNotifier = (StreamConnectionNotifier) Connector.open(service.getURL());
+//		} catch (IOException e) {
+////			e.printStackTrace();
+//		}
+//	}
+	
+	public BluetoothServiceConnectionManager(BluetoothService service, BluetoothClientManager manager, IController controller, ExecutorService es,
+			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
+		super(manager, controller, es, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		try {
 			this.connNotifier = (StreamConnectionNotifier) Connector.open(service.getURL());
 		} catch (IOException e) {
 //			e.printStackTrace();
 		}
-	}
-	
-	public BluetoothServiceConnectionManager(BluetoothService service, BluetoothClientManager manager, IController controller, ExecutorService es,
-			long pingPongTimeout, long sendTimeout, int resendLimit) {
-		this(service, manager, controller, es);
-		this.setPingPongTimeout(pingPongTimeout);
-		this.setSendTimeout(sendTimeout);
-		this.setResendLimit(resendLimit);
+//		this.setPingPongTimeout(pingPongTimeout);
+//		this.setSendTimeout(sendTimeout);
+//		this.setResendLimit(resendLimit);
 	}
 
 	@Override

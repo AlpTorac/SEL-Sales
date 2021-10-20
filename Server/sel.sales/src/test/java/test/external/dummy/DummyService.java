@@ -9,8 +9,9 @@ import external.connection.Service;
 
 public class DummyService extends Service {
 
-	public DummyService(String id, String name, IClientManager clientManager, IController controller, ExecutorService es) {
-		super(id, name, clientManager, controller, es);
+	public DummyService(String id, String name, IClientManager clientManager, IController controller, ExecutorService es,
+			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
+		super(id, name, clientManager, controller, es, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 	}
 
 	@Override

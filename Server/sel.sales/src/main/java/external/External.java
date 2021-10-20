@@ -14,9 +14,19 @@ public abstract class External implements IExternal {
 	private IModel model;
 	private IController controller;
 	
-	protected External(IController controller, IModel model) {
+	private long pingPongTimeout;
+	private long minimalPingPongDelay;
+	private long sendTimeout;
+	private int resendLimit;
+	
+	protected External(IController controller, IModel model,
+			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		this.controller = controller;
 		this.model = model;
+		this.pingPongTimeout = pingPongTimeout;
+		this.minimalPingPongDelay = minimalPingPongDelay;
+		this.sendTimeout = sendTimeout;
+		this.resendLimit = resendLimit;
 		this.subscribe();
 	}
 	
@@ -53,5 +63,21 @@ public abstract class External implements IExternal {
 	@Override
 	public void close() {
 		this.es.shutdown();
+	}
+	@Override
+	public long getMinimalPingPongDelay() {
+		return minimalPingPongDelay;
+	}
+	@Override
+	public int getResendLimit() {
+		return resendLimit;
+	}
+	@Override
+	public long getPingPongTimeout() {
+		return pingPongTimeout;
+	}
+	@Override
+	public long getSendTimeout() {
+		return sendTimeout;
 	}
 }

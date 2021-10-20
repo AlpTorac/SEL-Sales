@@ -13,11 +13,11 @@ public class DummyServiceConnectionManager extends ServiceConnectionManager {
 	private volatile DummyClient currentClient;
 	
 	public DummyServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es) {
-		super(manager, controller, es);
+		super(manager, controller, es, 10000, 1000, 2000, 10);
 	}
 	
-	public DummyServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es, long pingPongTimeout, long sendTimeout, int resendLimit) {
-		super(manager, controller, es, pingPongTimeout, sendTimeout, resendLimit);
+	public DummyServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es, long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
+		super(manager, controller, es, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 	}
 	
 	public void setCurrentConnectionObject(DummyClient currentClient) {

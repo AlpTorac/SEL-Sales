@@ -9,17 +9,21 @@ import external.client.ClientDiscoveryListener;
 import external.connection.IServiceConnectionManager;
 import external.connection.Service;
 
-public class BluetoothService extends Service {
-	public BluetoothService(UUID id, String name, BluetoothClientManager clientManager, IController controller, ExecutorService es) {
-		super(id.toString(), name, clientManager, controller, es);
-		this.getClientManager().setClientDiscoveryListener(new ClientDiscoveryListener(this.getController()));
+public abstract class BluetoothService extends Service {
+	public BluetoothService(UUID id, String name, BluetoothClientManager clientManager, IController controller, ExecutorService es,
+			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
+		super(id.toString(), name, clientManager, controller, es, pingPongTimeout,
+				minimalPingPongDelay, sendTimeout, resendLimit);
 	}
 
 	@Override
-	public void publish() {
-		this.scm = new BluetoothServiceConnectionManager(this, this.getClientManager(), this.getController(), es);
-		this.scm.makeNewConnectionThread();
-	}
+	public abstract void publish();
+	
+//	@Override
+//	public void publish() {
+//		this.scm = new BluetoothServiceConnectionManager(this, this.getClientManager(), this.getController(), es);
+//		this.scm.makeNewConnectionThread();
+//	}
 
 	@Override
 	public String generateURL() {

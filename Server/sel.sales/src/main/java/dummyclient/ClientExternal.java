@@ -35,9 +35,11 @@ public class ClientExternal extends External {
 	private ServiceRecord serviceRecord;
 	private IConnectionManager connManager;
 	
-	protected ClientExternal(IController controller, IModel model) {
-		super(controller, model);
-		// TODO Auto-generated constructor stub
+	private String targetName;
+	
+	protected ClientExternal(IController controller, IModel model, String targetName, long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
+		super(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
+		this.targetName = targetName;
 	}
 	
 	public IConnectionManager getConnManager() {
@@ -67,7 +69,7 @@ public class ClientExternal extends External {
 			@Override
 			public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
 				try {
-					if (btDevice.getFriendlyName(false).equals("DESKTOP-DIRGCI8")) {
+					if (btDevice.getFriendlyName(false).equals(targetName)) {
 						server = btDevice;
 					}
 				} catch (IOException e) {
@@ -170,7 +172,17 @@ public class ClientExternal extends External {
 	}
 	
 	private BluetoothService initBluetoothService(UUID id, String name) {
-		return new BluetoothService(id, name, this.initClientManager(), this.getController(), es);
+		return new BluetoothService(id, name, this.initClientManager(), this.getController(), es, this.getPingPongTimeout(),
+				this.getMinimalPingPongDelay(), this.getSendTimeout(), this.getResendLimit()) {
+
+					@Override
+					public void publish() {
+						this.scm = new BluetoothServiceConnectionManager(this, this.getClientManager(), this.getController(), es,
+								this.getPingPongTimeout(), this.getMinimalPingPongDelay(), this.getSendTimeout(), this.getResendLimit());
+						this.scm.makeNewConnectionThread();
+					}
+			
+		};
 	}
 	@Override
 	public void rediscoverClients() {

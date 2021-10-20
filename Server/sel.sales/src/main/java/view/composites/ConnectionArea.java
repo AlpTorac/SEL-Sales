@@ -29,7 +29,7 @@ public class ConnectionArea extends UIHBoxLayout {
 	private IButton addKnownClientButton;
 	private IButton removeKnownClientButton;
 	
-	private IConnectionDetailsTable<IClientData> knownClients;
+	private ITable<IClientData> knownClients;
 	
 	private IButton allowClientButton;
 	private IButton blockClientButton;
@@ -124,10 +124,13 @@ public class ConnectionArea extends UIHBoxLayout {
 		return b;
 	}
 	
-	private IConnectionDetailsTable<IClientData> initKnownClients() {
-		IConnectionDetailsTable<IClientData> kc = this.advFac.createConnectionDetailsTable("Allowed to Connect", "isAllowedToConnect", "Connection Status", "isConnected");
+	private ITable<IClientData> initKnownClients() {
+		ITable<IClientData> kc = this.fac.createTable();
+		//"Allowed to Connect", "isAllowedToConnect", "Connection Status", "isConnected"
 		kc.addColumn("Client Name", "ClientName");
 		kc.addColumn("Client Address", "ClientAddress");
+		kc.addColumn("Allowed to Connect", "IsAllowedToConnect");
+		kc.addColumn("Connection Status", "isConnected");
 		return kc;
 	}
 	

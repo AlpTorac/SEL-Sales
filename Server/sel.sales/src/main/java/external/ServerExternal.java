@@ -12,8 +12,9 @@ import model.dish.IDishMenuData;
 
 public abstract class ServerExternal extends External implements IServerExternal, MenuUpdatable {
 	
-	protected ServerExternal(IController controller, IModel model) {
-		super(controller, model);
+	protected ServerExternal(IController controller, IModel model,
+			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
+		super(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		this.setService(this.initService());
 	}
 	

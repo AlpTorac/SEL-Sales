@@ -10,16 +10,21 @@ public class ClientMain {
 	private static ClientView view;
 	private static ClientExternal external;
 	
+	private static long pingPongTimeout = 1000;
+	private static long minimalPingPongDelay = 200;
+	private static long sendTimeout = 1000;
+	private static int resendLimit = 3;
+	
 	public static void main(String[] args) {
 		model = new ClientModel();
 		controller = new ClientController(model);
 		view = new ClientView(controller, model);
 		view.startUp();
-		external = new ClientExternal(controller, model);
+		external = new ClientExternal(controller, model, "DESKTOP-4CPH3L2", pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		external.connectToService();
 		int i = 4;
 		while (true) {
-			IMessage order = new Message(MessageContext.ORDER, null, "order"+i+"-20210809000000111-1-1:item3,5;");
+			IMessage order = new Message(MessageContext.ORDER, null, "order"+i+"#20210809000000111#1#1:item3,5;");
 			external.sendMessage(order);
 			System.out.println("Message Sent");
 			try {

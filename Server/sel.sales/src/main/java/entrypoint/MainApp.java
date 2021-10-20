@@ -22,6 +22,11 @@ public class MainApp extends Application {
 	private static IView view;
 	private static IExternal external;
 	
+	private static long pingPongTimeout = 1000;
+	private static long minimalPingPongDelay = 200;
+	private static long sendTimeout = 1000;
+	private static int resendLimit = 3;
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -36,7 +41,7 @@ public class MainApp extends Application {
 		model = new Model();
 		controller = new MainController(model);
 		view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
-		external = new BluetoothServerExternal(controller, model);
+		external = new BluetoothServerExternal(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		view.startUp();
 		view.show();
 		model.loadSaved();

@@ -8,8 +8,9 @@ import model.IModel;
 
 public class BluetoothServerExternal extends ServerExternal {
 
-	public BluetoothServerExternal(IController controller, IModel model) {
-		super(controller, model);
+	public BluetoothServerExternal(IController controller, IModel model,
+			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
+		super(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 	}
 	
 	@Override
@@ -34,6 +35,7 @@ public class BluetoothServerExternal extends ServerExternal {
 	
 	@Override
 	protected BluetoothService initService() {
-		return new BluetoothServerService(this.initClientManager(), this.getController(), es);
+		return new BluetoothServerService(this.initClientManager(), this.getController(), es, this.getPingPongTimeout(),
+				this.getMinimalPingPongDelay(), this.getSendTimeout(), this.getResendLimit());
 	}
 }

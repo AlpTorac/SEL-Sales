@@ -12,4 +12,8 @@ public interface IService {
 	IClientManager getClientManager();
 	String generateURL();
 	void receiveKnownClientData(IClientData[] clientData);
+	long getMinimalPingPongDelay();
+	int getResendLimit();
+	long getPingPongTimeout();
+	long getSendTimeout();
 }
