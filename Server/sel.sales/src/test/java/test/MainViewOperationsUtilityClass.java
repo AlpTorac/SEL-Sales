@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 
 import controller.IController;
 import model.IModel;
+import model.connectivity.IClientData;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
 import model.order.IOrderItemData;
@@ -17,19 +18,34 @@ import test.model.order.OrderTestUtilityClass;
 import view.IDateSettings;
 import view.IView;
 import view.MainView;
+import view.composites.ConnectionArea;
 import view.composites.MainArea;
 import view.composites.MenuDesignArea;
 import view.composites.OrderInspectionArea;
 import view.composites.OrderTrackingArea;
+import view.composites.SettingsArea;
 import view.repository.HasText;
 import view.repository.IEventShooterOnClickUIComponent;
+import view.repository.uiwrapper.UILayout;
+import view.repository.uiwrapper.UITabPane;
 
 public class MainViewOperationsUtilityClass {
 	private long waitTime = 100;
 	private IModel model;
 	private IController controller;
 	private IView view;
+	
+	private UILayout tabArea;
+	private UITabPane tabPane;
+	
+	private String menuOrderAreaTabName;
+	private String connAreaTabName;
+	private String settingsAreaTabName;
+	
 	private MainArea ma;
+	private ConnectionArea ca;
+	private SettingsArea sa;
+	
 	private MenuDesignArea mda;
 	private OrderTrackingArea ota;
 	private OrderInspectionArea oia;
@@ -51,10 +67,16 @@ public class MainViewOperationsUtilityClass {
 		this.controller = controller;
 		this.view = view;
 		this.ma = GeneralTestUtilityClass.getPrivateFieldValue(view, "mainArea");
+		this.ca = GeneralTestUtilityClass.getPrivateFieldValue(view, "connArea");
+		this.sa = GeneralTestUtilityClass.getPrivateFieldValue(view, "settingsArea");
 		mda = GeneralTestUtilityClass.getPrivateFieldValue(ma, "mda");
 		ota = GeneralTestUtilityClass.getPrivateFieldValue(ma, "ota");
 		oia = GeneralTestUtilityClass.getPrivateFieldValue(ma, "oia");
 		ds = GeneralTestUtilityClass.getPrivateFieldValue(oia, "ds");
+		this.tabPane = GeneralTestUtilityClass.getPrivateFieldValue(view, "tabPane");
+		this.menuOrderAreaTabName = GeneralTestUtilityClass.getPrivateFieldValue(view, "menuOrderAreaTabName");
+		this.connAreaTabName = GeneralTestUtilityClass.getPrivateFieldValue(view, "connAreaTabName");
+		this.settingsAreaTabName = GeneralTestUtilityClass.getPrivateFieldValue(view, "settingsAreaTabName");
 		dishNameBox = mda.getDishNameBox();
 		priceBox = mda.getPriceBox();
 		idBox = mda.getMenuItemIDBox();
@@ -67,6 +89,7 @@ public class MainViewOperationsUtilityClass {
 	}
 	
 	public IDishMenuItemData addMenuItem(String name, String id, BigDecimal price, BigDecimal productionCost, BigDecimal portionSize, BigDecimal discount) {
+		this.setMenuOrderTabActive();
 		dishNameBox.setCaption(name);
 		priceBox.setCaption(String.valueOf(price.doubleValue()));
 		idBox.setCaption(id);
@@ -83,6 +106,7 @@ public class MainViewOperationsUtilityClass {
 	}
 	
 	public IDishMenuItemData removeMenuItem(String id) {
+		this.setMenuOrderTabActive();
 		IDishMenuItemData itemToBeRemoved = model.getMenuItem(id);
 		
 		idBox.setCaption(id);
@@ -99,6 +123,7 @@ public class MainViewOperationsUtilityClass {
 	}
 	
 	public IDishMenuItemData editMenuItem(String name, String id, BigDecimal price, BigDecimal productionCost, BigDecimal portionSize, BigDecimal discount) {
+		this.setMenuOrderTabActive();
 		dishNameBox.setCaption(name);
 		priceBox.setCaption(String.valueOf(price.doubleValue()));
 		idBox.setCaption(id);
@@ -117,6 +142,7 @@ public class MainViewOperationsUtilityClass {
 	}
 	
 	public IOrderData addConfirmOrder() {
+		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
 		IOrderData data = this.ota.getUnconfirmedOrderList().getItem(0);
 		GeneralTestUtilityClass.performWait(waitTime);
@@ -132,6 +158,7 @@ public class MainViewOperationsUtilityClass {
 	}
 	
 	public Collection<IOrderData> confirmAllOrders() {
+		this.setMenuOrderTabActive();
 		Collection<IOrderData> unconfirmedOrders = this.getUnconfirmedOrders();
 		IOrderData[] confirmedOrders = new IOrderData[unconfirmedOrders.size()];
 		GeneralTestUtilityClass.performWait(waitTime);
@@ -152,19 +179,23 @@ public class MainViewOperationsUtilityClass {
 	}
 	
 	public void confirmAllOrdersWithoutReturn() {
+		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
 		this.oia.getConfirmAllButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
 	public void toggleOnAutoConfirm() {
+		this.setMenuOrderTabActive();
 		this.ota.getAuto().setToggled(true);
 	}
 	public void toggleOffAutoConfirm() {
+		this.setMenuOrderTabActive();
 		this.ota.getAuto().setToggled(false);
 	}
 	
 	public IOrderData removeUnconfirmedOrder() {
+		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
 		IOrderData data = this.ota.getUnconfirmedOrderList().getItem(0);
 		GeneralTestUtilityClass.performWait(waitTime);
@@ -180,6 +211,7 @@ public class MainViewOperationsUtilityClass {
 	}
 	
 	public IOrderData removeConfirmedOrder() {
+		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
 		IOrderData data = this.ota.getConfirmedOrderList().getItem(0);
 		GeneralTestUtilityClass.performWait(waitTime);
@@ -195,16 +227,19 @@ public class MainViewOperationsUtilityClass {
 	}
 	
 	public Collection<IOrderData> getUnconfirmedOrders() {
+		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
 		return ota.getUnconfirmedOrderList().getAllItems();
 	}
 	
 	public Collection<IOrderData> getConfirmedOrders() {
+		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
 		return ota.getConfirmedOrderList().getAllItems();
 	}
 	
 	public void clickOnUnconfirmedOrder(int index) {
+		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
 		ota.getUnconfirmedOrderList().artificiallySelectItem(index);
 		ota.getUnconfirmedOrderList().performArtificialClicks(2);
@@ -212,6 +247,7 @@ public class MainViewOperationsUtilityClass {
 	}
 	
 	public void clickOnConfirmedOrder(int index) {
+		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
 		ota.getConfirmedOrderList().artificiallySelectItem(index);
 		ota.getConfirmedOrderList().performArtificialClicks(2);
@@ -219,6 +255,7 @@ public class MainViewOperationsUtilityClass {
 	}
 	
 	public void assertShownOrderEquals(IOrderData orderData) {
+		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
 		oia.displayOrder(orderData);
 		GeneralTestUtilityClass.performWait(waitTime);
@@ -250,5 +287,69 @@ public class MainViewOperationsUtilityClass {
 			OrderTestUtilityClass.assertOrderItemDataEqual(idatas[i], itemIDs[i], itemAmounts[i]);
 			Assertions.assertEquals(idatas[i].getGrossPrice().compareTo(itemGrossPrices[i]), 0);
 		}
+	}
+	
+	public void clickOnDiscoverClients() {
+		this.setConnAreaTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.ca.getRefreshButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public Collection<IClientData> getDiscoveredClients() {
+		this.setConnAreaTabActive();
+		return this.ca.getDiscoveredClients().getAllItems();
+	}
+	
+	public Collection<IClientData> getKnownClients() {
+		this.setConnAreaTabActive();
+		return this.ca.getKnownClients().getAllItems();
+	}
+	
+	public void addKnownClient(int index) {
+		this.setConnAreaTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.ca.getDiscoveredClients().artificiallySelectItem(index);
+		GeneralTestUtilityClass.performWait(waitTime);
+		System.out.println("discovered client size: " + ca.getDiscoveredClients().getSize());
+		this.ca.getAddKnownClientButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void removeKnownClient(int index) {
+		this.setConnAreaTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.ca.getKnownClients().artificiallySelectItem(index);
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.ca.getRemoveKnownClientButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void allowKnownClient(int index) {
+		this.setConnAreaTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.ca.getKnownClients().artificiallySelectItem(index);
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.ca.getAllowClientButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void blockKnownClient(int index) {
+		this.setConnAreaTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.ca.getKnownClients().artificiallySelectItem(index);
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.ca.getBlockClientButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	private void setMenuOrderTabActive() {
+		this.tabPane.selectTab(this.menuOrderAreaTabName);
+	}
+	private void setConnAreaTabActive() {
+		this.tabPane.selectTab(this.connAreaTabName);
+	}
+	private void setSettingsAreaTabActive() {
+		this.tabPane.selectTab(this.settingsAreaTabName);
 	}
 }

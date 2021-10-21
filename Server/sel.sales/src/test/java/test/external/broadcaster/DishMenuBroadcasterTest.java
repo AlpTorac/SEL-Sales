@@ -133,6 +133,7 @@ class DishMenuBroadcasterTest {
 	
 	@AfterEach
 	void cleanUp() {
+		model.close();
 		serviceConnectionManager.close();
 		isOrderReceivedByController = false;
 		

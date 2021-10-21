@@ -60,6 +60,7 @@ class OrderFileTest {
 	
 	@BeforeEach
 	void startUp() {
+		GeneralTestUtilityClass.deletePathContent(new File(this.testFolder));
 		model = new Model();
 		serialiser = model.getDishMenuItemSerialiser();
 		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
@@ -75,6 +76,7 @@ class OrderFileTest {
 
 	@AfterEach
 	void cleanUp() {
+		model.close();
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolder));
 	}
 	

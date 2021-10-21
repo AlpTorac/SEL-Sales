@@ -81,6 +81,7 @@ class UnconfirmedOrderTest extends ApplicationTest {
 	@AfterEach
 	public void cleanUp() {
 		model.removeAllUnconfirmedOrders();
+		model.close();
 	}
 	
 	@Override

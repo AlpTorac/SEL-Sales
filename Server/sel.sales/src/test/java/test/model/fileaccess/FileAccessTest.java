@@ -39,6 +39,7 @@ class FileAccessTest {
 	
 	@BeforeEach
 	void prep() {
+		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 		fa = new FileAccess(this.testFolderAddress) {};
 		Assertions.assertTrue(fa.isFolderAddressValid());
 		Assertions.assertTrue(fa.fileExists());
@@ -46,7 +47,7 @@ class FileAccessTest {
 	
 	@AfterEach
 	void cleanUp() {
-		fa.deleteFile();
+		fa.close();
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 	}
 	
@@ -82,6 +83,8 @@ class FileAccessTest {
 	}
 	
 	private void deleteFile(File f) {
+		f.delete();
+		f.deleteOnExit();
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 	}
 	

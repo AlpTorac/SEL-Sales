@@ -23,18 +23,17 @@ public class FileManager implements IFileManager {
 	private SettingsFile settingsFile;
 	private IModel model;
 	
-	public FileManager(IModel model, IDishMenuDataFactory menuDataFac, IDishMenuItemFinder finder, IOrderDataFactory orderDataFac,
-			String settingsFolderAddress) {
+	public FileManager(IModel model, String settingsFolderAddress) {
 		this.model = model;
 		
 		this.settingsFolderAddress = settingsFolderAddress;
 		this.settingsFile = new StandardSettingsFile(this.settingsFolderAddress);
-		this.orderWriter = new StandardOrderFile(this.model.getSettings().getSetting(SettingsField.ORDER_FOLDER), finder, orderDataFac, menuDataFac.getItemDataFac());
-		this.dishMenuWriter = new StandardDishMenuFile(this.model.getSettings().getSetting(SettingsField.DISH_MENU_FOLDER), menuDataFac);
+		this.orderWriter = new StandardOrderFile(this.model.getSettings().getSetting(SettingsField.ORDER_FOLDER));
+		this.dishMenuWriter = new StandardDishMenuFile(this.model.getSettings().getSetting(SettingsField.DISH_MENU_FOLDER));
 	}
 	
 	protected void initSettings() {
-		ISettings s = this.settingsFile.loadSettings();
+		String s = this.settingsFile.readFile();
 		if (s != null && !s.isEmpty()) {
 			System.out.println("Settings preloaded");
 			this.model.setSettings(s);
@@ -42,7 +41,7 @@ public class FileManager implements IFileManager {
 	}
 	
 	protected void initDishMenu() {
-		IDishMenuData menu = this.dishMenuWriter.loadDishMenu();
+		String menu = this.dishMenuWriter.readFile();
 		if (menu != null && !menu.isEmpty()) {
 			System.out.println("Dish menu preloaded");
 			this.model.setDishMenu(menu);
@@ -50,18 +49,18 @@ public class FileManager implements IFileManager {
 	}
 	
 	@Override
-	public boolean writeOrderDatas(IOrderData[] data) {
-		return this.orderWriter.writeOrderData(data);
+	public boolean writeOrderDatas(String data) {
+		return this.orderWriter.writeToFile(data);
 	}
 
 	@Override
-	public boolean writeDishMenuData(IDishMenuData data) {
-		return this.dishMenuWriter.writeDishMenuData(data);
+	public boolean writeDishMenuData(String data) {
+		return this.dishMenuWriter.writeToFile(data);
 	}
 	
 	@Override
-	public boolean writeSettings(ISettings settings) {
-		return this.settingsFile.writeSettings(settings);
+	public boolean writeSettings(String settings) {
+		return this.settingsFile.writeToFile(settings);
 	}
 
 	@Override
@@ -78,5 +77,11 @@ public class FileManager implements IFileManager {
 		System.out.println("Old menu folder address: "+this.dishMenuWriter.getFolderAddress());
 		this.dishMenuWriter.setFolderAddress(this.model.getSettings().getSetting(SettingsField.DISH_MENU_FOLDER));
 		System.out.println("New menu folder address: "+this.dishMenuWriter.getFolderAddress());
+	}
+	@Override
+	public void close() {
+		this.orderWriter.close();
+		this.dishMenuWriter.close();
+		this.settingsFile.close();
 	}
 }

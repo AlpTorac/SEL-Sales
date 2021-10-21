@@ -16,8 +16,8 @@ public class DummyService extends Service {
 
 	@Override
 	public void publish() {
-		this.scm = new DummyServiceConnectionManager(this.getClientManager(), this.getController(), es);
-		this.scm.makeNewConnectionThread();
+//		this.scm = new DummyServiceConnectionManager(this.getClientManager(), this.getController(), es);
+//		this.scm.makeNewConnectionThread();
 	}
 
 	@Override

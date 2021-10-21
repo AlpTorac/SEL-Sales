@@ -177,4 +177,9 @@ public abstract class FileAccess implements IFileAccess {
 		}
 		return this.activeFile;
 	}
+	@Override
+	public void close() {
+		this.closeRAF();
+	}
+	
 }

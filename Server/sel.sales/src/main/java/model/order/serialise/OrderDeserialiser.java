@@ -28,4 +28,9 @@ public abstract class OrderDeserialiser implements IOrderDeserialiser {
 	public IOrderData deserialise(String s) {
 		return this.orderParser.parseOrderData(s);
 	}
+	
+	@Override
+	public IOrderData[] deserialiseOrders(String s) {
+		return this.orderParser.parseOrderDatas(s);
+	}
 }

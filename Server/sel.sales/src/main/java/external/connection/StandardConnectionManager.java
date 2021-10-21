@@ -12,9 +12,9 @@ import external.connection.pingpong.StandardPingPong;
 
 public class StandardConnectionManager extends ConnectionManager {
 
-	public StandardConnectionManager(IController controller, IConnection conn, ExecutorService es) {
-		super(controller, conn, es);
-	}
+//	public StandardConnectionManager(IController controller, IConnection conn, ExecutorService es) {
+//		super(controller, conn, es);
+//	}
 	
 	public StandardConnectionManager(IController controller, IConnection conn, ExecutorService es, long pingPongTimeoutInMillis, long sendTimeoutInMillis, int resendLimit, long minimalPingPongDelay) {
 		super(controller, conn, es, pingPongTimeoutInMillis, sendTimeoutInMillis, resendLimit, minimalPingPongDelay);

@@ -2,3 +2,4 @@
 Server/sel.sales/.classpath
 Server/sel.sales/.settings/org.eclipse.jdt.core.prefs
 Server/sel.sales/src/main/resources
+Server/sel.sales/src/test/resources

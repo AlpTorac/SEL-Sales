@@ -88,12 +88,17 @@ public class FXTable<T> extends TableView<T> implements FXHasText, ITable<T>, FX
 	
 	@Override
 	public void artificiallySelectItem(int index) {
-		super.getSelectionModel().select(index);
+		super.requestFocus();
+		super.getSelectionModel().clearAndSelect(index);
+		super.getFocusModel().focus(index);
 	}
 	
 	@Override
 	public void artificiallySelectItemProperty(int index, int itemPropertyIndex) {
-		super.getSelectionModel().select(index,
+		super.requestFocus();
+		super.getSelectionModel().clearAndSelect(index,
+				super.getColumns().get(itemPropertyIndex));
+		super.getFocusModel().focus(index,
 				super.getColumns().get(itemPropertyIndex));
 	}
 	

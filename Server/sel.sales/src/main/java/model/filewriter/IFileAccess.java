@@ -10,4 +10,5 @@ public interface IFileAccess {
 	boolean isFolderAddressValid();
 	boolean fileExists();
 	boolean remakeFile();
+	void close();
 }

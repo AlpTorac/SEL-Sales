@@ -17,13 +17,19 @@ import model.filewriter.DishMenuFile;
 import model.filewriter.FileAccess;
 import model.filewriter.OrderFile;
 import model.settings.ISettings;
+import model.settings.ISettingsParser;
+import model.settings.ISettingsSerialiser;
 import model.settings.Settings;
 import model.settings.SettingsField;
+import model.settings.StandardSettingsParser;
+import model.settings.StandardSettingsSerialiser;
 import test.GeneralTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class SettingsFileAccessTest {
 	private SettingsFile sf;
 	private ISettings settings;
+	private ISettingsSerialiser serialiser;
+	private ISettingsParser parser;
 	
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	
@@ -52,18 +58,21 @@ class SettingsFileAccessTest {
 	
 	private void fillSettingsFile() {
 		settings = this.initSettings();
-		sf.writeSettings(settings);
+		sf.writeToFile(serialiser.serialise(settings));
 	}
 	
 	@BeforeEach
 	void prep() {
+		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 		sf = new StandardSettingsFile(this.testFolderAddress);
+		serialiser = new StandardSettingsSerialiser();
+		parser = new StandardSettingsParser();
 		this.fillSettingsFile();
 	}
 	
 	@AfterEach
 	void cleanUp() {
-		sf.deleteFile();
+		sf.close();
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 		settings = null;
 	}
@@ -75,7 +84,7 @@ class SettingsFileAccessTest {
 	
 	@Test
 	void loadTest() {
-		ISettings s = sf.loadSettings();
+		ISettings s = parser.parseSettings(sf.readFile());
 		Assertions.assertTrue(settings.equals(s));
 	}
 	

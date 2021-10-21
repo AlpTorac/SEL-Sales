@@ -73,12 +73,14 @@ public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T
 	
 	@Override
 	public void artificiallySelectItem(int index) {
-		super.getSelectionModel().select(index);
+		super.requestFocus();
+		super.getSelectionModel().clearAndSelect(index);
+		super.getFocusModel().focus(index);
 	}
 	
 	@Override
 	public void artificiallySelectItemProperty(int index, int itemPropertyIndex) {
-		super.getSelectionModel().select(index);
+		this.artificiallySelectItem(index);
 	}
 	
 	@Override

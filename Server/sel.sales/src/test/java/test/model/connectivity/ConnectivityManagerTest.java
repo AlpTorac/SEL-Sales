@@ -54,7 +54,7 @@ class ConnectivityManagerTest {
 	
 	@AfterEach
 	void cleanUp() {
-		
+		model.close();
 	}
 	
 	private void initConnManager() {

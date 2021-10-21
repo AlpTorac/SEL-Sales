@@ -129,7 +129,7 @@ public final class GeneralTestUtilityClass {
 		if (array1 == array2) {
 			return true;
 		}
-		if (array1 == null || array2 == null) {
+		if (array1 == null ^ array2 == null) {
 			return false;
 		}
 		for (T element : array2) {
@@ -139,15 +139,35 @@ public final class GeneralTestUtilityClass {
 		}
 		return true;
 	}
+	public static <T> boolean arrayContentEquals(T[] array1, T[] array2, BiFunction<T,T,Boolean> comparer) {
+		if (array1 == array2) {
+			return true;
+		}
+		if (array1 == null ^ array2 == null) {
+			return false;
+		}
+		for (T element : array2) {
+			if (!arrayContains(array1, element, comparer)) {
+				return false;
+			}
+		}
+		return true;
+	}
 	public static void deletePathContent(File folderToEmpty) {
+		deleteRecursively(folderToEmpty);
+	}
+	private static void deleteRecursively(File folderToEmpty) {
 		File testFolder = folderToEmpty;
 		File[] subFiles = testFolder.listFiles();
 		if (subFiles != null) {
 			for (File f : subFiles) {
-				while (f.exists() && !f.delete() && f.listFiles() != null && f.listFiles().length > 0) {
-					f = f.listFiles()[0];
-				}
+				deleteInnerPathContent(f);
 			}
 		}
+	}
+	private static void deleteInnerPathContent(File folderToEmpty) {
+		deleteRecursively(folderToEmpty);
+		folderToEmpty.delete();
+		folderToEmpty.deleteOnExit();
 	}
 }

@@ -18,13 +18,19 @@ import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemFinder;
 import model.dish.serialise.IntraAppDishMenuItemSerialiser;
+import model.dish.serialise.DishMenuFormat;
+import model.dish.serialise.DishMenuParser;
 import model.dish.serialise.ExternalDishMenuSerialiser;
+import model.dish.serialise.FileDishMenuSerialiser;
 import model.dish.serialise.IDishMenuItemDeserialiser;
 import model.dish.serialise.IDishMenuItemSerialiser;
+import model.dish.serialise.IDishMenuParser;
 import model.dish.serialise.IDishMenuSerialiser;
 import model.dish.serialise.StandardDishMenuDeserialiser;
 import model.filemanager.FileManager;
 import model.filemanager.IFileManager;
+import model.filewriter.FileDishMenuFormat;
+import model.filewriter.FileOrderSerialiser;
 import model.order.IOrderCollector;
 import model.order.IOrderData;
 import model.order.IOrderDataFactory;
@@ -38,8 +44,13 @@ import model.order.serialise.IntraAppOrderSerialiser;
 import model.order.serialise.StandardOrderDeserialiser;
 import model.settings.HasSettingsField;
 import model.settings.ISettings;
+import model.settings.ISettingsParser;
+import model.settings.ISettingsSerialiser;
 import model.settings.Settings;
 import model.settings.SettingsField;
+import model.settings.SettingsParser;
+import model.settings.StandardSettingsParser;
+import model.settings.StandardSettingsSerialiser;
 
 public class Model implements IModel {
 	
@@ -49,6 +60,7 @@ public class Model implements IModel {
 	private Collection<HasSettingsField> part;
 	
 	private IDishMenu dishMenu;
+	private IDishMenuParser dishMenuParser;
 	private IDishMenuDataFactory dishMenuDataFac;
 	private IDishMenuItemDataFactory dishMenuItemDataFac;
 	private IOrderDataFactory orderDataFac;
@@ -56,13 +68,14 @@ public class Model implements IModel {
 	
 	private IOrderCollector orderUnconfirmedCollector;
 	private IOrderCollector orderConfirmedCollector;
-	private IOrderSerialiser orderSerialiser;
+	private IntraAppOrderSerialiser appOrderSerialiser;
+	private FileOrderSerialiser fileOrderSerialiser;
 	private IOrderDeserialiser orderDeserialiser;
 	
 	private IDishMenuItemDeserialiser dishMenuItemDeserialiser;
 	private IDishMenuItemFinder finder;
 	private IDishMenuItemSerialiser menuItemSerialiser;
-	
+	private IDishMenuSerialiser fileMenuSerialiser;
 	/**
 	 * Only for the external clients (outside the server part of the app)
 	 */
@@ -73,6 +86,8 @@ public class Model implements IModel {
 	private IFileManager fileManager;
 
 	private ISettings settings;
+	private ISettingsParser settingsParser;
+	private ISettingsSerialiser settingsSerialiser;
 	
 	public Model() {
 		this.updatables = new ArrayList<Updatable>();
@@ -81,11 +96,14 @@ public class Model implements IModel {
 		this.dishMenu = new DishMenu();
 		this.dishMenuItemDataFac = new DishMenuItemDataFactory();
 		this.dishMenuDataFac = new DishMenuDataFactory(this.dishMenuItemDataFac);
+		this.dishMenuParser = new DishMenuParser(new FileDishMenuFormat(), this.dishMenuDataFac);
 		this.orderItemDataFac = new OrderItemDataFactory();
 		this.orderDataFac = new OrderDataFactory(orderItemDataFac);
 		
-		this.orderSerialiser = new IntraAppOrderSerialiser();
+		this.appOrderSerialiser = new IntraAppOrderSerialiser();
+		this.fileOrderSerialiser = new FileOrderSerialiser();
 		this.menuItemSerialiser = new IntraAppDishMenuItemSerialiser();
+		this.fileMenuSerialiser = new FileDishMenuSerialiser();
 		this.dishMenuItemDeserialiser = new StandardDishMenuDeserialiser();
 		this.finder = new DishMenuItemFinder(this.dishMenu);
 		this.orderUnconfirmedCollector = new OrderCollector();
@@ -97,10 +115,12 @@ public class Model implements IModel {
 		this.connManager = new ConnectivityManager();
 		
 		this.settings = new Settings();
+		this.settingsParser = new StandardSettingsParser();
+		this.settingsSerialiser = new StandardSettingsSerialiser();
 //		this.settings.addSetting(SettingsField.ORDER_FOLDER, "src/main/resources/orders");
 //		this.settings.addSetting(SettingsField.DISH_MENU_FOLDER, "src/main/resources/dishMenu");
 		
-		this.fileManager = new FileManager(this, dishMenuDataFac, finder, orderDataFac, "src/main/resources");
+		this.fileManager = new FileManager(this, "src/main/resources");
 		this.part.add(fileManager);
 	}
 	
@@ -241,7 +261,7 @@ public class Model implements IModel {
 
 	@Override
 	public IOrderSerialiser getOrderSerialiser() {
-		return this.orderSerialiser;
+		return this.appOrderSerialiser;
 	}
 
 	@Override
@@ -252,19 +272,17 @@ public class Model implements IModel {
 
 	@Override
 	public boolean writeOrders() {
-		return this.fileManager.writeOrderDatas(this.getAllConfirmedOrders());
+		return this.fileManager.writeOrderDatas(this.fileOrderSerialiser.serialiseOrderDatas(this.getAllConfirmedOrders()));
 	}
 
 	@Override
 	public boolean writeDishMenu() {
-		return this.fileManager.writeDishMenuData(this.dishMenuDataFac.dishMenuToData(this.dishMenu));
+		return this.fileManager.writeDishMenuData(this.fileMenuSerialiser.serialise(this.dishMenuDataFac.dishMenuToData(this.dishMenu)));
 	}
 	
 	@Override
 	public boolean writeSettings() {
-		boolean isWritten = this.fileManager.writeSettings(this.getSettings());
-//		this.settingsChanged();
-		return isWritten;
+		return this.fileManager.writeSettings(this.settingsSerialiser.serialise(this.getSettings()));
 	}
 
 	@Override
@@ -384,15 +402,16 @@ public class Model implements IModel {
 	}
 
 	@Override
-	public void setSettings(ISettings settings) {
-		this.settings = settings;
+	public void setSettings(String settings) {
+		this.settings = this.settingsParser.parseSettings(settings);
 		this.settingsChanged();
 	}
 
 	@Override
-	public void setDishMenu(IDishMenuData menu) {
+	public void setDishMenu(String menu) {
 		this.dishMenu = new DishMenu();
-		for (IDishMenuItemData data : menu.getAllDishMenuItems()) {
+		IDishMenuData menuData = this.dishMenuParser.parseDishMenuData(menu);
+		for (IDishMenuItemData data : menuData.getAllDishMenuItems()) {
 			this.dishMenu.addMenuItem(data);
 		}
 		this.menuChanged();
@@ -401,5 +420,9 @@ public class Model implements IModel {
 	@Override
 	public void loadSaved() {
 		this.fileManager.loadSaved();
+	}
+	@Override
+	public void close() {
+		this.fileManager.close();
 	}
 }

@@ -60,9 +60,11 @@ public interface IModel {
 	boolean getAutoConfirmOrders();
 	
 	ISettings getSettings();
-	void setSettings(ISettings settings);
-	void setDishMenu(IDishMenuData menu);
+	void setSettings(String settings);
+	void setDishMenu(String menu);
 	
 	void loadSaved();
 	boolean writeSettings();
+	
+	void close();
 }

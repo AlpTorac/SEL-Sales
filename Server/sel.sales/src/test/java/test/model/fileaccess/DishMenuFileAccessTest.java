@@ -16,6 +16,8 @@ import model.IModel;
 import model.Model;
 import model.dish.IDishMenuData;
 import model.dish.serialise.IDishMenuItemSerialiser;
+import model.dish.serialise.IDishMenuParser;
+import model.dish.serialise.IDishMenuSerialiser;
 import model.filewriter.DishMenuFile;
 import model.filewriter.StandardDishMenuFile;
 import test.GeneralTestUtilityClass;
@@ -23,6 +25,8 @@ import test.GeneralTestUtilityClass;
 class DishMenuFileAccessTest {
 	private IModel model;
 	private static IDishMenuItemSerialiser serialiser;
+	private static IDishMenuParser parser;
+	private static IDishMenuSerialiser menuSerialiser;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -50,25 +54,28 @@ class DishMenuFileAccessTest {
 	
 	@BeforeEach
 	void prep() {
+		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 		model = new Model();
 		serialiser = model.getDishMenuItemSerialiser();
+		menuSerialiser = GeneralTestUtilityClass.getPrivateFieldValue((Model) model, "fileMenuSerialiser");
+		parser = GeneralTestUtilityClass.getPrivateFieldValue((Model) model, "dishMenuParser");
 		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
 		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 		
-		dmf = new StandardDishMenuFile(this.testFolderAddress,
-				GeneralTestUtilityClass.getPrivateFieldValue((Model) model, "dishMenuDataFac"));
-		this.fillOrderFile();
+		dmf = new StandardDishMenuFile(this.testFolderAddress);
+		this.fillMenuFile();
 	}
 	
-	private void fillOrderFile() {
+	private void fillMenuFile() {
 		dishMenuData = model.getMenuData();
-		dmf.writeDishMenuData(dishMenuData);
+		dmf.writeToFile(menuSerialiser.serialise(dishMenuData));
 	}
 
 	@AfterEach
 	void cleanUp() {
-		dmf.deleteFile();
+		model.close();
+//		dmf.deleteFile();
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 	}
 	
@@ -79,7 +86,7 @@ class DishMenuFileAccessTest {
 	
 	@Test
 	void loadTest() {
-		IDishMenuData s = dmf.loadDishMenu();
+		IDishMenuData s = parser.parseDishMenuData(dmf.readFile());
 		Assertions.assertTrue(dishMenuData.equals(s));
 	}
 	

@@ -10,11 +10,11 @@ import external.connection.pingpong.IPingPong;
 import external.message.IMessage;
 
 public abstract class ConnectionManager implements IConnectionManager {
-	private long minimalPingPongDelay = 1000;
+	private long minimalPingPongDelay;
 	
-	private long sendTimeoutInMillis = 5000;
-	private long pingPongTimeoutInMillis = 10000;
-	private int resendLimit = 5;
+	private long sendTimeoutInMillis;
+	private long pingPongTimeoutInMillis;
+	private int resendLimit;
 	
 	private ExecutorService es;
 	private IConnection conn;
@@ -29,12 +29,6 @@ public abstract class ConnectionManager implements IConnectionManager {
 	
 //	private Thread cycleThread;
 	
-	protected ConnectionManager(IController controller, IConnection conn, ExecutorService es) {
-		this.controller = controller;
-		this.conn = conn;
-		this.es = es;
-		this.init();
-	}
 	protected ConnectionManager(IController controller, IConnection conn, ExecutorService es, long pingPongTimeoutInMillis, long sendTimeoutInMillis, int resendLimit, long minimalPingPongDelay) {
 		this.controller = controller;
 		this.conn = conn;

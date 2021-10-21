@@ -13,7 +13,6 @@ import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.UUID;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
-import javax.microedition.io.StreamConnectionNotifier;
 
 import controller.IController;
 import external.External;
@@ -23,10 +22,8 @@ import external.bluetooth.BluetoothService;
 import external.bluetooth.BluetoothServiceConnectionManager;
 import external.connection.IConnection;
 import external.connection.IConnectionManager;
-import external.connection.IService;
 import external.connection.StandardConnectionManager;
 import external.message.IMessage;
-import external.message.Message;
 import model.IModel;
 
 public class ClientExternal extends External {
@@ -145,7 +142,8 @@ public class ClientExternal extends External {
 		
 		IConnection connwrapper = new BluetoothConnection((StreamConnection) conn);
 		
-		IConnectionManager connManager = new StandardConnectionManager(this.getController(), connwrapper, es);
+		IConnectionManager connManager = new StandardConnectionManager(this.getController(), connwrapper, es,
+				this.getPingPongTimeout(), this.getSendTimeout(), this.getResendLimit(), this.getMinimalPingPongDelay());
 		this.connManager = connManager;
 	}
 

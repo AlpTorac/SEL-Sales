@@ -20,12 +20,17 @@ import model.filewriter.FileAccess;
 import model.filewriter.OrderFile;
 import model.filewriter.StandardOrderFile;
 import model.order.IOrderData;
+import model.order.serialise.IOrderDeserialiser;
+import model.order.serialise.IOrderParser;
+import model.order.serialise.IOrderSerialiser;
 import test.GeneralTestUtilityClass;
 
 @Execution(value = ExecutionMode.SAME_THREAD)
 class OrderFileAccessTest {
 	private IModel model;
 	private static IDishMenuItemSerialiser serialiser;
+	private static IOrderSerialiser orderSerialiser;
+	private static IOrderDeserialiser orderParser;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -59,8 +64,11 @@ class OrderFileAccessTest {
 	
 	@BeforeEach
 	void prep() {
+		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 		model = new Model();
 		serialiser = model.getDishMenuItemSerialiser();
+		orderSerialiser = GeneralTestUtilityClass.getPrivateFieldValue((Model) model, "appOrderSerialiser");
+		orderParser = GeneralTestUtilityClass.getPrivateFieldValue((Model) model, "orderDeserialiser");
 		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
 		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
@@ -69,21 +77,20 @@ class OrderFileAccessTest {
 		model.addUnconfirmedOrder("order2#20200809235959866#1#0:item1,2;item2,3;");
 		model.addUnconfirmedOrder("order3#20200809235959867#1#1:item2,2;item3,3;");
 		
-		of = new StandardOrderFile(this.testFolderAddress,
-				GeneralTestUtilityClass.getPrivateFieldValue(model, "finder"),
-				GeneralTestUtilityClass.getPrivateFieldValue(model, "orderDataFac"),
-				GeneralTestUtilityClass.getPrivateFieldValue(model, "dishMenuItemDataFac"));
+		of = new StandardOrderFile(this.testFolderAddress);
 		this.fillOrderFile();
 	}
 	
 	private void fillOrderFile() {
 		orderData = model.getAllUnconfirmedOrders();
-		of.writeOrderData(orderData);
+		of.writeToFile(orderSerialiser.serialiseOrderDatas(orderData));
 	}
 
 	@AfterEach
 	void cleanUp() {
-		of.deleteFile();
+		of.close();
+		model.close();
+//		of.deleteFile();
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 	}
 	
@@ -94,7 +101,7 @@ class OrderFileAccessTest {
 	
 	@Test
 	void loadTest() {
-		IOrderData[] ss = of.loadOrders();
+		IOrderData[] ss = orderParser.deserialiseOrders(of.readFile());
 		for (int i = 0; i < ss.length; i++) {
 			GeneralTestUtilityClass.arrayContains(orderData, ss);
 		}

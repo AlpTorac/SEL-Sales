@@ -142,4 +142,32 @@ public class ConnectionArea extends UIHBoxLayout {
 		this.knownClients.clear();
 		this.knownClients.addItemsIfNotPresent(knownClientData);
 	}
+
+	public ITable<IClientData> getDiscoveredClients() {
+		return discoveredClients;
+	}
+
+	public IButton getRefreshButton() {
+		return refreshButton;
+	}
+
+	public IButton getAddKnownClientButton() {
+		return addKnownClientButton;
+	}
+
+	public IButton getRemoveKnownClientButton() {
+		return removeKnownClientButton;
+	}
+
+	public ITable<IClientData> getKnownClients() {
+		return knownClients;
+	}
+
+	public IButton getAllowClientButton() {
+		return allowClientButton;
+	}
+
+	public IButton getBlockClientButton() {
+		return blockClientButton;
+	}
 }

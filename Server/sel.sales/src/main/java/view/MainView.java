@@ -36,6 +36,10 @@ public class MainView extends View {
 	private UIComponentFactory fac;
 	private AdvancedUIComponentFactory advFac;
 	
+	private String menuOrderAreaTabName = "Menu/Orders";
+	private String connAreaTabName = "Connectivity";
+	private String settingsAreaTabName = "Settings";
+	
 	public MainView(UIComponentFactory fac, AdvancedUIComponentFactory advFac, IController controller, IModel model) {
 		super(controller, model);
 		this.fac = fac;
@@ -72,9 +76,9 @@ public class MainView extends View {
 	
 	protected UITabPane initTabPane() {
 		UITabPane tp = this.fac.createTabPane();
-		tp.addTab("Menu/Orders", this.mainArea);
-		tp.addTab("Connectivity", this.connArea);
-		tp.addTab("Settings", this.settingsArea);
+		tp.addTab(this.menuOrderAreaTabName, this.mainArea);
+		tp.addTab(this.connAreaTabName, this.connArea);
+		tp.addTab(this.settingsAreaTabName, this.settingsArea);
 		return tp;
 	}
 	
