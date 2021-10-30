@@ -6,6 +6,7 @@ public enum BusinessEvent implements IApplicationEvent {
 	REMOVE_DISH,
 	EDIT_DISH,
 	WRITE_DISH_MENU,
+	LOAD_DISH_MENU,
 	
 	ADD_ORDER,
 	CONFIRM_ORDER,

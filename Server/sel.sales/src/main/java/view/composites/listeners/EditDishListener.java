@@ -30,7 +30,7 @@ public class EditDishListener extends ClickEventListener implements IApplication
 	
 	@Override
 	public Object[] getArgs() {
-		String data = this.controller.getModel().getDishMenuItemSerialiser().serialise(
+		String data = this.controller.getModel().getDishMenuHelper().serialiseMenuItemForApp(
 				this.getDishName().getText(),
 				this.getDishID().getText(),
 				BigDecimal.valueOf(Double.valueOf(this.getPortion().getText()).doubleValue()),

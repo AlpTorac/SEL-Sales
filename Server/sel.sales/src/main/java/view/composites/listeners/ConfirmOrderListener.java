@@ -55,7 +55,7 @@ public class ConfirmOrderListener extends ClickEventListener implements IApplica
 		
 		LocalDateTime date = this.oia.getDisplayedDate();
 		
-		String data = this.controller.getModel().getOrderSerialiser().serialiseOrderData(orderItemDataCollection.toArray(IOrderItemData[]::new), date, isCash, isHere, orderDiscount, orderID);
+		String data = this.controller.getModel().getOrderHelper().serialiseForApp(orderItemDataCollection.toArray(IOrderItemData[]::new), date, isCash, isHere, orderDiscount, orderID);
 		
 		this.oia.clearOrderDisplay();
 		

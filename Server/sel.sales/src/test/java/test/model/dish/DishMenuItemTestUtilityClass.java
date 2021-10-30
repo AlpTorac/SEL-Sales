@@ -13,7 +13,7 @@ public final class DishMenuItemTestUtilityClass {
 	public static final MathContext mc = new MathContext(2, RoundingMode.HALF_UP);
 	public static void assertMenuItemDataEqual(IDishMenuItemData data, String dishName, String id, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost) {
 		Assertions.assertEquals(data.getDishName(), dishName);
-		Assertions.assertEquals(data.getId().toString(), id);
+		Assertions.assertEquals(data.getID().toString(), id);
 		Assertions.assertEquals(data.getPortionSize().compareTo(portionSize), 0);
 		Assertions.assertEquals(data.getGrossPrice().compareTo(price), 0);
 		Assertions.assertEquals(data.getProductionCost().compareTo(productionCost), 0);
@@ -31,7 +31,7 @@ public final class DishMenuItemTestUtilityClass {
 	}
 	public static void assertMenuItemAndDataEqual(IDishMenuItem item, IDishMenuItemData data) {
 		Assertions.assertEquals(item.getDish().getName(), data.getDishName());
-		Assertions.assertEquals(item.getID().toString(), data.getId().toString());
+		Assertions.assertEquals(item.getID().toString(), data.getID().toString());
 		Assertions.assertEquals(item.getPortionSize().compareTo(data.getPortionSize()), 0);
 		Assertions.assertEquals(item.getPrice().compareTo(data.getGrossPrice()), 0);
 		Assertions.assertEquals(item.getProductionCost().compareTo(data.getProductionCost()), 0);

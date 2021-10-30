@@ -65,11 +65,15 @@ public class MessageReceptionist implements IMessageReceptionist {
 		this.messageHandlers.clear();
 	}
 
+	protected String[] readMessages() {
+		return this.mrs.readMessages();
+	}
+	
 	@Override
 	public boolean checkForMessages() {
 		String[] serialisedMessages;
 		boolean allHandled = true;
-		if ((serialisedMessages = this.mrs.readMessages()) != null) {
+		if ((serialisedMessages = this.readMessages()) != null) {
 			for (String sm : serialisedMessages) {
 //				System.out.println("Message read: " + sm);
 				allHandled = allHandled && this.handleMessage(sm);

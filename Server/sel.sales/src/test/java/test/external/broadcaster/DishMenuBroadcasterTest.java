@@ -2,6 +2,7 @@ package test.external.broadcaster;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +23,9 @@ import external.broadcaster.DishMenuBroadcaster;
 import external.broadcaster.IBroadcaster;
 import external.client.IClient;
 import external.client.IClientManager;
+import external.connection.IConnectionManager;
 import external.connection.IServiceConnectionManager;
+import external.connection.outgoing.ISendBuffer;
 import external.message.IMessage;
 import external.message.IMessageSerialiser;
 import external.message.Message;
@@ -40,6 +43,7 @@ import test.external.dummy.DummyClient;
 import test.external.dummy.DummyClientDiscoveryStrategy;
 import test.external.dummy.DummyClientManager;
 import test.external.dummy.DummyConnection;
+import test.external.dummy.DummyConnectionManager;
 import test.external.dummy.DummyController;
 import test.external.dummy.DummyServiceConnectionManager;
 import test.external.message.MessageTestUtilityClass;
@@ -49,7 +53,6 @@ class DishMenuBroadcasterTest {
 	
 	private IClientManager clientManager;
 	private IModel model;
-	private IDishMenuItemSerialiser itemSerialiser;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -147,14 +150,13 @@ class DishMenuBroadcasterTest {
 	
 	private void initModel() {
 		model = new Model();
-		itemSerialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(itemSerialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
-		model.addMenuItem(itemSerialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-		model.addMenuItem(itemSerialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 	}
 	
 	@Test
-	void broadcastTest() {
+	void messageContentTest() {
 //		serviceConnectionManager.setCurrentConnectionObject(client1);
 //		GeneralTestUtilityClass.performWait(200);
 //		serviceConnectionManager.setCurrentConnectionObject(client2);
@@ -166,9 +168,61 @@ class DishMenuBroadcasterTest {
 //		Assertions.assertNotNull(conn1);
 //		Assertions.assertNotNull(conn2);
 //		broadcaster.broadcast();
-		awaitedMessage = model.getExternalDishMenuSerialiser().serialise(model.getMenuData());
+		awaitedMessage = model.getDishMenuHelper().serialiseForExternal(model.getMenuData());
 		broadcaster = new DishMenuBroadcaster(serviceConnectionManager, model);
 		IMessage m = broadcaster.createMessage();
 		MessageTestUtilityClass.assertMessageEquals(new Message(MessageContext.MENU, null, awaitedMessage), m);
+	}
+	
+	@Test
+	void broadcastTest() {
+		serviceConnectionManager.setCurrentConnectionObject(client1);
+		GeneralTestUtilityClass.performWait(waitTime);
+		serviceConnectionManager.setCurrentConnectionObject(client2);
+		GeneralTestUtilityClass.performWait(waitTime);
+
+		DummyConnection conn1Target = new DummyConnection("someClientAddress1");
+		DummyConnection conn2Target = new DummyConnection("someClientAddress2");
+		
+		DummyConnection conn1 = (DummyConnection) serviceConnectionManager.getConnection(client1.getClientAddress());
+		DummyConnection conn2 = (DummyConnection) serviceConnectionManager.getConnection(client2.getClientAddress());
+		
+		Assertions.assertNotNull(conn1);
+		Assertions.assertNotNull(conn2);
+		
+		conn1.setInputTarget(conn1Target.getInputStream());
+		conn2.setInputTarget(conn2Target.getInputStream());
+		
+		Collection<IConnectionManager> connectionManager = serviceConnectionManager.getConnectionManagers();
+		
+		connectionManager.stream().map(cm -> (DummyConnectionManager) cm)
+		.forEach(cm -> {
+			ISendBuffer sb = cm.getSendBuffer();
+			Assertions.assertFalse(sb.isBlocked());
+		});
+		
+		broadcaster = new DishMenuBroadcaster(serviceConnectionManager, model);
+		broadcaster.broadcast();
+		IMessage m = broadcaster.createMessage();
+		String serialisedM = serialiser.serialise(m);
+		GeneralTestUtilityClass.performWait(waitTime);
+//		BufferUtilityClass.assertInputStoredEquals(conn1.getInputStream(), serialisedM.getBytes());
+//		BufferUtilityClass.assertInputStoredEquals(conn2.getInputStream(), serialisedM.getBytes());
+		connectionManager.stream().map(cm -> (DummyConnectionManager) cm)
+		.forEach(cm -> {
+			ISendBuffer sb = cm.getSendBuffer();
+			Assertions.assertTrue(sb.isBlocked());
+		});
+		
+//		BufferUtilityClass.assertInputStoredEquals(conn1Target.getInputStream(), serialisedM.getBytes());
+//		BufferUtilityClass.assertInputStoredEquals(conn2Target.getInputStream(), serialisedM.getBytes());
+		
+		try {
+			conn1Target.close();
+			conn2Target.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

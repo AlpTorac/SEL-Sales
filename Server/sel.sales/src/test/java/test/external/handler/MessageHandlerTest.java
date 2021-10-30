@@ -1,32 +1,43 @@
 package test.external.handler;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import external.handler.MessageHandler;
 import external.message.IMessage;
+import external.message.MessageParser;
+import external.message.StandardMessageParser;
 
-public abstract class MessageHandlerTest {
-	private MessageHandler handler;
+class MessageHandlerTest {
+
+	private MessageHandler mh;
 	
-	public void setHandler(MessageHandler handler) {
-		this.handler = handler;
+	@BeforeEach
+	void setUp() {
+		mh = new MessageHandler(new StandardMessageParser()) {
+			@Override
+			public boolean verify(IMessage message) {
+				return true;
+			}
+
+			@Override
+			public boolean performNeededAction(IMessage message) {
+				return true;
+			}
+		};
 	}
-	protected void handleMessageSuccessfulTest(String serialisedMessage) {
-		Assertions.assertTrue(handler.handleMessage(serialisedMessage));
+
+	@AfterEach
+	void cleanUp() {
 	}
-	protected void handleMessageFailTest(String serialisedMessage) {
-		Assertions.assertFalse(handler.handleMessage(serialisedMessage));
+
+	@Test
+	void wrongMessageFormatTest() {
+		Assertions.assertFalse(mh.handleMessage("fghkfgkhgfsdakgfsdakghjh"));
 	}
-	protected void verificationSuccessfulTest(IMessage message) {
-		Assertions.assertTrue(handler.verify(message));
-	}
-	protected void verificationFailTest(IMessage message) {
-		Assertions.assertFalse(handler.verify(message));
-	}
-	protected void actionSuccessfulTest(IMessage message) {
-		Assertions.assertTrue(handler.performNeededAction(message));
-	}
-	protected void actionFailTest(IMessage message) {
-		Assertions.assertFalse(handler.performNeededAction(message));
-	}
+
 }

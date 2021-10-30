@@ -7,48 +7,27 @@ import model.connectivity.ConnectivityManager;
 import model.connectivity.IClientData;
 import model.connectivity.IConnectivityManager;
 import model.dish.DishMenu;
-import model.dish.DishMenuDataFactory;
-import model.dish.DishMenuItemDataFactory;
+import model.dish.DishMenuHelper;
 import model.dish.DishMenuItemFinder;
 import model.dish.IDishMenu;
 import model.dish.IDishMenuData;
-import model.dish.IDishMenuDataFactory;
+import model.dish.IDishMenuHelper;
 import model.dish.IDishMenuItem;
 import model.dish.IDishMenuItemData;
-import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemFinder;
-import model.dish.serialise.IntraAppDishMenuItemSerialiser;
-import model.dish.serialise.DishMenuFormat;
-import model.dish.serialise.DishMenuParser;
-import model.dish.serialise.ExternalDishMenuSerialiser;
-import model.dish.serialise.FileDishMenuSerialiser;
-import model.dish.serialise.IDishMenuItemDeserialiser;
-import model.dish.serialise.IDishMenuItemSerialiser;
-import model.dish.serialise.IDishMenuParser;
-import model.dish.serialise.IDishMenuSerialiser;
-import model.dish.serialise.StandardDishMenuDeserialiser;
 import model.filemanager.FileManager;
 import model.filemanager.IFileManager;
-import model.filewriter.FileDishMenuFormat;
-import model.filewriter.FileOrderSerialiser;
 import model.order.IOrderCollector;
 import model.order.IOrderData;
-import model.order.IOrderDataFactory;
-import model.order.IOrderItemDataFactory;
+import model.order.IOrderHelper;
 import model.order.OrderCollector;
-import model.order.OrderDataFactory;
-import model.order.OrderItemDataFactory;
-import model.order.serialise.IOrderDeserialiser;
-import model.order.serialise.IOrderSerialiser;
-import model.order.serialise.IntraAppOrderSerialiser;
-import model.order.serialise.StandardOrderDeserialiser;
+import model.order.OrderHelper;
 import model.settings.HasSettingsField;
 import model.settings.ISettings;
 import model.settings.ISettingsParser;
 import model.settings.ISettingsSerialiser;
 import model.settings.Settings;
 import model.settings.SettingsField;
-import model.settings.SettingsParser;
 import model.settings.StandardSettingsParser;
 import model.settings.StandardSettingsSerialiser;
 
@@ -59,27 +38,15 @@ public class Model implements IModel {
 	private Collection<Updatable> updatables;
 	private Collection<HasSettingsField> part;
 	
+	private IOrderHelper orderHelper;
+	private IDishMenuHelper menuHelper;
+	
 	private IDishMenu dishMenu;
-	private IDishMenuParser dishMenuParser;
-	private IDishMenuDataFactory dishMenuDataFac;
-	private IDishMenuItemDataFactory dishMenuItemDataFac;
-	private IOrderDataFactory orderDataFac;
-	private IOrderItemDataFactory orderItemDataFac;
 	
 	private IOrderCollector orderUnconfirmedCollector;
 	private IOrderCollector orderConfirmedCollector;
-	private IntraAppOrderSerialiser appOrderSerialiser;
-	private FileOrderSerialiser fileOrderSerialiser;
-	private IOrderDeserialiser orderDeserialiser;
 	
-	private IDishMenuItemDeserialiser dishMenuItemDeserialiser;
 	private IDishMenuItemFinder finder;
-	private IDishMenuItemSerialiser menuItemSerialiser;
-	private IDishMenuSerialiser fileMenuSerialiser;
-	/**
-	 * Only for the external clients (outside the server part of the app)
-	 */
-	private IDishMenuSerialiser externalDishMenuSerialiser;
 	
 	private IConnectivityManager connManager;
 	
@@ -93,32 +60,19 @@ public class Model implements IModel {
 		this.updatables = new ArrayList<Updatable>();
 		this.part = new ArrayList<HasSettingsField>();
 		
-		this.dishMenu = new DishMenu();
-		this.dishMenuItemDataFac = new DishMenuItemDataFactory();
-		this.dishMenuDataFac = new DishMenuDataFactory(this.dishMenuItemDataFac);
-		this.dishMenuParser = new DishMenuParser(new FileDishMenuFormat(), this.dishMenuDataFac);
-		this.orderItemDataFac = new OrderItemDataFactory();
-		this.orderDataFac = new OrderDataFactory(orderItemDataFac);
-		
-		this.appOrderSerialiser = new IntraAppOrderSerialiser();
-		this.fileOrderSerialiser = new FileOrderSerialiser();
-		this.menuItemSerialiser = new IntraAppDishMenuItemSerialiser();
-		this.fileMenuSerialiser = new FileDishMenuSerialiser();
-		this.dishMenuItemDeserialiser = new StandardDishMenuDeserialiser();
+		this.menuHelper = new DishMenuHelper();
+		this.dishMenu = this.menuHelper.createDishMenu();
 		this.finder = new DishMenuItemFinder(this.dishMenu);
+		this.orderHelper = new OrderHelper(this.finder);
+		
 		this.orderUnconfirmedCollector = new OrderCollector();
 		this.orderConfirmedCollector = new OrderCollector();
-		this.orderDeserialiser = new StandardOrderDeserialiser(this.finder);
-		
-		this.externalDishMenuSerialiser = new ExternalDishMenuSerialiser();
 		
 		this.connManager = new ConnectivityManager();
 		
 		this.settings = new Settings();
 		this.settingsParser = new StandardSettingsParser();
 		this.settingsSerialiser = new StandardSettingsSerialiser();
-//		this.settings.addSetting(SettingsField.ORDER_FOLDER, "src/main/resources/orders");
-//		this.settings.addSetting(SettingsField.DISH_MENU_FOLDER, "src/main/resources/dishMenu");
 		
 		this.fileManager = new FileManager(this, "src/main/resources");
 		this.part.add(fileManager);
@@ -158,8 +112,8 @@ public class Model implements IModel {
 	}
 	
 	public void addMenuItem(String serialisedItemData) {
-		IDishMenuItemData data = this.dishMenuItemDeserialiser.deserialise(serialisedItemData);
-		if (this.dishMenu.addMenuItem(data)) {
+//		IDishMenuItemData data = this.dishMenuItemDeserialiser.deserialise(serialisedItemData);
+		if (this.dishMenu.addMenuItem(this.menuHelper.createDishMenuItem(serialisedItemData))) {
 			this.menuChanged();
 		}
 	}
@@ -173,14 +127,15 @@ public class Model implements IModel {
 	public IDishMenuItemData getMenuItem(String id) {
 		IDishMenuItem item = this.dishMenu.getItem(id);
 		if (item != null) {
-			return this.dishMenuItemDataFac.menuItemToData(item);
+			return this.menuHelper.dishMenuItemToData(item);
+//			return this.dishMenuItemDataFac.menuItemToData(item);
 		}
 		return null;
 	}
 
 	@Override
 	public IDishMenuData getMenuData() {
-		return this.dishMenuDataFac.dishMenuToData(this.dishMenu);
+		return this.menuHelper.dishMenuToData(this.dishMenu);
 	}
 
 	@Override
@@ -190,7 +145,7 @@ public class Model implements IModel {
 
 	@Override
 	public void addUnconfirmedOrder(String orderData) {
-		IOrderData order = this.orderDeserialiser.deserialise(orderData);
+		IOrderData order = this.orderHelper.deserialiseOrderData(orderData);
 		this.orderUnconfirmedCollector.addOrder(order);
 		if (this.autoConfirmOrders) {
 			this.confirmOrder(orderData);
@@ -223,15 +178,15 @@ public class Model implements IModel {
 
 	@Override
 	public void editMenuItem(String serialisedNewItemData) {
-		IDishMenuItemData data = dishMenuItemDeserialiser.deserialise(serialisedNewItemData);
+		IDishMenuItemData data = this.menuHelper.deserialiseDishMenuItem(serialisedNewItemData);
 		this.dishMenu.editMenuItem(data);
 		this.menuChanged();
 	}
 
 	@Override
 	public void confirmOrder(String serialisedConfirmedOrderData) {
-		IOrderData orderData = this.orderDeserialiser.deserialise(serialisedConfirmedOrderData);
-		this.orderUnconfirmedCollector.removeOrder(orderData.getID());
+		IOrderData orderData = this.orderHelper.deserialiseOrderData(serialisedConfirmedOrderData);
+		this.orderUnconfirmedCollector.removeOrder(orderData.getID().toString());
 		this.orderConfirmedCollector.addOrder(orderData);
 		this.unconfirmedOrdersChanged();
 		this.confirmedOrdersChanged();
@@ -255,16 +210,6 @@ public class Model implements IModel {
 	}
 
 	@Override
-	public IDishMenuItemSerialiser getDishMenuItemSerialiser() {
-		return this.menuItemSerialiser;
-	}
-
-	@Override
-	public IOrderSerialiser getOrderSerialiser() {
-		return this.appOrderSerialiser;
-	}
-
-	@Override
 	public void removeAllConfirmedOrders() {
 		this.orderConfirmedCollector.clearOrders();
 		this.confirmedOrdersChanged();
@@ -272,22 +217,17 @@ public class Model implements IModel {
 
 	@Override
 	public boolean writeOrders() {
-		return this.fileManager.writeOrderDatas(this.fileOrderSerialiser.serialiseOrderDatas(this.getAllConfirmedOrders()));
+		return this.fileManager.writeOrderDatas(this.orderHelper.serialiseForFile(this.getAllConfirmedOrders()));
 	}
 
 	@Override
 	public boolean writeDishMenu() {
-		return this.fileManager.writeDishMenuData(this.fileMenuSerialiser.serialise(this.dishMenuDataFac.dishMenuToData(this.dishMenu)));
+		return this.fileManager.writeDishMenuData(this.menuHelper.serialiseMenuForFile(this.menuHelper.dishMenuToData(this.dishMenu)));
 	}
 	
 	@Override
 	public boolean writeSettings() {
 		return this.fileManager.writeSettings(this.settingsSerialiser.serialise(this.getSettings()));
-	}
-
-	@Override
-	public IDishMenuSerialiser getExternalDishMenuSerialiser() {
-		return this.externalDishMenuSerialiser;
 	}
 
 	@Override
@@ -410,9 +350,9 @@ public class Model implements IModel {
 	@Override
 	public void setDishMenu(String menu) {
 		this.dishMenu = new DishMenu();
-		IDishMenuData menuData = this.dishMenuParser.parseDishMenuData(menu);
+		IDishMenuData menuData = this.menuHelper.parseMenuData(menu);
 		for (IDishMenuItemData data : menuData.getAllDishMenuItems()) {
-			this.dishMenu.addMenuItem(data);
+			this.dishMenu.addMenuItem(this.menuHelper.dishMenuItemDataToItem(data));
 		}
 		this.menuChanged();
 	}
@@ -424,5 +364,20 @@ public class Model implements IModel {
 	@Override
 	public void close() {
 		this.fileManager.close();
+	}
+
+	@Override
+	public IDishMenuHelper getDishMenuHelper() {
+		return this.menuHelper;
+	}
+
+	@Override
+	public IOrderHelper getOrderHelper() {
+		return this.orderHelper;
+	}
+
+	@Override
+	public void loadDishMenu(String fileAddress) {
+		this.fileManager.loadDishMenu(fileAddress);
 	}
 }

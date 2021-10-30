@@ -9,13 +9,13 @@ import java.util.Collection;
 import org.junit.jupiter.api.Assertions;
 
 import controller.IController;
+import model.IDateSettings;
 import model.IModel;
 import model.connectivity.IClientData;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
 import model.order.IOrderItemData;
 import test.model.order.OrderTestUtilityClass;
-import view.IDateSettings;
 import view.IView;
 import view.MainView;
 import view.composites.ConnectionArea;
@@ -157,25 +157,38 @@ public class MainViewOperationsUtilityClass {
 		return data;
 	}
 	
+	public void clickOnConfirmAllOrdersButton() {
+		this.oia.getConfirmAllButton().performArtificialClick();
+	}
+	
 	public Collection<IOrderData> confirmAllOrders() {
 		this.setMenuOrderTabActive();
-		Collection<IOrderData> unconfirmedOrders = this.getUnconfirmedOrders();
-		IOrderData[] confirmedOrders = new IOrderData[unconfirmedOrders.size()];
 		GeneralTestUtilityClass.performWait(waitTime);
-		int size = unconfirmedOrders.size();
-		
-		for (int i = 0; i < size; i++) {
-			IOrderData data = this.addConfirmOrder();
-			confirmedOrders[i] = data;
+//		Collection<IOrderData> unconfirmedOrders = this.getUnconfirmedOrders();
+//		IOrderData[] confirmedOrders = new IOrderData[unconfirmedOrders.size()];
+//		GeneralTestUtilityClass.performWait(waitTime);
+//		int size = unconfirmedOrders.size();
+//		
+//		for (int i = 0; i < size; i++) {
+//			
+//			IOrderData data = this.addConfirmOrder();
+//			confirmedOrders[i] = data;
+//		}
+//		
+//		Collection<IOrderData> co = new ArrayList<IOrderData>();
+//		
+//		for (IOrderData d : confirmedOrders) {
+//			co.add(d);
+//		}
+//		
+//		return co;
+		this.clickOnConfirmAllOrdersButton();
+		GeneralTestUtilityClass.performWait(waitTime);
+		Collection<IOrderData> col = new ArrayList<IOrderData>();
+		for (IOrderData d : model.getAllConfirmedOrders()) {
+			col.add(d);
 		}
-		
-		Collection<IOrderData> co = new ArrayList<IOrderData>();
-		
-		for (IOrderData d : confirmedOrders) {
-			co.add(d);
-		}
-		
-		return co;
+		return col;
 	}
 	
 	public void confirmAllOrdersWithoutReturn() {
@@ -267,7 +280,7 @@ public class MainViewOperationsUtilityClass {
 		BigDecimal totalOrderDiscount = BigDecimal.valueOf(Double.valueOf(oia.getDiscountDisplay().getText()));
 		BigDecimal grossSum = BigDecimal.valueOf(Double.valueOf(oia.getGrossSumDisplay().getText()));
 		BigDecimal netSum = BigDecimal.valueOf(Double.valueOf(oia.getNetSumDisplay().getText()));
-		String[] itemIDs = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getItemData().getId()).toArray(String[]::new);
+		String[] itemIDs = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getItemData().getID().toString()).toArray(String[]::new);
 		BigDecimal[] itemAmounts = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getAmount()).toArray(BigDecimal[]::new);
 		BigDecimal[] itemGrossPrices = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getGrossPrice()).toArray(BigDecimal[]::new);
 		

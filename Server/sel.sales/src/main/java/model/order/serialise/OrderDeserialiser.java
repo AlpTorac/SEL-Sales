@@ -2,7 +2,6 @@ package model.order.serialise;
 
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemFinder;
-import model.dish.IDishMenuItemIDFactory;
 import model.order.IOrderData;
 import model.order.IOrderDataFactory;
 import model.order.IOrderItemDataFactory;
@@ -16,7 +15,6 @@ public abstract class OrderDeserialiser implements IOrderDeserialiser {
 	protected IOrderItemFactory itemFac;
 	protected IDishMenuItemDataFactory dishMenuItemDataFac;
 	protected IOrderItemDataFactory orderItemDataFac;
-	protected IDishMenuItemIDFactory dishMenuItemIDFac;
 	
 	protected IOrderFormat orderFormat;
 

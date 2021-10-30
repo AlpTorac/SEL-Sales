@@ -8,7 +8,7 @@ import model.exceptions.NoSuchMessageFlagException;
 public abstract class MessageHandler implements IMessageHandler {
 	private IMessageParser parser;
 
-	MessageHandler(IMessageParser parser) {
+	public MessageHandler(IMessageParser parser) {
 		this.parser = parser;
 	}
 	

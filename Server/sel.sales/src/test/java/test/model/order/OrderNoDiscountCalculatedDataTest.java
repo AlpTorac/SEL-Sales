@@ -15,13 +15,11 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import model.IModel;
 import model.Model;
 import model.dish.IDishMenuItemDataFactory;
-import model.dish.IDishMenuItemIDFactory;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class OrderNoDiscountCalculatedDataTest {
 	private static IModel model;
-	private static IDishMenuItemSerialiser serialiser;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -58,11 +56,10 @@ class OrderNoDiscountCalculatedDataTest {
 	@BeforeEach
 	void startUp() {
 		model = new Model();
-		serialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
-		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
-		model.addMenuItem(serialiser.serialise(discName, discID, discPorSize, discProCost, discPrice));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(discName, discID, discPorSize, discProCost, discPrice));
 		
 		model.addUnconfirmedOrder("order1#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";");
 		model.addUnconfirmedOrder("order2#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";"+discID+",0.3;");

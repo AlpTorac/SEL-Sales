@@ -1,10 +1,11 @@
 package model.dish;
 
+import java.math.BigDecimal;
+
+import model.id.EntityID;
+
 public class DishMenuItemFactory implements IDishMenuItemFactory {
-	private IDishMenuItemIDFactory idFac;
-	
-	public DishMenuItemFactory(IDishMenuItemIDFactory idFac) {
-		this.idFac = idFac;
+	public DishMenuItemFactory() {
 	}
 	
 	public IDish createDish(String dishName) {
@@ -12,7 +13,8 @@ public class DishMenuItemFactory implements IDishMenuItemFactory {
 	}
 
 	@Override
-	public IDishMenuItem createMenuItem(IDishMenuItemData item) {
-		return new DishMenuItem(this.createDish(item.getDishName()), item.getPortionSize(), item.getGrossPrice(), item.getProductionCost(), idFac.createDishMenuItemID(item.getId()));
+	public IDishMenuItem createMenuItem(String dishName, BigDecimal portionSize, BigDecimal price,
+			BigDecimal productionCost, EntityID id) {
+		return new DishMenuItem(this.createDish(dishName), portionSize, price, productionCost, id);
 	}
 }

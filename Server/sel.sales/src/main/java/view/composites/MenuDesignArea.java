@@ -20,7 +20,7 @@ public class MenuDesignArea extends UIVBoxLayout {
 	private IButton addButton;
 	private IButton editButton;
 	private IButton removeButton;
-	private IButton writeButton;
+	private IButton saveButton;
 	private IButton loadButton;
 	private ITable<IDishMenuItemData> menuItemTable;
 	
@@ -42,7 +42,7 @@ public class MenuDesignArea extends UIVBoxLayout {
 		this.editButton = this.initEditButton();
 		this.removeButton = this.initRemoveButton();
 		this.menuItemTable = this.initMenuItemTable();
-		this.writeButton = this.initWriteButton();
+		this.saveButton = this.initSaveButton();
 		this.loadButton = this.initLoadButton();
 		
 		this.addUIComponents(new IUIComponent[] {
@@ -89,23 +89,23 @@ public class MenuDesignArea extends UIVBoxLayout {
 				this.getAddButton(),
 				this.getEditButton(),
 				this.getRemoveButton(),
-				this.getWriteButton(),
+				this.getSaveButton(),
 				this.getLoadButton()
 		});
 		return layout;
 	}
 	
-	protected IButton getLoadButton() {
+	public IButton getLoadButton() {
 		return this.loadButton;
 	}
 
-	protected IButton getWriteButton() {
-		return this.writeButton;
+	protected IButton getSaveButton() {
+		return this.saveButton;
 	}
 
-	protected IButton initWriteButton() {
+	protected IButton initSaveButton() {
 		IButton button = fac.createButton();
-		button.setCaption("Write Dish Menu");
+		button.setCaption("Save Dish Menu");
 		return button;
 	}
 
@@ -113,7 +113,7 @@ public class MenuDesignArea extends UIVBoxLayout {
 		ITable<IDishMenuItemData> table = this.fac.createTable();
 		
 		table.addColumn("Dish Name", "DishName");
-		table.addColumn("ID", "Id");
+		table.addColumn("ID", "ID");
 		table.addColumn("Portion Size", "PortionSize");
 		table.addColumn("Production Cost", "ProductionCost");
 		table.addColumn("Gross Price", "GrossPrice");

@@ -3,6 +3,7 @@ package test.model.fileaccess;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -41,7 +42,7 @@ class FileAccessTest {
 	void prep() {
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 		fa = new FileAccess(this.testFolderAddress) {};
-		Assertions.assertTrue(fa.isFolderAddressValid());
+		Assertions.assertTrue(fa.isAddressValid());
 		Assertions.assertTrue(fa.fileExists());
 	}
 	
@@ -188,7 +189,7 @@ class FileAccessTest {
 			Assertions.assertFalse(fa.deleteFile());
 			Assertions.assertFalse(fa.fileExists());
 			Assertions.assertTrue(fa.getFilePath() == null);
-			Assertions.assertFalse(fa.isFolderAddressValid());
+			Assertions.assertFalse(fa.isAddressValid());
 			Assertions.assertFalse(fa.writeToFile(fileContent));
 			Assertions.assertTrue(fa.readFile() == null || fa.readFile().equals(""));
 			Assertions.assertFalse(fa.remakeFile());
@@ -201,8 +202,8 @@ class FileAccessTest {
 		File folder = new File(newFolderAddress);
 		folder.mkdir();
 		Assertions.assertTrue(folder.exists() && folder.isDirectory());
-		fa.setFolderAddress(folder.getPath());
-		Assertions.assertEquals(fa.getFolderAddress(), newFolderAddress);
+		fa.setAddress(folder.getPath());
+		Assertions.assertEquals(fa.getAddress(), newFolderAddress);
 	}
 	
 	@Test
@@ -211,9 +212,46 @@ class FileAccessTest {
 		File folder = new File(newFolderAddress);
 		folder.mkdir();
 		Assertions.assertTrue(folder.exists() && folder.isDirectory());
-		fa.setFolderAddress(folder.getPath());
+		fa.setAddress(folder.getPath());
 		String newFileAddress = newFolderAddress+File.separator+this.fileNAE;
 		Assertions.assertEquals(fa.getFilePath(), newFileAddress);
+		Assertions.assertTrue(fa.deleteFile());
+	}
+	
+	@Test
+	void loadExistingFileTest() {
+		String fileAddress = testFolderAddress+File.separator+"testFile.txt";
+		File f = new File(fileAddress);
+		Assertions.assertFalse(f.length() > 0);
+		try {
+			f.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		BufferedWriter w = null;
+		
+		try {
+			w = new BufferedWriter(new FileWriter(f));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String fileContent = 
+				"aaa,item1,4.0,2.34,2.0;"+System.lineSeparator()+
+				"bbb,item2,10.0,1.0,5.67;"+System.lineSeparator()+
+				"ccc,item3,4.0,2.5,1.0;"+System.lineSeparator();
+		try {
+			w.write(fileContent);
+			w.flush();
+			w.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fa.setAddress(fileAddress);
+		Assertions.assertEquals(fileContent, fa.readFile());
 		Assertions.assertTrue(fa.deleteFile());
 	}
 }

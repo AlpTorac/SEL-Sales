@@ -7,5 +7,6 @@ public interface IFileManager extends HasSettingsField {
 	boolean writeDishMenuData(String data);
 	boolean writeSettings(String settings);
 	void loadSaved();
+	void loadDishMenu(String fileAddress);
 	void close();
 }

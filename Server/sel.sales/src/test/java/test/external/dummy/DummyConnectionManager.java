@@ -1,10 +1,14 @@
 package test.external.dummy;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 
 import controller.IController;
 import external.connection.IConnection;
 import external.connection.StandardConnectionManager;
+import external.connection.incoming.IMessageReceptionist;
+import external.connection.incoming.MessageReceptionist;
 import external.connection.outgoing.ISendBuffer;
 import external.connection.outgoing.StandardSendBuffer;
 import external.connection.pingpong.IPingPong;
@@ -12,6 +16,8 @@ import external.connection.pingpong.StandardPingPong;
 
 public class DummyConnectionManager extends StandardConnectionManager {
 
+	private Collection<String> receivedMessages = new ArrayList<String>();
+	
 	private int pingPongSuccessfulConsecutiveCycleCount = 0;
 	private int pingPongSuccessfulCycleCount = 0;
 	
@@ -62,6 +68,25 @@ public class DummyConnectionManager extends StandardConnectionManager {
 		};
 	}
 	
+	@Override
+	protected IMessageReceptionist createMessageReceptionist(ISendBuffer sb, IPingPong pingPong) {
+		return new MessageReceptionist(this.getConnection(),
+				controller,
+				sb, pingPong, this.getExecutorService()) {
+			@Override
+			protected String[] readMessages() {
+				String[] readMessages = super.readMessages();
+				if (readMessages != null) {
+					for (String m : readMessages) {
+						System.out.println("Received message: " + m);
+						receivedMessages.add(m);
+					}
+				}
+				return readMessages;
+			}
+		};
+	}
+	
 //	@Override
 //	protected void sendPingPongMessage() {
 //		
@@ -85,5 +110,9 @@ public class DummyConnectionManager extends StandardConnectionManager {
 
 	public int getPingPongResendCount() {
 		return this.getResendLimit() - this.getPingPong().getRemainingResendTries();
+	}
+	
+	public boolean isMessageReceived(String serialisedMessage) {
+		return this.receivedMessages.contains(serialisedMessage);
 	}
 }

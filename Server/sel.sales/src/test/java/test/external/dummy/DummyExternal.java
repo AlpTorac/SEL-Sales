@@ -20,6 +20,7 @@ public class DummyExternal extends External {
 		this.id = id;
 		this.name = name;
 		this.setService(this.initService());
+		this.getService().publish();
 	}
 
 	public void setDiscoveryStrategy(ClientDiscoveryStrategy cds) {

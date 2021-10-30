@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
+import model.id.EntityID;
+
 public interface IOrder extends Comparable<IOrder> {
-	String getID();
+	EntityID getID();
 	boolean addOrderItem(IOrderItemData item);
 	boolean removeOrderItem(String id);
 	boolean setOrderedItemAmount(String id, BigDecimal amount);
@@ -15,7 +17,6 @@ public interface IOrder extends Comparable<IOrder> {
 	boolean getIsHere();
 	IOrderItem[] getAllOrderItems();
 	Collection<IOrderItem> getOrderItemCollection();
-	BigDecimal getOrderDiscount();
 	default public int compareTo(IOrder o) {
 		return this.getID().compareTo(o.getID());
 	}

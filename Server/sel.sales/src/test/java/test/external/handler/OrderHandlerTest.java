@@ -35,7 +35,7 @@ import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyController;
 @Execution(value = ExecutionMode.SAME_THREAD)
-class OrderHandlerTest extends MessageHandlerTest {
+class OrderHandlerTest extends MessageHandlerSuperClass {
 	private MessageFormat format = new StandardMessageFormat();
 	private String fieldSeparator = format.getDataFieldSeparatorForString();
 	

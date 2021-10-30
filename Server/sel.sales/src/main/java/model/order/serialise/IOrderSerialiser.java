@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import model.dish.IDishMenuItemData;
+import model.id.EntityID;
 import model.order.IOrderData;
 import model.order.IOrderItemData;
 
@@ -12,9 +13,9 @@ public interface IOrderSerialiser {
 	default String serialiseOrderData(IOrderData orderData) {
 		return this.serialiseOrderData(orderData.getOrderedItems(), orderData.getDate(), orderData.getIsCash(), orderData.getIsHere(), orderData.getOrderDiscount(), orderData.getID());
 	}
-	String serialiseOrderData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, String orderID);
-	default String serialiseOrderID(String orderID) {
-		return orderID;
+	String serialiseOrderData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, EntityID orderID);
+	default String serialiseOrderID(EntityID orderID) {
+		return orderID.toString();
 	}
 	
 	default String serialiseOrderItemDatas(IOrderItemData[] orderItemsData) {
@@ -61,7 +62,7 @@ public interface IOrderSerialiser {
 	}
 	
 	default String serialiseDishMenuItemID(IDishMenuItemData menuItemData) {
-		return menuItemData.getId();
+		return menuItemData.getID().toString();
 	}
 	default String serialiseOrderItemAmount(IOrderItemData orderItemData) {
 		return this.serialiseBigDecimal(orderItemData.getAmount());

@@ -45,10 +45,11 @@ public class MainApp extends Application {
 		view.startUp();
 		view.show();
 		model.loadSaved();
+		model.setAutoConfirmOrders(true);
 		// ADD FAKE DATA -------------------------------------------------------
 		// ADD FAKE DATA -------------------------------------------------------
 		
-		model.addMenuItem(model.getDishMenuItemSerialiser().serialise(
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(
 				"aaa",
 				"item1",
 				BigDecimal.valueOf(2.34),
@@ -56,7 +57,7 @@ public class MainApp extends Application {
 				BigDecimal.valueOf(4)
 				));
 		
-		model.addMenuItem(model.getDishMenuItemSerialiser().serialise(
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(
 				"bbb",
 				"item2",
 				BigDecimal.valueOf(1),
@@ -64,7 +65,7 @@ public class MainApp extends Application {
 				BigDecimal.valueOf(10)
 				));
 		
-		model.addMenuItem(model.getDishMenuItemSerialiser().serialise(
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(
 				"ccc",
 				"item3",
 				BigDecimal.valueOf(2.5),
@@ -72,7 +73,7 @@ public class MainApp extends Application {
 				BigDecimal.valueOf(4)
 				));
 		
-		model.addMenuItem(model.getDishMenuItemSerialiser().serialise(
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(
 				"discount",
 				"disc",
 				BigDecimal.valueOf(1),

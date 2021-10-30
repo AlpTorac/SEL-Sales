@@ -19,13 +19,19 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import controller.IController;
 import external.client.IClient;
 import external.client.IClientManager;
+import external.connection.DisconnectionListener;
+import external.connection.IConnection;
 import external.connection.IConnectionManager;
 import external.connection.outgoing.ISendBuffer;
+import external.connection.pingpong.IPingPong;
 import external.message.IMessage;
 import external.message.IMessageSerialiser;
 import external.message.Message;
+import external.message.MessageContext;
 import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
+import model.connectivity.ClientData;
+import model.connectivity.IClientData;
 import test.GeneralTestUtilityClass;
 import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyClient;
@@ -46,6 +52,9 @@ class ServiceConnectionManagerTest {
 	private DummyClient client2;
 	private String client2Name;
 	private String client2Address;
+	private DummyClient client3;
+	private String client3Name;
+	private String client3Address;
 	
 	private IController controller;
 	private boolean isOrderReceivedByController;
@@ -61,13 +70,18 @@ class ServiceConnectionManagerTest {
 		client1Address = "client1Address";
 		client2Name = "client2Name";
 		client2Address = "client2Address";
+		client3Name = "client3Name";
+		client3Address = "client3Address";
 		client1 = new DummyClient(client1Name, client1Address);
 		client2 = new DummyClient(client2Name, client2Address);
+		client3 = new DummyClient(client3Name, client3Address);
 		this.discoverClients();
 		manager.addClient(client1Address);
 		manager.addClient(client2Address);
+		manager.addClient(client3Address);
 		manager.allowClient(client1Address);
 		manager.allowClient(client2Address);
+		manager.allowClient(client3Address);
 		controller = initController();
 		serviceConnectionManager = new DummyServiceConnectionManager(manager, controller, es);
 		isOrderReceivedByController = false;
@@ -78,6 +92,7 @@ class ServiceConnectionManagerTest {
 		Collection<IClient> cs = new ArrayList<IClient>();
 		cs.add(client1);
 		cs.add(client2);
+		cs.add(client3);
 		cds.setDiscoveredClients(cs);
 		this.manager.setDiscoveryStrategy(cds);
 		this.manager.discoverClients();
@@ -160,7 +175,7 @@ class ServiceConnectionManagerTest {
 		Assertions.assertEquals(client2.getClientAddress(), serviceConnectionManager.getConnection(client2Address).getTargetClientAddress());
 		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
 		
-		Collection<IConnectionManager> connectionManagers = GeneralTestUtilityClass.getPrivateFieldValue(serviceConnectionManager, "connectionManagers");
+		Collection<IConnectionManager> connectionManagers = serviceConnectionManager.getConnectionManagers();
 		connectionManagers.forEach(cm -> {
 			ISendBuffer sb = cm.getSendBuffer();
 			Assertions.assertFalse(sb.isBlocked());
@@ -209,7 +224,8 @@ class ServiceConnectionManagerTest {
 		Assertions.assertEquals(client2.getClientAddress(), serviceConnectionManager.getConnection(client2Address).getTargetClientAddress());
 		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
 		
-		Collection<IConnectionManager> connectionManagers = GeneralTestUtilityClass.getPrivateFieldValue(serviceConnectionManager, "connectionManagers");
+		Collection<IConnectionManager> connectionManagers = serviceConnectionManager.getConnectionManagers();
+		
 		connectionManagers.forEach(cm -> {
 			ISendBuffer sb = cm.getSendBuffer();
 			Assertions.assertFalse(sb.isBlocked());
@@ -229,5 +245,77 @@ class ServiceConnectionManagerTest {
 			DummyConnection conn = (DummyConnection) cm.getConnection();
 			ConnectionManagerTestUtilityClass.assertAckReadAndSentToSendBuffer(conn, sb, serialiser.serialise(m.getMinimalAcknowledgementMessage()), waitTime, 10000);
 		});
+	}
+	
+	private volatile boolean isDisconnected = false;
+	
+	@Test
+	void disconnectionViaWaitingTest() {
+		serviceConnectionManager.setCurrentConnectionObject(client1);
+//		serviceConnectionManager.makeNewConnectionThread();
+		GeneralTestUtilityClass.performWait(waitTime);
+		serviceConnectionManager.setCurrentConnectionObject(client2);
+//		serviceConnectionManager.makeNewConnectionThread();
+		GeneralTestUtilityClass.performWait(waitTime*2);
+		Assertions.assertEquals(client2.getClientAddress(), serviceConnectionManager.getConnection(client2Address).getTargetClientAddress());
+		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
+		
+		Collection<IConnectionManager> connectionManagers = serviceConnectionManager.getConnectionManagers();
+		
+		GeneralTestUtilityClass.performWait(DummyServiceConnectionManager.ESTIMATED_PP_TIMEOUT / 2);
+		IConnectionManager cm = connectionManagers.stream().findAny().get();
+		IPingPong pp = cm.getPingPong();
+		pp.receiveResponse(new Message(MessageContext.PINGPONG, null, null));
+		IConnectionManager cm2 = connectionManagers.stream().filter(man -> man != cm).findAny().get();
+		DisconnectionListener l = new DisconnectionListener(null) {
+			@Override
+			public void fireApplicationEvent(IController controller) {
+				isDisconnected = true;
+			}
+		};
+		cm2.setDisconnectionListener(l);
+		GeneralTestUtilityClass.performWait(DummyServiceConnectionManager.ESTIMATED_PP_TIMEOUT / 2);
+		Assertions.assertTrue(isDisconnected);
+	}
+	
+	@Test
+	void disconnectionViaDataTest() {
+		serviceConnectionManager.setCurrentConnectionObject(client1);
+//		serviceConnectionManager.makeNewConnectionThread();
+		GeneralTestUtilityClass.performWait(waitTime);
+		serviceConnectionManager.setCurrentConnectionObject(client2);
+//		serviceConnectionManager.makeNewConnectionThread();
+		GeneralTestUtilityClass.performWait(waitTime*2);
+		serviceConnectionManager.setCurrentConnectionObject(client3);
+//		serviceConnectionManager.makeNewConnectionThread();
+		GeneralTestUtilityClass.performWait(waitTime*2);
+		Assertions.assertEquals(client3.getClientAddress(), serviceConnectionManager.getConnection(client3Address).getTargetClientAddress());
+		Assertions.assertEquals(client2.getClientAddress(), serviceConnectionManager.getConnection(client2Address).getTargetClientAddress());
+		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
+		
+		Collection<IConnectionManager> connectionManagers = serviceConnectionManager.getConnectionManagers();
+		IConnectionManager cm = connectionManagers.stream().filter(man -> man.getConnection().getTargetClientAddress().equals(client1Address)).findFirst().get();
+		IConnectionManager cm2 = connectionManagers.stream().filter(man -> man.getConnection().getTargetClientAddress().equals(client2Address)).findFirst().get();
+		IConnectionManager cm3 = connectionManagers.stream().filter(man -> man.getConnection().getTargetClientAddress().equals(client3Address)).findFirst().get();
+		
+		DisconnectionListener l = new DisconnectionListener(null) {
+			@Override
+			public void fireApplicationEvent(IController controller) {
+				isDisconnected = true;
+			}
+		};
+		
+		serviceConnectionManager.setDisconnectionListener(l);
+		
+		serviceConnectionManager.receiveKnownClientData(new IClientData[] {
+				new ClientData(client1Name, client1Address, false, true),
+				new ClientData(client2Name, client2Address, true, false),
+				new ClientData(client3Name, client3Address, false, false)
+		});
+		
+		Assertions.assertTrue(isDisconnected);
+		Assertions.assertTrue(cm.isClosed());
+		Assertions.assertTrue(cm2.isClosed());
+		Assertions.assertTrue(cm3.isClosed());
 	}
 }

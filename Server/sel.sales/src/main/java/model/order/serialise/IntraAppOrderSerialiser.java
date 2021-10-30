@@ -3,6 +3,7 @@ package model.order.serialise;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import model.id.EntityID;
 import model.order.IOrderData;
 import model.order.IOrderItemData;
 
@@ -30,7 +31,7 @@ public class IntraAppOrderSerialiser implements IOrderSerialiser {
 	}
 	
 	@Override
-	public String serialiseOrderData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, String orderID) {
+	public String serialiseOrderData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, EntityID orderID) {
 		String result = "";
 		result += this.serialiseOrderID(orderID) + this.getOrderDataFieldSeperator();
 		result += this.serialiseOrderDate(date) + this.getOrderDataFieldSeperator();

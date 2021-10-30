@@ -8,29 +8,29 @@ public abstract class FileAccess implements IFileAccess {
 	private final static String defaultName = "file";
 	private final static String extension = ".txt";
 	private File activeFile;
-	private String folderAddress;
+	private String address;
 	private RandomAccessFile raf;
 	
 	public FileAccess(String address) {
-		this.folderAddress = address;
+		this.address = address;
 		this.adaptActiveFile();
 	}
+//	protected boolean isFileFilled(File f) {
+//		return f != null && f.exists() && f.length() > 0;
+//	}
 	public static String getDefaultFileNameForClass() {
 		return defaultName;
 	}
 	@Override
 	public boolean fileExists() {
-		return this.checkFileExistenceCondition(this.activeFile);
-	}
-	protected boolean checkFileExistenceCondition(File f) {
-		return f != null && f.canRead() && f.canWrite();
+		return this.activeFile != null && this.activeFile.exists();
 	}
 	@Override
-	public boolean isFolderAddressValid() {
-		if (this.getFolderAddress() == null) {
+	public boolean isAddressValid() {
+		if (this.getAddress() == null) {
 			return false;
 		}
-		return new File(this.getFolderAddress()).exists();
+		return new File(this.getAddress()).exists();
 	}
 	@Override
 	public String getDefaultFileName() {
@@ -67,10 +67,21 @@ public abstract class FileAccess implements IFileAccess {
 		return this.raf == null;
 	}
 	protected String buildActiveFilePath() {
-		return this.getFolderAddress()+File.separator+this.getDefaultFileName()+this.getExtension();
+		return this.getAddress()+File.separator+this.getDefaultFileName()+this.getExtension();
 	}
 	protected boolean isActiveFileAddressValid() {
-		return new File(this.buildActiveFilePath()).exists();
+		return new File(this.getEffectiveAddress()).exists();
+	}
+	protected String getEffectiveAddress() {
+		if (this.getAddress() == null) {
+			return this.buildActiveFilePath();
+		}
+		File f = new File(this.getAddress());
+		if (!f.isDirectory()) {
+			return f.getPath();
+		} else {
+			return this.buildActiveFilePath();
+		}
 	}
 	@Override
 	public boolean remakeFile() {
@@ -79,8 +90,8 @@ public abstract class FileAccess implements IFileAccess {
 		return this.isActiveFileAddressValid();
 	}
 	protected boolean adaptActiveFile() {
-		if (this.isFolderAddressValid()) {
-			this.setActiveFile(this.createFile());
+		if (this.isAddressValid()) {
+			this.setActiveFile(this.loadFile());
 			return this.isActiveFileAddressValid();
 		}
 		return false;
@@ -90,13 +101,15 @@ public abstract class FileAccess implements IFileAccess {
 //		this.setActiveFile(activeFile);
 	}
 	
-	protected File createFile() {
-		if (this.isFolderAddressValid()) {
-			File f = new File(this.buildActiveFilePath());
-			try {
-				f.createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
+	protected File loadFile() {
+		if (this.isAddressValid()) {
+			File f = new File(this.getEffectiveAddress());
+			if (f.length() <= 0) {
+				try {
+					f.createNewFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 			return f;
 		} else {
@@ -112,7 +125,7 @@ public abstract class FileAccess implements IFileAccess {
 	}
 	public boolean writeToFile(String stringToWrite) {
 		RandomAccessFile w = this.getFileAccessObject();
-		if (w != null && this.isFolderAddressValid()) {
+		if (w != null && this.isAddressValid()) {
 			try {
 				w.seek(w.length());
 				w.writeBytes(stringToWrite);
@@ -129,7 +142,7 @@ public abstract class FileAccess implements IFileAccess {
 	public String readFile() {
 		String result = "";
 		RandomAccessFile w = this.getFileAccessObject();
-		if (w != null && this.isFolderAddressValid()) {
+		if (w != null && this.isAddressValid()) {
 			Byte read = 0;
 			try {
 				while (w.getFilePointer() <= w.length() - 1 && (read = w.readByte()) > -1) {
@@ -158,13 +171,13 @@ public abstract class FileAccess implements IFileAccess {
 		return null;
 	}
 	
-	public void setFolderAddress(String address) {
-		this.folderAddress = address;
+	public void setAddress(String address) {
+		this.address = address;
 		this.adaptActiveFile();
 	}
 
-	public String getFolderAddress() {
-		return this.folderAddress;
+	public String getAddress() {
+		return this.address;
 	}
 
 	protected void setActiveFile(File file) {
@@ -173,7 +186,7 @@ public abstract class FileAccess implements IFileAccess {
 
 	protected File getActiveFile() {
 		if (this.activeFile == null) {
-			this.activeFile = this.createFile();
+			this.activeFile = this.loadFile();
 		}
 		return this.activeFile;
 	}

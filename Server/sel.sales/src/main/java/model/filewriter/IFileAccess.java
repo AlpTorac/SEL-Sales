@@ -7,7 +7,7 @@ public interface IFileAccess {
 	String getDefaultFileName();
 	String getFilePath();
 	String getExtension();
-	boolean isFolderAddressValid();
+	boolean isAddressValid();
 	boolean fileExists();
 	boolean remakeFile();
 	void close();

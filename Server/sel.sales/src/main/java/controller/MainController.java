@@ -13,6 +13,7 @@ import controller.handler.DiscoverClientsHandler;
 import controller.handler.DishMenuFolderChangedHandler;
 import controller.handler.AddDiscoveredClientHandler;
 import controller.handler.EditDishHandler;
+import controller.handler.LoadDishMenuHandler;
 import controller.handler.OrderConfirmModelChangedHandler;
 import controller.handler.OrderFolderChangedHandler;
 import controller.handler.RemoveDishHandler;
@@ -43,6 +44,7 @@ public class MainController extends Controller {
 		bem.addApplicationEventToHandlerMapping(BusinessEvent.REMOVE_ORDER, new RemoveOrderHandler(this));
 		bem.addApplicationEventToHandlerMapping(BusinessEvent.DISCOVER_CLIENTS, new DiscoverClientsHandler(this));
 		bem.addApplicationEventToHandlerMapping(BusinessEvent.WRITE_DISH_MENU, new WriteDishMenuHandler(this));
+		bem.addApplicationEventToHandlerMapping(BusinessEvent.LOAD_DISH_MENU, new LoadDishMenuHandler(this));
 		bem.addApplicationEventToHandlerMapping(BusinessEvent.WRITE_ORDERS, new WriteOrdersHandler(this));
 		bem.addApplicationEventToHandlerMapping(BusinessEvent.SAVE_SETTINGS, new SaveSettingsHandler(this));
 		

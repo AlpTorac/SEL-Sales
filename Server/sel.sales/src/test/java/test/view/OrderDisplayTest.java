@@ -34,7 +34,6 @@ class OrderDisplayTest extends ApplicationTest {
 	private static IModel model;
 	private static IController controller;
 	private static IView view;
-	private static IDishMenuItemSerialiser dishMenuItemSerialiser;
 	
 	private MainViewOperationsUtilityClass opHelper;
 	
@@ -59,6 +58,23 @@ class OrderDisplayTest extends ApplicationTest {
 	private BigDecimal i3Disc = BigDecimal.valueOf(1);
 	private String i3id = "item3";
 	
+	private volatile boolean actionFinished = false;
+	
+	private void waitForAction() {
+		while (!actionFinished) {
+			
+		}
+		actionFinished = false;
+	}
+	
+	private void runFXAction(Runnable run) {
+		Platform.runLater(() -> {
+			run.run();
+			actionFinished = true;
+		});
+		waitForAction();
+	}
+	
 	@Override
 	public void start(Stage stage) {
 		
@@ -66,16 +82,15 @@ class OrderDisplayTest extends ApplicationTest {
 	
 	@BeforeEach
 	void prep() {
-		Platform.runLater(() -> {
+		runFXAction(() -> {
 			model = new Model();
 			controller = new MainController(model);
 			view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 			view.startUp();
 			view.show();
-			dishMenuItemSerialiser = model.getDishMenuItemSerialiser();
-			model.addMenuItem(dishMenuItemSerialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
-			model.addMenuItem(dishMenuItemSerialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-			model.addMenuItem(dishMenuItemSerialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+			model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+			model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+			model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 			
 			model.addUnconfirmedOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
 			model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
@@ -87,7 +102,7 @@ class OrderDisplayTest extends ApplicationTest {
 	
 	@AfterEach
 	void cleanUp() {
-		Platform.runLater(() -> {
+		runFXAction(() -> {
 			view.hide();
 			model.close();
 		});
@@ -95,7 +110,7 @@ class OrderDisplayTest extends ApplicationTest {
 	
 	@Test
 	void unconfirmedOrderShowingTest() {
-		Platform.runLater(() -> {
+		runFXAction(() -> {
 			IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
 			Assertions.assertEquals(unconfirmedOrders.length, 3);
 			
@@ -110,7 +125,7 @@ class OrderDisplayTest extends ApplicationTest {
 	
 	@Test
 	void confirmedOrderShowingTest() {
-		Platform.runLater(() -> {
+		runFXAction(() -> {
 			opHelper.confirmAllOrdersWithoutReturn();
 			
 			IOrderData[] confirmedOrders = model.getAllConfirmedOrders();

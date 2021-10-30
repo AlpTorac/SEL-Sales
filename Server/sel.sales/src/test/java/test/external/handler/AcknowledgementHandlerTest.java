@@ -28,7 +28,7 @@ import external.message.StandardMessageFormat;
 import external.message.StandardMessageParser;
 import test.external.dummy.DummyConnection;
 @Execution(value = ExecutionMode.SAME_THREAD)
-class AcknowledgementHandlerTest extends MessageHandlerTest {
+class AcknowledgementHandlerTest extends MessageHandlerSuperClass {
 	private MessageSerialiser serialiser = new MessageSerialiser(new StandardMessageFormat());
 	private IMessageParser parser;
 	private ISendBuffer buffer;

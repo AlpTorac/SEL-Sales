@@ -3,6 +3,7 @@ package model.order.serialise;
 import model.dish.DishMenuItemDataFactory;
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemFinder;
+import model.id.FixIDFactory;
 import model.order.IOrderDataFactory;
 import model.order.IOrderItemDataFactory;
 import model.order.OrderDataFactory;
@@ -13,7 +14,7 @@ public class StandardOrderDeserialiser extends OrderDeserialiser {
 		super();
 		
 		IOrderItemDataFactory orderItemDataFac = new OrderItemDataFactory();
-		IOrderDataFactory orderDataFac = new OrderDataFactory(orderItemDataFac);
+		IOrderDataFactory orderDataFac = new OrderDataFactory(orderItemDataFac, new FixIDFactory());
 		IOrderFormat orderDateParser = new IntraAppOrderFormat();
 		IDishMenuItemDataFactory menuItemDataFac = new DishMenuItemDataFactory();
 		

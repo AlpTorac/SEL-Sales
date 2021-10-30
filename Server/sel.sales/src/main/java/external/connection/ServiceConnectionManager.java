@@ -39,8 +39,10 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 		this.es = es;
 		this.manager = manager;
 		this.controller = controller;
-		this.connListener = this.createConnListener();
-		this.disconListener = this.createDisconListener();
+//		this.connListener = this.createConnListener();
+//		this.disconListener = this.createDisconListener();
+		this.initConnListener();
+		this.initDisconListener();
 		this.pingPongTimeout = pingPongTimeout;
 		this.minimalPingPongDelay = minimalPingPongDelay;
 		this.sendTimeout = sendTimeout;
@@ -49,6 +51,10 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 
 	protected void initConnListener() {
 		this.connListener = this.createConnListener();
+	}
+	
+	protected void initDisconListener() {
+		this.disconListener = this.createDisconListener();
 	}
 	
 	protected void setPingPongTimeout(long pingPongTimeout) {
@@ -107,11 +113,16 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	
 	protected abstract IConnectionManager createConnectionManager(IConnection conn, long pingPongTimeout, long sendTimeout, int resendLimit, long minimalPingPongDelay);
 	
+	protected void reportConnection(IConnection conn) {
+		this.connListener.connectionEstablished(conn.getTargetClientAddress());
+	}
+	
 	protected boolean addConnection(IConnection conn) {
 		if (this.isConnectionAllowed(conn.getTargetClientAddress())) {
 			System.out.println("Connection added");
 			IConnectionManager connManager = this.createConnectionManager(conn, this.getPingPongTimeout(), this.getSendTimeout(), this.getResendLimit(), this.getMinimalPingPongDelay());
-			this.connListener.connectionEstablished(conn.getTargetClientAddress());
+//			this.connListener.connectionEstablished(conn.getTargetClientAddress());
+			this.reportConnection(conn);
 			connManager.setDisconnectionListener(this.disconListener);
 			System.out.println("Connection manager added");
 			return this.connectionManagers.add(connManager);
@@ -174,9 +185,9 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 			.filter(cm -> cm.getConnection().getTargetClientAddress().equals(d.getClientAddress()))
 			.forEach(cm -> {
 				if (!d.getIsAllowedToConnect() || !d.getIsConnected()) {
+					this.disconListener.connectionLost(cm.getConnection().getTargetClientAddress());
 					cm.close();
 					this.connectionManagers.remove(cm);
-					this.disconListener.connectionLost(cm.getConnection().getTargetClientAddress());
 				}
 			});
 		}

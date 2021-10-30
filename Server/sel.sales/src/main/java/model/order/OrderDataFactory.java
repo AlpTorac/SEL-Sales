@@ -2,15 +2,21 @@ package model.order;
 
 import java.time.LocalDateTime;
 
+import model.id.EntityID;
+import model.id.EntityIDFactory;
+
 public class OrderDataFactory implements IOrderDataFactory {
 	private IOrderItemDataFactory orderItemDatafac;
-	public OrderDataFactory(IOrderItemDataFactory orderItemDatafac) {
+	private EntityIDFactory idFac;
+	
+	public OrderDataFactory(IOrderItemDataFactory orderItemDatafac, EntityIDFactory idFac) {
 		this.orderItemDatafac = orderItemDatafac;
+		this.idFac = idFac;
 	}
 	
 	@Override
 	public OrderData constructData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash,
-			boolean isHere, String id) {
+			boolean isHere, EntityID id) {
 		return new OrderData(orderData, date, isCash, isHere, id);
 	}
 
@@ -29,6 +35,12 @@ public class OrderDataFactory implements IOrderDataFactory {
 	@Override
 	public IOrderItemDataFactory getItemDataFac() {
 		return this.orderItemDatafac;
+	}
+
+	@Override
+	public IOrderData constructData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere,
+			Object... idParameters) {
+		return new OrderData(orderData, date, isCash, isHere, this.idFac.createID(idParameters));
 	}
 
 }

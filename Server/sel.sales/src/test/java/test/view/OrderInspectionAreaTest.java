@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
@@ -36,7 +37,6 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	private static IModel model;
 	private static IController controller;
 	private static IView view;
-	private static IDishMenuItemSerialiser dishMenuItemSerialiser;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -59,193 +59,243 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	private BigDecimal i3Disc = BigDecimal.valueOf(1);
 	private String i3id = "item3";
 	
-	private boolean autoDone = false;
+	private volatile boolean actionFinished = false;
+	
+	private void waitForAction() {
+		while (!actionFinished) {
+			
+		}
+		actionFinished = false;
+	}
+	
+	private void runFXAction(Runnable run) {
+		Platform.runLater(() -> {
+			run.run();
+			actionFinished = true;
+		});
+		waitForAction();
+	}
+	
+	@BeforeEach
+	void cleanUp() {
+		runFXAction(()->{
+			model = new Model();
+			controller = new MainController(model);
+			view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
+			view.startUp();
+			view.show();
+			model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+			model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+			model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+		});
+	}
 	
 	@AfterEach
 	void prep() {
-		model.removeAllOrders();
+		runFXAction(()->{
+			model.removeAllOrders();
+			view.hide();
+			model.close();
+		});
 	}
 	
 	@Override
 	public void start(Stage stage) {
-		model = new Model();
-		controller = new MainController(model);
-		view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
-		view.startUp();
-		dishMenuItemSerialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(dishMenuItemSerialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
-		model.addMenuItem(dishMenuItemSerialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-		model.addMenuItem(dishMenuItemSerialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+
 	}
 	
 	@Test
 	void confirmOrderTest() {
-		model.addUnconfirmedOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		
-		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
-		Assertions.assertEquals(unconfirmedOrders.length, 1);
-		IOrderData addedUnconfirmedOrder = unconfirmedOrders[0];
-		
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
-		IOrderData confirmedOrderData = opHelper.addConfirmOrder();
-		
-		OrderTestUtilityClass.assertOrderDatasEqual(addedUnconfirmedOrder, confirmedOrderData);
-		
-		IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
-		Assertions.assertEquals(confirmedOrders.length, 1);
-		
-		unconfirmedOrders = model.getAllUnconfirmedOrders();
-		Assertions.assertEquals(unconfirmedOrders.length, 0);
+		runFXAction(()->{
+			model.addUnconfirmedOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		});
+			IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
+			Assertions.assertEquals(unconfirmedOrders.length, 1);
+			IOrderData addedUnconfirmedOrder = unconfirmedOrders[0];
+			
+		runFXAction(()->{
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			confirmedOrderData = opHelper.addConfirmOrder();
+		});
+			
+			OrderTestUtilityClass.assertOrderDatasEqual(addedUnconfirmedOrder, confirmedOrderData);
+			
+			IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
+			Assertions.assertEquals(confirmedOrders.length, 1);
+			
+			unconfirmedOrders = model.getAllUnconfirmedOrders();
+			Assertions.assertEquals(unconfirmedOrders.length, 0);
 	}
+	
+	private IOrderData removedOrderData;
 	
 	@Test
 	void removeUnconfirmedOrderTest() {
-		model.addUnconfirmedOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		
-		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
-		Assertions.assertEquals(unconfirmedOrders.length, 1);
-		IOrderData addedUnconfirmedOrder = unconfirmedOrders[0];
-		
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
-		IOrderData removedOrderData = opHelper.removeUnconfirmedOrder();
-		
-		unconfirmedOrders = model.getAllUnconfirmedOrders();
-		Assertions.assertEquals(unconfirmedOrders.length, 0);
-		
-		IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
-		Assertions.assertEquals(confirmedOrders.length, 0);
-		
-		unconfirmedOrders = model.getAllUnconfirmedOrders();
-		Assertions.assertEquals(unconfirmedOrders.length, 0);
-		
-		OrderTestUtilityClass.assertOrderDatasEqual(addedUnconfirmedOrder, removedOrderData);
+		runFXAction(()->{
+			model.addUnconfirmedOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		});
+			IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
+			Assertions.assertEquals(unconfirmedOrders.length, 1);
+			IOrderData addedUnconfirmedOrder = unconfirmedOrders[0];
+			
+		runFXAction(()->{
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			removedOrderData = opHelper.removeUnconfirmedOrder();
+		});
+			
+			unconfirmedOrders = model.getAllUnconfirmedOrders();
+			Assertions.assertEquals(unconfirmedOrders.length, 0);
+			
+			IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
+			Assertions.assertEquals(confirmedOrders.length, 0);
+			
+			unconfirmedOrders = model.getAllUnconfirmedOrders();
+			Assertions.assertEquals(unconfirmedOrders.length, 0);
+			
+			OrderTestUtilityClass.assertOrderDatasEqual(addedUnconfirmedOrder, removedOrderData);
 	}
+	
+	private IOrderData confirmedOrderData;
+	private IOrderData removedConfirmedOrderData;
 	
 	@Test
 	void removeConfirmedOrderTest() {
-		model.addUnconfirmedOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		runFXAction(()->{
+			model.addUnconfirmedOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+		});
 		
-		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
-		Assertions.assertEquals(unconfirmedOrders.length, 1);
-		IOrderData addedUnconfirmedOrder = unconfirmedOrders[0];
-		
-		IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
-		Assertions.assertEquals(confirmedOrders.length, 0);
-		
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
-		IOrderData confirmedOrderData = opHelper.addConfirmOrder();
-		
+			IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
+			Assertions.assertEquals(unconfirmedOrders.length, 1);
+			IOrderData addedUnconfirmedOrder = unconfirmedOrders[0];
+			
+			IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
+			Assertions.assertEquals(confirmedOrders.length, 0);
+		runFXAction(()->{
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			confirmedOrderData = opHelper.addConfirmOrder();
+		});
 		OrderTestUtilityClass.assertOrderDatasEqual(addedUnconfirmedOrder, confirmedOrderData);
-		
+			
 		confirmedOrders = model.getAllConfirmedOrders();
 		Assertions.assertEquals(confirmedOrders.length, 1);
-		
+			
 		unconfirmedOrders = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(unconfirmedOrders.length, 0);
+		runFXAction(()->{
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			removedConfirmedOrderData = opHelper.removeConfirmedOrder();
+		});
 		
-		IOrderData removedConfirmedOrderData = opHelper.removeConfirmedOrder();
-		
-		confirmedOrders = model.getAllConfirmedOrders();
-		Assertions.assertEquals(confirmedOrders.length, 0);
-		
-		unconfirmedOrders = model.getAllUnconfirmedOrders();
-		Assertions.assertEquals(unconfirmedOrders.length, 0);
-		
-		OrderTestUtilityClass.assertOrderDatasEqual(removedConfirmedOrderData, confirmedOrderData);
+		runFXAction(()->{
+			IOrderData[] co = model.getAllConfirmedOrders();
+			Assertions.assertEquals(co.length, 0);
+			
+			IOrderData[] uo = model.getAllUnconfirmedOrders();
+			Assertions.assertEquals(uo.length, 0);
+			
+			OrderTestUtilityClass.assertOrderDatasEqual(removedConfirmedOrderData, confirmedOrderData);
+		});
 	}
 	
+	private IOrderData[] unconfirmedOrderDatas;
+	private IOrderData[] confirmedOrderDatas;
 	@Test
 	void confirmAllOrdersTest() {
-		model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
-		model.addUnconfirmedOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
+		runFXAction(()->{
+			model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+			model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
+			model.addUnconfirmedOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
+		});
 		
-		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
-		Assertions.assertEquals(unconfirmedOrders.length, 3);
-		
-		IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
-		Assertions.assertEquals(confirmedOrders.length, 0);
-		
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
-		IOrderData[] unconfirmedOrderDatas = opHelper.getUnconfirmedOrders().toArray(IOrderData[]::new);
-		IOrderData[] confirmedOrderDatas = opHelper.confirmAllOrders().toArray(IOrderData[]::new);
-		
-		confirmedOrders = model.getAllConfirmedOrders();
-		Assertions.assertEquals(confirmedOrders.length, 3);
-		
-		unconfirmedOrders = model.getAllUnconfirmedOrders();
-		Assertions.assertEquals(unconfirmedOrders.length, 0);
-		
-		for (IOrderData cod : confirmedOrderDatas) {
-//			boolean contains = false;
-//			for (IOrderData uod : unconfirmedOrderDatas) {
-//				contains = contains || uod.equals(cod);
-//			}
-//			Assertions.assertTrue(contains);
-			GeneralTestUtilityClass.arrayContains(unconfirmedOrderDatas, cod);
-		}
+			IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
+			Assertions.assertEquals(unconfirmedOrders.length, 3);
+			
+			IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
+			Assertions.assertEquals(confirmedOrders.length, 0);
+			
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			unconfirmedOrderDatas = opHelper.getUnconfirmedOrders().toArray(IOrderData[]::new);
+			
+		runFXAction(()->{
+			confirmedOrderDatas = opHelper.confirmAllOrders().toArray(IOrderData[]::new);
+		});
+			
+			confirmedOrders = model.getAllConfirmedOrders();
+			Assertions.assertEquals(confirmedOrders.length, 3);
+			
+			unconfirmedOrders = model.getAllUnconfirmedOrders();
+			Assertions.assertEquals(unconfirmedOrders.length, 0);
+			
+			for (IOrderData cod : confirmedOrderDatas) {
+//				boolean contains = false;
+//				for (IOrderData uod : unconfirmedOrderDatas) {
+//					contains = contains || uod.equals(cod);
+//				}
+//				Assertions.assertTrue(contains);
+				GeneralTestUtilityClass.arrayContains(unconfirmedOrderDatas, cod);
+			}
 	}
 	
 	@Test
 	void confirmAllOrdersWithButtonTest() {
-		model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
-		model.addUnconfirmedOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
-		
-		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
-		Assertions.assertEquals(unconfirmedOrders.length, 3);
-		
-		IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
-		Assertions.assertEquals(confirmedOrders.length, 0);
-		
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
-		IOrderData[] unconfirmedOrderDatas = opHelper.getUnconfirmedOrders().toArray(IOrderData[]::new);
-		opHelper.confirmAllOrdersWithoutReturn();
-		
-		confirmedOrders = model.getAllConfirmedOrders();
-		Assertions.assertEquals(confirmedOrders.length, 3);
-		
-		unconfirmedOrders = model.getAllUnconfirmedOrders();
-		Assertions.assertEquals(unconfirmedOrders.length, 0);
-		GeneralTestUtilityClass.performWait(waitTime);
-		for (IOrderData cod : confirmedOrders) {
-//			boolean contains = false;
-//			for (IOrderData uod : unconfirmedOrderDatas) {
-//				contains = contains || cod.equals(uod);
-//			}
-//			Assertions.assertTrue(contains);
-			GeneralTestUtilityClass.arrayContains(unconfirmedOrderDatas, cod);
-		}
+		runFXAction(()->{
+			model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+			model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
+			model.addUnconfirmedOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
+		});
+			
+			IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
+			Assertions.assertEquals(unconfirmedOrders.length, 3);
+			
+			IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
+			Assertions.assertEquals(confirmedOrders.length, 0);
+		runFXAction(()->{
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			unconfirmedOrderDatas = opHelper.getUnconfirmedOrders().toArray(IOrderData[]::new);
+		});
+		runFXAction(()->{
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			opHelper.confirmAllOrdersWithoutReturn();
+		});
+			confirmedOrders = model.getAllConfirmedOrders();
+			Assertions.assertEquals(confirmedOrders.length, 3);
+			
+			unconfirmedOrders = model.getAllUnconfirmedOrders();
+			Assertions.assertEquals(unconfirmedOrders.length, 0);
+			GeneralTestUtilityClass.performWait(waitTime);
+			for (IOrderData cod : confirmedOrders) {
+//				boolean contains = false;
+//				for (IOrderData uod : unconfirmedOrderDatas) {
+//					contains = contains || cod.equals(uod);
+//				}
+//				Assertions.assertTrue(contains);
+				GeneralTestUtilityClass.arrayContains(unconfirmedOrderDatas, cod);
+			}
 	}
 	
 	@Test
 	void confirmAllOrdersWithAutoTest() {		
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
-		opHelper.toggleOnAutoConfirm();
-		
-		IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
-		Assertions.assertEquals(unconfirmedOrders.length, 0);
-		
-		IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
-		Assertions.assertEquals(confirmedOrders.length, 0);
-		
-		model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-		model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
-		model.addUnconfirmedOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
-		
-		Platform.runLater(() -> {
-			autoDone = true;
+		runFXAction(()->{
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			opHelper.toggleOnAutoConfirm();
 		});
-		
-		while (!autoDone) {
+		runFXAction(()->{
+			IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
+			Assertions.assertEquals(unconfirmedOrders.length, 0);
 			
-		}
-		
-		IOrderData[] co = model.getAllConfirmedOrders();
-		Assertions.assertEquals(co.length, 3);
-		
-		IOrderData[] uo = model.getAllUnconfirmedOrders();
-		Assertions.assertEquals(uo.length, 0);
-		
+			IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
+			Assertions.assertEquals(confirmedOrders.length, 0);
+			
+			model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+			model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
+			model.addUnconfirmedOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
+		});
+		runFXAction(()->{
+			IOrderData[] co = model.getAllConfirmedOrders();
+			Assertions.assertEquals(co.length, 3);
+			
+			IOrderData[] uo = model.getAllUnconfirmedOrders();
+			Assertions.assertEquals(uo.length, 0);
+		});
 	}
 }

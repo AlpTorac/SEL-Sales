@@ -90,10 +90,10 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		this.getUnconfirmedOrderList().addItemIfNotPresent(orderData);
 	}
 	
-	public void confirmOrder(IOrderData orderData) {
-		this.getUnconfirmedOrderList().removeItem(orderData);
-		this.addConfirmedOrder(orderData);
-	}
+//	public void confirmOrder(IOrderData orderData) {
+//		this.getUnconfirmedOrderList().removeItem(orderData);
+//		this.addConfirmedOrder(orderData);
+//	}
 	
 	public void addConfirmedOrder(IOrderData orderData) {
 		this.getConfirmedOrderList().addItemIfNotPresent(orderData);

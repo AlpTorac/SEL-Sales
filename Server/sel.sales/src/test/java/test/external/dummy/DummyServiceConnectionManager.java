@@ -1,28 +1,53 @@
 package test.external.dummy;
 
+import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 
 import controller.IController;
 import external.client.IClientManager;
+import external.connection.DisconnectionListener;
 import external.connection.IConnection;
 import external.connection.IConnectionManager;
 import external.connection.ServiceConnectionManager;
 import test.GeneralTestUtilityClass;
 
 public class DummyServiceConnectionManager extends ServiceConnectionManager {
+	public final static long DEFAULT_PP_TIMEOUT = 200;
+	public final static long DEFAULT_PP_MINIMAL_TIMEOUT = 100;
+	public final static long SEND_TIMEOUT = 2000;
+	public final static int RESEND_LIMIT = 10;
+	
+	public final static long ESTIMATED_PP_TIMEOUT = DEFAULT_PP_TIMEOUT * (RESEND_LIMIT + 1);
+	
 	private volatile DummyClient currentClient;
+	private DisconnectionListener newDl = new DisconnectionListener(controller);
 	
 	public DummyServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es) {
-		super(manager, controller, es, 10000, 1000, 2000, 10);
+//		super(manager, controller, es, 10000, 1000, 2000, 10);
+		super(manager, controller, es, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
 	}
 	
 	public DummyServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es, long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		super(manager, controller, es, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 	}
 	
+	public Collection<IConnectionManager> getConnectionManagers() {
+		return GeneralTestUtilityClass.getPrivateFieldValue(this, "connectionManagers");
+	}
+	
 	public void setCurrentConnectionObject(DummyClient currentClient) {
 		this.currentClient = currentClient;
 		this.makeNewConnectionThread();
+	}
+	
+	public void setDisconnectionListener(DisconnectionListener dl) {
+		this.newDl = dl;
+		this.initDisconListener();
+	}
+	
+	@Override
+	protected DisconnectionListener createDisconListener() {
+		return this.newDl;
 	}
 	
 	@Override

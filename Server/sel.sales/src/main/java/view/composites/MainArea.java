@@ -3,14 +3,15 @@ package view.composites;
 import controller.BusinessEvent;
 import controller.IController;
 import controller.StatusEvent;
+import model.DateSettings;
+import model.IDateSettings;
 import model.IModel;
 import model.order.IOrderData;
-import view.DateSettings;
-import view.IDateSettings;
 import view.composites.listeners.AddDishListener;
 import view.composites.listeners.ConfirmAllOrdersListener;
 import view.composites.listeners.ConfirmOrderListener;
 import view.composites.listeners.EditDishListener;
+import view.composites.listeners.LoadDishMenuListener;
 import view.composites.listeners.OrderInspectionListener;
 import view.composites.listeners.RemoveDishListener;
 import view.composites.listeners.RemoveOrderListener;
@@ -86,14 +87,7 @@ public class MainArea extends UIHBoxLayout {
 		ota.getWriteButton().addClickListener(writeOrdersListener);
 		
 		ClickEventListener writeDishMenuListener = new WriteDishMenuListener(controller);
-		mda.getWriteButton().addClickListener(writeDishMenuListener);
-		
-		mda.getLoadButton().addClickListener(new ClickEventListener() {
-			@Override
-			public void clickAction(Object[] parameter) {
-				System.out.println("NOT IMPLEMENTED");
-			}
-		});
+		mda.getSaveButton().addClickListener(writeDishMenuListener);
 		
 		ota.getAuto().addChangeEventListener(new ChangeEventListener() {
 			@Override

@@ -48,10 +48,6 @@ class FileManagerPreloadTest {
 	private Collection<HasSettingsField> part;
 	private IFileManager fm;
 	
-	private static IDishMenuItemSerialiser menuItemSerialiser;
-	private static IDishMenuParser menuParser;
-	private static IDishMenuSerialiser menuSerialiser;
-	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
 	private BigDecimal i1Price = BigDecimal.valueOf(5);
@@ -89,7 +85,7 @@ class FileManagerPreloadTest {
 	}
 	
 	private void fillMenuFile() {
-		dmf.writeToFile(menuSerialiser.serialise(dishMenuData));
+		dmf.writeToFile(model.getDishMenuHelper().serialiseMenuForFile(dishMenuData));
 	}
 	
 	private void fillMenu() {
@@ -101,15 +97,11 @@ class FileManagerPreloadTest {
 	void prep() {
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 		model = new Model();
-		menuItemSerialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(menuItemSerialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
-		model.addMenuItem(menuItemSerialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-		model.addMenuItem(menuItemSerialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 		dishMenuData = model.getMenuData();
 		model = new Model();
-		menuItemSerialiser = model.getDishMenuItemSerialiser();
-		menuSerialiser = GeneralTestUtilityClass.getPrivateFieldValue((Model) model, "fileMenuSerialiser");
-		menuParser = GeneralTestUtilityClass.getPrivateFieldValue((Model) model, "dishMenuParser");
 		
 		fm = new FileManager(model, this.testFolderAddress);
 //		fm = GeneralTestUtilityClass.getPrivateFieldValue(model, "fileManager");
@@ -136,7 +128,7 @@ class FileManagerPreloadTest {
 		fm.loadSaved();
 		Assertions.assertTrue(model.getSettings().equals(settings));
 		String menuFileContent = dmf.readFile();
-		Assertions.assertTrue(model.getMenuData().equals(menuParser.parseDishMenuData(menuFileContent)));
+		Assertions.assertTrue(model.getMenuData().equals(model.getDishMenuHelper().parseMenuData(menuFileContent)));
 	}
 	
 	@Test

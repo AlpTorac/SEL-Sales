@@ -2,14 +2,16 @@ package model.dish;
 
 import java.math.BigDecimal;
 
+import model.id.EntityID;
+
 public class DishMenuItem implements IDishMenuItem {
 	private IDish dish;
 	private BigDecimal portionSize;
 	private BigDecimal price;
-	private IDishMenuItemID id;
+	private EntityID id;
 	private BigDecimal productionCost;
 	
-	DishMenuItem(IDish dish, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, IDishMenuItemID id) {
+	DishMenuItem(IDish dish, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, EntityID id) {
 		this.dish = dish;
 		this.portionSize = portionSize;
 		this.price = price;
@@ -43,8 +45,8 @@ public class DishMenuItem implements IDishMenuItem {
 	}
 
 	@Override
-	public String getID() {
-		return this.id.toString();
+	public EntityID getID() {
+		return this.id;
 	}
 
 	@Override
@@ -62,8 +64,10 @@ public class DishMenuItem implements IDishMenuItem {
 			return false;
 		}
 		
-		IDishMenuItem otherItem = (IDishMenuItem) o;
-		boolean result = this.getID().equals(otherItem.getID());
-		return result;
+//		IDishMenuItem otherItem = (IDishMenuItem) o;
+//		boolean result = this.getID().equals(otherItem.getID());
+//		return result;
+		
+		return this.compareTo((IDishMenuItem) o) == 0 ? true : false;
 	}
 }

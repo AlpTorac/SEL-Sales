@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import model.id.EntityID;
+
 public interface IOrderData {
 	IOrderItemData[] getOrderedItems();
 	LocalDateTime getDate();
@@ -14,7 +16,7 @@ public interface IOrderData {
 	boolean getIsCash();
 	boolean getIsHere();
 	boolean getIsDiscounted();
-	String getID();
+	EntityID getID();
 	BigDecimal getGrossSum();
 	BigDecimal getOrderDiscount();
 	Collection<IOrderItemData> getOrderItems();
@@ -48,7 +50,7 @@ public interface IOrderData {
 		Map<String, IOrderItemData> newOrderItems = new HashMap<String, IOrderItemData>();
 		orderItems.forEach(oid -> {
 			String id;
-			if (newOrderItems.containsKey(id = oid.getItemData().getId())) {
+			if (newOrderItems.containsKey(id = oid.getItemData().getID().toString())) {
 				newOrderItems.put(id, newOrderItems.get(id).combine(oid));
 			} else {
 				newOrderItems.put(id, oid);

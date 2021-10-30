@@ -32,6 +32,14 @@ public class FileManager implements IFileManager {
 		this.dishMenuWriter = new StandardDishMenuFile(this.model.getSettings().getSetting(SettingsField.DISH_MENU_FOLDER));
 	}
 	
+	protected void setDishMenuInModel(DishMenuFile f) {
+		String menu = f.readFile();
+		if (menu != null && !menu.isEmpty()) {
+			System.out.println("Dish menu preloaded");
+			this.model.setDishMenu(menu);
+		}
+	}
+	
 	protected void initSettings() {
 		String s = this.settingsFile.readFile();
 		if (s != null && !s.isEmpty()) {
@@ -41,11 +49,12 @@ public class FileManager implements IFileManager {
 	}
 	
 	protected void initDishMenu() {
-		String menu = this.dishMenuWriter.readFile();
-		if (menu != null && !menu.isEmpty()) {
-			System.out.println("Dish menu preloaded");
-			this.model.setDishMenu(menu);
-		}
+//		String menu = this.dishMenuWriter.readFile();
+//		if (menu != null && !menu.isEmpty()) {
+//			System.out.println("Dish menu preloaded");
+//			this.model.setDishMenu(menu);
+//		}
+		this.setDishMenuInModel(this.dishMenuWriter);
 	}
 	
 	@Override
@@ -71,17 +80,28 @@ public class FileManager implements IFileManager {
 
 	@Override
 	public void refreshValue() {
-		System.out.println("Old order folder address: "+this.orderWriter.getFolderAddress());
-		this.orderWriter.setFolderAddress(this.model.getSettings().getSetting(SettingsField.ORDER_FOLDER));
-		System.out.println("New order folder address: "+this.orderWriter.getFolderAddress());
-		System.out.println("Old menu folder address: "+this.dishMenuWriter.getFolderAddress());
-		this.dishMenuWriter.setFolderAddress(this.model.getSettings().getSetting(SettingsField.DISH_MENU_FOLDER));
-		System.out.println("New menu folder address: "+this.dishMenuWriter.getFolderAddress());
+		System.out.println("Old order folder address: "+this.orderWriter.getAddress());
+		this.orderWriter.setAddress(this.model.getSettings().getSetting(SettingsField.ORDER_FOLDER));
+		System.out.println("New order folder address: "+this.orderWriter.getAddress());
+		System.out.println("Old menu folder address: "+this.dishMenuWriter.getAddress());
+		this.dishMenuWriter.setAddress(this.model.getSettings().getSetting(SettingsField.DISH_MENU_FOLDER));
+		System.out.println("New menu folder address: "+this.dishMenuWriter.getAddress());
 	}
 	@Override
 	public void close() {
 		this.orderWriter.close();
 		this.dishMenuWriter.close();
 		this.settingsFile.close();
+	}
+
+	@Override
+	public void loadDishMenu(String fileAddress) {
+		DishMenuFile file = new StandardDishMenuFile(fileAddress);
+//		String menu = file.readFile();
+//		if (menu != null && !menu.isEmpty()) {
+//			this.model.setDishMenu(menu);
+//		}
+		this.setDishMenuInModel(file);
+		file.close();
 	}
 }

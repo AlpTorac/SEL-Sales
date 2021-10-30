@@ -24,9 +24,6 @@ import test.GeneralTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class DishMenuFileAccessTest {
 	private IModel model;
-	private static IDishMenuItemSerialiser serialiser;
-	private static IDishMenuParser parser;
-	private static IDishMenuSerialiser menuSerialiser;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -56,12 +53,9 @@ class DishMenuFileAccessTest {
 	void prep() {
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 		model = new Model();
-		serialiser = model.getDishMenuItemSerialiser();
-		menuSerialiser = GeneralTestUtilityClass.getPrivateFieldValue((Model) model, "fileMenuSerialiser");
-		parser = GeneralTestUtilityClass.getPrivateFieldValue((Model) model, "dishMenuParser");
-		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
-		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 		
 		dmf = new StandardDishMenuFile(this.testFolderAddress);
 		this.fillMenuFile();
@@ -69,7 +63,7 @@ class DishMenuFileAccessTest {
 	
 	private void fillMenuFile() {
 		dishMenuData = model.getMenuData();
-		dmf.writeToFile(menuSerialiser.serialise(dishMenuData));
+		dmf.writeToFile(model.getDishMenuHelper().serialiseMenuForFile(dishMenuData));
 	}
 
 	@AfterEach
@@ -86,7 +80,7 @@ class DishMenuFileAccessTest {
 	
 	@Test
 	void loadTest() {
-		IDishMenuData s = parser.parseDishMenuData(dmf.readFile());
+		IDishMenuData s = model.getDishMenuHelper().parseMenuData(dmf.readFile());
 		Assertions.assertTrue(dishMenuData.equals(s));
 	}
 	

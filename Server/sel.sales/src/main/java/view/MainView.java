@@ -4,6 +4,7 @@ import controller.IController;
 import model.IModel;
 import view.repository.IUILibraryHelper;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
+import view.repository.uiwrapper.ClickEventListener;
 import view.repository.uiwrapper.UIComponent;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIInnerFrame;
@@ -13,6 +14,7 @@ import view.repository.uiwrapper.UITabPane;
 import view.composites.ConnectionArea;
 import view.composites.MainArea;
 import view.composites.SettingsArea;
+import view.composites.listeners.LoadDishMenuListener;
 
 public class MainView extends View {
 
@@ -58,6 +60,9 @@ public class MainView extends View {
 		this.tabPane = this.initTabPane();
 		this.tabPane.attachTo(this.tabArea);
 		this.frame = this.initFrame(this.tabArea);
+		
+		ClickEventListener loadDishMenuListener = new LoadDishMenuListener(this.getController(), this.fac, this.mainWindow.getComponent());
+		mainArea.getMenuDesignArea().getLoadButton().addClickListener(loadDishMenuListener);
 	}
 	
 	protected IUILibraryHelper initHelper() {
@@ -141,13 +146,13 @@ public class MainView extends View {
 
 	@Override
 	public void refreshConfirmMode() {
-//		if (this.getModel().getAutoConfirmOrders()) {
-//			this.mainArea.getOrderTrackingArea().getAuto().setEnabled(true);
-//			this.mainArea.getOrderTrackingArea().getManual().setEnabled(false);
-//		} else {
-//			this.mainArea.getOrderTrackingArea().getAuto().setEnabled(false);
-//			this.mainArea.getOrderTrackingArea().getManual().setEnabled(true);
-//		}
+		if (this.getModel().getAutoConfirmOrders()) {
+			this.mainArea.getOrderTrackingArea().getAuto().setToggled(true);
+			this.mainArea.getOrderTrackingArea().getManual().setToggled(false);
+		} else {
+			this.mainArea.getOrderTrackingArea().getAuto().setToggled(false);
+			this.mainArea.getOrderTrackingArea().getManual().setToggled(true);
+		}
 		this.refreshUnconfirmedOrders();
 		this.refreshConfirmedOrders();
 	}

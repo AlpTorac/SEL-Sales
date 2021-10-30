@@ -29,7 +29,7 @@ import external.message.StandardMessageParser;
 import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyConnection;
 
-class AcknowledgingHandlerTest extends MessageHandlerTest {
+class AcknowledgingHandlerTest extends MessageHandlerSuperClass {
 
 	private MessageFormat format = new StandardMessageFormat();
 	private String fieldSeparator = format.getDataFieldSeparatorForString();

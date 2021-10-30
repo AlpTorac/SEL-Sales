@@ -26,7 +26,7 @@ public interface IOrderParser {
 		Map<String, IOrderData> newOrderDatas = new HashMap<String, IOrderData>();
 		orderDatas.forEach(od -> {
 			String id;
-			if (newOrderDatas.containsKey(id = od.getID())) {
+			if (newOrderDatas.containsKey(id = od.getID().toString())) {
 				newOrderDatas.put(id, newOrderDatas.get(id).combine(od));
 			} else {
 				newOrderDatas.put(id, od);

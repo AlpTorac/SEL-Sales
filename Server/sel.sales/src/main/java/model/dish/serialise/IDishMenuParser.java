@@ -8,6 +8,7 @@ import model.dish.IDishMenuData;
 import model.dish.IDishMenuDataFactory;
 import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemDataFactory;
+import model.id.EntityIDFactory;
 
 public interface IDishMenuParser {
 	default IDishMenuData parseDishMenuData(String s) {
@@ -32,7 +33,7 @@ public interface IDishMenuParser {
 		BigDecimal prodCost = this.getSerialisedProductionCost(dishMenuItemDataFields);
 		String id = this.getSerialisedID(dishMenuItemDataFields);
 		
-		return this.getDishMenuItemDataFactory().constructData(name, porSize, price, prodCost, id);
+		return this.getDishMenuItemDataFactory().constructData(name, porSize, price, prodCost, this.getIDFactory().createID(id));
 	}
 	
 	default String getSerialisedName(String[] dishMenuItemDataFields) {
@@ -68,4 +69,5 @@ public interface IDishMenuParser {
 	IDishMenuFormat getDishMenuFormat();
 	IDishMenuItemDataFactory getDishMenuItemDataFactory();
 	IDishMenuDataFactory getDishMenuFactory();
+	EntityIDFactory getIDFactory();
 }

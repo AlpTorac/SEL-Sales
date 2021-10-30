@@ -2,10 +2,12 @@ package model;
 
 import model.connectivity.IClientData;
 import model.dish.IDishMenuData;
+import model.dish.IDishMenuHelper;
 import model.dish.IDishMenuItemData;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.dish.serialise.IDishMenuSerialiser;
 import model.order.IOrderData;
+import model.order.IOrderHelper;
 import model.order.serialise.IOrderSerialiser;
 import model.settings.ISettings;
 
@@ -23,9 +25,8 @@ public interface IModel {
 	IOrderData getOrder(String id);
 	IOrderData[] getAllUnconfirmedOrders();
 	IOrderData[] getAllConfirmedOrders();
-	IDishMenuItemSerialiser getDishMenuItemSerialiser();
-	IDishMenuSerialiser getExternalDishMenuSerialiser();
-	IOrderSerialiser getOrderSerialiser();
+	IDishMenuHelper getDishMenuHelper();
+	IOrderHelper getOrderHelper();
 	
 	void addDiscoveredClient(String clientName, String clientAddress);
 	void addKnownClient(String clientAddress);
@@ -64,6 +65,7 @@ public interface IModel {
 	void setDishMenu(String menu);
 	
 	void loadSaved();
+	void loadDishMenu(String fileAddress);
 	boolean writeSettings();
 	
 	void close();

@@ -4,27 +4,22 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-import model.dish.DishMenuItemIDFactory;
-import model.dish.IDishMenuItemID;
-import model.dish.IDishMenuItemIDFactory;
+import model.id.EntityID;
 
 public class Order implements IOrder {
 	private LocalDateTime date;
 	private boolean isCash;
 	private boolean isHere;
-	private IOrderID id;
-	private IDishMenuItemIDFactory menuItemIDFac = new DishMenuItemIDFactory();
+	private EntityID id;
+//	private IDishMenuItemIDFactory menuItemIDFac = new DishMenuItemIDFactory();
 	private IOrderItemFactory orderItemFac = new OrderItemFactory();
-	/**
-	 * Order specific discount, FULLY INDEPENDENT of discounts of individual ordered items.
-	 */
-	private BigDecimal orderDiscount = BigDecimal.ZERO;
 	
-	private Map<IDishMenuItemID, IOrderItem> orderItems = new ConcurrentSkipListMap<IDishMenuItemID, IOrderItem>();
+	private Map<EntityID, IOrderItem> orderItems = new ConcurrentSkipListMap<EntityID, IOrderItem>();
 	
-	Order(LocalDateTime date, boolean isCash, boolean isHere, IOrderID id) {
+	public Order(LocalDateTime date, boolean isCash, boolean isHere, EntityID id) {
 		this.date = date;
 		this.isCash = isCash;
 		this.isHere = isHere;
@@ -36,27 +31,36 @@ public class Order implements IOrder {
 	 */
 	@Override
 	public boolean addOrderItem(IOrderItemData data) {
-		IDishMenuItemID id = this.menuItemIDFac.createDishMenuItemID(data.getItemData().getId());
+//		IDishMenuItemID id = this.menuItemIDFac.createDishMenuItemID(data.getItemData().getID());
 		IOrderItem item = this.orderItemFac.createOrderItem(data);
 		
-		if (!this.orderItems.containsKey(id)) {
-			this.orderItems.put(id, item);
+		if (!this.orderItems.containsKey(data.getItemData().getID())) {
+			this.orderItems.put(data.getItemData().getID(), item);
 			return true;
 		} else {
-			IOrderItem formerOrder = this.orderItems.get(id);
+			IOrderItem formerOrder = this.orderItems.get(data.getItemData().getID());
 			formerOrder.setAmount(formerOrder.getAmount().add(data.getAmount()));
 			return false;
 		}
 	}
 
+	private IOrderItem getOrderItemFromMap(String id) {
+		Optional<IOrderItem> optional = this.orderItems.entrySet().stream()
+				.filter(e -> e.getKey().serialisedIDequals(id))
+				.map(e -> e.getValue())
+				.findFirst();
+		
+		return optional.isPresent() ? optional.get() : null;
+	}
+	
 	@Override
 	public boolean removeOrderItem(String id) {
-		return this.orderItems.remove(this.menuItemIDFac.createDishMenuItemID(id)) != null;
+		return this.orderItems.keySet().removeIf(k -> k.toString().equals(id));
 	}
 
 	@Override
 	public IOrderItem getOrderItem(String id) {
-		return this.orderItems.get(this.menuItemIDFac.createDishMenuItemID(id));
+		return this.getOrderItemFromMap(id);
 	}
 
 	@Override
@@ -66,18 +70,18 @@ public class Order implements IOrder {
 
 	@Override
 	public boolean setOrderedItemAmount(String id, BigDecimal amount) {
-		if (!this.orderItems.containsKey(this.menuItemIDFac.createDishMenuItemID(id))) {
+		if (this.getOrderItemFromMap(id) == null) {
 			return false;
 		} else {
-			IOrderItem formerOrder = this.orderItems.get(this.menuItemIDFac.createDishMenuItemID(id));
+			IOrderItem formerOrder = this.getOrderItemFromMap(id);
 			formerOrder.setAmount(amount);
 			return true;
 		}
 	}
 
 	@Override
-	public String getID() {
-		return this.id.toString();
+	public EntityID getID() {
+		return this.id;
 	}
 	
 	@Override
@@ -98,10 +102,5 @@ public class Order implements IOrder {
 	@Override
 	public Collection<IOrderItem> getOrderItemCollection() {
 		return this.orderItems.values();
-	}
-
-	@Override
-	public BigDecimal getOrderDiscount() {
-		return this.orderDiscount;
 	}
 }

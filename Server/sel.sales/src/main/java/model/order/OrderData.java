@@ -3,18 +3,18 @@ package model.order;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import model.id.EntityID;
 
 public class OrderData implements IOrderData {
 	private Collection<IOrderItemData> orderItems;
 	private LocalDateTime date;
 	private boolean isCash;
 	private boolean isHere;
-	private String id;
+	private EntityID id;
 	
-	OrderData(Collection<IOrderItemData> orderItems, LocalDateTime date, boolean isCash, boolean isHere, String id) {
+	OrderData(Collection<IOrderItemData> orderItems, LocalDateTime date, boolean isCash, boolean isHere, EntityID id) {
 		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>();
 		this.orderItems.addAll(orderItems);
 		this.date = date;
@@ -23,7 +23,7 @@ public class OrderData implements IOrderData {
 		this.id = id;
 	}
 	
-	OrderData(IOrderItemData[] orderItems, LocalDateTime date, boolean isCash, boolean isHere, String id) {
+	OrderData(IOrderItemData[] orderItems, LocalDateTime date, boolean isCash, boolean isHere, EntityID id) {
 		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>();
 		for (IOrderItemData d : orderItems) {
 			this.orderItems.add(d);
@@ -56,7 +56,7 @@ public class OrderData implements IOrderData {
 	}
 
 	@Override
-	public String getID() {
+	public EntityID getID() {
 		return this.id;
 	}
 

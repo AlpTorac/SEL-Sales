@@ -38,7 +38,7 @@ public interface IDishMenuItemSerialiser {
 	default String serialise(IDishMenuItemData menuItemData) {
 		return this.serialise(
 				menuItemData.getDishName(),
-				menuItemData.getId(),
+				menuItemData.getID().toString(),
 				menuItemData.getPortionSize(),
 				menuItemData.getProductionCost(),
 				menuItemData.getGrossPrice());

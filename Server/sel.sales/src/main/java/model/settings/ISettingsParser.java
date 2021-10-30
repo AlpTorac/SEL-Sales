@@ -8,7 +8,9 @@ public interface ISettingsParser {
 		String[] fieldData = this.removeFieldStarts(separatedFields);
 		String[][] fields = this.getSerialisedSettingsData(fieldData);
 		for (String[] f : fields) {
-			this.addSetting(s, f[0], f[1]);
+			if (f.length > 1) {
+				this.addSetting(s, f[0], f[1]);
+			}
 		}
 		return s;
 	}

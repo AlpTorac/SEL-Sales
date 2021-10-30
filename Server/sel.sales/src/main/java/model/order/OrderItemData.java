@@ -24,6 +24,15 @@ public class OrderItemData implements IOrderItemData {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof IOrderItemData)) {
+			return false;
+		}
+		IOrderItemData castedO = (IOrderItemData) o;
+		return this.getAmount().compareTo(castedO.getAmount()) == 0 && this.getItemData().equals(castedO.getItemData());
+	}
+	
+	@Override
 	public IOrderItemData combine(IOrderItemData data) {
 		if (!data.getItemData().equals(this.menuItemData)) {
 			throw new IllegalArgumentException("Cannot combine order item data containing different dishes.");

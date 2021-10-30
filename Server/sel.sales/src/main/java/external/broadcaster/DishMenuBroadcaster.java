@@ -15,6 +15,6 @@ public class DishMenuBroadcaster extends Broadcaster {
 
 	@Override
 	public IMessage createMessage() {
-		return new Message(MessageContext.MENU, null, this.model.getExternalDishMenuSerialiser().serialise(this.model.getMenuData()));
+		return new Message(MessageContext.MENU, null, this.model.getDishMenuHelper().serialiseForExternal(this.model.getMenuData()));
 	}
 }

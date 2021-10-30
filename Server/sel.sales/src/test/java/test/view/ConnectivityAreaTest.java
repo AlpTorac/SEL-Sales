@@ -2,6 +2,7 @@ package test.view;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -15,7 +16,11 @@ import org.testfx.framework.junit5.ApplicationTest;
 
 import controller.IController;
 import controller.MainController;
+import controller.StatusEvent;
+import external.External;
 import external.client.IClient;
+import external.connection.DisconnectionListener;
+import external.connection.pingpong.IPingPong;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import model.IModel;
@@ -27,6 +32,8 @@ import test.MainViewOperationsUtilityClass;
 import test.external.dummy.DummyClient;
 import test.external.dummy.DummyClientDiscoveryStrategy;
 import test.external.dummy.DummyExternal;
+import test.external.dummy.DummyService;
+import test.external.dummy.DummyServiceConnectionManager;
 import view.MainView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
@@ -42,26 +49,29 @@ class ConnectivityAreaTest extends ApplicationTest {
 	
 	private MainViewOperationsUtilityClass opHelper;
 	
+	private DummyService service;
+	private DummyServiceConnectionManager dscm;
+	
 	private DummyClientDiscoveryStrategy cds;
 	
 	private DummyClient dc1;
-	private String dc1n;
-	private String dc1a;
+	private final String dc1n = "dc1n";
+	private final String dc1a = "dc1a";
 	
 	private DummyClient dc2;
-	private String dc2n;
-	private String dc2a;
+	private final String dc2n = "dc2n";
+	private final String dc2a = "dc2a";
 	
 	private Collection<IClient> dcCol;
 	private IClientData[] dcdArray;
 	
 	private void initClients() {
-		dc1n = "dc1n";
-		dc1a = "dc1a";
+//		dc1n = "dc1n";
+//		dc1a = "dc1a";
 		dc1 = new DummyClient(dc1n, dc1a);
 		
-		dc2n = "dc2n";
-		dc2a = "dc2a";
+//		dc2n = "dc2n";
+//		dc2a = "dc2a";
 		dc2 = new DummyClient(dc2n, dc2a);
 		
 		dcCol = new ArrayList<IClient>();
@@ -110,6 +120,8 @@ class ConnectivityAreaTest extends ApplicationTest {
 			controller = new MainController(model);
 			view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 			external = new DummyExternal("id", "name", controller, model, 10000, 1000, 2000, 5);
+			service = GeneralTestUtilityClass.getPrivateFieldValue((External) external, "service");
+			dscm = (DummyServiceConnectionManager) service.getServiceConnectionManager();
 			view.startUp();
 			view.show();
 			this.initialClientDiscovery();
@@ -235,6 +247,92 @@ class ConnectivityAreaTest extends ApplicationTest {
 							dcdArray[0].getClientAddress(),	true, false),
 							new ClientData(dcdArray[1].getClientName(),
 									dcdArray[1].getClientAddress(),	false, false)});
+		});
+	}
+	
+	@Test
+	void knownClientConnectionTest() {
+		runFXAction(()->{
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+					null);
+			
+			opHelper.addKnownClient(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+					new IClientData[] {dcdArray[0]});
+		});
+		runFXAction(()->{
+			opHelper.allowKnownClient(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
+							dcdArray[0].getClientAddress(), true, false)});
+		});
+		runFXAction(()->{
+			dscm.setCurrentConnectionObject(dc1);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
+							dcdArray[0].getClientAddress(), true, true)});
+		});
+	}
+	
+	private DummyClient getClientByAddress(String clientAddress) {
+		DummyClient client = null;
+		switch (clientAddress) {
+		case dc1a: client = dc1; break;
+		case dc2a: client = dc2; break;
+		}
+		return client;
+	}
+	
+	@Test
+	void knownClientDisconnectionTest() {
+		runFXAction(()->{
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+					null);
+			
+			opHelper.addKnownClient(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+					new IClientData[] {dcdArray[0]});
+		});
+		runFXAction(()->{
+			opHelper.addKnownClient(1);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+					dcdArray);
+		});
+		runFXAction(()->{
+			opHelper.allowKnownClient(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
+							dcdArray[0].getClientAddress(), true, false), dcdArray[1]});
+		});
+		runFXAction(()->{
+			opHelper.allowKnownClient(1);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
+							dcdArray[0].getClientAddress(), true, false),
+							new ClientData(dcdArray[1].getClientName(),
+									dcdArray[1].getClientAddress(), true, false)});
+		});
+		runFXAction(()->{
+			dscm.setCurrentConnectionObject(getClientByAddress(dcdArray[0].getClientAddress()));
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
+							dcdArray[0].getClientAddress(), true, true), new ClientData(dcdArray[1].getClientName(),
+									dcdArray[1].getClientAddress(), true, false)});
+		});
+		runFXAction(()->{
+//			dscm.getConnectionManagers().forEach(cm -> {
+//				if (cm.getConnection().getTargetClientAddress().equals(dcdArray[0].getClientAddress())) {
+//					DisconnectionListener dl = new DisconnectionListener(controller);
+//					cm.getPingPong().setDisconnectionListener(dl);
+//					dl.connectionLost(dcdArray[0].getClientAddress());
+//				}
+//			});
+			// wait for the ping pong to timeout and report the disconnection
+			GeneralTestUtilityClass.performWait(DummyServiceConnectionManager.ESTIMATED_PP_TIMEOUT);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
+							dcdArray[0].getClientAddress(), true, false), new ClientData(dcdArray[1].getClientName(),
+									dcdArray[1].getClientAddress(), true, false)});
 		});
 	}
 }

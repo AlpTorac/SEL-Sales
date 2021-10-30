@@ -3,6 +3,7 @@ package model.filewriter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import model.id.EntityID;
 import model.order.IOrderData;
 import model.order.IOrderItemData;
 import model.order.serialise.IOrderFormat;
@@ -21,7 +22,7 @@ public class FileOrderSerialiser implements IOrderSerialiser {
 	
 	@Override
 	public String serialiseOrderData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash,
-			boolean isHere, BigDecimal orderDiscount, String orderID) {
+			boolean isHere, BigDecimal orderDiscount, EntityID orderID) {
 		String result = "";
 		for (IOrderItemData d : orderData) {
 			result += this.getOrderFormat().getOrderStart();

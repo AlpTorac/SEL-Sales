@@ -18,7 +18,7 @@ public final class OrderTestUtilityClass {
 	}
 	
 	public static void assertOrderItemDataIDEqual(IOrderItemData data, String id) {
-		Assertions.assertEquals(data.getItemData().getId(), id);
+		data.getItemData().getID().serialisedIDequals(id);
 	}
 	
 	public static void assertOrderItemDataEqual(IOrderItemData data, String id, BigDecimal amount) {
@@ -36,13 +36,13 @@ public final class OrderTestUtilityClass {
 	}
 	
 	public static void assertOrderDataEqual(IOrderData order, String id, LocalDateTime date, boolean isCash, boolean isHere) {
-		Assertions.assertEquals(id, order.getID());
+		Assertions.assertEquals(id, order.getID().toString());
 		assertDatesEqual(order.getDate(), date);
 		Assertions.assertEquals(order.getIsCash(), isCash);
 		Assertions.assertEquals(order.getIsHere(), isHere);
 	}
 	public static void assertOrderDataEqual(IOrderData order, String id, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount) {
-		Assertions.assertEquals(id, order.getID());
+		Assertions.assertEquals(id, order.getID().toString());
 		assertDatesEqual(order.getDate(), date);
 		Assertions.assertEquals(order.getIsCash(), isCash);
 		Assertions.assertEquals(order.getIsHere(), isHere);
@@ -50,7 +50,7 @@ public final class OrderTestUtilityClass {
 	}
 	
 	public static void assertOrderDatasEqual(IOrderData orderData1, IOrderData orderData2) {
-		assertOrderDataEqual(orderData1, orderData2.getID(), orderData2.getDate(), orderData2.getIsCash(), orderData2.getIsHere());
+		assertOrderDataEqual(orderData1, orderData2.getID().toString(), orderData2.getDate(), orderData2.getIsCash(), orderData2.getIsHere());
 	}
 	
 }

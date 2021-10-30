@@ -28,9 +28,6 @@ import test.GeneralTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class OrderFileAccessTest {
 	private IModel model;
-	private static IDishMenuItemSerialiser serialiser;
-	private static IOrderSerialiser orderSerialiser;
-	private static IOrderDeserialiser orderParser;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -66,12 +63,9 @@ class OrderFileAccessTest {
 	void prep() {
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 		model = new Model();
-		serialiser = model.getDishMenuItemSerialiser();
-		orderSerialiser = GeneralTestUtilityClass.getPrivateFieldValue((Model) model, "appOrderSerialiser");
-		orderParser = GeneralTestUtilityClass.getPrivateFieldValue((Model) model, "orderDeserialiser");
-		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
-		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 		
 		model.addUnconfirmedOrder("order1#20200809235959865#0#0:item3,2;");
 		model.addUnconfirmedOrder("order2#20200809235959866#1#0:item1,2;item2,3;");
@@ -83,7 +77,7 @@ class OrderFileAccessTest {
 	
 	private void fillOrderFile() {
 		orderData = model.getAllUnconfirmedOrders();
-		of.writeToFile(orderSerialiser.serialiseOrderDatas(orderData));
+		of.writeToFile(model.getOrderHelper().serialiseForFile(orderData));
 	}
 
 	@AfterEach
@@ -101,7 +95,7 @@ class OrderFileAccessTest {
 	
 	@Test
 	void loadTest() {
-		IOrderData[] ss = orderParser.deserialiseOrders(of.readFile());
+		IOrderData[] ss = model.getOrderHelper().deserialiseOrderDatas(of.readFile());
 		for (int i = 0; i < ss.length; i++) {
 			GeneralTestUtilityClass.arrayContains(orderData, ss);
 		}

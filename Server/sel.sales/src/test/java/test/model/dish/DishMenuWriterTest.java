@@ -31,7 +31,6 @@ import test.GeneralTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class DishMenuWriterTest {
 	private static IModel model;
-	private static IDishMenuItemSerialiser serialiser;
 	
 	private BufferedReader r;
 	
@@ -62,10 +61,9 @@ class DishMenuWriterTest {
 	void startUp() {
 		GeneralTestUtilityClass.deletePathContent(new File(testFolder));
 		model = new Model();
-		serialiser = model.getDishMenuItemSerialiser();
-		model.addMenuItem(serialiser.serialise(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
-		model.addMenuItem(serialiser.serialise(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-		model.addMenuItem(serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 	
 		model.setDishMenuFolderAddress(testFolder);
 	}
