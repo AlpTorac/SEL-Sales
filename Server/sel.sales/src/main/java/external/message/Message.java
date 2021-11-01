@@ -68,9 +68,6 @@ public class Message implements IMessage {
 
 	@Override
 	public boolean hasContext(MessageContext c) {
-		if (this.context == null) {
-			return false;
-		}
 		if (this.context == c) {
 			return true;
 		}
@@ -101,5 +98,33 @@ public class Message implements IMessage {
 			}
 		}
 		return new Message(this.sequenceNumber, c, fs, this.serialisedData);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof IMessage)) {
+			return false;
+		}
+		IMessage castedO = (IMessage) o;
+		MessageFlag[] flags = castedO.getMessageFlags();
+		if (this.getMessageFlags() == null ^ flags == null) {
+			return false;
+		}
+		if (flags != null) {
+			for (MessageFlag f : flags) {
+				if (f != null && !this.hasFlag(f)) {
+					return false;
+				}
+			}
+		}
+		if (this.getSerialisedData() == null ^ castedO.getSerialisedData() == null) {
+			return false;
+		}
+		if (!(this.getSerialisedData() == castedO.getSerialisedData() ||
+				this.getSerialisedData().equals(castedO.getSerialisedData()))) {
+			return false;
+		}
+		return this.getSequenceNumber() == castedO.getSequenceNumber() &&
+				this.hasContext(castedO.getMessageContext());
 	}
 }

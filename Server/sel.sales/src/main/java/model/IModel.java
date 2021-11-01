@@ -4,6 +4,7 @@ import model.connectivity.IClientData;
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuHelper;
 import model.dish.IDishMenuItemData;
+import model.dish.IDishMenuItemFinder;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.dish.serialise.IDishMenuSerialiser;
 import model.order.IOrderData;
@@ -25,6 +26,7 @@ public interface IModel {
 	IOrderData getOrder(String id);
 	IOrderData[] getAllUnconfirmedOrders();
 	IOrderData[] getAllConfirmedOrders();
+	IOrderData[] getAllWrittenOrders();
 	IDishMenuHelper getDishMenuHelper();
 	IOrderHelper getOrderHelper();
 	
@@ -34,7 +36,7 @@ public interface IModel {
 	void allowKnownClient(String clientAddress);
 	void blockKnownClient(String clientAddress);
 	boolean isClientRediscoveryRequested();
-	void requestClientRediscovery();
+	void requestClientRediscovery(Runnable afterDiscoveryAction);
 	
 	void clientConnected(String clientAddress);
 	void clientDisconnected(String clientAddress);
@@ -63,10 +65,16 @@ public interface IModel {
 	ISettings getSettings();
 	void setSettings(String settings);
 	void setDishMenu(String menu);
+	void setKnownClients(String serialisedClientData);
 	
 	void loadSaved();
 	void loadDishMenu(String fileAddress);
+	void loadKnownClients(String fileAddress);
+	void loadOrders(String fileAddress);
 	boolean writeSettings();
 	
 	void close();
+	void setWrittenOrders(String readFile);
+	
+	IDishMenuItemFinder getActiveDishMenuItemFinder();
 }

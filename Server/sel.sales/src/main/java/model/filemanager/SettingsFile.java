@@ -19,8 +19,4 @@ public abstract class SettingsFile extends FileAccess {
 	public static String getDefaultFileNameForClass() {
 		return defaultName;
 	}
-	public boolean writeToFile(String s) {
-		this.remakeFile();
-		return super.writeToFile(s);
-	}
 }

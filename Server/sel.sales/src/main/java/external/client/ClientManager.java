@@ -89,21 +89,36 @@ public abstract class ClientManager implements IClientManager {
 			e.setConnectionAllowance(false);
 		}
 	}
-
-	public void discoverClients() {
+	
+	protected void addDiscoveredClient(IClient c) {
+		this.discoveredClients.put(c.getClientAddress(), c);
+	}
+	
+	protected void discoverClientsAlgorithmWithAfterAction(Runnable afterAction) {
+		this.discoverClientsAlgorithm();
+		afterAction.run();
+	}
+	
+	protected void discoverClientsAlgorithm() {
+		Collection<IClient> dcs = cds.discoverClients();
+		
+		if (this.discoveredClients != null) {
+			for (IClient c : dcs) {
+//				discoveredClients.put(c.getClientAddress(), c);
+				addDiscoveredClient(c);
+				if (this.cdl != null) {
+					this.cdl.clientDiscovered(c.getClientName(), c.getClientAddress());
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void discoverClients(Runnable afterAction) {
 		es.submit(new Runnable() {
 			@Override
 			public void run() {
-				Collection<IClient> dcs = cds.discoverClients();
-				
-				if (discoveredClients != null) {
-					for (IClient c : dcs) {
-						discoveredClients.put(c.getClientAddress(), c);
-						if (cdl != null) {
-							cdl.clientDiscovered(c.getClientName(), c.getClientAddress());
-						}
-					}
-				}
+				discoverClientsAlgorithmWithAfterAction(afterAction);
 			}
 		});
 	}

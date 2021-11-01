@@ -7,10 +7,6 @@ import model.dish.IDishMenuItemData;
 public interface IDishMenuItemSerialiser {
 	String serialise(String dishName, String id, BigDecimal portionSize, BigDecimal productionCost, BigDecimal price);
 	
-	default String getDishMenuItemDataFieldSeperator() {
-		return this.getDishMenuFormat().getDishMenuItemDataFieldSeperator();
-	}
-	
 	default String serialiseDishName(String dishName) {
 		return dishName;
 	}

@@ -8,7 +8,7 @@ public interface IToggleGroup {
 	public void addToToggleGroup(Toggleable t);
 	
 	default public Toggleable[] getAllToggleables() {
-		return null;
+		return ((IToggleGroup) this.getToggleGroup()).getAllToggleables();
 	}
 	
 	default public void clearSelections() {

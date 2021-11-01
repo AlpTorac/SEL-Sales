@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import model.connectivity.ConnectivityManager;
+import model.connectivity.FileClientDataParser;
+import model.connectivity.FileClientDataSerialiser;
 import model.connectivity.IClientData;
 import model.connectivity.IConnectivityManager;
 import model.dish.DishMenu;
@@ -20,7 +22,6 @@ import model.filemanager.IFileManager;
 import model.order.IOrderCollector;
 import model.order.IOrderData;
 import model.order.IOrderHelper;
-import model.order.OrderCollector;
 import model.order.OrderHelper;
 import model.settings.HasSettingsField;
 import model.settings.ISettings;
@@ -42,11 +43,11 @@ public class Model implements IModel {
 	private IDishMenuHelper menuHelper;
 	
 	private IDishMenu dishMenu;
+	private IDishMenuItemFinder finder;
 	
 	private IOrderCollector orderUnconfirmedCollector;
 	private IOrderCollector orderConfirmedCollector;
-	
-	private IDishMenuItemFinder finder;
+	private IOrderCollector writtenOrderCollector;
 	
 	private IConnectivityManager connManager;
 	
@@ -56,17 +57,24 @@ public class Model implements IModel {
 	private ISettingsParser settingsParser;
 	private ISettingsSerialiser settingsSerialiser;
 	
+	private FileClientDataParser clientDataParser;
+	private FileClientDataSerialiser clientDataSerialiser;
+	
 	public Model() {
 		this.updatables = new ArrayList<Updatable>();
 		this.part = new ArrayList<HasSettingsField>();
 		
+		this.orderHelper = new OrderHelper();
 		this.menuHelper = new DishMenuHelper();
-		this.dishMenu = this.menuHelper.createDishMenu();
-		this.finder = new DishMenuItemFinder(this.dishMenu);
-		this.orderHelper = new OrderHelper(this.finder);
 		
-		this.orderUnconfirmedCollector = new OrderCollector();
-		this.orderConfirmedCollector = new OrderCollector();
+		this.clientDataParser = new FileClientDataParser();
+		this.clientDataSerialiser = new FileClientDataSerialiser();
+		
+		this.setDishMenu(this.menuHelper.createDishMenu());
+		
+		this.orderUnconfirmedCollector = this.orderHelper.createOrderCollector();
+		this.orderConfirmedCollector = this.orderHelper.createOrderCollector();
+		this.writtenOrderCollector = this.orderHelper.createOrderCollector();
 		
 		this.connManager = new ConnectivityManager();
 		
@@ -100,15 +108,21 @@ public class Model implements IModel {
 	
 	private void knownClientsChanged() {
 		this.updatables.stream().filter(u -> u instanceof KnownClientUpdatable).forEach(u -> ((KnownClientUpdatable) u).refreshKnownClients());
+		this.fileManager.writeClientDatas(this.clientDataSerialiser.serialiseClientDatas(this.connManager.getAllKnownClientData()));
 	}
 	
-	private void externalStatusChanged() {
-		this.updatables.stream().filter(u -> u instanceof ExternalUpdatable).forEach(u -> ((ExternalUpdatable) u).rediscoverClients());
+	private void externalStatusChanged(Runnable afterDiscoveryAction) {
+		this.updatables.stream().filter(u -> u instanceof ExternalUpdatable).forEach(u -> ((ExternalUpdatable) u).rediscoverClients(afterDiscoveryAction));
 	}
 	
 	private void settingsChanged() {
 		this.part.stream().forEach(p -> p.refreshValue());
 		this.updatables.stream().filter(u -> u instanceof SettingsUpdatable).forEach(u -> ((SettingsUpdatable) u).refreshSettings());
+	}
+	
+	private void ordersChanged() {
+		this.unconfirmedOrdersChanged();
+		this.confirmedOrdersChanged();
 	}
 	
 	public void addMenuItem(String serialisedItemData) {
@@ -183,13 +197,20 @@ public class Model implements IModel {
 		this.menuChanged();
 	}
 
+	protected void confirmOrder(IOrderData orderData) {
+		this.orderUnconfirmedCollector.removeOrder(orderData.getID().toString());
+		this.orderConfirmedCollector.addOrder(orderData);
+		if (!this.isOrderWritten(orderData.getID().toString())) {
+			this.fileManager.writeOrderData(this.orderHelper.serialiseForFile(orderData));
+			this.writtenOrderCollector.addOrder(orderData);
+		}
+		this.ordersChanged();
+	}
+	
 	@Override
 	public void confirmOrder(String serialisedConfirmedOrderData) {
 		IOrderData orderData = this.orderHelper.deserialiseOrderData(serialisedConfirmedOrderData);
-		this.orderUnconfirmedCollector.removeOrder(orderData.getID().toString());
-		this.orderConfirmedCollector.addOrder(orderData);
-		this.unconfirmedOrdersChanged();
-		this.confirmedOrdersChanged();
+		this.confirmOrder(orderData);
 	}
 
 	@Override
@@ -217,7 +238,21 @@ public class Model implements IModel {
 
 	@Override
 	public boolean writeOrders() {
-		return this.fileManager.writeOrderDatas(this.orderHelper.serialiseForFile(this.getAllConfirmedOrders()));
+		IOrderData[] orders = this.getAllConfirmedOrders();
+		Collection<IOrderData> ordersToBeWritten = new ArrayList<IOrderData>();
+		for (IOrderData od : orders) {
+			if (!this.isOrderWritten(od.getID().toString())) {
+				ordersToBeWritten.add(od);
+			}
+		}
+		IOrderData[] array = ordersToBeWritten.toArray(IOrderData[]::new);
+		boolean allWritten = this.fileManager.writeOrderData(this.orderHelper.serialiseForFile(array));
+		if (allWritten) {
+			for (IOrderData od : array) {
+				this.writtenOrderCollector.addOrder(od);
+			}
+		}
+		return allWritten;
 	}
 
 	@Override
@@ -288,20 +323,19 @@ public class Model implements IModel {
 	}
 
 	@Override
-	public void requestClientRediscovery() {
+	public void requestClientRediscovery(Runnable afterDiscoveryAction) {
 		this.connManager.requestClientRediscovery();
-		this.externalStatusChanged();
+		this.externalStatusChanged(afterDiscoveryAction);
 	}
 
 	@Override
 	public void confirmAllOrders() {
 		IOrderData[] unconfirmedOrders = this.orderUnconfirmedCollector.getAllOrders();
 		for (IOrderData uco : unconfirmedOrders) {
-			this.orderConfirmedCollector.addOrder(uco);
+			this.confirmOrder(uco);
 		}
-		this.orderUnconfirmedCollector.clearOrders();
-		this.confirmedOrdersChanged();
-		this.unconfirmedOrdersChanged();
+//		this.orderUnconfirmedCollector.clearOrders();
+		this.ordersChanged();
 	}
 
 	@Override
@@ -320,6 +354,7 @@ public class Model implements IModel {
 	public void removeOrder(String id) {
 		this.removeConfirmedOrder(id);
 		this.removeUnconfirmedOrder(id);
+		this.ordersChanged();
 	}
 
 	@Override
@@ -347,13 +382,20 @@ public class Model implements IModel {
 		this.settingsChanged();
 	}
 
+	private void setDishMenu(IDishMenu dishMenu) {
+		this.dishMenu = dishMenu;
+		this.finder = new DishMenuItemFinder(this.dishMenu);
+		this.orderHelper.setFinder(this.finder);
+	}
+	
 	@Override
 	public void setDishMenu(String menu) {
-		this.dishMenu = new DishMenu();
+		IDishMenu dishMenu = new DishMenu();
 		IDishMenuData menuData = this.menuHelper.parseMenuData(menu);
 		for (IDishMenuItemData data : menuData.getAllDishMenuItems()) {
-			this.dishMenu.addMenuItem(this.menuHelper.dishMenuItemDataToItem(data));
+			dishMenu.addMenuItem(this.menuHelper.dishMenuItemDataToItem(data));
 		}
+		this.setDishMenu(dishMenu);
 		this.menuChanged();
 	}
 
@@ -379,5 +421,58 @@ public class Model implements IModel {
 	@Override
 	public void loadDishMenu(String fileAddress) {
 		this.fileManager.loadDishMenu(fileAddress);
+	}
+
+	@Override
+	public void setKnownClients(String serialisedClientData) {
+		IClientData[] clientDatas = this.clientDataParser.parseClientDatas(serialisedClientData);
+		if (clientDatas != null) {
+			this.requestClientRediscovery(()->{
+				for (IClientData d : clientDatas) {
+					this.addDiscoveredClient(d.getClientName(), d.getClientAddress());
+					this.addKnownClient(d.getClientAddress());
+					if (d.getIsAllowedToConnect()) {
+						this.allowKnownClient(d.getClientAddress());
+					} else {
+						this.blockKnownClient(d.getClientAddress());
+					}
+				}
+			});
+		}
+	}
+
+	@Override
+	public void loadKnownClients(String fileAddress) {
+		this.fileManager.loadKnownClients(fileAddress);
+	}
+
+	private boolean isOrderWritten(String orderID) {
+		return this.writtenOrderCollector.getOrder(orderID) != null;
+	}
+	
+	@Override
+	public void setWrittenOrders(String readFile) {
+		if (readFile == null) {
+			return;
+		}
+		IOrderData[] orderData = this.orderHelper.deserialiseOrderDatas(readFile);
+		for (IOrderData od : orderData) {
+			this.writtenOrderCollector.addOrder(od);
+		}
+	}
+
+	@Override
+	public void loadOrders(String fileAddress) {
+		this.fileManager.loadOrders(fileAddress);
+	}
+
+	@Override
+	public IOrderData[] getAllWrittenOrders() {
+		return this.writtenOrderCollector.getAllOrders();
+	}
+
+	@Override
+	public IDishMenuItemFinder getActiveDishMenuItemFinder() {
+		return this.finder;
 	}
 }

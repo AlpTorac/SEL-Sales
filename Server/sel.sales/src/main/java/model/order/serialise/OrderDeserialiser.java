@@ -31,4 +31,10 @@ public abstract class OrderDeserialiser implements IOrderDeserialiser {
 	public IOrderData[] deserialiseOrders(String s) {
 		return this.orderParser.parseOrderDatas(s);
 	}
+	
+	@Override
+	public void setFinder(IDishMenuItemFinder finder) {
+		this.finder = finder;
+		this.orderParser.setFinder(this.finder);
+	}
 }

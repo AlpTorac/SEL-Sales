@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import model.IModel;
 import model.Model;
 import model.dish.Dish;
+import model.dish.DishMenuItem;
 import model.dish.IDishMenuItem;
 import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemDataFactory;
@@ -44,20 +46,52 @@ class DishMenuItemTest {
 	private BigDecimal i3Disc = BigDecimal.valueOf(1);
 	private String i3id = "item3";
 	
+	private IDishMenuItemData iData1;
+	private IDishMenuItemData iData2;
+	private IDishMenuItemData iData3;
+	
+	private IDishMenuItem i1;
+	private IDishMenuItem i2;
+	private IDishMenuItem i3;
+	
 	@BeforeEach
-	void startUp() {
+	void prep() {
 		model = new Model();
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+		
+		iData1 = model.getMenuItem(i1id);
+		iData2 = model.getMenuItem(i2id);
+		iData3 = model.getMenuItem(i3id);
+		
+		i1 = iData1.getAssociatedItem(model.getActiveDishMenuItemFinder());
+		i2 = iData2.getAssociatedItem(model.getActiveDishMenuItemFinder());
+		i3 = iData3.getAssociatedItem(model.getActiveDishMenuItemFinder());
+	}
+	
+	@AfterEach
+	void cleanUp() {
+		model.close();
+	}
+	
+	@Test
+	void compareToTest() {
+		Assertions.assertEquals(i1.compareTo(i1), i1.getID().compareTo(i1.getID()));
+		Assertions.assertEquals(i1.compareTo(i2), i1.getID().compareTo(i2.getID()));
+		Assertions.assertEquals(i1.compareTo(i3), i1.getID().compareTo(i3.getID()));
+		
+		Assertions.assertEquals(i2.compareTo(i1), i2.getID().compareTo(i1.getID()));
+		Assertions.assertEquals(i2.compareTo(i2), i2.getID().compareTo(i2.getID()));
+		Assertions.assertEquals(i2.compareTo(i3), i2.getID().compareTo(i3.getID()));
+		
+		Assertions.assertEquals(i3.compareTo(i1), i3.getID().compareTo(i1.getID()));
+		Assertions.assertEquals(i3.compareTo(i2), i3.getID().compareTo(i2.getID()));
+		Assertions.assertEquals(i3.compareTo(i3), i3.getID().compareTo(i3.getID()));
 	}
 	
 	@Test
 	void equalityTest() {
-		IDishMenuItemData i1 = model.getMenuItem(i1id);
-		IDishMenuItemData i2 = model.getMenuItem(i2id);
-		IDishMenuItemData i3 = model.getMenuItem(i3id);
-		
 		Assertions.assertTrue(i1.equals(i1));
 		Assertions.assertTrue(i2.equals(i2));
 		Assertions.assertTrue(i3.equals(i3));
@@ -68,24 +102,9 @@ class DishMenuItemTest {
 		Assertions.assertFalse(i2.equals(i3));
 		Assertions.assertFalse(i3.equals(i1));
 		Assertions.assertFalse(i3.equals(i2));
-	}
-	
-	@Test
-	void compareTest() {
-		IDishMenuItemData i1 = model.getMenuItem(i1id);
-		IDishMenuItemData i2 = model.getMenuItem(i2id);
-		IDishMenuItemData i3 = model.getMenuItem(i3id);
 		
-		Assertions.assertEquals(i1.compareTo(i1), 0);
-		Assertions.assertEquals(i2.compareTo(i2), 0);
-		Assertions.assertEquals(i3.compareTo(i3), 0);
-		
-		Assertions.assertNotEquals(i1.compareTo(i2), 0);
-		Assertions.assertNotEquals(i1.compareTo(i3), 0);
-		Assertions.assertNotEquals(i2.compareTo(i1), 0);
-		Assertions.assertNotEquals(i2.compareTo(i3), 0);
-		Assertions.assertNotEquals(i3.compareTo(i1), 0);
-		Assertions.assertNotEquals(i3.compareTo(i2), 0);
+		Assertions.assertFalse(i1.equals(null));
+		Assertions.assertFalse(i1.equals(new Object()));
 	}
 
 //	@Test

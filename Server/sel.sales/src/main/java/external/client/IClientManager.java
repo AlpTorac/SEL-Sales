@@ -5,7 +5,7 @@ import java.util.Collection;
 import model.connectivity.IClientData;
 
 public interface IClientManager {
-	void discoverClients();
+	void discoverClients(Runnable afterAction);
 	void addClient(String clientAddress);
 	void removeClient(String clientAddress);
 	void allowClient(String clientAddress);

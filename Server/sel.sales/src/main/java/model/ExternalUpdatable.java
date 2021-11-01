@@ -1,5 +1,5 @@
 package model;
 
 public interface ExternalUpdatable extends Updatable {
-	void rediscoverClients();
+	void rediscoverClients(Runnable afterDiscoveryAction);
 }

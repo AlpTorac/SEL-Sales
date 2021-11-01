@@ -29,15 +29,14 @@ public class OrderHelper implements IOrderHelper {
 	private IntraAppOrderSerialiser appOrderSerialiser;
 	private FileOrderSerialiser fileOrderSerialiser;
 	
-	public OrderHelper(IDishMenuItemFinder finder) {
-		this.finder = finder;
+	public OrderHelper() {
 		this.idFac = new FixIDFactory();
 		this.orderColFac = new OrderCollectorFactory();
 		this.orderFac = new OrderFactory();
 		this.orderItemFac = new OrderItemFactory();
 		this.orderItemDataFac = new OrderItemDataFactory();
 		this.orderDataFac = new OrderDataFactory(this.orderItemDataFac, new FixIDFactory());
-		this.deserialiser = new StandardOrderDeserialiser(this.finder);
+		this.deserialiser = new StandardOrderDeserialiser();
 		this.appOrderSerialiser = new IntraAppOrderSerialiser();
 		this.fileOrderSerialiser = new FileOrderSerialiser();
 	}
@@ -80,6 +79,12 @@ public class OrderHelper implements IOrderHelper {
 	@Override
 	public void setFileSerialiser(FileOrderSerialiser fileOrderSerialiser) {
 		this.fileOrderSerialiser = fileOrderSerialiser;
+	}
+	
+	@Override
+	public void setFinder(IDishMenuItemFinder finder) {
+		this.finder = finder;
+		this.deserialiser.setFinder(this.finder);
 	}
 	
 	@Override
@@ -135,4 +140,8 @@ public class OrderHelper implements IOrderHelper {
 				this.idFac.createID(idParameters));
 	}
 
+	@Override
+	public String serialiseForFile(IOrderData data) {
+		return this.fileOrderSerialiser.serialiseOrderData(data);
+	}
 }

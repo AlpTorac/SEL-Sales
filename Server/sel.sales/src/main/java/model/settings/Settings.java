@@ -73,9 +73,4 @@ public class Settings implements ISettings {
 	public boolean isEmpty() {
 		return this.settings.isEmpty() || this.settings.values().stream().allMatch(i -> this.valueExists(i));
 	}
-
-	@Override
-	public boolean settingExists(SettingsField description) {
-		return this.getSetting(description) != null;
-	}
 }

@@ -86,7 +86,7 @@ class OrderTest {
 
 	@AfterEach
 	void cleanUp() {
-		
+		model.close();
 	}
 
 	@Test

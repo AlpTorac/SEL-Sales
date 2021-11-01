@@ -49,6 +49,7 @@ class FileAccessTest {
 	@AfterEach
 	void cleanUp() {
 		fa.close();
+		fa.deleteFile();
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 	}
 	
@@ -238,10 +239,6 @@ class FileAccessTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String fileContent = 
-				"aaa,item1,4.0,2.34,2.0;"+System.lineSeparator()+
-				"bbb,item2,10.0,1.0,5.67;"+System.lineSeparator()+
-				"ccc,item3,4.0,2.5,1.0;"+System.lineSeparator();
 		try {
 			w.write(fileContent);
 			w.flush();
@@ -253,5 +250,50 @@ class FileAccessTest {
 		fa.setAddress(fileAddress);
 		Assertions.assertEquals(fileContent, fa.readFile());
 		Assertions.assertTrue(fa.deleteFile());
+	}
+	
+	@Test
+	void remakeFileTest() {
+		String fileAddress = testFolderAddress+File.separator+"testFile.txt";
+		File f = new File(fileAddress);
+		Assertions.assertFalse(f.length() > 0);
+		try {
+			f.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		BufferedWriter w = null;
+		
+		try {
+			w = new BufferedWriter(new FileWriter(f));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			w.write(fileContent);
+			w.flush();
+			w.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fa.setAddress(fileAddress);
+		Assertions.assertEquals(fileContent, fa.readFile());
+//		System.out.println("File address: " + fa.getAddress());
+//		System.out.println("File name: " + fa.getFileName());
+		Assertions.assertTrue(fa.remakeFile());
+		File f2 = new File(fileAddress);
+		Assertions.assertFalse(f2.length() > 0);
+		try {
+			f2.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String readContent = fa.readFile();
+		Assertions.assertTrue(readContent == null || readContent.equals(""));
 	}
 }

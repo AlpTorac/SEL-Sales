@@ -84,7 +84,7 @@ class OrderFileAccessTest {
 	void cleanUp() {
 		of.close();
 		model.close();
-//		of.deleteFile();
+		of.deleteFile();
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 	}
 	

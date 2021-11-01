@@ -10,6 +10,7 @@ import model.order.serialise.IOrderDeserialiser;
 import model.order.serialise.IntraAppOrderSerialiser;
 
 public interface IOrderHelper {
+	void setFinder(IDishMenuItemFinder finder);
 	void setOrderCollectorFactory(IOrderCollectorFactory fac);
 	
 	void setOrderFactory(IOrderFactory fac);
@@ -28,6 +29,7 @@ public interface IOrderHelper {
 	String serialiseForApp(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, EntityID orderID);
 	String serialiseForApp(IOrderData[] data);
 	String serialiseForFile(IOrderData[] data);
+	String serialiseForFile(IOrderData data);
 	
 	IOrderCollector createOrderCollector();
 	IOrder createOrder(String serialisedOrder);

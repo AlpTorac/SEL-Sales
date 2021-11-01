@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
+import view.repository.IDataCollectingUIComponent;
 import view.repository.IListView;
 import view.repository.uiwrapper.ClickEventListener;
 import view.repository.uiwrapper.ItemChangeListener;
@@ -114,5 +115,9 @@ public class FXListView<T> extends ListView<T> implements FXHasText, IListView<T
 	@Override
 	public T getSelectedElement() {
 		return super.getSelectionModel().getSelectedItem();
+	}
+	@Override
+	public void refresh() {
+		super.refresh();
 	}
 }

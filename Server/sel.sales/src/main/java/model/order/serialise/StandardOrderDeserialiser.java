@@ -10,7 +10,7 @@ import model.order.OrderDataFactory;
 import model.order.OrderItemDataFactory;
 
 public class StandardOrderDeserialiser extends OrderDeserialiser {
-	public StandardOrderDeserialiser(IDishMenuItemFinder finder) {
+	public StandardOrderDeserialiser() {
 		super();
 		
 		IOrderItemDataFactory orderItemDataFac = new OrderItemDataFactory();
@@ -18,7 +18,6 @@ public class StandardOrderDeserialiser extends OrderDeserialiser {
 		IOrderFormat orderDateParser = new IntraAppOrderFormat();
 		IDishMenuItemDataFactory menuItemDataFac = new DishMenuItemDataFactory();
 		
-		this.finder = finder;
 		this.orderDataFac = orderDataFac;
 		this.orderItemDataFac = orderItemDataFac;
 		this.orderFormat = orderDateParser;

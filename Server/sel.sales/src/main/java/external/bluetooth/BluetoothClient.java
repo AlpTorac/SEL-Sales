@@ -31,10 +31,7 @@ public class BluetoothClient implements IClient {
 	
 	@Override
 	public boolean equals(Object o) {
-		if (o == null) {
-			return false;
-		}
-		if (!(o instanceof IClient)) {
+		if (o == null || !(o instanceof IClient)) {
 			return false;
 		}
 		return this.getClientAddress().equals(((IClient) o).getClientAddress());

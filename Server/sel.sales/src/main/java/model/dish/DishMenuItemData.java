@@ -50,6 +50,16 @@ public class DishMenuItemData implements IDishMenuItemData {
 			return false;
 		}
 		
-		return this.compareTo(((IDishMenuItemData) o)) == 0;
+//		return this.compareTo(((IDishMenuItemData) o)) == 0;
+		IDishMenuItemData castedO = (IDishMenuItemData) o;
+//		boolean result = this.getID().equals(otherItem.getID());
+//		return result;
+		
+//		return this.compareTo((IDishMenuItem) o) == 0 ? true : false;
+		return this.getDishName().equals(castedO.getDishName()) &&
+				this.getID().equals(castedO.getID()) &&
+				this.getPortionSize().compareTo(castedO.getPortionSize()) == 0 &&
+				this.getGrossPrice().compareTo(castedO.getGrossPrice()) == 0 &&
+				this.getProductionCost().compareTo(castedO.getProductionCost()) == 0;
 	}
 }

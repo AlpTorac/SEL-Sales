@@ -63,4 +63,8 @@ public interface FXDataCollectingUIComponent<T> extends IDataCollectingUICompone
 	default public T getSelectedElement() {
 		return ((FXDataCollectingUIComponent<T>) this.getComponent()).getSelectedElement();
 	}
+	
+	default public void refresh() {
+		((IDataCollectingUIComponent<?>) this.getComponent()).refresh();
+	}
 }

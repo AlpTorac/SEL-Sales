@@ -30,6 +30,6 @@ public abstract class EntityID implements Comparable<EntityID> {
 	
 	@Override
 	public int compareTo(EntityID otherID) {
-		return this.id.compareTo(otherID.toString());
+		return this.toString().compareTo(otherID.toString());
 	}
 }

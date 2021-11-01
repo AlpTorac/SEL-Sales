@@ -183,7 +183,7 @@ public class ClientExternal extends External {
 		};
 	}
 	@Override
-	public void rediscoverClients() {
+	public void rediscoverClients(Runnable afterDiscoveryAction) {
 //		this.service.getClientManager().discoverClients();
 	}
 	@Override

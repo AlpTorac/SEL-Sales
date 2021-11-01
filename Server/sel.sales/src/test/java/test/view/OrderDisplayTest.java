@@ -124,6 +124,33 @@ class OrderDisplayTest extends ApplicationTest {
 	}
 	
 	@Test
+	void multiClickOrderShowingTest() {
+		runFXAction(() -> {
+			IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
+			Assertions.assertEquals(unconfirmedOrders.length, 3);
+			
+			opHelper.clickOnUnconfirmedOrder(0);
+			opHelper.assertShownOrderEquals(unconfirmedOrders[0]);
+			opHelper.clickOnUnconfirmedOrder(1);
+			opHelper.assertShownOrderEquals(unconfirmedOrders[1]);
+			opHelper.clickOnUnconfirmedOrder(2);
+			opHelper.assertShownOrderEquals(unconfirmedOrders[2]);
+		});
+		runFXAction(() -> {
+			model.confirmAllOrders();
+			IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
+			Assertions.assertEquals(confirmedOrders.length, 3);
+			
+			opHelper.clickOnConfirmedOrder(0);
+			opHelper.assertShownOrderEquals(confirmedOrders[0]);
+			opHelper.clickOnConfirmedOrder(1);
+			opHelper.assertShownOrderEquals(confirmedOrders[1]);
+			opHelper.clickOnConfirmedOrder(2);
+			opHelper.assertShownOrderEquals(confirmedOrders[2]);
+		});
+	}
+	
+	@Test
 	void confirmedOrderShowingTest() {
 		runFXAction(() -> {
 			opHelper.confirmAllOrdersWithoutReturn();

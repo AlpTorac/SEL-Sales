@@ -14,6 +14,13 @@ public class ClientData implements IClientData {
 		this.isConnected = isConnected;
 	}
 	
+	public ClientData(String clientName, String clientAddress, boolean isAllowedToConnect) {
+		this.clientName = clientName;
+		this.clientAddress = clientAddress;
+		this.isAllowedToConnect = isAllowedToConnect;
+		this.isConnected = false;
+	}
+	
 	@Override
 	public String getClientName() {
 		return this.clientName;

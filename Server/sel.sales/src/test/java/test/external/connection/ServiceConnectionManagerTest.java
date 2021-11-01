@@ -95,7 +95,7 @@ class ServiceConnectionManagerTest {
 		cs.add(client3);
 		cds.setDiscoveredClients(cs);
 		this.manager.setDiscoveryStrategy(cds);
-		this.manager.discoverClients();
+		this.manager.discoverClients(()->{});
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	

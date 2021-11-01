@@ -48,4 +48,8 @@ public class OrderParser implements IOrderParser {
 		return this.menuItemDataFac;
 	}
 
+	@Override
+	public void setFinder(IDishMenuItemFinder finder) {
+		this.finder = finder;
+	}
 }

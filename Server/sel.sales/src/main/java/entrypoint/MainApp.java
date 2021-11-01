@@ -45,7 +45,7 @@ public class MainApp extends Application {
 		view.startUp();
 		view.show();
 		model.loadSaved();
-		model.setAutoConfirmOrders(true);
+//		model.setAutoConfirmOrders(true);
 		// ADD FAKE DATA -------------------------------------------------------
 		// ADD FAKE DATA -------------------------------------------------------
 		

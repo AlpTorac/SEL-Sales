@@ -36,7 +36,7 @@ public class SettingsArea extends UIVBoxLayout {
 		this.setSpacing(20);
 		this.addUIComponents(new IUIComponent[] {
 				new FileAddressArea(),
-				new ConnectivityArea(),
+//				new ConnectivityArea(),
 				this.applyButton = this.initButton()
 		});
 	}
@@ -176,7 +176,11 @@ public class SettingsArea extends UIVBoxLayout {
 	}
 
 	public void refreshSettings(ISettings settings) {
-		this.menuFolderAddress.setAddress(settings.getSetting(SettingsField.DISH_MENU_FOLDER));
-		this.orderFolderAddress.setAddress(settings.getSetting(SettingsField.ORDER_FOLDER));
+		if (settings.settingExists(SettingsField.DISH_MENU_FOLDER)) {
+			this.menuFolderAddress.setAddress(settings.getSetting(SettingsField.DISH_MENU_FOLDER));
+		}
+		if (settings.settingExists(SettingsField.ORDER_FOLDER)) {
+			this.orderFolderAddress.setAddress(settings.getSetting(SettingsField.ORDER_FOLDER));
+		}
 	}
 }

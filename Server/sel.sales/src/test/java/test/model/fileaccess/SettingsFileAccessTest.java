@@ -73,6 +73,7 @@ class SettingsFileAccessTest {
 	@AfterEach
 	void cleanUp() {
 		sf.close();
+		sf.deleteFile();
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 		settings = null;
 	}

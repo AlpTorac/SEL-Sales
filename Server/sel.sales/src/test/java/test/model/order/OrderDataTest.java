@@ -67,6 +67,11 @@ class OrderDataTest {
 		item3 = model.getMenuItem(i3id);
 	}
 	
+	@AfterEach
+	void cleanUp() {
+		model.close();
+	}
+	
 	@Test
 	void notEqualTest() {
 		IOrderData[] orderData = model.getAllUnconfirmedOrders();

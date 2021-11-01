@@ -50,35 +50,44 @@ class FIFOBufferTest {
 	@Test
 	void removeTest() {
 		IMessage m1 = this.generateNullMessage();
-		m1.setSequenceNumber(0);
+		int seqNum1 = 1;
+		m1.setSequenceNumber(seqNum1);
 		buffer.add(m1);
 		Assertions.assertEquals(buffer.size(), 1);
+		
 		IMessage m2 = this.generateNullMessage();
-		m2.setSequenceNumber(1);
+		int seqNum2 = 2;
+		m2.setSequenceNumber(seqNum2);
 		buffer.add(m2);
 		Assertions.assertEquals(buffer.size(), 2);
+		
 		IMessage m3 = this.generateNullMessage();
-		m3.setSequenceNumber(2);
+		int seqNum3 = 3;
+		m3.setSequenceNumber(seqNum3);
 		buffer.add(m3);
 		Assertions.assertEquals(buffer.size(), 3);
-		IMessage m4 = this.generateNullMessage();
-		m4.setSequenceNumber(3);
-		buffer.add(m4);
 		
+		IMessage m4 = this.generateNullMessage();
+		int seqNum4 = 4;
+		m4.setSequenceNumber(seqNum4);
+		buffer.add(m4);
 		Assertions.assertEquals(buffer.size(), 4);
-		Assertions.assertTrue(buffer.remove(1));
+		
+		int nonExistentSeqNum = 999;
+		
+		Assertions.assertTrue(buffer.remove(seqNum2));
 		Assertions.assertEquals(buffer.size(), 3);
 		Assertions.assertTrue(buffer.remove(m3));
 		Assertions.assertEquals(buffer.size(), 2);
-		Assertions.assertFalse(buffer.remove(4));
+		Assertions.assertFalse(buffer.remove(nonExistentSeqNum));
 		Assertions.assertEquals(buffer.size(), 2);
 		Assertions.assertFalse(buffer.remove(this.generateNullMessage()));
 		Assertions.assertEquals(buffer.size(), 2);
-		Assertions.assertTrue(buffer.remove(0));
+		Assertions.assertTrue(buffer.remove(seqNum1));
 		Assertions.assertEquals(buffer.size(), 1);
-		Assertions.assertTrue(buffer.remove(3));
+		Assertions.assertTrue(buffer.remove(seqNum4));
 		Assertions.assertEquals(buffer.size(), 0);
-		Assertions.assertFalse(buffer.remove(0));
+		Assertions.assertFalse(buffer.remove(seqNum1));
 		Assertions.assertTrue(buffer.isEmpty());
 	}
 	

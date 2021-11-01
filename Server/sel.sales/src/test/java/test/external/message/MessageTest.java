@@ -87,4 +87,50 @@ class MessageTest {
 		IMessage messageWOContext = new Message(sequenceNumber, null, flags, serialisedData);
 		Assertions.assertFalse(messageWOContext.hasContext(context));
 	}
+	
+	@Test
+	void cloneAndEqualsTest() {
+		IMessage emptyMessage = new Message(null, null, null);
+		Assertions.assertFalse(emptyMessage == emptyMessage.clone());
+		Assertions.assertTrue(emptyMessage.equals(new Message(null, null, null)));
+		
+		IMessage messageWithContext = new Message(MessageContext.MENU, null, null);
+		Assertions.assertTrue(messageWithContext.clone().hasContext(MessageContext.MENU));
+		Assertions.assertTrue(messageWithContext.equals(messageWithContext.clone()));
+		
+		IMessage flaggedMessage = new Message(null, new MessageFlag[] {MessageFlag.ACKNOWLEDGEMENT}, null);
+		Assertions.assertTrue(flaggedMessage.clone().hasFlag(MessageFlag.ACKNOWLEDGEMENT));
+		Assertions.assertTrue(flaggedMessage.equals(flaggedMessage.clone()));
+		
+		String data = "someData";
+		IMessage messageWithData = new Message(null, null, data);
+		Assertions.assertTrue(messageWithData.clone().getSerialisedData().equals(data));
+		Assertions.assertTrue(messageWithData.equals(messageWithData.clone()));
+		
+		Assertions.assertFalse(emptyMessage.equals(messageWithContext));
+		Assertions.assertFalse(emptyMessage.equals(flaggedMessage));
+		Assertions.assertFalse(emptyMessage.equals(messageWithData));
+		
+		Assertions.assertFalse(messageWithContext.equals(emptyMessage));
+		Assertions.assertFalse(messageWithContext.equals(flaggedMessage));
+		Assertions.assertFalse(messageWithContext.equals(messageWithData));
+		
+		Assertions.assertFalse(flaggedMessage.equals(messageWithContext));
+		Assertions.assertFalse(flaggedMessage.equals(emptyMessage));
+		Assertions.assertFalse(flaggedMessage.equals(messageWithData));
+		
+		Assertions.assertFalse(messageWithData.equals(messageWithContext));
+		Assertions.assertFalse(messageWithData.equals(flaggedMessage));
+		Assertions.assertFalse(messageWithData.equals(emptyMessage));
+		
+		IMessage seqNumMessage1 = new Message(0, null, null, null);
+		IMessage seqNumMessage2 = new Message(1, null, null, null);
+		
+		Assertions.assertTrue(seqNumMessage2.equals(seqNumMessage2.clone()));
+		Assertions.assertFalse(seqNumMessage1.equals(seqNumMessage2));
+		
+		String data2 = "someOtherData";
+		IMessage messageWithSomeOtherData = new Message(null, null, data2);
+		Assertions.assertFalse(messageWithData.equals(messageWithSomeOtherData));
+	}
 }

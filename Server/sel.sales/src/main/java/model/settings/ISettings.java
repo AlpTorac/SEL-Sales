@@ -7,7 +7,9 @@ public interface ISettings {
 	}
 	default void initAllSettingsFields() {
 		for (SettingsField sf : SettingsField.values()) {
-			this.addSetting(sf, this.getPlaceholder());
+			if (!this.settingExists(sf)) {
+				this.addSetting(sf, this.getPlaceholder());
+			}
 		}
 	}
 	void addSetting(SettingsField description, String serialisedValue);
@@ -20,5 +22,7 @@ public interface ISettings {
 	String[][] getAllSettings();
 	boolean equals(Object o);
 	boolean isEmpty();
-	boolean settingExists(SettingsField description);
+	default boolean settingExists(SettingsField description) {
+		return this.getSetting(description) != null;
+	}
 }

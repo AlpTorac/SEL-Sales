@@ -66,7 +66,7 @@ class ClientManagerTest {
 		cs.add(client2);
 		cds.setDiscoveredClients(cs);
 		this.manager.setDiscoveryStrategy(cds);
-		this.manager.discoverClients();
+		this.manager.discoverClients(()->{});
 		GeneralTestUtilityClass.performWait(300);
 	}
 	
@@ -131,7 +131,7 @@ class ClientManagerTest {
 		DummyClientDiscoveryStrategy cds = new DummyClientDiscoveryStrategy();
 		cds.setDiscoveredClients(clientCol);
 		manager.setDiscoveryStrategy(cds);
-		manager.discoverClients();
+		manager.discoverClients(()->{});
 		GeneralTestUtilityClass.performWait(300);
 		Assertions.assertTrue(manager.getDiscoveredClients().containsAll(clientCol));
 		Assertions.assertFalse(manager.isAllowedToConnect(client1Address));

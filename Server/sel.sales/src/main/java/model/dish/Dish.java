@@ -16,4 +16,14 @@ public class Dish implements IDish {
 	public void setName(String name) {
 		this.dishName = name;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null && !(o instanceof IDish)) {
+			return false;
+		}
+		
+		IDish castedO = (IDish) o;
+		return this.getName().equals(castedO.getName());
+	}
 }

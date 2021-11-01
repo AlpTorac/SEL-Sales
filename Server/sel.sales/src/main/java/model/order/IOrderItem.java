@@ -2,9 +2,7 @@ package model.order;
 
 import java.math.BigDecimal;
 
-import model.dish.IDishMenuItem;
 import model.dish.IDishMenuItemData;
-import model.dish.IDishMenuItemDataFactory;
 
 public interface IOrderItem extends Comparable<IOrderItem> {
 	default public BigDecimal getTotalPortions() {

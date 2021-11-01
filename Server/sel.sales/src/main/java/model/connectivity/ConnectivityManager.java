@@ -91,6 +91,26 @@ public class ConnectivityManager implements IConnectivityManager {
 		this.rediscover = true;
 	}
 	
+//	@Override
+//	public void addClientData(IClientData cd) {
+//		this.addDiscoveredClient(cd.getClientName(), cd.getClientAddress());
+//		this.addKnownClient(cd.getClientAddress());
+//		boolean allowance = cd.getIsAllowedToConnect();
+//		if (allowance) {
+//			this.allowKnownClient(cd.getClientAddress());
+//		} else {
+//			this.blockKnownClient(cd.getClientAddress());
+//		}
+////		this.discoveredClients.put(cd.getClientAddress(), new ConnectivityManagerEntry(
+////				cd.getClientName(),
+////				cd.getClientAddress(),
+////				cd.getIsAllowedToConnect()));
+////		this.knownClients.put(cd.getClientAddress(), new ConnectivityManagerEntry(
+////				cd.getClientName(),
+////				cd.getClientAddress(),
+////				cd.getIsAllowedToConnect()));
+//	}
+	
 	private class ConnectivityManagerEntry {
 		private String clientName;
 		private String clientAddress;

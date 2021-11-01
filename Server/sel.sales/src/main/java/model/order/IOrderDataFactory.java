@@ -7,8 +7,7 @@ import model.id.EntityID;
 
 public interface IOrderDataFactory {
 	default IOrderData constructData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, EntityID id) {
-		IOrderData data = this.constructData(orderData, date, isCash, isHere, id);
-		return data;
+		return this.constructData(orderData, date, isCash, isHere, id);
 	}
 	IOrderData constructData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, EntityID id);
 	IOrderData constructData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, Object... idParameters);

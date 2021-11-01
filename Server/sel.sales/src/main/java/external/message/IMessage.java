@@ -13,5 +13,6 @@ public interface IMessage extends Cloneable {
 	boolean isPingPongMessage();
 	boolean hasFlag(MessageFlag f);
 	boolean hasContext(MessageContext c);
+	boolean equals(Object o);
 	IMessage clone();
 }

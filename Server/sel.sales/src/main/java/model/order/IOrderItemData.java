@@ -25,7 +25,7 @@ public interface IOrderItemData extends Comparable<IOrderItemData> {
 	}
 	
 	default public int compareTo(IOrderItemData data) {
-		return this.getItemData().getID().compareTo(data.getItemData().getID());
+		return this.getItemData().compareTo(data.getItemData());
 	}
 	boolean equals(Object o);
 	IOrderItemData combine(IOrderItemData data);

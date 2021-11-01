@@ -7,13 +7,13 @@ import java.io.RandomAccessFile;
 public abstract class FileAccess implements IFileAccess {
 	private final static String defaultName = "file";
 	private final static String extension = ".txt";
+	private String fileName;
 	private File activeFile;
 	private String address;
 	private RandomAccessFile raf;
 	
 	public FileAccess(String address) {
-		this.address = address;
-		this.adaptActiveFile();
+		this.setAddress(address);
 	}
 //	protected boolean isFileFilled(File f) {
 //		return f != null && f.exists() && f.length() > 0;
@@ -22,8 +22,16 @@ public abstract class FileAccess implements IFileAccess {
 		return defaultName;
 	}
 	@Override
+	public String getFileName() {
+		return this.fileName != null ? this.fileName : this.getDefaultFileName()+this.getExtension();
+	}
+	@Override
 	public boolean fileExists() {
 		return this.activeFile != null && this.activeFile.exists();
+	}
+	@Override
+	public boolean fileEmpty() {
+		return this.fileExists() && this.activeFile.length() <= 0;
 	}
 	@Override
 	public boolean isAddressValid() {
@@ -47,7 +55,7 @@ public abstract class FileAccess implements IFileAccess {
 	}
 	@Override
 	public boolean deleteFile() {
-		if (this.activeFile != null && this.activeFile.exists()) {
+		if (this.fileExists()) {
 			this.closeRAF();
 			boolean isDeleted = this.activeFile.delete();
 			this.activeFile = null;
@@ -67,7 +75,13 @@ public abstract class FileAccess implements IFileAccess {
 		return this.raf == null;
 	}
 	protected String buildActiveFilePath() {
-		return this.getAddress()+File.separator+this.getDefaultFileName()+this.getExtension();
+//		System.out.println("File name: " + this.getFileName());
+		String address = this.getAddress();
+		if ((new File(address)).isDirectory()) {
+			address += File.separator+this.getFileName();
+		}
+//		System.out.println("File address: " + address);
+		return address;
 	}
 	protected boolean isActiveFileAddressValid() {
 		return new File(this.getEffectiveAddress()).exists();
@@ -77,7 +91,7 @@ public abstract class FileAccess implements IFileAccess {
 			return this.buildActiveFilePath();
 		}
 		File f = new File(this.getAddress());
-		if (!f.isDirectory()) {
+		if (!f.isDirectory() && f.exists()) {
 			return f.getPath();
 		} else {
 			return this.buildActiveFilePath();
@@ -87,10 +101,17 @@ public abstract class FileAccess implements IFileAccess {
 	public boolean remakeFile() {
 		this.deleteFile();
 		this.adaptActiveFile();
-		return this.isActiveFileAddressValid();
+		return this.fileEmpty();
+	}
+	protected boolean parentExists() {
+		if (this.getAddress() == null) {
+			return false;
+		}
+		File f = new File(this.getAddress());
+		return f.getParentFile() != null && f.getParentFile().exists();
 	}
 	protected boolean adaptActiveFile() {
-		if (this.isAddressValid()) {
+		if (this.parentExists()) {
 			this.setActiveFile(this.loadFile());
 			return this.isActiveFileAddressValid();
 		}
@@ -102,7 +123,7 @@ public abstract class FileAccess implements IFileAccess {
 	}
 	
 	protected File loadFile() {
-		if (this.isAddressValid()) {
+		if (this.parentExists()) {
 			File f = new File(this.getEffectiveAddress());
 			if (f.length() <= 0) {
 				try {
@@ -172,8 +193,16 @@ public abstract class FileAccess implements IFileAccess {
 	}
 	
 	public void setAddress(String address) {
-		this.address = address;
-		this.adaptActiveFile();
+		if (address != null) {
+			this.address = address;
+			File f = new File(this.address);
+			if (!f.isDirectory()) {
+				this.fileName = f.getName();
+			} else {
+				this.fileName = this.getFileName();
+			}
+			this.adaptActiveFile();
+		}
 	}
 
 	public String getAddress() {
@@ -185,7 +214,7 @@ public abstract class FileAccess implements IFileAccess {
 	}
 
 	protected File getActiveFile() {
-		if (this.activeFile == null) {
+		if (this.activeFile == null && this.parentExists()) {
 			this.activeFile = this.loadFile();
 		}
 		return this.activeFile;

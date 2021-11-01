@@ -2,7 +2,10 @@ package test.model.settings;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collection;
 
@@ -13,6 +16,8 @@ import org.junit.jupiter.api.Test;
 
 import model.IModel;
 import model.Model;
+import model.connectivity.FileClientDataParser;
+import model.connectivity.IClientData;
 import model.dish.IDishMenuData;
 import model.dish.serialise.FileDishMenuSerialiser;
 import model.dish.serialise.IDishMenuItemSerialiser;
@@ -22,10 +27,15 @@ import model.filemanager.FileManager;
 import model.filemanager.IFileManager;
 import model.filemanager.SettingsFile;
 import model.filemanager.StandardSettingsFile;
+import model.filewriter.ClientDataFile;
 import model.filewriter.DishMenuFile;
 import model.filewriter.FileAccess;
 import model.filewriter.FileDishMenuItemSerialiser;
+import model.filewriter.OrderFile;
+import model.filewriter.StandardClientDataFile;
 import model.filewriter.StandardDishMenuFile;
+import model.filewriter.StandardOrderFile;
+import model.order.IOrderData;
 import model.settings.HasSettingsField;
 import model.settings.ISettings;
 import model.settings.ISettingsParser;
@@ -39,6 +49,8 @@ import test.GeneralTestUtilityClass;
 class FileManagerPreloadTest {
 	private SettingsFile sf;
 	private DishMenuFile dmf;
+	private OrderFile of;
+	private ClientDataFile cdf;
 	
 	private ISettings settings;
 	private ISettingsSerialiser settingSerialiser;
@@ -89,17 +101,20 @@ class FileManagerPreloadTest {
 	}
 	
 	private void fillMenu() {
-		dmf = new StandardDishMenuFile(this.testFolderAddress);
 		this.fillMenuFile();
+	}
+	
+	private void addMenuToModel() {
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 	}
 	
 	@BeforeEach
 	void prep() {
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 		model = new Model();
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+		this.addMenuToModel();
 		dishMenuData = model.getMenuData();
 		model = new Model();
 		
@@ -108,7 +123,10 @@ class FileManagerPreloadTest {
 		part = GeneralTestUtilityClass.getPrivateFieldValue(model, "part");
 		part.clear();
 		part.add(fm);
+		dmf = new StandardDishMenuFile(this.testFolderAddress);
 		sf = new StandardSettingsFile(this.testFolderAddress);
+		of = new StandardOrderFile(this.testFolderAddress);
+		cdf = new StandardClientDataFile(this.testFolderAddress);
 		settingSerialiser = new StandardSettingsSerialiser();
 		settingsParser = new StandardSettingsParser();
 		this.fillSettingsFile();
@@ -118,7 +136,10 @@ class FileManagerPreloadTest {
 	@AfterEach
 	void cleanUp() {
 		model.close();
-//		sf.deleteFile();
+		sf.close();
+		dmf.close();
+		of.close();
+		cdf.close();
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 		settings = null;
 	}
@@ -137,5 +158,122 @@ class FileManagerPreloadTest {
 		fm.writeSettings(settingSerialiser.serialise(settings));
 		fm.loadSaved();
 		Assertions.assertTrue(settings.equals(settingsParser.parseSettings(sf.readFile())));
+	}
+	
+	@Test
+	void loadExistingDishMenuTest() {
+		String fileAddress = testFolderAddress+File.separator+"testMenuFile.txt";
+		File f = new File(fileAddress);
+		Assertions.assertFalse(f.length() > 0);
+		try {
+			f.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		BufferedWriter w = null;
+		
+		try {
+			w = new BufferedWriter(new FileWriter(f));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String fileContent = 
+				"aaa,item1,4.0,2.34,2.0;"+System.lineSeparator()+
+				"bbb,item2,10.0,1.0,5.67;"+System.lineSeparator()+
+				"ccc,item3,4.0,2.5,1.0;"+System.lineSeparator();
+		try {
+			w.write(fileContent);
+			w.flush();
+			w.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fm.loadDishMenu(fileAddress);
+		IDishMenuData readMenuData = model.getMenuData();
+		IDishMenuData expectedMenuData = model.getDishMenuHelper().parseMenuData(fileContent);
+		Assertions.assertTrue(expectedMenuData.equals(readMenuData));
+	}
+	
+	@Test
+	void loadExistingOrdersTest() {
+		String fileAddress = testFolderAddress+File.separator+"testOrderFile.txt";
+		File f = new File(fileAddress);
+		Assertions.assertFalse(f.length() > 0);
+		try {
+			f.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		BufferedWriter w = null;
+		
+		try {
+			w = new BufferedWriter(new FileWriter(f));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String fileContent = "order1#20200820112233000#0#0#0:item1,2.0;" + System.lineSeparator()
+				+ "order2#20200110235959153#1#0#0:item1,2.0;" + System.lineSeparator()
+				+ "order2#20200110235959153#1#0#0:item2,3.0;" + System.lineSeparator()
+				+ "order3#20201201000000999#1#1#0:item3,5.0;" + System.lineSeparator()
+				+ "order4#20211201000000999#1#1#1:item1,2.0;" + System.lineSeparator()
+				+ "order4#20211201000000999#1#1#1:item2,3.0;" + System.lineSeparator()
+				+ "order4#20211201000000999#1#1#1:item3,5.0;" + System.lineSeparator();
+		try {
+			w.write(fileContent);
+			w.flush();
+			w.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.addMenuToModel();
+		fm.loadOrders(fileAddress);
+		IOrderData[] readOrderData = model.getAllWrittenOrders();
+		IOrderData[] expectedOrderData = model.getOrderHelper().deserialiseOrderDatas(fileContent);
+		GeneralTestUtilityClass.arrayContentEquals(readOrderData, expectedOrderData);
+	}
+	
+	@Test
+	void loadExistingKnownClientsTest() {
+		String fileAddress = testFolderAddress+File.separator+"testClientFile.txt";
+		File f = new File(fileAddress);
+		Assertions.assertFalse(f.length() > 0);
+		try {
+			f.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		BufferedWriter w = null;
+		
+		try {
+			w = new BufferedWriter(new FileWriter(f));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String fileContent = 
+				"c1n,c1a,1;" + System.lineSeparator()
+				+ "c2n,c2a,0;" + System.lineSeparator();
+		try {
+			w.write(fileContent);
+			w.flush();
+			w.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		fm.loadKnownClients(fileAddress);
+		IClientData[] readClientData = model.getAllKnownClientData();
+		IClientData[] expectedClientData = (new FileClientDataParser()).parseClientDatas(fileContent);
+		GeneralTestUtilityClass.arrayContentEquals(readClientData, expectedClientData);
 	}
 }

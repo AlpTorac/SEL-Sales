@@ -143,4 +143,6 @@ public interface IOrderParser {
 	IOrderDataFactory getOrderDataFactory();
 	IOrderItemDataFactory getOrderItemDataFactory();
 	IOrderFormat getOrderFormat();
+	
+	void setFinder(IDishMenuItemFinder finder);
 }

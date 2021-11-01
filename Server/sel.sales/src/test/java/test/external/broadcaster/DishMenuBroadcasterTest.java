@@ -122,7 +122,7 @@ class DishMenuBroadcasterTest {
 		cs.add(client2);
 		cds.setDiscoveredClients(cs);
 		this.manager.setDiscoveryStrategy(cds);
-		this.manager.discoverClients();
+		this.manager.discoverClients(()->{});
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	

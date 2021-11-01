@@ -2,7 +2,10 @@ package test.model.fileaccess;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.AfterEach;
@@ -68,50 +71,15 @@ class DishMenuFileAccessTest {
 
 	@AfterEach
 	void cleanUp() {
+		dmf.close();
 		model.close();
-//		dmf.deleteFile();
+		dmf.deleteFile();
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 	}
-	
-//	@Test
-//	void addressTest() {
-//		Assertions.assertEquals(this.getOrderAddress(), of.getFilePath());
-//	}
 	
 	@Test
 	void loadTest() {
 		IDishMenuData s = model.getDishMenuHelper().parseMenuData(dmf.readFile());
 		Assertions.assertTrue(dishMenuData.equals(s));
 	}
-	
-//	@Test
-//	void deleteTest() {
-//		Assertions.assertTrue((new File(this.getOrderAddress())).exists());
-//		Assertions.assertTrue(of.deleteFile());
-//		Assertions.assertTrue(!(new File(this.getOrderAddress())).exists());
-//	}
-	
-//	@Test
-//	void changeFolderAddressTest() {
-//		String newFolderAddress = this.testFolderAddress+File.separator+"subfolder";
-//		File folder = new File(newFolderAddress);
-//		folder.mkdir();
-//		Assertions.assertTrue(folder.exists() && folder.isDirectory());
-//		of.setFolderAddress(folder.getPath());
-//		Assertions.assertEquals(of.getFolderAddress(), newFolderAddress);
-//	}
-	
-//	@Test
-//	void migrationTest() {
-//		String newFolderAddress = this.testFolderAddress+File.separator+"subfolder";
-//		File folder = new File(newFolderAddress);
-//		folder.mkdir();
-//		Assertions.assertTrue(folder.exists() && folder.isDirectory());
-//		of.setFolderAddress(folder.getPath());
-//		String newFileAddress = newFolderAddress+File.separator+this.orderFileNAE;
-//		Assertions.assertEquals(of.getFilePath(), newFileAddress);
-//		this.fillOrderFile();
-////		Assertions.assertTrue(orderData.equals(of.loadOrders()));
-//		Assertions.assertTrue(of.deleteFile());
-//	}
 }

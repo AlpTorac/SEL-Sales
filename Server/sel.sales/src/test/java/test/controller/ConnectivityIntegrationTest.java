@@ -2,11 +2,14 @@ package test.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.math.BigDecimal;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import controller.BusinessEvent;
 import controller.IController;
 import controller.MainController;
 import model.IModel;
@@ -14,6 +17,7 @@ import model.Model;
 import model.connectivity.ClientData;
 import model.connectivity.IClientData;
 import model.connectivity.IConnectivityManager;
+import model.order.IOrderData;
 import test.GeneralTestUtilityClass;
 
 class ConnectivityIntegrationTest {
@@ -32,6 +36,24 @@ class ConnectivityIntegrationTest {
 	private String client1Address;
 	private String client2Name;
 	private String client2Address;
+	
+	private String i1Name = "aaa";
+	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
+	private BigDecimal i1Price = BigDecimal.valueOf(5);
+	private BigDecimal i1ProCost = BigDecimal.valueOf(4);
+	private String i1id = "item1";
+	
+	private String i2Name = "bbb";
+	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
+	private BigDecimal i2Price = BigDecimal.valueOf(1);
+	private BigDecimal i2ProCost = BigDecimal.valueOf(0.5);
+	private String i2id = "item2";
+	
+	private String i3Name = "ccc";
+	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
+	private BigDecimal i3Price = BigDecimal.valueOf(4);
+	private BigDecimal i3ProCost = BigDecimal.valueOf(3.5);
+	private String i3id = "item3";
 	
 	@BeforeEach
 	void prep() {
@@ -62,6 +84,11 @@ class ConnectivityIntegrationTest {
 	private void init() {
 		model = new Model();
 		controller = new MainController(model);
+		
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
+		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+		
 		initConnManager();
 	}
 	
@@ -221,5 +248,30 @@ class ConnectivityIntegrationTest {
 		Assertions.assertEquals(connManager.getAllKnownClientData().length, 2);
 		Assertions.assertTrue(connManager.getAllKnownClientData()[0].equals(knownClient1Data));
 		Assertions.assertTrue(connManager.getAllKnownClientData()[1].equals(knownClient2Data));
+	}
+	
+	@Test
+	void addOrdersViaController() {
+		Assertions.assertEquals(0, model.getAllUnconfirmedOrders().length);
+		Assertions.assertEquals(0, model.getAllConfirmedOrders().length);
+		
+		String serialisedOrder1 = "order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1;";
+		String serialisedOrder2 = "order6#20200813000000183#1#1:item3,5;item3,4;";
+		String serialisedOrder3 = "order7#20200909112233937#0#0:item1,2;item2,5;";
+		
+		controller.handleApplicationEvent(BusinessEvent.ADD_ORDER, new Object[] {serialisedOrder1});
+		controller.handleApplicationEvent(BusinessEvent.ADD_ORDER, new Object[] {serialisedOrder2});
+		controller.handleApplicationEvent(BusinessEvent.ADD_ORDER, new Object[] {serialisedOrder3});
+		
+		Assertions.assertEquals(3, model.getAllUnconfirmedOrders().length);
+		Assertions.assertEquals(0, model.getAllConfirmedOrders().length);
+		
+		IOrderData[] orders = model.getOrderHelper().deserialiseOrderDatas(
+				serialisedOrder1 + System.lineSeparator() + 
+				serialisedOrder2 + System.lineSeparator() +
+				serialisedOrder3 + System.lineSeparator()
+				);
+		
+		GeneralTestUtilityClass.arrayContentEquals(model.getAllUnconfirmedOrders(), orders);
 	}
 }

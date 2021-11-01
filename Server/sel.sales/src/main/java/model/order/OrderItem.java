@@ -8,14 +8,15 @@ public class OrderItem implements IOrderItem {
 	private IDishMenuItemData menuItem;
 	private BigDecimal amount;
 	
-	OrderItem(IDishMenuItemData menuItem, BigDecimal amount) {
+	public OrderItem(IDishMenuItemData menuItem, BigDecimal amount) {
 		this.menuItem = menuItem;
 		this.amount = amount;
 	}
 	
 	OrderItem(IOrderItemData data) {
-		this.menuItem = data.getItemData();
-		this.amount = data.getAmount();
+		this(data.getItemData(), data.getAmount());
+//		this.menuItem = data.getItemData();
+//		this.amount = data.getAmount();
 	}
 	
 	@Override

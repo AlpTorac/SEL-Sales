@@ -64,10 +64,15 @@ public class DishMenuItem implements IDishMenuItem {
 			return false;
 		}
 		
-//		IDishMenuItem otherItem = (IDishMenuItem) o;
+		IDishMenuItem castedO = (IDishMenuItem) o;
 //		boolean result = this.getID().equals(otherItem.getID());
 //		return result;
 		
-		return this.compareTo((IDishMenuItem) o) == 0 ? true : false;
+//		return this.compareTo((IDishMenuItem) o) == 0 ? true : false;
+		return this.getDish().equals(castedO.getDish()) &&
+				this.getID().equals(castedO.getID()) &&
+				this.getPortionSize().compareTo(castedO.getPortionSize()) == 0 &&
+				this.getPrice().compareTo(castedO.getPrice()) == 0 &&
+				this.getProductionCost().compareTo(castedO.getProductionCost()) == 0;
 	}
 }

@@ -1,6 +1,7 @@
 package external.connection;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -180,17 +181,21 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	}
 	@Override
 	public void receiveKnownClientData(IClientData[] clientData) {
+//		Collection<IConnectionManager> closedCMs = new ArrayList<IConnectionManager>();
 		for (IClientData d : clientData) {
 			this.connectionManagers.stream()
+			.filter(cm -> !cm.isClosed())
 			.filter(cm -> cm.getConnection().getTargetClientAddress().equals(d.getClientAddress()))
 			.forEach(cm -> {
 				if (!d.getIsAllowedToConnect() || !d.getIsConnected()) {
-					this.disconListener.connectionLost(cm.getConnection().getTargetClientAddress());
 					cm.close();
 					this.connectionManagers.remove(cm);
+					this.disconListener.connectionLost(d.getClientAddress());
+//					closedCMs.add(cm);
 				}
 			});
 		}
+//		this.connectionManagers.removeAll(closedCMs);
 //		this.connectionManagers.stream().filter(cm -> cm.getConnection().isClosed()).forEach(cm -> {
 //
 //		});

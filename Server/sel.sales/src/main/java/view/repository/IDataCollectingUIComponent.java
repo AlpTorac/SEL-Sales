@@ -8,6 +8,7 @@ public interface IDataCollectingUIComponent<T> extends ISizable {
 	@SuppressWarnings("unchecked")
 	default public void addItem(T item) {
 		((IDataCollectingUIComponent<T>) this.getComponent()).addItem(item);
+		this.refresh();
 	}
 	
 	default public void addItems(T[] item) {
@@ -30,11 +31,13 @@ public interface IDataCollectingUIComponent<T> extends ISizable {
 	
 	default public void clear() {
 		((IDataCollectingUIComponent<?>) this.getComponent()).clear();
+		this.refresh();
 	}
 	
 	@SuppressWarnings("unchecked")
 	default public void removeItem(T item) {
 		((IDataCollectingUIComponent<T>) this.getComponent()).removeItem(item);
+		this.refresh();
 	}
 	
 	default public int getSize() {
@@ -79,5 +82,9 @@ public interface IDataCollectingUIComponent<T> extends ISizable {
 	@SuppressWarnings("unchecked")
 	default public T getSelectedElement() {
 		return ((IDataCollectingUIComponent<T>) this.getComponent()).getSelectedElement();
+	}
+	
+	default public void refresh() {
+		((IDataCollectingUIComponent<?>) this.getComponent()).refresh();
 	}
 }

@@ -53,8 +53,8 @@ public abstract class External implements IExternal {
 		this.service = service;
 	}
 	@Override
-	public void rediscoverClients() {
-		this.service.getClientManager().discoverClients();
+	public void rediscoverClients(Runnable afterDiscoveryAction) {
+		this.service.getClientManager().discoverClients(afterDiscoveryAction);
 	}
 	@Override
 	public void refreshKnownClients() {

@@ -138,4 +138,8 @@ public class FXTable<T> extends TableView<T> implements FXHasText, ITable<T>, FX
 		
 		super.getItems().addListener(listener);
 	}
+	@Override
+	public void refresh() {
+		super.refresh();
+	}
 }

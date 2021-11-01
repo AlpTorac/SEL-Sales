@@ -57,9 +57,7 @@ class OrderFileTest {
 	
 	private String testFolder = "src"+File.separator+"test"+File.separator+"resources";
 	
-	@BeforeEach
-	void startUp() {
-		GeneralTestUtilityClass.deletePathContent(new File(this.testFolder));
+	private void initModel() {
 		model = new Model();
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
@@ -70,6 +68,12 @@ class OrderFileTest {
 		model.addUnconfirmedOrder("order3#20200809000000222#1#1:item3,"+o3a3.toPlainString()+";");
 		
 		model.setOrderFolderAddress(testFolder);
+	}
+	
+	@BeforeEach
+	void startUp() {
+		GeneralTestUtilityClass.deletePathContent(new File(this.testFolder));
+		this.initModel();
 	}
 
 	@AfterEach
@@ -101,6 +105,63 @@ class OrderFileTest {
 		model.confirmOrder("order3#20200809000000222#1#1:item3,"+o3a3.toPlainString()+";");
 		Assertions.assertEquals(model.getAllConfirmedOrders().length, 3);
 		Assertions.assertTrue(model.writeOrders());
+		File f = new File(this.testFolder+File.separator+OrderFile.getDefaultFileNameForClass()+OrderFile.getExtensionForClass());
+		try {
+			BufferedReader r = null;
+			try {
+				r = new BufferedReader(new FileReader(f));
+			} catch (FileNotFoundException e) {
+				this.deleteFile(f);
+				fail();
+			}
+			String[] ls = r.lines().toArray(String[]::new);
+			if (ls.length != 4) {
+				this.deleteFile(f);
+				fail();
+			}
+			ArrayList<String> lCol = new ArrayList<String>();
+			for (String l : ls) {
+				lCol.add(l);
+			}
+			Assertions.assertTrue(lCol.contains("order1#20200809112233343#0#0#0:item1,2.0;"));
+			Assertions.assertTrue(lCol.contains("order2#20200809235959111#1#0#0:item1,2.0;"));
+			Assertions.assertTrue(lCol.contains("order2#20200809235959111#1#0#0:item2,3.0;"));
+			Assertions.assertTrue(lCol.contains("order3#20200809000000222#1#1#0:item3,5.0;"));
+			try {
+				r.close();
+			} catch (IOException e) {
+				this.deleteFile(f);
+				fail();
+			}
+		} catch (Exception e) {
+			this.deleteFile(f);
+			fail();
+		}
+		this.deleteFile(f);
+	}
+	
+	@Test
+	void noDuplicateWriteTest() {
+		model.confirmOrder("order1#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";");
+		model.confirmOrder("order2#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
+		model.confirmOrder("order3#20200809000000222#1#1:item3,"+o3a3.toPlainString()+";");
+		Assertions.assertEquals(model.getAllConfirmedOrders().length, 3);
+		Assertions.assertTrue(model.writeOrders());
+		model.close();
+		this.initModel();
+		model.loadSaved();
+		model.confirmOrder("order1#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";");
+		model.confirmOrder("order2#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
+		Assertions.assertEquals(model.getAllConfirmedOrders().length, 2);
+		Assertions.assertTrue(model.writeOrders());
+		model.close();
+		this.initModel();
+		model.loadSaved();
+		model.confirmOrder("order2#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
+		model.confirmOrder("order3#20200809000000222#1#1:item3,"+o3a3.toPlainString()+";");
+		Assertions.assertEquals(model.getAllConfirmedOrders().length, 2);
+		Assertions.assertTrue(model.writeOrders());
+		
 		File f = new File(this.testFolder+File.separator+OrderFile.getDefaultFileNameForClass()+OrderFile.getExtensionForClass());
 		try {
 			BufferedReader r = null;

@@ -10,6 +10,6 @@ public class DiscoverClientsHandler extends BusinessEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().getModel().requestClientRediscovery();
+		this.getController().getModel().requestClientRediscovery(()->{});
 	}
 }
