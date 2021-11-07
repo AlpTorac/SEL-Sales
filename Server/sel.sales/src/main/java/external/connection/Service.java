@@ -19,10 +19,10 @@ public abstract class Service implements IService {
 	
 	private IController controller;
 	
-	private long pingPongTimeout;
-	private long minimalPingPongDelay;
-	private long sendTimeout;
-	private int resendLimit;
+	private volatile long pingPongTimeout;
+	private volatile long minimalPingPongDelay;
+	private volatile long sendTimeout;
+	private volatile int resendLimit;
 	
 	public Service(String id, String name, IClientManager clientManager, IController controller, ExecutorService es,
 			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {

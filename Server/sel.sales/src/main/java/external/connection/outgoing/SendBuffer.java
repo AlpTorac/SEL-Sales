@@ -18,9 +18,9 @@ public abstract class SendBuffer implements ISendBuffer {
 	
 	private volatile int currentSequenceNumber = 0;
 	
-	private IMessage messageInLine = null;
+	private volatile IMessage messageInLine = null;
 	
-	SendBuffer(IConnection conn, IMessageSendingStrategy mss, ISendBufferDataContainer buffer, ITimeoutStrategy ts, ExecutorService es) {
+	protected SendBuffer(IConnection conn, IMessageSendingStrategy mss, ISendBufferDataContainer buffer, ITimeoutStrategy ts, ExecutorService es) {
 		this.conn = conn;
 		this.mss = mss;
 		this.buffer = buffer;

@@ -26,10 +26,10 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	private ConnectionListener connListener;
 	private DisconnectionListener disconListener;
 	
-	private long pingPongTimeout;
-	private long minimalPingPongDelay;
-	private long sendTimeout;
-	private int resendLimit;
+	private volatile long pingPongTimeout;
+	private volatile long minimalPingPongDelay;
+	private volatile long sendTimeout;
+	private volatile int resendLimit;
 	
 //	protected ServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es) {
 //		this.es = es;

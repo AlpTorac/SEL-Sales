@@ -14,10 +14,10 @@ public abstract class External implements IExternal {
 	private IModel model;
 	private IController controller;
 	
-	private long pingPongTimeout;
-	private long minimalPingPongDelay;
-	private long sendTimeout;
-	private int resendLimit;
+	private volatile long pingPongTimeout;
+	private volatile long minimalPingPongDelay;
+	private volatile long sendTimeout;
+	private volatile int resendLimit;
 	
 	protected External(IController controller, IModel model,
 			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
@@ -46,23 +46,30 @@ public abstract class External implements IExternal {
 	}
 
 	protected IService getService() {
-		return service;
+		return this.service;
 	}
 	
 	protected void setService(IService service) {
 		this.service = service;
+		System.out.println("Service set");
 	}
 	@Override
 	public void rediscoverClients(Runnable afterDiscoveryAction) {
-		this.service.getClientManager().discoverClients(afterDiscoveryAction);
+		if (this.getService() != null) {
+			this.getService().getClientManager().discoverClients(afterDiscoveryAction);
+		}
 	}
 	@Override
 	public void refreshKnownClients() {
-		this.service.receiveKnownClientData(this.model.getAllKnownClientData());
+		if (this.getService() != null) {
+			this.getService().receiveKnownClientData(this.model.getAllKnownClientData());
+		}
 	}
 	@Override
 	public void refreshSettings() {
-		this.service.receiveSettings(this.model.getSettings());
+		if (this.getService() != null) {
+			this.getService().receiveSettings(this.model.getSettings());
+		}
 	}
 	@Override
 	public void close() {

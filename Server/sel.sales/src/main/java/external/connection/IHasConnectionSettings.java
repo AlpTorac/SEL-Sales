@@ -23,7 +23,7 @@ public interface IHasConnectionSettings {
 	/**
 	 * Use this to notify further constructs about the settings changes, override if needed
 	 */
-	default void notifyInnerConstructs(ISettings settings) {}
+	void notifyInnerConstructs(ISettings settings);
 	
 	void setMinimalPingPongDelay(long minimalPingPongDelay);
 	void setSendTimeoutInMillis(long sendTimeoutInMillis);

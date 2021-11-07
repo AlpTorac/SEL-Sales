@@ -16,7 +16,7 @@ public abstract class PingPong implements IPingPong {
 	private IMessageSendingStrategy mss;
 	private PingPongTimeoutStrategy ts;
 	private volatile int resendCount = 0;
-	private int resendLimit;
+	private volatile int resendLimit;
 	private IConnection conn;
 	
 	private DisconnectionListener disconListener;

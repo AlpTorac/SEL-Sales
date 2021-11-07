@@ -11,10 +11,10 @@ import external.message.IMessage;
 import model.settings.ISettings;
 
 public abstract class ConnectionManager implements IConnectionManager {
-	private long minimalPingPongDelay;
-	private long sendTimeoutInMillis;
-	private long pingPongTimeoutInMillis;
-	private int resendLimit;
+	private volatile long minimalPingPongDelay;
+	private volatile long sendTimeoutInMillis;
+	private volatile long pingPongTimeoutInMillis;
+	private volatile int resendLimit;
 	
 	private ExecutorService es;
 	private IConnection conn;
@@ -215,5 +215,10 @@ public abstract class ConnectionManager implements IConnectionManager {
 	public void setPingPongResendLimit(int pingPongResendLimit) {
 		this.resendLimit = pingPongResendLimit;
 		this.pingPong.setResendLimit(pingPongResendLimit);
+	}
+	
+	@Override
+	public void notifyInnerConstructs(ISettings settings) {
+		
 	}
 }
