@@ -1,5 +1,7 @@
 package external.connection.timeout;
 
+import java.time.temporal.TemporalUnit;
+
 public interface HasTimeout {
 
 	/**
@@ -12,4 +14,18 @@ public interface HasTimeout {
 	 */
 	void timeoutTimerStopped(boolean wasReset, boolean wasTerminated);
 	
+	ITimeoutStrategy getTimeoutStrategy();
+	
+	default void setTimeUnitAmount(long timeUnitAmount) {
+		this.getTimeoutStrategy().setTimeUnitAmount(timeUnitAmount);
+	}
+	default long getTimeUnitAmount() {
+		return this.getTimeoutStrategy().getTimeUnitAmount();
+	}
+	default TemporalUnit getTimeUnit() {
+		return this.getTimeoutStrategy().getTimeUnit();
+	}
+	default void setTimeUnit(TemporalUnit unit) {
+		this.getTimeoutStrategy().setTimeUnit(unit);
+	}
 }

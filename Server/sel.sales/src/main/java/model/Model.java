@@ -25,9 +25,11 @@ import model.order.IOrderHelper;
 import model.order.OrderHelper;
 import model.settings.HasSettingsField;
 import model.settings.ISettings;
+import model.settings.ISettingsFactory;
 import model.settings.ISettingsParser;
 import model.settings.ISettingsSerialiser;
 import model.settings.Settings;
+import model.settings.SettingsFactory;
 import model.settings.SettingsField;
 import model.settings.StandardSettingsParser;
 import model.settings.StandardSettingsSerialiser;
@@ -339,18 +341,6 @@ public class Model implements IModel {
 	}
 
 	@Override
-	public void setOrderFolderAddress(String address) {
-		this.settings.changeSettingValue(SettingsField.ORDER_FOLDER, address);
-		this.settingsChanged();
-	}
-
-	@Override
-	public void setDishMenuFolderAddress(String address) {
-		this.settings.changeSettingValue(SettingsField.DISH_MENU_FOLDER, address);
-		this.settingsChanged();
-	}
-
-	@Override
 	public void removeOrder(String id) {
 		this.removeConfirmedOrder(id);
 		this.removeUnconfirmedOrder(id);
@@ -378,10 +368,21 @@ public class Model implements IModel {
 
 	@Override
 	public void setSettings(String settings) {
-		this.settings = this.settingsParser.parseSettings(settings);
-		this.settingsChanged();
+		this.setSettings(this.settingsParser.parseSettings(settings));
 	}
 
+	@Override
+	public void setSettings(ISettings settings) {
+		this.settings = settings;
+		this.settingsChanged();
+	}
+	
+	@Override
+	public void setSettings(String[][] settings) {
+		this.settings.addAllSettings(settings);
+		this.settingsChanged();
+	}
+	
 	private void setDishMenu(IDishMenu dishMenu) {
 		this.dishMenu = dishMenu;
 		this.finder = new DishMenuItemFinder(this.dishMenu);
@@ -474,5 +475,11 @@ public class Model implements IModel {
 	@Override
 	public IDishMenuItemFinder getActiveDishMenuItemFinder() {
 		return this.finder;
+	}
+
+	@Override
+	public void addSetting(SettingsField sf, String serialisedValue) {
+		this.settings.addSetting(sf, serialisedValue);
+		this.settingsChanged();
 	}
 }

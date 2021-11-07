@@ -14,8 +14,9 @@ import model.order.IOrderData;
 import model.order.IOrderDataFactory;
 import model.order.IOrderItemData;
 import model.order.IOrderItemDataFactory;
+import model.util.IParser;
 
-public interface IOrderParser {
+public interface IOrderParser extends IParser {
 	default IOrderData[] parseOrderDatas(String s) {
 		String serialisedOrders = this.removeStartAndEnd(s);
 		String[] serialisedSeparatedOrders = serialisedOrders.split(this.getOrderFormat().getOrderEnd());
@@ -123,20 +124,8 @@ public interface IOrderParser {
 	}
 
 	default BigDecimal parseAmount(String s) {
-		return BigDecimal.valueOf(Double.valueOf(s));
+		return this.parseBigDecimal(s);
 	}
-	default boolean parseBoolean(String s) {
-		if (s.equals("0")) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-//	default void removeLastNewLine(String s) {
-//		if (s.endsWith(this.getOrderFormat().getOrderItemDataFieldEnd())) {
-//			s = s.substring(0, s.length() - 1);
-//		}
-//	}
 	
 	IDishMenuItemDataFactory getDishMenuItemDataFactory();
 	IDishMenuItemFinder getFinder();

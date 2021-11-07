@@ -127,6 +127,29 @@ class ServiceConnectionManagerTest {
 		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
 	}
 	@Test
+	void setConnectivitySettingsTest() {
+		serviceConnectionManager.setCurrentConnectionObject(client1);
+//		serviceConnectionManager.makeNewConnectionThread();
+		GeneralTestUtilityClass.performWait(waitTime * 2);
+		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
+		IConnectionManager cm = serviceConnectionManager.getConnectionManagers().stream().filter(connMan -> connMan.getConnection().getTargetClientAddress().equals(client1.getClientAddress())).findFirst().get();
+		
+		long minimalPPDelay = 1000;
+		long ppTimeout = 2000;
+		long sendTimeout = 5000;
+		int resendLimit = 20;
+		
+		cm.setMinimalPingPongDelay(minimalPPDelay);
+		cm.setPingPongResendLimit(resendLimit);
+		cm.setPingPongTimeoutInMillis(ppTimeout);
+		cm.setSendTimeoutInMillis(sendTimeout);
+		
+		Assertions.assertEquals(minimalPPDelay, cm.getMinimalPingPongDelay());
+		Assertions.assertEquals(ppTimeout, cm.getPingPongTimeoutInMillis());
+		Assertions.assertEquals(sendTimeout, cm.getSendTimeoutInMillis());
+		Assertions.assertEquals(resendLimit, cm.getPingPongResendLimit());
+	}
+	@Test
 	void acceptIncomingConnectionTest() {
 		serviceConnectionManager.setCurrentConnectionObject(client1);
 //		serviceConnectionManager.makeNewConnectionThread();

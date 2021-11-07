@@ -3,8 +3,9 @@ package model.dish.serialise;
 import java.math.BigDecimal;
 
 import model.dish.IDishMenuItemData;
+import model.util.ISerialiser;
 
-public interface IDishMenuItemSerialiser {
+public interface IDishMenuItemSerialiser extends ISerialiser {
 	String serialise(String dishName, String id, BigDecimal portionSize, BigDecimal productionCost, BigDecimal price);
 	
 	default String serialiseDishName(String dishName) {
@@ -25,10 +26,6 @@ public interface IDishMenuItemSerialiser {
 	
 	default String serialisePrice(BigDecimal price) {
 		return this.serialiseBigDecimal(price);
-	}
-	
-	default String serialiseBigDecimal(BigDecimal bd) {
-		return bd.toPlainString();
 	}
 	
 	default String serialise(IDishMenuItemData menuItemData) {

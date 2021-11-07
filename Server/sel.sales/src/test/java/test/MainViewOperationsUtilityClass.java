@@ -25,6 +25,7 @@ import view.composites.OrderInspectionArea;
 import view.composites.OrderTrackingArea;
 import view.composites.SettingsArea;
 import view.repository.HasText;
+import view.repository.IButton;
 import view.repository.IEventShooterOnClickUIComponent;
 import view.repository.uiwrapper.UILayout;
 import view.repository.uiwrapper.UITabPane;
@@ -60,6 +61,15 @@ public class MainViewOperationsUtilityClass {
 	private IEventShooterOnClickUIComponent removeButton;
 	private IEventShooterOnClickUIComponent editButton;
 	
+	private HasText menuFolderAddress;
+	private HasText orderFolderAddress;
+	private HasText ppTimeout;
+	private HasText ppMinimalDelay;
+	private HasText ppResendLimit;
+	private HasText sendTimeout;
+	
+	private IButton applySettingsButton;
+	
 	private IDateSettings ds;
 	
 	public MainViewOperationsUtilityClass(MainView view, IController controller, IModel model) {
@@ -86,6 +96,14 @@ public class MainViewOperationsUtilityClass {
 		addButton = mda.getAddButton();
 		removeButton = mda.getRemoveButton();
 		editButton = mda.getEditButton();
+		
+		menuFolderAddress = sa.getMenuFolderAddress();
+		orderFolderAddress = sa.getOrderFolderAddress();
+		ppTimeout = sa.getPpTimeout();
+		ppMinimalDelay = sa.getPpMinimalDelay();
+		ppResendLimit = sa.getPpResendLimit();
+		sendTimeout = sa.getSendTimeout();
+		applySettingsButton = sa.getApplyButton();
 	}
 	
 	public IDishMenuItemData addMenuItem(String name, String id, BigDecimal price, BigDecimal productionCost, BigDecimal portionSize, BigDecimal discount) {
@@ -353,6 +371,55 @@ public class MainViewOperationsUtilityClass {
 		this.ca.getKnownClients().artificiallySelectItem(index);
 		GeneralTestUtilityClass.performWait(waitTime);
 		this.ca.getBlockClientButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void inputMenuFolderAddress(String text) {
+		this.setSettingsAreaTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.menuFolderAddress.setCaption(text);
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void inputOrderFolderAddress(String text) {
+		this.setSettingsAreaTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.orderFolderAddress.setCaption(text);
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void inputPPMinimalDelay(String text) {
+		this.setSettingsAreaTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.ppMinimalDelay.setCaption(text);
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void inputPPResendLimit(String text) {
+		this.setSettingsAreaTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.ppResendLimit.setCaption(text);
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void inputPPTimeout(String text) {
+		this.setSettingsAreaTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.ppTimeout.setCaption(text);
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void inputSendTimeout(String text) {
+		this.setSettingsAreaTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.sendTimeout.setCaption(text);
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void applySettings() {
+		this.setSettingsAreaTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.applySettingsButton.performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	

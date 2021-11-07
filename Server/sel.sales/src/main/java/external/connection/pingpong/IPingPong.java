@@ -16,4 +16,6 @@ public interface IPingPong extends HasTimeout, Closeable {
 	boolean isClosed();
 	boolean isBlocked();
 	boolean hasRunningTimer();
+	void setResendLimit(int pingPongResendLimit);
+	void setMinimalDelay(long minimalDelay);
 }

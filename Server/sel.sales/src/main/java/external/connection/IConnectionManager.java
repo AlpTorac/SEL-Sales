@@ -7,7 +7,7 @@ import external.connection.outgoing.ISendBuffer;
 import external.connection.pingpong.IPingPong;
 import external.message.IMessage;
 
-public interface IConnectionManager extends Closeable {
+public interface IConnectionManager extends Closeable, IHasConnectionSettings {
 	IConnection getConnection();
 	ISendBuffer getSendBuffer();
 	IPingPong getPingPong();

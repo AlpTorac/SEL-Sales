@@ -2,8 +2,9 @@ package model.dish.serialise;
 
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
+import model.util.ISerialiser;
 
-public interface IDishMenuSerialiser {
+public interface IDishMenuSerialiser extends ISerialiser {
 	default String serialise(IDishMenuData data) {
 		String result = "";
 		IDishMenuItemData[] itemData = data.getAllDishMenuItems();

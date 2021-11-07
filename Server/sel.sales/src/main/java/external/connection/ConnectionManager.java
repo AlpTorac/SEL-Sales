@@ -8,10 +8,10 @@ import external.connection.incoming.IMessageReceptionist;
 import external.connection.outgoing.ISendBuffer;
 import external.connection.pingpong.IPingPong;
 import external.message.IMessage;
+import model.settings.ISettings;
 
 public abstract class ConnectionManager implements IConnectionManager {
 	private long minimalPingPongDelay;
-	
 	private long sendTimeoutInMillis;
 	private long pingPongTimeoutInMillis;
 	private int resendLimit;
@@ -39,6 +39,7 @@ public abstract class ConnectionManager implements IConnectionManager {
 		this.minimalPingPongDelay = minimalPingPongDelay;
 		this.init();
 	}
+	
 	@Override
 	public void setDisconnectionListener(DisconnectionListener dl) {
 		this.disconListener = dl;
@@ -53,10 +54,6 @@ public abstract class ConnectionManager implements IConnectionManager {
 	@Override
 	public IConnection getConnection() {
 		return this.conn;
-	}
-	
-	protected long getMinimalPingPongDelay() {
-		return this.minimalPingPongDelay;
 	}
 	
 	protected ExecutorService getExecutorService() {
@@ -113,23 +110,12 @@ public abstract class ConnectionManager implements IConnectionManager {
 	
 	protected void init() {
 		System.out.println("Connection manager init");
-		this.initPingPong(this.getMinimalPingPongDelay(), this.getResendLimit(), this.getPingPongTimeout());
-		this.initSendBuffer(this.getSendTimeout());
+//		this.initPingPong(this.getMinimalPingPongDelay(), this.getResendLimit(), this.getPingPongTimeout());
+//		this.initSendBuffer(this.getSendTimeout());
+		this.initPingPong(this.getMinimalPingPongDelay(), this.getPingPongResendLimit(), this.getPingPongTimeoutInMillis());
+		this.initSendBuffer(this.getSendTimeoutInMillis());
 		this.initMessageReceptionist(this.getSendBuffer(), this.getPingPong());
 		System.out.println("Connection manager init end");
-//		cycleThread = new Thread() {
-//			@Override
-//			public void run() {
-//				while (!isClosed && !getConnection().isClosed()) {
-//					checkForMessagesToBeRead();
-//					checkForMessagesToBeSent();
-//					sendPingPongMessage();
-//				}
-//			}
-//		};
-//		
-//		cycleThread.setDaemon(false);
-//		cycleThread.start();
 		System.out.println("Connection manager submitting runnable");
 		this.es.submit(new Runnable() {
 			@Override
@@ -146,17 +132,17 @@ public abstract class ConnectionManager implements IConnectionManager {
 		System.out.println("Connection manager submitted runnable");
 	}
 	
-	protected int getResendLimit() {
-		return this.resendLimit;
-	}
-	
-	protected long getSendTimeout() {
-		return this.sendTimeoutInMillis;
-	}
-	
-	protected long getPingPongTimeout() {
-		return this.pingPongTimeoutInMillis;
-	}
+//	protected int getResendLimit() {
+//		return this.resendLimit;
+//	}
+//	
+//	protected long getSendTimeout() {
+//		return this.sendTimeoutInMillis;
+//	}
+//	
+//	protected long getPingPongTimeout() {
+//		return this.pingPongTimeoutInMillis;
+//	}
 	
 	@Override
 	public void sendMessage(IMessage message) {
@@ -180,5 +166,54 @@ public abstract class ConnectionManager implements IConnectionManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public long getSendTimeoutInMillis() {
+		return this.sendTimeoutInMillis;
+	}
+
+	@Override
+	public long getPingPongTimeoutInMillis() {
+		return this.pingPongTimeoutInMillis;
+	}
+
+	@Override
+	public int getPingPongResendLimit() {
+		return this.resendLimit;
+	}
+	
+	@Override
+	public long getMinimalPingPongDelay() {
+		return this.minimalPingPongDelay;
+	}
+
+	@Override
+	public void receiveSettings(ISettings settings) {
+		
+	}
+	
+	@Override
+	public void setMinimalPingPongDelay(long minimalPingPongDelay) {
+		this.minimalPingPongDelay = minimalPingPongDelay;
+		this.pingPong.setMinimalDelay(minimalPingPongDelay);
+	}
+
+	@Override
+	public void setSendTimeoutInMillis(long sendTimeoutInMillis) {
+		this.sendTimeoutInMillis = sendTimeoutInMillis;
+		this.sb.setTimeUnitAmount(sendTimeoutInMillis);
+	}
+
+	@Override
+	public void setPingPongTimeoutInMillis(long pingPongTimeoutInMillis) {
+		this.pingPongTimeoutInMillis = pingPongTimeoutInMillis;
+		this.pingPong.setTimeUnitAmount(pingPongTimeoutInMillis);
+	}
+
+	@Override
+	public void setPingPongResendLimit(int pingPongResendLimit) {
+		this.resendLimit = pingPongResendLimit;
+		this.pingPong.setResendLimit(pingPongResendLimit);
 	}
 }

@@ -1,6 +1,8 @@
 package model.connectivity;
 
-public interface IClientDataParser {
+import model.util.IParser;
+
+public interface IClientDataParser extends IParser {
 	IClientData[] parseClientDatas(String serialisedClientDatas);
 	IClientData parseClientData(String serialisedClientData);
 	IClientDataFormat getFormat();
@@ -14,13 +16,5 @@ public interface IClientDataParser {
 			end -= this.getFormat().getEndIndicator().length();
 		}
 		return serialisedClientDatas.substring(begin, end);
-	}
-	default boolean parseBoolean(String serialisedBoolean) {
-//		System.out.println("Serialised boolean: " + serialisedBoolean);
-		if (serialisedBoolean.equals("0")) {
-			return false;
-		} else {
-			return true;
-		}
 	}
 }

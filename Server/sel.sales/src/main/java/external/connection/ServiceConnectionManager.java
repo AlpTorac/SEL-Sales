@@ -11,6 +11,8 @@ import controller.IController;
 import external.client.IClientManager;
 import external.message.IMessage;
 import model.connectivity.IClientData;
+import model.settings.ISettings;
+import model.settings.SettingsField;
 
 public abstract class ServiceConnectionManager implements IServiceConnectionManager {
 
@@ -58,32 +60,65 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 		this.disconListener = this.createDisconListener();
 	}
 	
-	protected void setPingPongTimeout(long pingPongTimeout) {
-		this.pingPongTimeout = pingPongTimeout;
+	@Override
+	public void notifyInnerConstructs(ISettings settings) {
+		this.connectionManagers.forEach(cm -> cm.receiveSettings(settings));
 	}
 	
-	protected void setSendTimeout(long sendTimeout) {
-		this.sendTimeout = sendTimeout;
-	}
-	
-	protected void setResendLimit(int resendLimit) {
-		this.resendLimit = resendLimit;
-	}
-	
-	protected long getPingPongTimeout() {
-		return this.pingPongTimeout;
-	}
-	
-	protected long getSendTimeout() {
+	@Override
+	public long getSendTimeoutInMillis() {
 		return this.sendTimeout;
 	}
-	
-	protected int getResendLimit() {
+
+	@Override
+	public long getPingPongTimeoutInMillis() {
+		return this.pingPongTimeout;
+	}
+
+	@Override
+	public int getPingPongResendLimit() {
 		return this.resendLimit;
 	}
 	
-	protected long getMinimalPingPongDelay() {
+	@Override
+	public long getMinimalPingPongDelay() {
 		return this.minimalPingPongDelay;
+	}
+	
+//	protected long getPingPongTimeout() {
+//		return this.pingPongTimeout;
+//	}
+//	
+//	protected long getSendTimeout() {
+//		return this.sendTimeout;
+//	}
+//	
+//	protected int getResendLimit() {
+//		return this.resendLimit;
+//	}
+//	
+//	protected long getMinimalPingPongDelay() {
+//		return this.minimalPingPongDelay;
+//	}
+	
+	@Override
+	public void setMinimalPingPongDelay(long minimalPingPongDelay) {
+		this.minimalPingPongDelay = minimalPingPongDelay;
+	}
+
+	@Override
+	public void setSendTimeoutInMillis(long sendTimeoutInMillis) {
+		this.sendTimeout = sendTimeoutInMillis;
+	}
+
+	@Override
+	public void setPingPongTimeoutInMillis(long pingPongTimeoutInMillis) {
+		this.pingPongTimeout = pingPongTimeoutInMillis;
+	}
+
+	@Override
+	public void setPingPongResendLimit(int pingPongResendLimit) {
+		this.resendLimit = pingPongResendLimit;
 	}
 	
 	private IConnectionManager getConnectionManager(String clientAddress) {
@@ -121,7 +156,8 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	protected boolean addConnection(IConnection conn) {
 		if (this.isConnectionAllowed(conn.getTargetClientAddress())) {
 			System.out.println("Connection added");
-			IConnectionManager connManager = this.createConnectionManager(conn, this.getPingPongTimeout(), this.getSendTimeout(), this.getResendLimit(), this.getMinimalPingPongDelay());
+//			IConnectionManager connManager = this.createConnectionManager(conn, this.getPingPongTimeout(), this.getSendTimeout(), this.getResendLimit(), this.getMinimalPingPongDelay());
+			IConnectionManager connManager = this.createConnectionManager(conn, this.getPingPongTimeoutInMillis(), this.getSendTimeoutInMillis(), this.getPingPongResendLimit(), this.getMinimalPingPongDelay());
 //			this.connListener.connectionEstablished(conn.getTargetClientAddress());
 			this.reportConnection(conn);
 			connManager.setDisconnectionListener(this.disconListener);

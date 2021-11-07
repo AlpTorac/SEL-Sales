@@ -10,16 +10,15 @@ import controller.handler.ClientDisconnectedHandler;
 import controller.handler.ConfirmAllOrdersHandler;
 import controller.handler.ConfirmOrderHandler;
 import controller.handler.DiscoverClientsHandler;
-import controller.handler.DishMenuFolderChangedHandler;
 import controller.handler.AddDiscoveredClientHandler;
 import controller.handler.EditDishHandler;
 import controller.handler.LoadDishMenuHandler;
 import controller.handler.OrderConfirmModelChangedHandler;
-import controller.handler.OrderFolderChangedHandler;
 import controller.handler.RemoveDishHandler;
 import controller.handler.RemoveKnownClientHandler;
 import controller.handler.RemoveOrderHandler;
 import controller.handler.SaveSettingsHandler;
+import controller.handler.SettingsChangedHandler;
 import controller.handler.WriteDishMenuHandler;
 import controller.handler.WriteOrdersHandler;
 import controller.manager.ApplicationEventManager;
@@ -55,8 +54,7 @@ public class MainController extends Controller {
 		bem.addApplicationEventToHandlerMapping(StatusEvent.CLIENT_DISCOVERED, new AddDiscoveredClientHandler(this));
 		bem.addApplicationEventToHandlerMapping(StatusEvent.CLIENT_CONNECTED, new ClientConnectedHandler(this));
 		bem.addApplicationEventToHandlerMapping(StatusEvent.CLIENT_DISCONNECTED, new ClientDisconnectedHandler(this));
-		bem.addApplicationEventToHandlerMapping(StatusEvent.DISH_MENU_FOLDER_CHANGED, new DishMenuFolderChangedHandler(this));
-		bem.addApplicationEventToHandlerMapping(StatusEvent.ORDER_FOLDER_CHANGED, new OrderFolderChangedHandler(this));
+		bem.addApplicationEventToHandlerMapping(StatusEvent.SETTINGS_CHANGED, new SettingsChangedHandler(this));
 		bem.addApplicationEventToHandlerMapping(StatusEvent.ORDER_CONFIRM_MODEL_CHANGED, new OrderConfirmModelChangedHandler(this));
 		return bem;
 	}

@@ -12,6 +12,17 @@ public interface ISettings {
 			}
 		}
 	}
+	default void addAllSettings(String[][] settings) {
+		if (settings == null) {
+			return;
+		}
+		for (String[] setting : settings) {
+			this.addSetting(setting[0], setting[1]);
+		}
+	}
+	default void addSetting(String serialisedDescription, String serialisedValue) {
+		this.addSetting(SettingsField.stringToSettingsField(serialisedDescription), serialisedValue);
+	}
 	void addSetting(SettingsField description, String serialisedValue);
 	String getSetting(SettingsField description);
 	void removeSetting(SettingsField description);

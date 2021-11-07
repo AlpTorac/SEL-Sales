@@ -9,9 +9,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import external.connection.timeout.FixTimeoutStrategy;
 import external.connection.timeout.ITimeoutStrategy;
 import external.connection.timeout.PingPongTimeoutStrategy;
 
@@ -24,7 +26,7 @@ class PingPongTimeoutStrategyTest {
 	private long timeoutInMillis;
 	private long shortestRandomDuration;
 	private long longestRandomDuration;
-	private ITimeoutStrategy ts;
+	private PingPongTimeoutStrategy ts;
 	
 	private long minimalDelay;
 	
@@ -104,5 +106,56 @@ class PingPongTimeoutStrategyTest {
 		TimeoutTestUtilityClass.assertRandomTimeoutResetSuccessful(ts, startTime, minimalDelay+timeoutInMillis, toleranceInMillis, shortestRandomDuration, longestRandomDuration);
 		this.initTimeoutStrategy();
 		TimeoutTestUtilityClass.assertRandomTimeoutResetSuccessful(ts, startTime, minimalDelay+timeoutInMillis, toleranceInMillis, shortestRandomDuration, longestRandomDuration);
+	}
+	
+	@Test
+	void timeUnitChangedTest() {
+		this.initTimeoutStrategy();
+		long waitTime = 200;
+		TimeoutTestUtilityClass.assertTimeoutResetSuccessful(ts, waitTime, startTime, timeoutInMillis, toleranceInMillis);
+		timeoutInMillis = 1;
+		ts = new PingPongTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS, es, minimalDelay);
+		this.ts.setTimeUnit(ChronoUnit.SECONDS);
+		Assertions.assertEquals(ChronoUnit.SECONDS, this.ts.getTimeUnit());
+		Assertions.assertEquals(timeoutInMillis, this.ts.getTimeUnitAmount());
+		startTime = LocalDateTime.now();
+		this.ts.startTimer();
+		TimeoutTestUtilityClass.assertTimeoutCorrect(startTime, timeoutInMillis, toleranceInMillis);
+//		TimeoutTestUtilityClass.failIfToleranceViolated(ts, LocalDateTime.now(), timeoutInMillis, toleranceInMillis, ChronoUnit.SECONDS);
+	}
+	
+	@Test
+	void timeUnitAmountChangedTest() {
+		this.initTimeoutStrategy();
+		long waitTime = 200;
+		TimeoutTestUtilityClass.assertTimeoutResetSuccessful(ts, waitTime, startTime, timeoutInMillis, toleranceInMillis);
+		ts = new PingPongTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS, es, minimalDelay);
+		timeoutInMillis = 0;
+		ts.setTimeUnitAmount(timeoutInMillis);
+		Assertions.assertEquals(ChronoUnit.MILLIS, this.ts.getTimeUnit());
+		Assertions.assertEquals(timeoutInMillis, this.ts.getTimeUnitAmount());
+		startTime = LocalDateTime.now();
+		this.ts.startTimer();
+		TimeoutTestUtilityClass.failIfToleranceViolated(ts, startTime, timeoutInMillis, toleranceInMillis);
+//		TimeoutTestUtilityClass.assertTimeoutCorrect(startTime, timeoutInMillis, toleranceInMillis);
+		
+//		TimeoutTestUtilityClass.failIfToleranceViolated(ts, LocalDateTime.now(), timeoutInMillis, toleranceInMillis, ChronoUnit.SECONDS);
+	}
+	
+	@Test
+	void minimalDelayChangedTest() {
+		this.initTimeoutStrategy();
+		long waitTime = 200;
+		TimeoutTestUtilityClass.assertTimeoutResetSuccessful(ts, waitTime, startTime, timeoutInMillis, toleranceInMillis);
+		timeoutInMillis = 500;
+		ts = new PingPongTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS, es, minimalDelay);
+		minimalDelay = 500;
+		ts.setMinimalDelay(minimalDelay);
+		Assertions.assertEquals(ChronoUnit.MILLIS, this.ts.getTimeUnit());
+		Assertions.assertEquals(minimalDelay, this.ts.getMinimalDelay());
+		startTime = LocalDateTime.now();
+		this.ts.startTimer();
+		TimeoutTestUtilityClass.failIfToleranceViolated(ts, startTime, minimalDelay, toleranceInMillis);
+//		TimeoutTestUtilityClass.assertTimeoutCorrect(startTime, minimalDelay, toleranceInMillis);
 	}
 }

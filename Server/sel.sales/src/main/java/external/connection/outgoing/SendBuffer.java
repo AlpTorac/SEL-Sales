@@ -29,6 +29,11 @@ public abstract class SendBuffer implements ISendBuffer {
 	}
 	
 	@Override
+	public ITimeoutStrategy getTimeoutStrategy() {
+		return this.ts;
+	}
+	
+	@Override
 	public boolean isClosed() {
 		return this.isClosed;
 	}

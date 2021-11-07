@@ -109,7 +109,7 @@ public class DummyConnectionManager extends StandardConnectionManager {
 	}
 
 	public int getPingPongResendCount() {
-		return this.getResendLimit() - this.getPingPong().getRemainingResendTries();
+		return this.getPingPongResendLimit() - this.getPingPong().getRemainingResendTries();
 	}
 	
 	public boolean isMessageReceived(String serialisedMessage) {

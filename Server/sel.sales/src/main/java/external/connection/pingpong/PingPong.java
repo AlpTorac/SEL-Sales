@@ -1,11 +1,10 @@
 package external.connection.pingpong;
 
-import java.util.concurrent.ExecutorService;
-
 import external.connection.DisconnectionListener;
 import external.connection.IConnection;
 import external.connection.outgoing.IMessageSendingStrategy;
 import external.connection.timeout.ITimeoutStrategy;
+import external.connection.timeout.PingPongTimeoutStrategy;
 import external.message.IMessage;
 import external.message.Message;
 import external.message.MessageContext;
@@ -15,20 +14,34 @@ public abstract class PingPong implements IPingPong {
 	private volatile boolean isBlocked = false;
 	
 	private IMessageSendingStrategy mss;
-	private ITimeoutStrategy ts;
+	private PingPongTimeoutStrategy ts;
 	private volatile int resendCount = 0;
 	private int resendLimit;
 	private IConnection conn;
 	
 	private DisconnectionListener disconListener;
 	
-	protected PingPong(IConnection conn, IMessageSendingStrategy mss, ITimeoutStrategy ts, ExecutorService es, long minimalDelay, int resendLimit) {
+	protected PingPong(IConnection conn, IMessageSendingStrategy mss, PingPongTimeoutStrategy ts, int resendLimit) {
 		this.conn = conn;
 		this.mss = mss;
 		this.ts = ts;
 		this.resendLimit = resendLimit;
 		this.ts.setNotifyTarget(this);
 	}
+	@Override
+	public void setMinimalDelay(long minimalDelay) {
+		this.ts.setMinimalDelay(minimalDelay);
+	}
+	@Override
+	public void setResendLimit(int resendLimit) {
+		this.resendLimit = resendLimit;
+	}
+	
+	@Override
+	public ITimeoutStrategy getTimeoutStrategy() {
+		return this.ts;
+	}
+	
 	@Override
 	public boolean isClosed() {
 		return this.isClosed;

@@ -1,6 +1,8 @@
 package model.settings;
 
-public interface ISettingsSerialiser {
+import model.util.ISerialiser;
+
+public interface ISettingsSerialiser extends ISerialiser {
 	default String serialise(ISettings s) {
 		String result = "";
 		

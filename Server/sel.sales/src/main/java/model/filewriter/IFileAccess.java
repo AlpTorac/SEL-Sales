@@ -1,6 +1,8 @@
 package model.filewriter;
 
-public interface IFileAccess {
+import java.io.Closeable;
+
+public interface IFileAccess extends Closeable {
 	boolean deleteFile();
 	boolean writeToFile(String stringToWrite);
 	String readFile();

@@ -1,6 +1,8 @@
 package model.settings;
 
-public interface ISettingsParser {
+import model.util.IParser;
+
+public interface ISettingsParser extends IParser {
 	default ISettings parseSettings(String readFile) {
 		ISettings s = this.constructSettings();
 		String serialisedFields = this.getSerialisedSettingsFields(readFile);

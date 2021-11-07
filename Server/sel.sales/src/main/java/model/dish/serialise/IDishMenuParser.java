@@ -9,8 +9,9 @@ import model.dish.IDishMenuDataFactory;
 import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemDataFactory;
 import model.id.EntityIDFactory;
+import model.util.IParser;
 
-public interface IDishMenuParser {
+public interface IDishMenuParser extends IParser {
 	default IDishMenuData parseDishMenuData(String s) {
 		String[] serialisedDishMenuItemDatas = this.getSerialisedDishMenuItems(s);
 		return this.getDishMenuFactory().constructData(this.parseDishMenuItemDatas(serialisedDishMenuItemDatas));
@@ -40,13 +41,16 @@ public interface IDishMenuParser {
 		return dishMenuItemDataFields[0];
 	}
 	default BigDecimal getSerialisedPortionSize(String[] dishMenuItemDataFields) {
-		return BigDecimal.valueOf(Double.valueOf(dishMenuItemDataFields[2]));
+		return this.parseBigDecimal(dishMenuItemDataFields[2]);
+//		return BigDecimal.valueOf(Double.valueOf(dishMenuItemDataFields[2]));
 	}
 	default BigDecimal getSerialisedPrice(String[] dishMenuItemDataFields) {
-		return BigDecimal.valueOf(Double.valueOf(dishMenuItemDataFields[4]));
+		return this.parseBigDecimal(dishMenuItemDataFields[4]);
+//		return BigDecimal.valueOf(Double.valueOf(dishMenuItemDataFields[4]));
 	}
 	default BigDecimal getSerialisedProductionCost(String[] dishMenuItemDataFields) {
-		return BigDecimal.valueOf(Double.valueOf(dishMenuItemDataFields[3]));
+		return this.parseBigDecimal(dishMenuItemDataFields[3]);
+//		return BigDecimal.valueOf(Double.valueOf(dishMenuItemDataFields[3]));
 	}
 	default String getSerialisedID(String[] dishMenuItemDataFields) {
 		return dishMenuItemDataFields[1];

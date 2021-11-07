@@ -24,6 +24,7 @@ import model.filewriter.FileOrderSerialiser;
 import model.filewriter.OrderFile;
 import model.filewriter.StandardOrderFile;
 import model.order.IOrderData;
+import model.settings.SettingsField;
 import test.GeneralTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class OrderFileTest {
@@ -67,7 +68,7 @@ class OrderFileTest {
 		model.addUnconfirmedOrder("order2#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
 		model.addUnconfirmedOrder("order3#20200809000000222#1#1:item3,"+o3a3.toPlainString()+";");
 		
-		model.setOrderFolderAddress(testFolder);
+		model.addSetting(SettingsField.ORDER_FOLDER, testFolder);
 	}
 	
 	@BeforeEach
@@ -150,6 +151,7 @@ class OrderFileTest {
 		model.close();
 		this.initModel();
 		model.loadSaved();
+		model.addSetting(SettingsField.ORDER_FOLDER, testFolder);
 		model.confirmOrder("order1#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";");
 		model.confirmOrder("order2#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
 		Assertions.assertEquals(model.getAllConfirmedOrders().length, 2);
@@ -157,6 +159,7 @@ class OrderFileTest {
 		model.close();
 		this.initModel();
 		model.loadSaved();
+		model.addSetting(SettingsField.ORDER_FOLDER, testFolder);
 		model.confirmOrder("order2#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
 		model.confirmOrder("order3#20200809000000222#1#1:item3,"+o3a3.toPlainString()+";");
 		Assertions.assertEquals(model.getAllConfirmedOrders().length, 2);

@@ -1,9 +1,11 @@
 package external.connection;
 
+import java.io.Closeable;
+
 import external.message.IMessage;
 import model.connectivity.IClientData;
 
-public interface IServiceConnectionManager {
+public interface IServiceConnectionManager extends Closeable, IHasConnectionSettings {
 	IConnection getConnection(String clientAddress);
 	boolean isConnectionAllowed(String clientAddress);
 	boolean isClosed();

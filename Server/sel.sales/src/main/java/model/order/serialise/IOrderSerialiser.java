@@ -7,8 +7,9 @@ import model.dish.IDishMenuItemData;
 import model.id.EntityID;
 import model.order.IOrderData;
 import model.order.IOrderItemData;
+import model.util.ISerialiser;
 
-public interface IOrderSerialiser {
+public interface IOrderSerialiser extends ISerialiser {
 	String serialiseOrderDatas(IOrderData[] orderDatas);
 	default String serialiseOrderData(IOrderData orderData) {
 		return this.serialiseOrderData(orderData.getOrderedItems(), orderData.getDate(), orderData.getIsCash(), orderData.getIsHere(), orderData.getOrderDiscount(), orderData.getID());
@@ -66,18 +67,6 @@ public interface IOrderSerialiser {
 	}
 	default String serialiseOrderItemAmount(IOrderItemData orderItemData) {
 		return this.serialiseBigDecimal(orderItemData.getAmount());
-	}
-	
-	default String serialiseBigDecimal(BigDecimal bd) {
-		return bd.toPlainString();
-	}
-	
-	default String serialiseBoolean(boolean b) {
-		if (b) {
-			return "1";
-		} else {
-			return "0";
-		}
 	}
 	
 	IOrderFormat getOrderFormat();

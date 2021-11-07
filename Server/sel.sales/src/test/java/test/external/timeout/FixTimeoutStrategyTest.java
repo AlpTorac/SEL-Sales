@@ -33,7 +33,7 @@ class FixTimeoutStrategyTest {
 	
 	@BeforeEach
 	void prep() {
-		toleranceInMillis = 100;
+		toleranceInMillis = 50;
 		esTerminationTimeout = 100;
 		es = Executors.newCachedThreadPool();
 		timeoutInMillis = 500;
@@ -79,7 +79,7 @@ class FixTimeoutStrategyTest {
 	void immediateResetTest() {
 		this.initTimeoutStrategy();
 		TimeoutTestUtilityClass.assertTimeoutResetSuccessful(ts, 0, startTime, 0, toleranceInMillis);
-		TimeoutTestUtilityClass.assertTimeoutShorter(startTime, 0, toleranceInMillis + testCompensationInMillis);
+		TimeoutTestUtilityClass.assertTimeoutShorter(startTime, 0, toleranceInMillis);
 	}
 	
 	@Test
@@ -93,5 +93,37 @@ class FixTimeoutStrategyTest {
 		TimeoutTestUtilityClass.assertRandomTimeoutResetSuccessful(ts, startTime, timeoutInMillis, toleranceInMillis, shortestRandomDuration, longestRandomDuration);
 		this.initTimeoutStrategy();
 		TimeoutTestUtilityClass.assertRandomTimeoutResetSuccessful(ts, startTime, timeoutInMillis, toleranceInMillis, shortestRandomDuration, longestRandomDuration);
+	}
+	
+	@Test
+	void timeUnitChangedTest() {
+		this.initTimeoutStrategy();
+		long waitTime = 200;
+		TimeoutTestUtilityClass.assertTimeoutResetSuccessful(ts, waitTime, startTime, timeoutInMillis, toleranceInMillis);
+		timeoutInMillis = 1;
+		ts = new FixTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS, es);
+		this.ts.setTimeUnit(ChronoUnit.SECONDS);
+		Assertions.assertEquals(ChronoUnit.SECONDS, this.ts.getTimeUnit());
+		Assertions.assertEquals(timeoutInMillis, this.ts.getTimeUnitAmount());
+		startTime = LocalDateTime.now();
+		this.ts.startTimer();
+//		TimeoutTestUtilityClass.assertTimeoutCorrect(startTime, timeoutInMillis, toleranceInMillis);
+		TimeoutTestUtilityClass.failIfToleranceViolated(ts, startTime, timeoutInMillis, toleranceInMillis, ChronoUnit.SECONDS);
+	}
+	
+	@Test
+	void timeUnitAmountChangedTest() {
+		this.initTimeoutStrategy();
+		long waitTime = 200;
+		TimeoutTestUtilityClass.assertTimeoutResetSuccessful(ts, waitTime, startTime, timeoutInMillis, toleranceInMillis);
+		ts = new FixTimeoutStrategy(timeoutInMillis, ChronoUnit.MILLIS, es);
+		timeoutInMillis = 0;
+		ts.setTimeUnitAmount(timeoutInMillis);
+		Assertions.assertEquals(ChronoUnit.MILLIS, this.ts.getTimeUnit());
+		Assertions.assertEquals(timeoutInMillis, this.ts.getTimeUnitAmount());
+		startTime = LocalDateTime.now();
+		this.ts.startTimer();
+//		TimeoutTestUtilityClass.assertTimeoutCorrect(LocalDateTime.now(), timeoutInMillis, toleranceInMillis);
+		TimeoutTestUtilityClass.failIfToleranceViolated(ts, startTime, timeoutInMillis, toleranceInMillis, ChronoUnit.SECONDS);
 	}
 }

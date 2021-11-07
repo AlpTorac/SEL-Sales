@@ -1,18 +1,19 @@
 package model;
 
+import java.io.Closeable;
+
 import model.connectivity.IClientData;
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuHelper;
 import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemFinder;
-import model.dish.serialise.IDishMenuItemSerialiser;
-import model.dish.serialise.IDishMenuSerialiser;
 import model.order.IOrderData;
 import model.order.IOrderHelper;
-import model.order.serialise.IOrderSerialiser;
 import model.settings.ISettings;
+import model.settings.ISettingsFactory;
+import model.settings.SettingsField;
 
-public interface IModel {
+public interface IModel extends Closeable {
 	void addUnconfirmedOrder(String serialisedOrderData);
 	void confirmOrder(String serialisedConfirmedOrderData);
 	void removeUnconfirmedOrder(String id);
@@ -56,14 +57,14 @@ public interface IModel {
 	boolean writeDishMenu();
 	void confirmAllOrders();
 	
-	void setOrderFolderAddress(String address);
-	void setDishMenuFolderAddress(String address);
-	
 	void setAutoConfirmOrders(boolean autoConfirm);
 	boolean getAutoConfirmOrders();
 	
 	ISettings getSettings();
+	void addSetting(SettingsField sf, String serialisedValue);
 	void setSettings(String settings);
+	void setSettings(ISettings settings);
+	void setSettings(String[][] settings);
 	void setDishMenu(String menu);
 	void setKnownClients(String serialisedClientData);
 	

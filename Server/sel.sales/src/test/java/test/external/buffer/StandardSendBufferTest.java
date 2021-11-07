@@ -180,7 +180,6 @@ class StandardSendBufferTest {
 		sb.receiveAcknowledgement(nonAck);
 		Assertions.assertTrue(sb.isBlocked());
 	}
-	
 	@Test
 	void recoveryTest() {
 		long waitDuration = timeout / 4;

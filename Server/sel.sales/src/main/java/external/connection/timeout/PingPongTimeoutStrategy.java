@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutorService;
 
 public class PingPongTimeoutStrategy extends TimeoutStrategy {
 
-	protected final long minimalTimeToWait;
+	protected volatile long minimalTimeToWait;
 	
 	public PingPongTimeoutStrategy(long timeUnitAmount, TemporalUnit timeUnit, ExecutorService es, long minimalTimeToWait) {
 		super(timeUnitAmount, timeUnit, es);
@@ -15,7 +15,15 @@ public class PingPongTimeoutStrategy extends TimeoutStrategy {
 	
 	@Override
 	protected PingPongTimeoutTimer createTimer() {
-		return new PingPongTimeoutTimer(LocalDateTime.now(), this.getTimeUnitAmount(), this.getTimeUnit(), this.getNotifyTarget(), this.minimalTimeToWait);
+		return new PingPongTimeoutTimer(LocalDateTime.now(), this.getTimeUnitAmount(), this.getTimeUnit(), this.getNotifyTarget(), this.getMinimalDelay());
+	}
+	
+	public void setMinimalDelay(long minimalDelay) {
+		this.minimalTimeToWait = minimalDelay;
+	}
+	
+	public long getMinimalDelay() {
+		return this.minimalTimeToWait;
 	}
 	
 	protected class PingPongTimeoutTimer extends TimeoutTimer {
@@ -29,12 +37,13 @@ public class PingPongTimeoutStrategy extends TimeoutStrategy {
 		
 		@Override
 		protected void waitTillTimeIsUp() {
-			while (!this.isTimeUp() && this.isRunning() && !this.isReset()) {
-				
-			}
+			super.waitTillTimeIsUp();
+//			while (!this.isTimeUp() && this.isRunning() && !this.isReset()) {
+//				
+//			}
 			
 			while ((this.getTimeElapsed() < this.minimalTimeToWait) && this.isRunning()) {
-				
+//				System.out.println("Time elapsed: " + this.getTimeElapsed());
 			}
 		}
 	}

@@ -6,6 +6,7 @@ import controller.IController;
 import external.client.ClientDiscoveryListener;
 import external.client.IClientManager;
 import model.connectivity.IClientData;
+import model.settings.ISettings;
 
 public abstract class Service implements IService {
 	protected ExecutorService es;
@@ -66,7 +67,14 @@ public abstract class Service implements IService {
 	public IClientManager getClientManager() {
 		return this.clientManager;
 	}
-
+	
+	@Override
+	public void receiveSettings(ISettings settings) {
+		if (this.scm != null) {
+			this.scm.receiveSettings(settings);
+		}
+	}
+	
 	@Override
 	public void receiveKnownClientData(IClientData[] clientData) {
 		if (this.clientManager != null) {

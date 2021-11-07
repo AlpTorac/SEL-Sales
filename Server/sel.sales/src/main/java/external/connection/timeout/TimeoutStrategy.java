@@ -2,20 +2,18 @@ package external.connection.timeout;
 
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalUnit;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 
 	private ExecutorService es;
 	
-	private HasTimeout notifyTarget;
+	private volatile HasTimeout notifyTarget;
 	
-	private long timeUnitAmount;
-	private TemporalUnit timeUnit;
+	private volatile long timeUnitAmount;
+	private volatile TemporalUnit timeUnit;
 	
-	private TimeoutTimer timer;
+	private volatile TimeoutTimer timer;
 	
 	public TimeoutStrategy(long timeUnitAmount, TemporalUnit timeUnit, ExecutorService es) {
 		this.timeUnitAmount = timeUnitAmount;
@@ -56,16 +54,24 @@ public abstract class TimeoutStrategy implements ITimeoutStrategy  {
 		}
 //		System.out.println(this + " reset() in " + notifyTarget);
 	}
+	
+	@Override
+	public void setTimeUnit(TemporalUnit unit) {
+		this.timeUnit = unit;
+	}
 
-	protected TemporalUnit getTimeUnit() {
+	@Override
+	public TemporalUnit getTimeUnit() {
 		return timeUnit;
 	}
 	
-	protected long getTimeUnitAmount() {
+	@Override
+	public long getTimeUnitAmount() {
 		return timeUnitAmount;
 	}
 
-	protected void setTimeUnitAmount(long timeUnitAmount) {
+	@Override
+	public void setTimeUnitAmount(long timeUnitAmount) {
 		this.timeUnitAmount = timeUnitAmount;
 	}
 	

@@ -61,6 +61,10 @@ public abstract class External implements IExternal {
 		this.service.receiveKnownClientData(this.model.getAllKnownClientData());
 	}
 	@Override
+	public void refreshSettings() {
+		this.service.receiveSettings(this.model.getSettings());
+	}
+	@Override
 	public void close() {
 		this.es.shutdown();
 	}
