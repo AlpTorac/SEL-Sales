@@ -19,7 +19,7 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	private volatile boolean isClosed = false;
 	
 	protected ExecutorService es;
-	private Collection<IConnectionManager> connectionManagers = new CopyOnWriteArrayList<IConnectionManager>();
+	private Collection<IConnectionManager> connectionManagers;
 	private IClientManager manager;
 	protected IController controller;
 	
@@ -39,6 +39,7 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 //		this.disconListener = this.createDisconListener();
 //	}
 	protected ServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es, long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
+		this.connectionManagers = new CopyOnWriteArrayList<IConnectionManager>();
 		this.es = es;
 		this.manager = manager;
 		this.controller = controller;
