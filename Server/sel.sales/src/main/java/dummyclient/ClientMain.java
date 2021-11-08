@@ -10,10 +10,10 @@ public class ClientMain {
 	private static ClientView view;
 	private static ClientExternal external;
 	
-	private static long pingPongTimeout = 1000;
-	private static long minimalPingPongDelay = 200;
-	private static long sendTimeout = 1000;
-	private static int resendLimit = 3;
+	private static volatile long pingPongTimeout = 1000;
+	private static volatile long minimalPingPongDelay = 200;
+	private static volatile long sendTimeout = 1000;
+	private static volatile int resendLimit = 3;
 	
 	public static void main(String[] args) {
 		model = new ClientModel();
