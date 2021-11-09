@@ -1,5 +1,7 @@
 package model;
 
+import java.io.Closeable;
+
 import model.connectivity.IDeviceData;
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuHelper;
@@ -10,7 +12,7 @@ import model.order.IOrderHelper;
 import model.settings.ISettings;
 import model.settings.SettingsField;
 
-public interface IModel {
+public interface IModel extends Closeable {
 	void addOrder(String serialisedOrderData);
 	void subscribe(Updatable updatable);
 	IDishMenuItemData getMenuItem(String id);

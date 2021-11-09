@@ -15,7 +15,7 @@ import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
-import server.view.MainView;
+import server.view.StandardServerView;
 import test.MainViewOperationsUtilityClass;
 import test.model.dish.DishMenuItemTestUtilityClass;
 import view.IView;
@@ -57,13 +57,13 @@ class MenuItemOperationsTest extends ApplicationTest {
 	public void start(Stage stage) {
 		model = new ServerModel();
 		controller = new StandardServerController(model);
-		view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
+		view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 		view.startUp();
 	}
 	
 	@Test
 	void addMenuItemtest() {
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
 		
 		IDishMenuItemData[] datas = model.getMenuData().getAllDishMenuItems();
@@ -74,7 +74,7 @@ class MenuItemOperationsTest extends ApplicationTest {
 	
 	@Test
 	void removeMenuItemTest() {
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1ProCost, i1PorSize, i1Disc);
 		IDishMenuItemData[] datas = model.getMenuData().getAllDishMenuItems();
 		Assertions.assertEquals(datas.length, 1);
@@ -90,7 +90,7 @@ class MenuItemOperationsTest extends ApplicationTest {
 	
 	@Test
 	void editMenuItemTest() {
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
 		
 		IDishMenuItemData[] datas = model.getMenuData().getAllDishMenuItems();

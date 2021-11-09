@@ -21,7 +21,7 @@ import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
-import server.view.MainView;
+import server.view.StandardServerView;
 import test.GeneralTestUtilityClass;
 import test.MainViewOperationsUtilityClass;
 import test.external.dummy.DummyDevice;
@@ -38,7 +38,7 @@ class ConnectivityAreaTest extends ApplicationTest {
 	
 	private IServerModel model;
 	private IServerController controller;
-	private MainView view;
+	private StandardServerView view;
 	private DummyExternal external;
 	
 	private MainViewOperationsUtilityClass opHelper;
@@ -112,7 +112,7 @@ class ConnectivityAreaTest extends ApplicationTest {
 		runFXAction(()->{
 			model = new ServerModel();
 			controller = new StandardServerController(model);
-			view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
+			view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 			external = new DummyExternal("id", "name", controller, model, 10000, 1000, 2000, 5);
 			service = GeneralTestUtilityClass.getPrivateFieldValue((External) external, "service");
 			dscm = (DummyServiceConnectionManager) service.getServiceConnectionManager();

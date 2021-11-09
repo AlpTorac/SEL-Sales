@@ -5,10 +5,9 @@ import model.DiscoveredDeviceUpdatable;
 import model.IModel;
 import model.KnownDeviceUpdatable;
 import model.MenuUpdatable;
-import model.OrderUpdatable;
 import model.SettingsUpdatable;
 
-public interface IView extends MenuUpdatable, OrderUpdatable, DiscoveredDeviceUpdatable, KnownDeviceUpdatable, SettingsUpdatable {
+public interface IView extends MenuUpdatable, DiscoveredDeviceUpdatable, KnownDeviceUpdatable, SettingsUpdatable {
 	IController getController();
 	IModel getModel();
 	void show();

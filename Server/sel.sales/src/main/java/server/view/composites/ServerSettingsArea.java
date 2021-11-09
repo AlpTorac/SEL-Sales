@@ -18,7 +18,7 @@ import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIHBoxLayout;
 import view.repository.uiwrapper.UIVBoxLayout;
 
-public class SettingsArea extends UIVBoxLayout {
+public class ServerSettingsArea extends UIVBoxLayout {
 	private final static String descriptionEnd = ":";
 	
 	private IController controller;
@@ -43,7 +43,7 @@ public class SettingsArea extends UIVBoxLayout {
 //	@SuppressWarnings("unused")
 	private ConnectivityUI sendTimeout;
 	
-	public SettingsArea(IController controller, UIComponentFactory fac, IRootComponent mainWindow) {
+	public ServerSettingsArea(IController controller, UIComponentFactory fac, IRootComponent mainWindow) {
 		super(fac.createVBoxLayout().getComponent());
 		this.settingAreas = new CopyOnWriteArrayList<ISettingsInputArea>();
 		this.controller = controller;

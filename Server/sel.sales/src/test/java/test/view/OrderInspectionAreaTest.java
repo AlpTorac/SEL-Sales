@@ -16,7 +16,7 @@ import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
-import server.view.MainView;
+import server.view.StandardServerView;
 import test.GeneralTestUtilityClass;
 import test.MainViewOperationsUtilityClass;
 import test.model.order.OrderTestUtilityClass;
@@ -75,7 +75,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		runFXAction(()->{
 			model = new ServerModel();
 			controller = new StandardServerController(model);
-			view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
+			view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 			view.startUp();
 			view.show();
 			model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
@@ -108,7 +108,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 			IOrderData addedUnconfirmedOrder = unconfirmedOrders[0];
 			
 		runFXAction(()->{
-			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 			confirmedOrderData = opHelper.addConfirmOrder();
 		});
 			
@@ -133,7 +133,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 			IOrderData addedUnconfirmedOrder = unconfirmedOrders[0];
 			
 		runFXAction(()->{
-			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 			removedOrderData = opHelper.removeUnconfirmedOrder();
 		});
 			
@@ -165,7 +165,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 			IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
 			Assertions.assertEquals(confirmedOrders.length, 0);
 		runFXAction(()->{
-			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 			confirmedOrderData = opHelper.addConfirmOrder();
 		});
 		OrderTestUtilityClass.assertOrderDatasEqual(addedUnconfirmedOrder, confirmedOrderData);
@@ -176,7 +176,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		unconfirmedOrders = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(unconfirmedOrders.length, 0);
 		runFXAction(()->{
-			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 			removedConfirmedOrderData = opHelper.removeConfirmedOrder();
 		});
 		
@@ -207,7 +207,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 			IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
 			Assertions.assertEquals(confirmedOrders.length, 0);
 			
-			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 			unconfirmedOrderDatas = opHelper.getUnconfirmedOrders().toArray(IOrderData[]::new);
 			
 		runFXAction(()->{
@@ -244,11 +244,11 @@ class OrderInspectionAreaTest extends ApplicationTest {
 			IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
 			Assertions.assertEquals(confirmedOrders.length, 0);
 		runFXAction(()->{
-			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 			unconfirmedOrderDatas = opHelper.getUnconfirmedOrders().toArray(IOrderData[]::new);
 		});
 		runFXAction(()->{
-			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 			opHelper.confirmAllOrdersWithoutReturn();
 		});
 			confirmedOrders = model.getAllConfirmedOrders();
@@ -270,7 +270,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	@Test
 	void confirmAllOrdersWithAutoTest() {		
 		runFXAction(()->{
-			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 			opHelper.toggleOnAutoConfirm();
 		});
 		runFXAction(()->{

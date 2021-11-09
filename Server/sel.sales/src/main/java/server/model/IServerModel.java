@@ -1,11 +1,9 @@
 package server.model;
 
-import java.io.Closeable;
-
 import model.IModel;
 import model.order.IOrderData;
 
-public interface IServerModel extends Closeable, IModel {
+public interface IServerModel extends IModel {
 	default void addOrder(String serialisedOrderData) {
 		this.addUnconfirmedOrder(serialisedOrderData);
 	}

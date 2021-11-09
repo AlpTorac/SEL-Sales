@@ -1,14 +1,14 @@
 package server.external;
 
-import controller.IController;
 import external.bluetooth.BluetoothDeviceManager;
 import external.bluetooth.BluetoothService;
 import external.bluetooth.BluetoothServiceConnectionManager;
-import model.IModel;
+import server.controller.IServerController;
+import server.model.IServerModel;
 
 public class BluetoothServerExternal extends ServerExternal {
 
-	public BluetoothServerExternal(IController controller, IModel model,
+	public BluetoothServerExternal(IServerController controller, IServerModel model,
 			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		super(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 	}

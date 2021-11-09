@@ -34,16 +34,6 @@ public class ClientView extends View {
 	}
 
 	@Override
-	public void refreshUnconfirmedOrders() {
-		System.out.println("Unconfirmed orders refreshed");
-	}
-
-	@Override
-	public void refreshConfirmedOrders() {
-		System.out.println("Confirmed orders refreshed");
-	}
-
-	@Override
 	public void refreshDiscoveredDevices() {
 		System.out.println("Discovered Devices refreshed");
 	}
@@ -51,11 +41,6 @@ public class ClientView extends View {
 	@Override
 	public void refreshKnownDevices() {
 		System.out.println("Known Devices refreshed");
-	}
-
-	@Override
-	public void refreshConfirmMode() {
-		System.out.println("Confirm model changed");
 	}
 
 	@Override

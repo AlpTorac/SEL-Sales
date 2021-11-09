@@ -75,4 +75,6 @@ public interface IUIComponentFactory {
 	public IUILibraryHelper createUILibraryHelper();
 	public IFileChooser createFileChooser();
 	public IDirectoryChooser createDirectoryChooser();
+	public <T> IChoiceBox<T> createChoiceBox();
+	public IAccordion createAccordion();
 }

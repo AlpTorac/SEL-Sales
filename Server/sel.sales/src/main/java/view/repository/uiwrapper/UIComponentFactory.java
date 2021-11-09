@@ -1,5 +1,6 @@
 package view.repository.uiwrapper;
 
+import view.repository.IChoiceBox;
 import view.repository.IUIComponent;
 import view.repository.IUIComponentFactory;
 
@@ -51,4 +52,10 @@ public abstract class UIComponentFactory implements IUIComponentFactory {
 	
 	@Override
 	public abstract DirectoryChooserWrapper createDirectoryChooser();
+	
+	@Override
+	public abstract <T> UIChoiceBox<T> createChoiceBox();
+	
+	@Override
+	public abstract UIAccordion createAccordion();
 }

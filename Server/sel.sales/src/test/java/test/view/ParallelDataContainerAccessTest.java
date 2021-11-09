@@ -14,7 +14,7 @@ import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
-import server.view.MainView;
+import server.view.StandardServerView;
 import test.MainViewOperationsUtilityClass;
 import view.IView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
@@ -51,7 +51,7 @@ class ParallelDataContainerAccessTest extends ApplicationTest {
 	public void start(Stage primaryStage) {
 		model = new ServerModel();
 		controller = new StandardServerController(model);
-		view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
+		view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 		view.startUp();
 		view.show();
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
@@ -61,7 +61,7 @@ class ParallelDataContainerAccessTest extends ApplicationTest {
 	
 	@Test
 	void test() {
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		for (int i = 0; i < 10; i++) {
 			final int num = i;
 			final String serialisedOrder = "order"+num+"-20200813000000183-1-1:item3,5;item3,4;";

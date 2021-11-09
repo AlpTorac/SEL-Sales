@@ -1,18 +1,18 @@
 package server.external;
 
-import controller.IController;
 import external.External;
 import external.broadcaster.DishMenuBroadcaster;
 import external.broadcaster.IBroadcaster;
 import external.device.IDeviceManager;
 import external.connection.IService;
 import external.connection.IServiceConnectionManager;
-import model.IModel;
 import model.MenuUpdatable;
+import server.controller.IServerController;
+import server.model.IServerModel;
 
 public abstract class ServerExternal extends External implements IServerExternal, MenuUpdatable {
 	
-	protected ServerExternal(IController controller, IModel model,
+	protected ServerExternal(IServerController controller, IServerModel model,
 			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		super(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		this.setService(this.initService());
@@ -42,5 +42,15 @@ public abstract class ServerExternal extends External implements IServerExternal
 	protected void setService(IService service) {
 		super.setService(service);
 		super.getService().publish();
+	}
+	
+	@Override
+	protected IServerModel getModel() {
+		return (IServerModel) super.getModel();
+	}
+	
+	@Override
+	protected IServerController getController() {
+		return (IServerController) super.getController();
 	}
 }

@@ -19,7 +19,7 @@ import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
-import server.view.MainView;
+import server.view.StandardServerView;
 import test.GeneralTestUtilityClass;
 import test.MainViewOperationsUtilityClass;
 import test.model.order.ClientSimulant;
@@ -72,7 +72,7 @@ class UnconfirmedOrderTest extends ApplicationTest {
 	public void start(Stage stage) {
 		model = new ServerModel();
 		controller = new StandardServerController(model);
-		view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
+		view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 		view.startUp();
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
@@ -89,7 +89,7 @@ class UnconfirmedOrderTest extends ApplicationTest {
 		
 		Assertions.assertEquals(model.getAllUnconfirmedOrders().length, 1);
 		
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		
 		Assertions.assertEquals(opHelper.getUnconfirmedOrders().size(), 1);
 	}
@@ -134,7 +134,7 @@ class UnconfirmedOrderTest extends ApplicationTest {
 		
 		Assertions.assertEquals(model.getAllUnconfirmedOrders().length, 4);
 		
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		
 		GeneralTestUtilityClass.performWait(300);
 		

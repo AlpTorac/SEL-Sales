@@ -1,25 +1,25 @@
-package entrypoint;
+package server;
 
 import java.math.BigDecimal;
 
-import external.IExternal;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.external.BluetoothServerExternal;
+import server.external.IServerExternal;
 import server.model.IServerModel;
 import server.model.ServerModel;
-import server.view.MainView;
-import view.IView;
+import server.view.IServerView;
+import server.view.StandardServerView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
-public class MainApp extends Application {
+public class ServerApp extends Application {
 	private static IServerModel model;
 	private static IServerController controller;
-	private static IView view;
-	private static IExternal external;
+	private static IServerView view;
+	private static IServerExternal external;
 	
 	private static volatile long pingPongTimeout = 1000;
 	private static volatile long minimalPingPongDelay = 200;
@@ -39,12 +39,12 @@ public class MainApp extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		model = new ServerModel();
 		controller = new StandardServerController(model);
-		view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
+		view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 		external = new BluetoothServerExternal(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		view.startUp();
 		view.show();
 		model.loadSaved();
-//		model.setAutoConfirmOrders(true);
+		model.setAutoConfirmOrders(true);
 		// ADD FAKE DATA -------------------------------------------------------
 		// ADD FAKE DATA -------------------------------------------------------
 		

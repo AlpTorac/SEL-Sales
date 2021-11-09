@@ -14,14 +14,16 @@ import model.connectivity.IDeviceData;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
 import model.order.IOrderItemData;
+import server.controller.IServerController;
 import server.model.IServerModel;
-import server.view.MainView;
-import server.view.composites.ConnectionArea;
+import server.view.IServerView;
+import server.view.StandardServerView;
+import server.view.composites.ServerConnectionArea;
 import server.view.composites.MainArea;
 import server.view.composites.MenuDesignArea;
 import server.view.composites.OrderInspectionArea;
 import server.view.composites.OrderTrackingArea;
-import server.view.composites.SettingsArea;
+import server.view.composites.ServerSettingsArea;
 import test.model.order.OrderTestUtilityClass;
 import view.IView;
 import view.repository.HasText;
@@ -33,8 +35,8 @@ import view.repository.uiwrapper.UITabPane;
 public class MainViewOperationsUtilityClass {
 	private long waitTime = 100;
 	private IServerModel model;
-	private IController controller;
-	private IView view;
+	private IServerController controller;
+	private IServerView view;
 	
 	private UILayout tabArea;
 	private UITabPane tabPane;
@@ -44,8 +46,8 @@ public class MainViewOperationsUtilityClass {
 	private String settingsAreaTabName;
 	
 	private MainArea ma;
-	private ConnectionArea ca;
-	private SettingsArea sa;
+	private ServerConnectionArea ca;
+	private ServerSettingsArea sa;
 	
 	private MenuDesignArea mda;
 	private OrderTrackingArea ota;
@@ -72,7 +74,7 @@ public class MainViewOperationsUtilityClass {
 	
 	private IDateSettings ds;
 	
-	public MainViewOperationsUtilityClass(MainView view, IController controller, IServerModel model) {
+	public MainViewOperationsUtilityClass(StandardServerView view, IServerController controller, IServerModel model) {
 		this.model = model;
 		this.controller = controller;
 		this.view = view;

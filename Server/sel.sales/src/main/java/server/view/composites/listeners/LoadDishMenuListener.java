@@ -2,7 +2,7 @@ package server.view.composites.listeners;
 
 import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
-import controller.IController;
+import server.controller.IServerController;
 import server.controller.ServerSpecificEvent;
 import view.repository.IRootComponent;
 import view.repository.uiwrapper.ClickEventListener;
@@ -10,11 +10,11 @@ import view.repository.uiwrapper.UIComponentFactory;
 
 public class LoadDishMenuListener extends ClickEventListener implements IApplicationEventShooter {
 
-	private IController controller;
+	private IServerController controller;
 	private UIComponentFactory fac;
 	private IRootComponent root;
 	
-	public LoadDishMenuListener(IController controller, UIComponentFactory fac, IRootComponent root) {
+	public LoadDishMenuListener(IServerController controller, UIComponentFactory fac, IRootComponent root) {
 		this.controller = controller;
 		this.fac = fac;
 		this.root = root;

@@ -6,8 +6,10 @@ import view.repository.IUILibraryHelper;
 import view.repository.uiwrapper.DirectoryChooserWrapper;
 import view.repository.uiwrapper.FileChooserWrapper;
 import view.repository.uiwrapper.ToggleGroupWrapper;
+import view.repository.uiwrapper.UIAccordion;
 import view.repository.uiwrapper.UIButton;
 import view.repository.uiwrapper.UICheckBox;
+import view.repository.uiwrapper.UIChoiceBox;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIGridLayout;
 import view.repository.uiwrapper.UIHBoxLayout;
@@ -129,6 +131,20 @@ public class FXUIComponentFactory extends UIComponentFactory {
 	public DirectoryChooserWrapper createDirectoryChooser() {
 		FXDirectoryChooser wrapee = new FXDirectoryChooser();
 		DirectoryChooserWrapper wrapper = new DirectoryChooserWrapper(wrapee);
+		return wrapper;
+	}
+
+	@Override
+	public <T> UIChoiceBox<T> createChoiceBox() {
+		FXChoiceBox<T> wrapee = new FXChoiceBox<T>();
+		UIChoiceBox<T> wrapper = new UIChoiceBox<T>(wrapee);
+		return wrapper;
+	}
+
+	@Override
+	public UIAccordion createAccordion() {
+		FXAccordion wrapee = new FXAccordion();
+		UIAccordion wrapper = new UIAccordion(wrapee);
 		return wrapper;
 	}
 }

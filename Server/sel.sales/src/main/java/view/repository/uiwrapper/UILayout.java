@@ -4,7 +4,7 @@ import view.repository.ILayout;
 
 public abstract class UILayout extends UIComponent implements ILayout {
 
-	UILayout(ILayout component) {
+	protected UILayout(ILayout component) {
 		super(component);
 	}
 	

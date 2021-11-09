@@ -17,7 +17,7 @@ import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
-import server.view.MainView;
+import server.view.StandardServerView;
 import test.MainViewOperationsUtilityClass;
 import view.IView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
@@ -78,7 +78,7 @@ class OrderDisplayTest extends ApplicationTest {
 		runFXAction(() -> {
 			model = new ServerModel();
 			controller = new StandardServerController(model);
-			view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
+			view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 			view.startUp();
 			view.show();
 			model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
@@ -89,7 +89,7 @@ class OrderDisplayTest extends ApplicationTest {
 			model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
 			model.addUnconfirmedOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
 			
-			opHelper = new MainViewOperationsUtilityClass((MainView) view, controller, model);
+			opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		});
 	}
 	

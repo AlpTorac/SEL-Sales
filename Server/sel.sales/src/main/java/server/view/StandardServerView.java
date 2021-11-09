@@ -2,9 +2,9 @@ package server.view;
 
 import server.controller.IServerController;
 import server.model.IServerModel;
-import server.view.composites.ConnectionArea;
+import server.view.composites.ServerConnectionArea;
 import server.view.composites.MainArea;
-import server.view.composites.SettingsArea;
+import server.view.composites.ServerSettingsArea;
 import server.view.composites.listeners.LoadDishMenuListener;
 import view.repository.IUILibraryHelper;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
@@ -16,7 +16,7 @@ import view.repository.uiwrapper.UILayout;
 import view.repository.uiwrapper.UIRootComponent;
 import view.repository.uiwrapper.UITabPane;
 
-public class MainView extends ServerView {
+public class StandardServerView extends ServerView {
 
 	private IUILibraryHelper helper;
 	
@@ -28,8 +28,8 @@ public class MainView extends ServerView {
 	private UITabPane tabPane;
 	
 	private MainArea mainArea;
-	private ConnectionArea connArea;
-	private SettingsArea settingsArea;
+	private ServerConnectionArea connArea;
+	private ServerSettingsArea settingsArea;
 	
 //	private MenuDesignArea mda;
 //	private OrderTrackingArea ota;
@@ -42,7 +42,7 @@ public class MainView extends ServerView {
 	private String connAreaTabName = "Connectivity";
 	private String settingsAreaTabName = "Settings";
 	
-	public MainView(UIComponentFactory fac, AdvancedUIComponentFactory advFac, IServerController controller, IServerModel model) {
+	public StandardServerView(UIComponentFactory fac, AdvancedUIComponentFactory advFac, IServerController controller, IServerModel model) {
 		super(controller, model);
 		this.fac = fac;
 		this.advFac = advFac;
@@ -50,7 +50,7 @@ public class MainView extends ServerView {
 		this.initListeners();
 	}
 	
-	private void initUI() {
+	protected void initUI() {
 		this.helper = this.initHelper();
 		this.mainWindow = this.initMainWindow();
 		this.mainArea = this.initMainArea();
@@ -71,8 +71,8 @@ public class MainView extends ServerView {
 		return helper;
 	}
 	
-	protected SettingsArea initSettingsArea() {
-		return new SettingsArea(this.getController(), this.fac, this.mainWindow.getComponent());
+	protected ServerSettingsArea initSettingsArea() {
+		return new ServerSettingsArea(this.getController(), this.fac, this.mainWindow.getComponent());
 	}
 
 	protected UILayout initTabArea() {
@@ -96,8 +96,8 @@ public class MainView extends ServerView {
 	protected MainArea initMainArea() {
 		return new MainArea(this.getController(), this.getModel(), this.fac, this.advFac);
 	}
-	protected ConnectionArea initConnArea() {
-		return new ConnectionArea(this.getController(), this.fac, this.advFac);
+	protected ServerConnectionArea initConnArea() {
+		return new ServerConnectionArea(this.getController(), this.fac, this.advFac);
 	}
 	protected UIInnerFrame initFrame(UIComponent parent) {
 		return this.fac.createInnerFrame(parent);

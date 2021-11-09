@@ -16,7 +16,7 @@ import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIHBoxLayout;
 import view.repository.uiwrapper.UIVBoxLayout;
 
-public class ConnectionArea extends UIHBoxLayout {
+public class ServerConnectionArea extends UIHBoxLayout {
 	private UIComponentFactory fac;
 	private AdvancedUIComponentFactory advFac;
 	private IController controller;
@@ -32,7 +32,7 @@ public class ConnectionArea extends UIHBoxLayout {
 	private IButton allowDeviceButton;
 	private IButton blockDeviceButton;
 	
-	public ConnectionArea(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac) {
+	public ServerConnectionArea(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac) {
 		super(fac.createHBoxLayout().getComponent());
 		this.controller = controller;
 		this.fac = fac;
