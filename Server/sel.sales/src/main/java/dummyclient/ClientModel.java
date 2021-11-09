@@ -1,7 +1,7 @@
 package dummyclient;
 
-import model.Model;
+import server.model.ServerModel;
 
-public class ClientModel extends Model {
+public class ClientModel extends ServerModel {
 
 }

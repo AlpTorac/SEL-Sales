@@ -2,7 +2,7 @@ package controller.handler;
 
 import controller.IController;
 
-public class SaveSettingsHandler extends BusinessEventHandler {
+public class SaveSettingsHandler extends ApplicationEventHandler {
 
 	public SaveSettingsHandler(IController controller) {
 		super(controller);

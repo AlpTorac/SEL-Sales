@@ -1,7 +1,5 @@
 package test.external.broadcaster;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -18,13 +16,11 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.IController;
-import controller.MainController;
 import external.broadcaster.DishMenuBroadcaster;
 import external.broadcaster.IBroadcaster;
-import external.client.IClient;
-import external.client.IClientManager;
+import external.device.IDevice;
+import external.device.IDeviceManager;
 import external.connection.IConnectionManager;
-import external.connection.IServiceConnectionManager;
 import external.connection.outgoing.ISendBuffer;
 import external.message.IMessage;
 import external.message.IMessageSerialiser;
@@ -32,27 +28,23 @@ import external.message.Message;
 import external.message.MessageContext;
 import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
-import model.IModel;
-import model.Model;
-import model.dish.serialise.ExternalDishMenuSerialiser;
-import model.dish.serialise.IDishMenuItemSerialiser;
-import model.dish.serialise.IDishMenuSerialiser;
+import server.model.IServerModel;
+import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
-import test.external.buffer.BufferUtilityClass;
-import test.external.dummy.DummyClient;
-import test.external.dummy.DummyClientDiscoveryStrategy;
-import test.external.dummy.DummyClientManager;
+import test.external.dummy.DummyDevice;
+import test.external.dummy.DummyDeviceDiscoveryStrategy;
+import test.external.dummy.DummyDeviceManager;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyConnectionManager;
-import test.external.dummy.DummyController;
+import test.external.dummy.DummyServerController;
 import test.external.dummy.DummyServiceConnectionManager;
 import test.external.message.MessageTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class DishMenuBroadcasterTest {
 	private IBroadcaster broadcaster;
 	
-	private IClientManager clientManager;
-	private IModel model;
+	private IDeviceManager DeviceManager;
+	private IServerModel model;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -80,13 +72,13 @@ class DishMenuBroadcasterTest {
 	private long waitTime = 100;
 	private DummyServiceConnectionManager serviceConnectionManager;
 	
-	private IClientManager manager;
-	private DummyClient client1;
-	private String client1Name;
-	private String client1Address;
-	private DummyClient client2;
-	private String client2Name;
-	private String client2Address;
+	private IDeviceManager manager;
+	private DummyDevice Device1;
+	private String Device1Name;
+	private String Device1Address;
+	private DummyDevice Device2;
+	private String Device2Name;
+	private String Device2Address;
 	
 	private IController controller;
 	private boolean isOrderReceivedByController;
@@ -97,37 +89,37 @@ class DishMenuBroadcasterTest {
 	@BeforeEach
 	void prep() {
 		es = Executors.newCachedThreadPool();
-		manager = new DummyClientManager(es);
-		client1Name = "client1Name";
-		client1Address = "client1Address";
-		client2Name = "client2Name";
-		client2Address = "client2Address";
-		client1 = new DummyClient(client1Name, client1Address);
-		client2 = new DummyClient(client2Name, client2Address);
-		this.discoverClients();
-		manager.addClient(client1Address);
-		manager.addClient(client2Address);
-		manager.allowClient(client1Address);
-		manager.allowClient(client2Address);
+		manager = new DummyDeviceManager(es);
+		Device1Name = "Device1Name";
+		Device1Address = "Device1Address";
+		Device2Name = "Device2Name";
+		Device2Address = "Device2Address";
+		Device1 = new DummyDevice(Device1Name, Device1Address);
+		Device2 = new DummyDevice(Device2Name, Device2Address);
+		this.discoverDevices();
+		manager.addDevice(Device1Address);
+		manager.addDevice(Device2Address);
+		manager.allowDevice(Device1Address);
+		manager.allowDevice(Device2Address);
 		initModel();
 		controller = initController();
 		serviceConnectionManager = new DummyServiceConnectionManager(manager, controller, es);
 		isOrderReceivedByController = false;
 	}
 	
-	private void discoverClients() {
-		DummyClientDiscoveryStrategy cds = new DummyClientDiscoveryStrategy();
-		Collection<IClient> cs = new ArrayList<IClient>();
-		cs.add(client1);
-		cs.add(client2);
-		cds.setDiscoveredClients(cs);
+	private void discoverDevices() {
+		DummyDeviceDiscoveryStrategy cds = new DummyDeviceDiscoveryStrategy();
+		Collection<IDevice> cs = new ArrayList<IDevice>();
+		cs.add(Device1);
+		cs.add(Device2);
+		cds.setDiscoveredDevices(cs);
 		this.manager.setDiscoveryStrategy(cds);
-		this.manager.discoverClients(()->{});
+		this.manager.discoverDevices(()->{});
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
 	private IController initController() {
-		DummyController controller = new DummyController() {
+		DummyServerController controller = new DummyServerController() {
 //			@Override
 //			public void addOrder(String serialisedOrder) {isOrderReceivedByController = true;}
 		};
@@ -149,7 +141,7 @@ class DishMenuBroadcasterTest {
 	}
 	
 	private void initModel() {
-		model = new Model();
+		model = new ServerModel();
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
@@ -157,13 +149,13 @@ class DishMenuBroadcasterTest {
 	
 	@Test
 	void messageContentTest() {
-//		serviceConnectionManager.setCurrentConnectionObject(client1);
+//		serviceConnectionManager.setCurrentConnectionObject(Device1);
 //		GeneralTestUtilityClass.performWait(200);
-//		serviceConnectionManager.setCurrentConnectionObject(client2);
+//		serviceConnectionManager.setCurrentConnectionObject(Device2);
 //		GeneralTestUtilityClass.performWait(200);
 //
-//		DummyConnection conn1 = (DummyConnection) serviceConnectionManager.getConnection(client1.getClientAddress());
-//		DummyConnection conn2 = (DummyConnection) serviceConnectionManager.getConnection(client2.getClientAddress());
+//		DummyConnection conn1 = (DummyConnection) serviceConnectionManager.getConnection(Device1.getDeviceAddress());
+//		DummyConnection conn2 = (DummyConnection) serviceConnectionManager.getConnection(Device2.getDeviceAddress());
 //		
 //		Assertions.assertNotNull(conn1);
 //		Assertions.assertNotNull(conn2);
@@ -176,16 +168,16 @@ class DishMenuBroadcasterTest {
 	
 	@Test
 	void broadcastTest() {
-		serviceConnectionManager.setCurrentConnectionObject(client1);
+		serviceConnectionManager.setCurrentConnectionObject(Device1);
 		GeneralTestUtilityClass.performWait(waitTime);
-		serviceConnectionManager.setCurrentConnectionObject(client2);
+		serviceConnectionManager.setCurrentConnectionObject(Device2);
 		GeneralTestUtilityClass.performWait(waitTime);
 
-		DummyConnection conn1Target = new DummyConnection("someClientAddress1");
-		DummyConnection conn2Target = new DummyConnection("someClientAddress2");
+		DummyConnection conn1Target = new DummyConnection("someDeviceAddress1");
+		DummyConnection conn2Target = new DummyConnection("someDeviceAddress2");
 		
-		DummyConnection conn1 = (DummyConnection) serviceConnectionManager.getConnection(client1.getClientAddress());
-		DummyConnection conn2 = (DummyConnection) serviceConnectionManager.getConnection(client2.getClientAddress());
+		DummyConnection conn1 = (DummyConnection) serviceConnectionManager.getConnection(Device1.getDeviceAddress());
+		DummyConnection conn2 = (DummyConnection) serviceConnectionManager.getConnection(Device2.getDeviceAddress());
 		
 		Assertions.assertNotNull(conn1);
 		Assertions.assertNotNull(conn2);

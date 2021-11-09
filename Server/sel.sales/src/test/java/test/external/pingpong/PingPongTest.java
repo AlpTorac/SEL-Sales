@@ -1,9 +1,6 @@
 package test.external.pingpong;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.IOException;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -20,25 +17,13 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.IController;
 import external.connection.DisconnectionListener;
-import external.connection.StandardConnectionManager;
-import external.connection.outgoing.BasicMessageSender;
-import external.connection.outgoing.IMessageSendingStrategy;
-import external.connection.outgoing.ISendBuffer;
 import external.connection.pingpong.IPingPong;
-import external.connection.pingpong.StandardPingPong;
-import external.connection.timeout.FixTimeoutStrategy;
-import external.connection.timeout.ITimeoutStrategy;
-import external.message.IMessage;
-import external.message.IMessageSerialiser;
 import external.message.Message;
-import external.message.MessageSerialiser;
-import external.message.StandardMessageFormat;
 import test.GeneralTestUtilityClass;
-import test.external.dummy.DummyClient;
+import test.external.dummy.DummyDevice;
 import test.external.dummy.DummyConnection;
-import test.external.dummy.DummyController;
+import test.external.dummy.DummyServerController;
 import test.external.dummy.DummyPingPong;
-import test.external.message.MessageTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class PingPongTest {
 	private volatile boolean continueCycle = true;
@@ -57,9 +42,9 @@ class PingPongTest {
 	private int sendCount = 0;
 	
 	private DummyConnection conn;
-	private DummyClient client1;
-	private String client1Name;
-	private String client1Address;
+	private DummyDevice Device1;
+	private String Device1Name;
+	private String Device1Address;
 	
 	private IController controller;
 	
@@ -76,11 +61,11 @@ class PingPongTest {
 	
 	@BeforeEach
 	void prep() {
-		client1Name = "client1Name";
-		client1Address = "client1Address";
-		client1 = new DummyClient(client1Name, client1Address);
+		Device1Name = "Device1Name";
+		Device1Address = "Device1Address";
+		Device1 = new DummyDevice(Device1Name, Device1Address);
 		controller = initController();
-		conn = new DummyConnection(client1Address);
+		conn = new DummyConnection(Device1Address);
 		es = Executors.newCachedThreadPool();
 		initPingPong();
 		isConnected = true;
@@ -91,7 +76,7 @@ class PingPongTest {
 		pingPong = new DummyPingPong(conn, es, minimalPingPongDelay, resendLimit, timeoutTime);
 		pingPong.setDisconnectionListener(new DisconnectionListener(controller) {
 			@Override
-			public void connectionLost(String clientAddress) {
+			public void connectionLost(String DeviceAddress) {
 				isConnected = false;
 				try {
 					conn.close();
@@ -120,13 +105,13 @@ class PingPongTest {
 	}
 	
 	private IController initController() {
-		return new DummyController() {
+		return new DummyServerController() {
 			@Override
-			public void clientConnected(String clientAddress) {
+			public void DeviceConnected(String DeviceAddress) {
 				isConnected = true;
 			}
 			@Override
-			public void clientDisconnected(String clientAddress) {
+			public void DeviceDisconnected(String DeviceAddress) {
 				isConnected = false;
 			}
 		};

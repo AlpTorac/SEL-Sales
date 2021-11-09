@@ -1,7 +1,5 @@
 package view.repository;
 
-import java.util.Collection;
-
 public interface IVBoxLayout extends ILayout {
 	default public void setSpacing(double space) {
 		((IVBoxLayout) this.getComponent()).setSpacing(space);

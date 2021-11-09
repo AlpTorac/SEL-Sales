@@ -1,11 +1,6 @@
 package test.external.connection;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -20,11 +15,9 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import controller.IController;
 import external.connection.incoming.IMessageReceptionist;
 import external.connection.incoming.MessageReceptionist;
-import external.connection.outgoing.BasicMessageSender;
 import external.connection.outgoing.ISendBuffer;
 import external.connection.outgoing.StandardSendBuffer;
 import external.connection.pingpong.IPingPong;
-import external.connection.timeout.FixTimeoutStrategy;
 import external.message.IMessage;
 import external.message.IMessageSerialiser;
 import external.message.Message;
@@ -35,7 +28,7 @@ import external.message.StandardMessageFormat;
 import test.GeneralTestUtilityClass;
 import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyConnection;
-import test.external.dummy.DummyController;
+import test.external.dummy.DummyServerController;
 import test.external.dummy.DummyPingPong;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class MessageReceptionistTest {
@@ -59,7 +52,7 @@ class MessageReceptionistTest {
 	@BeforeEach
 	void prep() {
 		isOrderReceivedByController = false;
-		senderConn = new DummyConnection("clientaddress");
+		senderConn = new DummyConnection("Deviceaddress");
 		receiverConn = new DummyConnection("receiverAddress");
 		senderConn.setInputTarget(receiverConn.getInputStream());
 		controller = initController();
@@ -88,7 +81,7 @@ class MessageReceptionistTest {
 	}
 	
 	private IController initController() {
-		DummyController controller = new DummyController() {
+		DummyServerController controller = new DummyServerController() {
 			@Override
 			public void addOrder(String serialisedOrder) {isOrderReceivedByController = true;}
 		};

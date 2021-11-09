@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 
 import controller.IController;
-import external.client.IClientManager;
+import external.device.IDeviceManager;
 import external.connection.DisconnectionListener;
 import external.connection.IConnection;
 import external.connection.IConnectionManager;
@@ -19,15 +19,15 @@ public class DummyServiceConnectionManager extends ServiceConnectionManager {
 	
 	public final static long ESTIMATED_PP_TIMEOUT = DEFAULT_PP_TIMEOUT * (RESEND_LIMIT + 1);
 	
-	private volatile DummyClient currentClient;
+	private volatile DummyDevice currentDevice;
 	private DisconnectionListener newDl = new DisconnectionListener(controller);
 	
-	public DummyServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es) {
+	public DummyServiceConnectionManager(IDeviceManager manager, IController controller, ExecutorService es) {
 //		super(manager, controller, es, 10000, 1000, 2000, 10);
 		super(manager, controller, es, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
 	}
 	
-	public DummyServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es, long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
+	public DummyServiceConnectionManager(IDeviceManager manager, IController controller, ExecutorService es, long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		super(manager, controller, es, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 	}
 	
@@ -35,8 +35,8 @@ public class DummyServiceConnectionManager extends ServiceConnectionManager {
 		return GeneralTestUtilityClass.getPrivateFieldValue(this, "connectionManagers");
 	}
 	
-	public void setCurrentConnectionObject(DummyClient currentClient) {
-		this.currentClient = currentClient;
+	public void setCurrentConnectionObject(DummyDevice currentDevice) {
+		this.currentDevice = currentDevice;
 		this.makeNewConnectionThread();
 	}
 	
@@ -53,18 +53,18 @@ public class DummyServiceConnectionManager extends ServiceConnectionManager {
 	@Override
 	protected boolean addConnection(IConnection conn) {
 		boolean result = super.addConnection(conn);
-		System.out.println(conn.getTargetClientAddress() + " added");
+		System.out.println(conn.getTargetDeviceAddress() + " added");
 		return result;
 	}
 	
 	@Override
 	protected IConnection initConnection(Object connectionObject) {
-		return new DummyConnection(((DummyClient) getConnectionObject()).getClientAddress());
+		return new DummyConnection(((DummyDevice) getConnectionObject()).getDeviceAddress());
 	}
 
 	@Override
 	protected Object getConnectionObject() {
-		return currentClient;
+		return currentDevice;
 	}
 
 	@Override

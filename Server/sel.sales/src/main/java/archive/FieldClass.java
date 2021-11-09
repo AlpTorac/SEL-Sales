@@ -2,10 +2,10 @@ package archive;
 
 import java.math.BigDecimal;
 
-import model.connectivity.ClientData;
+import model.connectivity.DeviceData;
 
 public enum FieldClass {
-	CLIENT_DATA_ARRAY(ClientData[].class.getSimpleName()),
+	DEVICE_DATA_ARRAY(DeviceData[].class.getSimpleName()),
 	BOOLEAN(boolean.class.getSimpleName()),
 	INTEGER(int.class.getSimpleName()),
 	DOUBLE(double.class.getSimpleName()),

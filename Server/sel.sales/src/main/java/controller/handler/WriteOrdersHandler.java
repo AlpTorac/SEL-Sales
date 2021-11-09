@@ -2,7 +2,7 @@ package controller.handler;
 
 import controller.IController;
 
-public class WriteOrdersHandler extends BusinessEventHandler {
+public class WriteOrdersHandler extends ApplicationEventHandler {
 	public WriteOrdersHandler(IController controller) {
 		super(controller);
 	}

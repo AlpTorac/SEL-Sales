@@ -16,7 +16,7 @@ import javax.microedition.io.StreamConnection;
 
 import controller.IController;
 import external.External;
-import external.bluetooth.BluetoothClientManager;
+import external.bluetooth.BluetoothDeviceManager;
 import external.bluetooth.BluetoothConnection;
 import external.bluetooth.BluetoothService;
 import external.bluetooth.BluetoothServiceConnectionManager;
@@ -151,8 +151,8 @@ public class ClientExternal extends External {
 		return (BluetoothServiceConnectionManager) super.getService().getServiceConnectionManager();
 	}
 	
-	protected BluetoothClientManager getClientManager() {
-		return (BluetoothClientManager) super.getService().getClientManager();
+	protected BluetoothDeviceManager getDeviceManager() {
+		return (BluetoothDeviceManager) super.getService().getDeviceManager();
 	}
 	
 	@Override
@@ -160,8 +160,8 @@ public class ClientExternal extends External {
 		return (BluetoothService) super.getService();
 	}
 	
-	protected BluetoothClientManager initClientManager() {
-		return new BluetoothClientManager(es, this.getController());
+	protected BluetoothDeviceManager initDeviceManager() {
+		return new BluetoothDeviceManager(es, this.getController());
 	}
 	
 	@Override
@@ -170,12 +170,12 @@ public class ClientExternal extends External {
 	}
 	
 	private BluetoothService initBluetoothService(UUID id, String name) {
-		return new BluetoothService(id, name, this.initClientManager(), this.getController(), es, this.getPingPongTimeout(),
+		return new BluetoothService(id, name, this.initDeviceManager(), this.getController(), es, this.getPingPongTimeout(),
 				this.getMinimalPingPongDelay(), this.getSendTimeout(), this.getResendLimit()) {
 
 					@Override
 					public void publish() {
-						this.scm = new BluetoothServiceConnectionManager(this, this.getClientManager(), this.getController(), es,
+						this.scm = new BluetoothServiceConnectionManager(this, this.getDeviceManager(), this.getController(), es,
 								this.getPingPongTimeout(), this.getMinimalPingPongDelay(), this.getSendTimeout(), this.getResendLimit());
 						this.scm.makeNewConnectionThread();
 					}
@@ -183,12 +183,12 @@ public class ClientExternal extends External {
 		};
 	}
 	@Override
-	public void rediscoverClients(Runnable afterDiscoveryAction) {
-//		this.service.getClientManager().discoverClients();
+	public void rediscoverDevices(Runnable afterDiscoveryAction) {
+//		this.service.getDeviceManager().discoverDevices();
 	}
 	@Override
-	public void refreshKnownClients() {
-//		this.service.getClientManager().receiveKnownClientData(this.model.getAllKnownClientData());
+	public void refreshKnownDevices() {
+//		this.service.getDeviceManager().receiveKnownDeviceData(this.model.getAllKnownDeviceData());
 	}
 	
 	public void close(IMessage ackMessage) {

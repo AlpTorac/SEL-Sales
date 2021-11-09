@@ -1,38 +1,31 @@
 package test.view;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.testfx.framework.junit5.ApplicationTest;
 
-import controller.IController;
-import controller.MainController;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import model.IModel;
-import model.Model;
-import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
+import server.controller.IServerController;
+import server.controller.StandardServerController;
+import server.model.IServerModel;
+import server.model.ServerModel;
+import server.view.MainView;
 import test.MainViewOperationsUtilityClass;
 import view.IView;
-import view.MainView;
-import view.repository.IUILibraryHelper;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
-import view.repository.uifx.FXHelper;
 import view.repository.uifx.FXUIComponentFactory;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class OrderDisplayTest extends ApplicationTest {
-	private static IModel model;
-	private static IController controller;
+	private static IServerModel model;
+	private static IServerController controller;
 	private static IView view;
 	
 	private MainViewOperationsUtilityClass opHelper;
@@ -83,8 +76,8 @@ class OrderDisplayTest extends ApplicationTest {
 	@BeforeEach
 	void prep() {
 		runFXAction(() -> {
-			model = new Model();
-			controller = new MainController(model);
+			model = new ServerModel();
+			controller = new StandardServerController(model);
 			view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 			view.startUp();
 			view.show();

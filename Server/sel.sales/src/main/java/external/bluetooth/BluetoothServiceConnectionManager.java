@@ -18,7 +18,7 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 	
 	private StreamConnectionNotifier connNotifier;
 	
-//	public BluetoothServiceConnectionManager(BluetoothService service, BluetoothClientManager manager, IController controller, ExecutorService es) {
+//	public BluetoothServiceConnectionManager(BluetoothService service, BluetoothDeviceManager manager, IController controller, ExecutorService es) {
 //		super(manager, controller, es);
 //		try {
 //			this.connNotifier = (StreamConnectionNotifier) Connector.open(service.getURL());
@@ -27,7 +27,7 @@ public class BluetoothServiceConnectionManager extends ServiceConnectionManager 
 //		}
 //	}
 	
-	public BluetoothServiceConnectionManager(BluetoothService service, BluetoothClientManager manager, IController controller, ExecutorService es,
+	public BluetoothServiceConnectionManager(BluetoothService service, BluetoothDeviceManager manager, IController controller, ExecutorService es,
 			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		super(manager, controller, es, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		try {

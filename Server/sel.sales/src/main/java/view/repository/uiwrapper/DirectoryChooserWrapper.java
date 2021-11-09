@@ -3,7 +3,6 @@ package view.repository.uiwrapper;
 import java.io.File;
 
 import view.repository.IDirectoryChooser;
-import view.repository.IFileChooser;
 import view.repository.IRootComponent;
 
 public class DirectoryChooserWrapper implements IDirectoryChooser {

@@ -1,33 +1,23 @@
 package test.model.fileaccess;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.File;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import model.IModel;
-import model.Model;
-import model.dish.serialise.IDishMenuItemSerialiser;
-import model.filewriter.FileAccess;
 import model.filewriter.OrderFile;
 import model.filewriter.StandardOrderFile;
 import model.order.IOrderData;
-import model.order.serialise.IOrderDeserialiser;
-import model.order.serialise.IOrderParser;
-import model.order.serialise.IOrderSerialiser;
+import server.model.IServerModel;
+import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
 
 @Execution(value = ExecutionMode.SAME_THREAD)
 class OrderFileAccessTest {
-	private IModel model;
+	private IServerModel model;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -62,7 +52,7 @@ class OrderFileAccessTest {
 	@BeforeEach
 	void prep() {
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
-		model = new Model();
+		model = new ServerModel();
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));

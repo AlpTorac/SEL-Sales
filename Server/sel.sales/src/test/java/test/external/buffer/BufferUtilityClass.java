@@ -1,6 +1,5 @@
 package test.external.buffer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -8,7 +7,6 @@ import org.junit.jupiter.api.Assertions;
 
 import external.connection.outgoing.ISendBuffer;
 import external.message.IMessage;
-import test.GeneralTestUtilityClass;
 
 public final class BufferUtilityClass {
 //	public static void assertOutputWrittenEquals(ByteArrayOutputStream os, byte[] written) {

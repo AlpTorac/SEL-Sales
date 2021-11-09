@@ -1,7 +1,5 @@
 package test.model.order;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.AfterEach;
@@ -9,15 +7,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import model.IModel;
-import model.Model;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderItem;
 import model.order.OrderItem;
+import server.model.IServerModel;
+import server.model.ServerModel;
 
 class OrderItemTest {
 
-	private static IModel model;
+	private static IServerModel model;
 	
 	private IDishMenuItemData item1;
 	private String i1Name = "aaa";
@@ -50,7 +48,7 @@ class OrderItemTest {
 	
 	@BeforeEach
 	void prep() {
-		model = new Model();
+		model = new ServerModel();
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));

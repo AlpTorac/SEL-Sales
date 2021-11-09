@@ -1,29 +1,29 @@
 package model.connectivity;
 
 public interface IConnectivityManager {
-//	default void addClientDatas(IClientData[] cds) {
+//	default void addDeviceDatas(IDeviceData[] cds) {
 //		if (cds != null) {
-//			for (IClientData cd : cds) {
-//				this.addClientData(cd);
+//			for (IDeviceData cd : cds) {
+//				this.addDeviceData(cd);
 //			}
 //		}
 //	}
-//	void addClientData(IClientData cd);
+//	void addDeviceData(IDeviceData cd);
 	
-	void addDiscoveredClient(String clientName, String clientAddress);
-	void addKnownClient(String clientAddress);
-	void removeKnownClient(String clientAddress);
-	void allowKnownClient(String clientAddress);
-	void blockKnownClient(String clientAddress);
-	void requestClientRediscovery();
-	boolean isClientRediscoveryRequested();
-	boolean isAllowedToConnect(String clientAddress);
-	boolean isConnected(String clientAddress);
-	void clientConnected(String clientAddress);
-	void clientDisconnected(String clientAddress);
+	void addDiscoveredDevice(String deviceName, String deviceAddress);
+	void addKnownDevice(String deviceAddress);
+	void removeKnownDevice(String deviceAddress);
+	void allowKnownDevice(String deviceAddress);
+	void blockKnownDevice(String deviceAddress);
+	void requestDeviceRediscovery();
+	boolean isDeviceRediscoveryRequested();
+	boolean isAllowedToConnect(String deviceAddress);
+	boolean isConnected(String deviceAddress);
+	void DeviceConnected(String deviceAddress);
+	void DeviceDisconnected(String deviceAddress);
 	
-	int getKnownClientCount();
+	int getKnownDeviceCount();
 	
-	IClientData[] getAllKnownClientData();
-	IClientData[] getAllDiscoveredClientData();
+	IDeviceData[] getAllKnownDeviceData();
+	IDeviceData[] getAllDiscoveredDeviceData();
 }

@@ -1,8 +1,5 @@
 package test.external.connection;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.junit.jupiter.api.AfterEach;
@@ -31,7 +28,7 @@ class BasicMessageSenderTest {
 	
 	@BeforeEach
 	void prep() {
-		senderConn = new DummyConnection("clientaddress");
+		senderConn = new DummyConnection("Deviceaddress");
 		receiverConn = new DummyConnection("receiverAddress");
 		senderConn.setInputTarget(receiverConn.getInputStream());
 		mss = new BasicMessageSender();

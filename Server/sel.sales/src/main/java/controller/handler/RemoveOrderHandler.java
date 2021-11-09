@@ -2,7 +2,7 @@ package controller.handler;
 
 import controller.IController;
 
-public class RemoveOrderHandler extends BusinessEventHandler {
+public class RemoveOrderHandler extends ApplicationEventHandler {
 
 	public RemoveOrderHandler(IController controller) {
 		super(controller);

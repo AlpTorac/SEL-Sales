@@ -1,7 +1,5 @@
 package test.view;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,31 +10,30 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 
-import controller.IController;
-import controller.MainController;
 import external.External;
-import external.client.IClient;
+import external.device.IDevice;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import model.IModel;
-import model.Model;
-import model.connectivity.ClientData;
-import model.connectivity.IClientData;
+import model.connectivity.DeviceData;
+import model.connectivity.IDeviceData;
 import model.filemanager.FileManager;
 import model.filemanager.IFileManager;
 import model.settings.HasSettingsField;
 import model.settings.ISettings;
 import model.settings.Settings;
 import model.settings.SettingsField;
+import server.controller.IServerController;
+import server.controller.StandardServerController;
+import server.model.IServerModel;
+import server.model.ServerModel;
+import server.view.MainView;
 import test.GeneralTestUtilityClass;
 import test.MainViewOperationsUtilityClass;
-import test.external.dummy.DummyClient;
-import test.external.dummy.DummyClientDiscoveryStrategy;
+import test.external.dummy.DummyDevice;
+import test.external.dummy.DummyDeviceDiscoveryStrategy;
 import test.external.dummy.DummyExternal;
 import test.external.dummy.DummyService;
 import test.external.dummy.DummyServiceConnectionManager;
-import view.MainView;
-import view.repository.HasText;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
@@ -44,8 +41,8 @@ class SettingsAreaTest extends ApplicationTest {
 
 	private volatile boolean actionFinished = false;
 	
-	private IModel model;
-	private IController controller;
+	private IServerModel model;
+	private IServerController controller;
 	private MainView view;
 	private DummyExternal external;
 	
@@ -54,18 +51,18 @@ class SettingsAreaTest extends ApplicationTest {
 	private DummyService service;
 	private DummyServiceConnectionManager dscm;
 	
-	private DummyClientDiscoveryStrategy cds;
+	private DummyDeviceDiscoveryStrategy cds;
 	
-	private DummyClient dc1;
+	private DummyDevice dc1;
 	private final String dc1n = "dc1n";
 	private final String dc1a = "dc1a";
 	
-	private DummyClient dc2;
+	private DummyDevice dc2;
 	private final String dc2n = "dc2n";
 	private final String dc2a = "dc2a";
 	
-	private Collection<IClient> dcCol;
-	private IClientData[] dcdArray;
+	private Collection<IDevice> dcCol;
+	private IDeviceData[] dcdArray;
 	
 	private String menuFolderAddress = "mfa";
 	private String orderFolderAddress = "ofa";
@@ -78,31 +75,31 @@ class SettingsAreaTest extends ApplicationTest {
 	private Collection<HasSettingsField> part;
 	private IFileManager fm;
 	
-	private void initClients() {
+	private void initDevices() {
 //		dc1n = "dc1n";
 //		dc1a = "dc1a";
-		dc1 = new DummyClient(dc1n, dc1a);
+		dc1 = new DummyDevice(dc1n, dc1a);
 		
 //		dc2n = "dc2n";
 //		dc2a = "dc2a";
-		dc2 = new DummyClient(dc2n, dc2a);
+		dc2 = new DummyDevice(dc2n, dc2a);
 		
-		dcCol = new ArrayList<IClient>();
+		dcCol = new ArrayList<IDevice>();
 		dcCol.add(dc1);
 		dcCol.add(dc2);
 	}
 	
 	private void initDiscoveryStrategy() {
-		cds = new DummyClientDiscoveryStrategy();
-		cds.setDiscoveredClients(dcCol);
+		cds = new DummyDeviceDiscoveryStrategy();
+		cds.setDiscoveredDevices(dcCol);
 		dcdArray = dcCol.stream()
-				.map(c -> {return new ClientData(c.getClientName(), c.getClientAddress(), false, false);})
-				.toArray(IClientData[]::new);
+				.map(c -> {return new DeviceData(c.getDeviceName(), c.getDeviceAddress(), false, false);})
+				.toArray(IDeviceData[]::new);
 		this.external.setDiscoveryStrategy(cds);
 	}
 	
-	private void initialClientDiscovery() {
-		this.initClients();
+	private void initialDeviceDiscovery() {
+		this.initDevices();
 		this.initDiscoveryStrategy();
 	}
 	
@@ -130,22 +127,22 @@ class SettingsAreaTest extends ApplicationTest {
 	void prep() {
 		runFXAction(()->{
 			GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
-			model = new Model();
+			model = new ServerModel();
 			fm = new FileManager(model, this.testFolderAddress);
 //			fm = GeneralTestUtilityClass.getPrivateFieldValue(model, "fileManager");
 			part = GeneralTestUtilityClass.getPrivateFieldValue(model, "part");
 			part.clear();
 			part.add(fm);
-			controller = new MainController(model);
+			controller = new StandardServerController(model);
 			view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 			external = new DummyExternal("id", "name", controller, model, 10000, 1000, 2000, 5);
 			service = GeneralTestUtilityClass.getPrivateFieldValue((External) external, "service");
 			dscm = (DummyServiceConnectionManager) service.getServiceConnectionManager();
 			view.startUp();
 			view.show();
-			this.initialClientDiscovery();
+			this.initialDeviceDiscovery();
 			opHelper = new MainViewOperationsUtilityClass(view, controller, model);
-			opHelper.clickOnDiscoverClients();
+			opHelper.clickOnDiscoverDevices();
 		});
 	}
 	

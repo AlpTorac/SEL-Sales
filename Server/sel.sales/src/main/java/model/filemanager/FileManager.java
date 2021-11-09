@@ -1,10 +1,10 @@
 package model.filemanager;
 
 import model.IModel;
-import model.filewriter.ClientDataFile;
+import model.filewriter.DeviceDataFile;
 import model.filewriter.DishMenuFile;
 import model.filewriter.OrderFile;
-import model.filewriter.StandardClientDataFile;
+import model.filewriter.StandardDeviceDataFile;
 import model.filewriter.StandardDishMenuFile;
 import model.filewriter.StandardOrderFile;
 import model.settings.SettingsField;
@@ -15,14 +15,14 @@ public class FileManager implements IFileManager {
 	
 	private String settingsFolderAddress;
 	private SettingsFile settingsFile;
-	private ClientDataFile clientDataFile;
+	private DeviceDataFile deviceDataFile;
 	private IModel model;
 	
 	public FileManager(IModel model, String settingsFolderAddress) {
 		this.model = model;
 		
 		this.settingsFolderAddress = settingsFolderAddress;
-		this.clientDataFile = new StandardClientDataFile(this.settingsFolderAddress);
+		this.deviceDataFile = new StandardDeviceDataFile(this.settingsFolderAddress);
 		this.settingsFile = new StandardSettingsFile(this.settingsFolderAddress);
 		this.orderWriter = new StandardOrderFile(this.model.getSettings().getSetting(SettingsField.ORDER_FOLDER));
 		this.dishMenuWriter = new StandardDishMenuFile(this.model.getSettings().getSetting(SettingsField.DISH_MENU_FOLDER));
@@ -73,7 +73,7 @@ public class FileManager implements IFileManager {
 		this.initSettings();
 		this.initDishMenu();
 		this.initOrders();
-		this.initKnownClients();
+		this.initKnownDevices();
 	}
 
 	protected void initOrders() {
@@ -87,8 +87,8 @@ public class FileManager implements IFileManager {
 		}
 	}
 
-	protected void initKnownClients() {
-		this.setKnownClientsInModel(this.clientDataFile);
+	protected void initKnownDevices() {
+		this.setKnownDevicesInModel(this.deviceDataFile);
 	}
 
 	@Override
@@ -105,7 +105,7 @@ public class FileManager implements IFileManager {
 		this.orderWriter.close();
 		this.dishMenuWriter.close();
 		this.settingsFile.close();
-		this.clientDataFile.close();
+		this.deviceDataFile.close();
 	}
 
 	@Override
@@ -120,19 +120,19 @@ public class FileManager implements IFileManager {
 	}
 
 	@Override
-	public boolean writeClientDatas(String clientDatas) {
-		return this.clientDataFile.remakeFile() && this.clientDataFile.writeToFile(clientDatas);
+	public boolean writeDeviceDatas(String deviceDatas) {
+		return this.deviceDataFile.remakeFile() && this.deviceDataFile.writeToFile(deviceDatas);
 	}
 
 	@Override
-	public void loadKnownClients(String fileAddress) {
-		ClientDataFile file = new StandardClientDataFile(fileAddress);
-		this.setKnownClientsInModel(file);
+	public void loadKnownDevices(String fileAddress) {
+		DeviceDataFile file = new StandardDeviceDataFile(fileAddress);
+		this.setKnownDevicesInModel(file);
 		file.close();
 	}
 
-	protected void setKnownClientsInModel(ClientDataFile file) {
-		this.model.setKnownClients(file.readFile());
+	protected void setKnownDevicesInModel(DeviceDataFile file) {
+		this.model.setKnownDevices(file.readFile());
 	}
 
 	@Override

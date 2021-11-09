@@ -2,7 +2,7 @@ package controller.handler;
 
 import controller.IController;
 
-public class AddOrderHandler extends BusinessEventHandler {
+public class AddOrderHandler extends ApplicationEventHandler {
 
 	public AddOrderHandler(IController controller) {
 		super(controller);
@@ -10,7 +10,7 @@ public class AddOrderHandler extends BusinessEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().getModel().addUnconfirmedOrder((String) args[0]);
+		this.getController().getModel().addOrder((String) args[0]);
 	}
 
 }

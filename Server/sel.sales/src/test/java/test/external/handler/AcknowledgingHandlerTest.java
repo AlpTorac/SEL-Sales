@@ -1,20 +1,11 @@
 package test.external.handler;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.IOException;
-import java.util.concurrent.Executors;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import controller.IController;
-import external.acknowledgement.MinimalAcknowledgementStrategy;
 import external.acknowledgement.StandardAcknowledger;
-import external.connection.outgoing.BasicMessageSender;
-import external.connection.outgoing.StandardSendBuffer;
-import external.handler.AcknowledgementHandler;
 import external.handler.AcknowledgingHandler;
 import external.message.IMessage;
 import external.message.IMessageParser;
@@ -41,7 +32,7 @@ class AcknowledgingHandlerTest extends MessageHandlerSuperClass {
 	
 	@BeforeEach
 	void prep() {
-		senderConn = new DummyConnection("clientAddress");
+		senderConn = new DummyConnection("DeviceAddress");
 		receiverConn = new DummyConnection("receiverAddress");
 		senderConn.setInputTarget(receiverConn.getInputStream());
 		parser = new StandardMessageParser();

@@ -2,13 +2,11 @@ package test.external.connection;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 import external.connection.outgoing.ISendBuffer;
 import test.GeneralTestUtilityClass;
-import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyConnection;
 
 public final class ConnectionManagerTestUtilityClass {

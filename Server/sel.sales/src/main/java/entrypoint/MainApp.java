@@ -2,23 +2,22 @@ package entrypoint;
 
 import java.math.BigDecimal;
 
-import controller.IController;
-import controller.MainController;
-import external.BluetoothServerExternal;
 import external.IExternal;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.stage.Stage;
-import model.IModel;
-import model.Model;
+import server.controller.IServerController;
+import server.controller.StandardServerController;
+import server.external.BluetoothServerExternal;
+import server.model.IServerModel;
+import server.model.ServerModel;
+import server.view.MainView;
 import view.IView;
-import view.MainView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
 public class MainApp extends Application {
-	private static IModel model;
-	private static IController controller;
+	private static IServerModel model;
+	private static IServerController controller;
 	private static IView view;
 	private static IExternal external;
 	
@@ -38,8 +37,8 @@ public class MainApp extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		model = new Model();
-		controller = new MainController(model);
+		model = new ServerModel();
+		controller = new StandardServerController(model);
 		view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 		external = new BluetoothServerExternal(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		view.startUp();

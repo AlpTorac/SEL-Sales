@@ -10,20 +10,20 @@ import org.junit.jupiter.api.Assertions;
 
 import controller.IController;
 import model.IDateSettings;
-import model.IModel;
-import model.connectivity.IClientData;
+import model.connectivity.IDeviceData;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
 import model.order.IOrderItemData;
+import server.model.IServerModel;
+import server.view.MainView;
+import server.view.composites.ConnectionArea;
+import server.view.composites.MainArea;
+import server.view.composites.MenuDesignArea;
+import server.view.composites.OrderInspectionArea;
+import server.view.composites.OrderTrackingArea;
+import server.view.composites.SettingsArea;
 import test.model.order.OrderTestUtilityClass;
 import view.IView;
-import view.MainView;
-import view.composites.ConnectionArea;
-import view.composites.MainArea;
-import view.composites.MenuDesignArea;
-import view.composites.OrderInspectionArea;
-import view.composites.OrderTrackingArea;
-import view.composites.SettingsArea;
 import view.repository.HasText;
 import view.repository.IButton;
 import view.repository.IEventShooterOnClickUIComponent;
@@ -32,7 +32,7 @@ import view.repository.uiwrapper.UITabPane;
 
 public class MainViewOperationsUtilityClass {
 	private long waitTime = 100;
-	private IModel model;
+	private IServerModel model;
 	private IController controller;
 	private IView view;
 	
@@ -72,7 +72,7 @@ public class MainViewOperationsUtilityClass {
 	
 	private IDateSettings ds;
 	
-	public MainViewOperationsUtilityClass(MainView view, IController controller, IModel model) {
+	public MainViewOperationsUtilityClass(MainView view, IController controller, IServerModel model) {
 		this.model = model;
 		this.controller = controller;
 		this.view = view;
@@ -320,57 +320,57 @@ public class MainViewOperationsUtilityClass {
 		}
 	}
 	
-	public void clickOnDiscoverClients() {
+	public void clickOnDiscoverDevices() {
 		this.setConnAreaTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
 		this.ca.getRefreshButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
-	public Collection<IClientData> getDiscoveredClients() {
+	public Collection<IDeviceData> getDiscoveredDevices() {
 		this.setConnAreaTabActive();
-		return this.ca.getDiscoveredClients().getAllItems();
+		return this.ca.getDiscoveredDevices().getAllItems();
 	}
 	
-	public Collection<IClientData> getKnownClients() {
+	public Collection<IDeviceData> getKnownDevices() {
 		this.setConnAreaTabActive();
-		return this.ca.getKnownClients().getAllItems();
+		return this.ca.getKnownDevices().getAllItems();
 	}
 	
-	public void addKnownClient(int index) {
+	public void addKnownDevice(int index) {
 		this.setConnAreaTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getDiscoveredClients().artificiallySelectItem(index);
+		this.ca.getDiscoveredDevices().artificiallySelectItem(index);
 		GeneralTestUtilityClass.performWait(waitTime);
-		System.out.println("discovered client size: " + ca.getDiscoveredClients().getSize());
-		this.ca.getAddKnownClientButton().performArtificialClick();
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
-	public void removeKnownClient(int index) {
-		this.setConnAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getKnownClients().artificiallySelectItem(index);
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getRemoveKnownClientButton().performArtificialClick();
+		System.out.println("discovered Device size: " + ca.getDiscoveredDevices().getSize());
+		this.ca.getAddKnownDeviceButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
-	public void allowKnownClient(int index) {
+	public void removeKnownDevice(int index) {
 		this.setConnAreaTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getKnownClients().artificiallySelectItem(index);
+		this.ca.getKnownDevices().artificiallySelectItem(index);
 		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getAllowClientButton().performArtificialClick();
+		this.ca.getRemoveKnownDeviceButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
-	public void blockKnownClient(int index) {
+	public void allowKnownDevice(int index) {
 		this.setConnAreaTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getKnownClients().artificiallySelectItem(index);
+		this.ca.getKnownDevices().artificiallySelectItem(index);
 		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getBlockClientButton().performArtificialClick();
+		this.ca.getAllowDeviceButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void blockKnownDevice(int index) {
+		this.setConnAreaTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.ca.getKnownDevices().artificiallySelectItem(index);
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.ca.getBlockDeviceButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	

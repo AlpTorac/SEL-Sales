@@ -3,13 +3,15 @@ package controller.handler;
 import controller.IController;
 
 public abstract class ApplicationEventHandler implements IApplicationEventHandler {
-	private IController controller;
-	
-	ApplicationEventHandler(IController controller) {
+
+	protected IController controller;
+
+	public ApplicationEventHandler(IController controller) {
 		this.controller = controller;
 	}
-	
-	IController getController() {
+
+	protected IController getController() {
 		return this.controller;
 	}
+
 }

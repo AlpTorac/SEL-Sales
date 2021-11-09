@@ -3,29 +3,29 @@ package external.connection;
 import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
 import controller.IController;
-import controller.StatusEvent;
+import controller.GeneralEvent;
 
 public class DisconnectionListener implements IApplicationEventShooter {
 
 	private IController controller;
-	private String clientAddress;
+	private String deviceAddress;
 	
 	public DisconnectionListener(IController controller) {
 		this.controller = controller;
 	}
 	
-	public void connectionLost(String clientAddress) {
-		this.clientAddress = clientAddress;
+	public void connectionLost(String deviceAddress) {
+		this.deviceAddress = deviceAddress;
 		this.fireApplicationEvent(controller);
 	}
 	
 	@Override
 	public Object[] getArgs() {
-		return new Object[] {this.clientAddress};
+		return new Object[] {this.deviceAddress};
 	}
 
 	@Override
 	public IApplicationEvent getApplicationEvent() {
-		return StatusEvent.CLIENT_DISCONNECTED;
+		return GeneralEvent.DEVICE_DISCONNECTED;
 	}
 }

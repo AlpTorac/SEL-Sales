@@ -1,49 +1,35 @@
 package test.view;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.testfx.framework.junit5.ApplicationTest;
 
-import controller.IController;
-import controller.MainController;
-import javafx.application.Application;
 import javafx.stage.Stage;
-import model.IModel;
-import model.Model;
-import model.dish.IDishMenuItemDataFactory;
-import model.dish.serialise.IDishMenuItemSerialiser;
-import model.order.IOrderData;
+import server.controller.IServerController;
+import server.controller.StandardServerController;
+import server.model.IServerModel;
+import server.model.ServerModel;
+import server.view.MainView;
 import test.GeneralTestUtilityClass;
 import test.MainViewOperationsUtilityClass;
 import test.model.order.ClientSimulant;
 import view.IView;
-import view.MainView;
-import view.composites.OrderTrackingArea;
-import view.repository.IListView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
 @Execution(value = ExecutionMode.SAME_THREAD)
 class UnconfirmedOrderTest extends ApplicationTest {
-	private static IModel model;
+	private static IServerModel model;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -66,7 +52,7 @@ class UnconfirmedOrderTest extends ApplicationTest {
 	private BigDecimal i3Disc = BigDecimal.valueOf(1);
 	private String i3id = "item3";
 	
-	private static IController controller;
+	private static IServerController controller;
 	private static IView view;
 	
 	private static ExecutorService pool = Executors.newCachedThreadPool();
@@ -84,8 +70,8 @@ class UnconfirmedOrderTest extends ApplicationTest {
 	
 	@Override
 	public void start(Stage stage) {
-		model = new Model();
-		controller = new MainController(model);
+		model = new ServerModel();
+		controller = new StandardServerController(model);
 		view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 		view.startUp();
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));

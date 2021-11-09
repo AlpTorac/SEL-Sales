@@ -1,188 +1,184 @@
 package test.external.dummy;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import controller.IController;
 import external.connection.DisconnectionListener;
-import external.connection.IConnectionManager;
 import external.connection.outgoing.ISendBuffer;
 import external.connection.pingpong.IPingPong;
 import external.message.IMessage;
 
 public class DummyInteraction {
 	protected IController controllerServer;
-	protected IController controllerClient;
+	protected IController controllerDevice;
 	
 	protected ExecutorService esServer;
-	protected ExecutorService esClient;
+	protected ExecutorService esDevice;
 	
 	protected long minimalPingPongDelay;
 	protected long pingPongTimeout;
 	protected long sendTimeout;
 	protected int resendLimit;
 	
-	protected String clientAddress;
-	protected String clientName;
+	protected String DeviceAddress;
+	protected String DeviceName;
 	
 	protected String serverName = "serverName";
 	protected String serverAddress = "serverAddress";
 	
-	protected DummyClient client;
-	protected DummyClient server;
+	protected DummyDevice device;
+	protected DummyDevice server;
 	
-	protected DummyConnection serverClientConn;
-	protected DummyConnection clientServerConn;
+	protected DummyConnection serverDeviceConn;
+	protected DummyConnection DeviceServerConn;
 	
-	protected DummyConnectionManager serverClientConnManager;
-	protected DummyConnectionManager clientServerConnManager;
+	protected DummyConnectionManager serverDeviceConnManager;
+	protected DummyConnectionManager DeviceServerConnManager;
 	
 	protected DisconnectionListener dlServer;
-	protected DisconnectionListener dlClient;
+	protected DisconnectionListener dlDevice;
 	
 	protected ISendBuffer serverSB;
-	protected ISendBuffer clientSB;
+	protected ISendBuffer DeviceSB;
 	
 	protected IPingPong serverPP;
-	protected IPingPong clientPP;
+	protected IPingPong DevicePP;
 	
-	public DummyInteraction(ExecutorService esServer, ExecutorService esClient, String clientName, String clientAddress, long pingPongTimeout,
+	public DummyInteraction(ExecutorService esServer, ExecutorService esDevice, String DeviceName, String DeviceAddress, long pingPongTimeout,
 			long sendTimeout, int resendLimit, long minimalPingPongDelay) {
 		this.esServer = esServer;
-		this.esClient = esClient;
+		this.esDevice = esDevice;
 		this.minimalPingPongDelay = minimalPingPongDelay;
 		this.pingPongTimeout = pingPongTimeout;
 		this.sendTimeout = sendTimeout;
 		this.resendLimit = resendLimit;
-		this.clientAddress = clientAddress;
-		this.clientName = clientName;
-		this.controllerClient = this.initClientController();
+		this.DeviceAddress = DeviceAddress;
+		this.DeviceName = DeviceName;
+		this.controllerDevice = this.initDeviceController();
 		this.controllerServer = this.initServerController();
-		this.client = this.initClient();
+		this.device = this.initDevice();
 		this.server = this.initServer();
-		this.serverClientConn = this.initServerClientConnection();
-		this.clientServerConn = this.initClientServerConnection();
+		this.serverDeviceConn = this.initServerDeviceConnection();
+		this.DeviceServerConn = this.initDeviceServerConnection();
 		this.bindConnectionStreams();
-		this.serverClientConnManager = this.initServerClientConnectionManager();
-		this.clientServerConnManager = this.initClientServerConnectionManager();
+		this.serverDeviceConnManager = this.initServerDeviceConnectionManager();
+		this.DeviceServerConnManager = this.initDeviceServerConnectionManager();
 		this.dlServer = this.initServerDisconListener();
-		this.serverClientConnManager.setDisconnectionListener(this.dlServer);
-		this.dlClient = this.initClientDisconListener();
-		this.clientServerConnManager.setDisconnectionListener(this.dlClient);
+		this.serverDeviceConnManager.setDisconnectionListener(this.dlServer);
+		this.dlDevice = this.initDeviceDisconListener();
+		this.DeviceServerConnManager.setDisconnectionListener(this.dlDevice);
 	}
 	
-	protected DummyClient initClient() {
-		return new DummyClient(this.clientName, this.clientAddress);
+	protected DummyDevice initDevice() {
+		return new DummyDevice(this.DeviceName, this.DeviceAddress);
 	}
 	
-	protected DummyClient initServer() {
-		return new DummyClient(this.serverName, this.serverAddress);
+	protected DummyDevice initServer() {
+		return new DummyDevice(this.serverName, this.serverAddress);
 	}
 	
-	protected DummyConnection initServerClientConnection() {
-		return new DummyConnection(this.server.getClientAddress());
+	protected DummyConnection initServerDeviceConnection() {
+		return new DummyConnection(this.server.getDeviceAddress());
 	}
-	protected DummyConnection initClientServerConnection() {
-		return new DummyConnection(this.client.getClientAddress());
+	protected DummyConnection initDeviceServerConnection() {
+		return new DummyConnection(this.device.getDeviceAddress());
 	}
 	
 	protected void bindConnectionStreams() {
-		this.clientServerConn.setInputTarget(this.serverClientConn.getInputStream());
-		this.serverClientConn.setInputTarget(this.clientServerConn.getInputStream());
+		this.DeviceServerConn.setInputTarget(this.serverDeviceConn.getInputStream());
+		this.serverDeviceConn.setInputTarget(this.DeviceServerConn.getInputStream());
 	}
 	
 	public void resetServerInputBuffer() {
-		this.serverClientConn.resetInputStream();
+		this.serverDeviceConn.resetInputStream();
 		this.bindConnectionStreams();
 	}
-	public void resetClientInputBuffer() {
-		this.clientServerConn.resetInputStream();
+	public void resetDeviceInputBuffer() {
+		this.DeviceServerConn.resetInputStream();
 		this.bindConnectionStreams();
 	}
 	public void resetServerOutputBuffer() {
-		this.serverClientConn.resetOutputStream();
+		this.serverDeviceConn.resetOutputStream();
 		this.bindConnectionStreams();
 	}
-	public void resetClientOutputBuffer() {
-		this.clientServerConn.resetOutputStream();
+	public void resetDeviceOutputBuffer() {
+		this.DeviceServerConn.resetOutputStream();
 		this.bindConnectionStreams();
 	}
 	
 	protected IController initServerController() {
-		return new DummyController();
+		return new DummyServerController();
 	}
 	
-	protected IController initClientController() {
-		return new DummyController();
+	protected IController initDeviceController() {
+		return new DummyServerController();
 	}
 	
 	protected DisconnectionListener initServerDisconListener() {
 		return new DisconnectionListener(this.controllerServer);
 	}
 	
-	protected DisconnectionListener initClientDisconListener() {
-		return new DisconnectionListener(this.controllerClient);
+	protected DisconnectionListener initDeviceDisconListener() {
+		return new DisconnectionListener(this.controllerDevice);
 	}
 	
-	protected DummyConnectionManager initServerClientConnectionManager() {
-		DummyConnectionManager cm = new DummyConnectionManager(this.controllerServer, this.serverClientConn, this.esServer, this.pingPongTimeout, this.sendTimeout, this.resendLimit, this.minimalPingPongDelay);
+	protected DummyConnectionManager initServerDeviceConnectionManager() {
+		DummyConnectionManager cm = new DummyConnectionManager(this.controllerServer, this.serverDeviceConn, this.esServer, this.pingPongTimeout, this.sendTimeout, this.resendLimit, this.minimalPingPongDelay);
 		this.serverSB = cm.getSendBuffer();
 		this.serverPP = cm.getPingPong();
 		return cm;
 	}
-	protected DummyConnectionManager initClientServerConnectionManager() {
-		DummyConnectionManager cm = new DummyConnectionManager(this.controllerClient, this.clientServerConn, this.esClient, this.pingPongTimeout, this.sendTimeout, this.resendLimit, this.minimalPingPongDelay);
-		this.clientSB = cm.getSendBuffer();
-		this.clientPP = cm.getPingPong();
+	protected DummyConnectionManager initDeviceServerConnectionManager() {
+		DummyConnectionManager cm = new DummyConnectionManager(this.controllerDevice, this.DeviceServerConn, this.esDevice, this.pingPongTimeout, this.sendTimeout, this.resendLimit, this.minimalPingPongDelay);
+		this.DeviceSB = cm.getSendBuffer();
+		this.DevicePP = cm.getPingPong();
 		return cm;
 	}
 	
 	public void close() {
-		this.serverClientConnManager.close();
-		this.clientServerConnManager.close();
+		this.serverDeviceConnManager.close();
+		this.DeviceServerConnManager.close();
 	}
 	
 	public int getPingPongSuccessfulConsecutiveCycleCount() {
-		return Math.max(this.serverClientConnManager.getPingPongSuccessfulConsecutiveCycleCount(), this.clientServerConnManager.getPingPongSuccessfulConsecutiveCycleCount());
+		return Math.max(this.serverDeviceConnManager.getPingPongSuccessfulConsecutiveCycleCount(), this.DeviceServerConnManager.getPingPongSuccessfulConsecutiveCycleCount());
 	}
 	public int getPingPongSuccessfulCycleCount() {
-		return Math.max(this.serverClientConnManager.getPingPongSuccessfulCycleCount(), this.clientServerConnManager.getPingPongSuccessfulCycleCount());
+		return Math.max(this.serverDeviceConnManager.getPingPongSuccessfulCycleCount(), this.DeviceServerConnManager.getPingPongSuccessfulCycleCount());
 	}
 	public int getSendBufferSuccessfulConsecutiveCycleCount() {
-		return Math.max(this.serverClientConnManager.getSendBufferSuccessfulConsecutiveCycleCount(), this.clientServerConnManager.getSendBufferSuccessfulConsecutiveCycleCount());
+		return Math.max(this.serverDeviceConnManager.getSendBufferSuccessfulConsecutiveCycleCount(), this.DeviceServerConnManager.getSendBufferSuccessfulConsecutiveCycleCount());
 	}
 	public int getSendBufferSuccessfulCycleCount() {
-		return Math.max(this.serverClientConnManager.getSendBufferSuccessfulCycleCount(), this.clientServerConnManager.getSendBufferSuccessfulCycleCount());
+		return Math.max(this.serverDeviceConnManager.getSendBufferSuccessfulCycleCount(), this.DeviceServerConnManager.getSendBufferSuccessfulCycleCount());
 	}
 	public int getServerSendBufferSuccessfulConsecutiveCycleCount() {
-		return this.serverClientConnManager.getSendBufferSuccessfulConsecutiveCycleCount();
+		return this.serverDeviceConnManager.getSendBufferSuccessfulConsecutiveCycleCount();
 	}
 	public int getServerSendBufferSuccessfulCycleCount() {
-		return this.serverClientConnManager.getSendBufferSuccessfulCycleCount();
+		return this.serverDeviceConnManager.getSendBufferSuccessfulCycleCount();
 	}
-	public int getClientSendBufferSuccessfulConsecutiveCycleCount() {
-		return this.clientServerConnManager.getSendBufferSuccessfulConsecutiveCycleCount();
+	public int getDeviceSendBufferSuccessfulConsecutiveCycleCount() {
+		return this.DeviceServerConnManager.getSendBufferSuccessfulConsecutiveCycleCount();
 	}
-	public int getClientSendBufferSuccessfulCycleCount() {
-		return this.clientServerConnManager.getSendBufferSuccessfulCycleCount();
+	public int getDeviceSendBufferSuccessfulCycleCount() {
+		return this.DeviceServerConnManager.getSendBufferSuccessfulCycleCount();
 	}
 	
-	public void messageToClient(IMessage message) {
-		this.serverClientConnManager.sendMessage(message);
+	public void messageToDevice(IMessage message) {
+		this.serverDeviceConnManager.sendMessage(message);
 	}
 	public void messageToServer(IMessage message) {
-		this.clientServerConnManager.sendMessage(message);
+		this.DeviceServerConnManager.sendMessage(message);
 	}
 	
 	public void serverWaitTillAcknowledgement() {
-		while (this.serverClientConnManager.getSendBuffer().isBlocked()) {
+		while (this.serverDeviceConnManager.getSendBuffer().isBlocked()) {
 			
 		}
 	}
 	
-	public void clientWaitTillAcknowledgement() {
-		while (this.clientServerConnManager.getSendBuffer().isBlocked()) {
+	public void DeviceWaitTillAcknowledgement() {
+		while (this.DeviceServerConnManager.getSendBuffer().isBlocked()) {
 			
 		}
 	}

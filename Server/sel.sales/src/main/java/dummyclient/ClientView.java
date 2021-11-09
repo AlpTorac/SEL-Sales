@@ -44,13 +44,13 @@ public class ClientView extends View {
 	}
 
 	@Override
-	public void refreshDiscoveredClients() {
-		System.out.println("Discovered clients refreshed");
+	public void refreshDiscoveredDevices() {
+		System.out.println("Discovered Devices refreshed");
 	}
 
 	@Override
-	public void refreshKnownClients() {
-		System.out.println("Known clients refreshed");
+	public void refreshKnownDevices() {
+		System.out.println("Known Devices refreshed");
 	}
 
 	@Override

@@ -2,12 +2,7 @@ package test;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
-
-import entrypoint.MainApp;
-import view.IView;
 
 public final class GeneralTestUtilityClass {
 	/**

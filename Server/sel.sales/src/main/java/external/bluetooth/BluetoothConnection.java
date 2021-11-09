@@ -47,7 +47,7 @@ public class BluetoothConnection implements IConnection {
 	}
 
 	@Override
-	public String getTargetClientAddress() {
+	public String getTargetDeviceAddress() {
 		return this.targetAddress;
 	}
 

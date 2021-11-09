@@ -1,10 +1,10 @@
 package external;
 
 import model.ExternalUpdatable;
-import model.KnownClientUpdatable;
+import model.KnownDeviceUpdatable;
 import model.SettingsUpdatable;
 
-public interface IExternal extends ExternalUpdatable, KnownClientUpdatable, SettingsUpdatable {
+public interface IExternal extends ExternalUpdatable, KnownDeviceUpdatable, SettingsUpdatable {
 	void close();
 	long getMinimalPingPongDelay();
 	int getResendLimit();

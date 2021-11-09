@@ -12,26 +12,23 @@ import java.util.ArrayList;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import model.IModel;
-import model.Model;
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
 import model.dish.serialise.FileDishMenuSerialiser;
-import model.dish.serialise.IDishMenuItemSerialiser;
 import model.filewriter.DishMenuFile;
 import model.filewriter.FileDishMenuItemSerialiser;
-import model.filewriter.OrderFile;
 import model.settings.SettingsField;
+import server.model.IServerModel;
+import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class DishMenuWriterTest {
-	private static IModel model;
+	private static IServerModel model;
 	
 	private BufferedReader r;
 	
@@ -59,14 +56,14 @@ class DishMenuWriterTest {
 	private static String testFolder = "src"+File.separator+"test"+File.separator+"resources";
 	
 	private void initModel() {
-		model = new Model();
+		model = new ServerModel();
 		model.addSetting(SettingsField.DISH_MENU_FOLDER, testFolder);
 	}
 	
 	@BeforeEach
 	void startUp() {
 		GeneralTestUtilityClass.deletePathContent(new File(testFolder));
-		model = new Model();
+		model = new ServerModel();
 		model.addSetting(SettingsField.DISH_MENU_FOLDER, testFolder);
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));

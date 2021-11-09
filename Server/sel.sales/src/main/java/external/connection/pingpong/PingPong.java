@@ -134,7 +134,7 @@ public abstract class PingPong implements IPingPong {
 		System.out.println("Reporting disconnection");
 		if (this.disconListener != null) {
 			System.out.println("Disconnection listener not null");
-			this.disconListener.connectionLost(conn.getTargetClientAddress());
+			this.disconListener.connectionLost(conn.getTargetDeviceAddress());
 			System.out.println("Reported disconnection");
 		}
 	}

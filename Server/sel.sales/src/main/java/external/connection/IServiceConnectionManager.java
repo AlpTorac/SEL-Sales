@@ -3,15 +3,15 @@ package external.connection;
 import java.io.Closeable;
 
 import external.message.IMessage;
-import model.connectivity.IClientData;
+import model.connectivity.IDeviceData;
 
 public interface IServiceConnectionManager extends Closeable, IHasConnectionSettings {
-	IConnection getConnection(String clientAddress);
-	boolean isConnectionAllowed(String clientAddress);
+	IConnection getConnection(String deviceAddress);
+	boolean isConnectionAllowed(String deviceAddress);
 	boolean isClosed();
 	void close();
-	void sendMessageTo(String clientAddress, IMessage message);
+	void sendMessageTo(String deviceAddress, IMessage message);
 	void broadcastMessage(IMessage message);
 	void makeNewConnectionThread();
-	void receiveKnownClientData(IClientData[] clientData);
+	void receiveKnownDeviceData(IDeviceData[] deviceData);
 }

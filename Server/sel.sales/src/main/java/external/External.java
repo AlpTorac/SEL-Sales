@@ -54,15 +54,15 @@ public abstract class External implements IExternal {
 		System.out.println("Service set");
 	}
 	@Override
-	public void rediscoverClients(Runnable afterDiscoveryAction) {
+	public void rediscoverDevices(Runnable afterDiscoveryAction) {
 		if (this.getService() != null) {
-			this.getService().getClientManager().discoverClients(afterDiscoveryAction);
+			this.getService().getDeviceManager().discoverDevices(afterDiscoveryAction);
 		}
 	}
 	@Override
-	public void refreshKnownClients() {
+	public void refreshKnownDevices() {
 		if (this.getService() != null) {
-			this.getService().receiveKnownClientData(this.model.getAllKnownClientData());
+			this.getService().receiveKnownDeviceData(this.model.getAllKnownDeviceData());
 		}
 	}
 	@Override

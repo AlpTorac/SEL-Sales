@@ -1,7 +1,5 @@
 package test.model.dish;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Assertions;

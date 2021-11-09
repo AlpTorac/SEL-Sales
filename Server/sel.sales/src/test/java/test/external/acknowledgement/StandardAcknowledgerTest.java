@@ -1,11 +1,6 @@
 package test.external.acknowledgement;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +32,7 @@ class StandardAcknowledgerTest {
 	
 	@BeforeEach
 	void prep() {
-		this.senderConn = new DummyConnection("clientAddress");
+		this.senderConn = new DummyConnection("DeviceAddress");
 		this.receiverConn = new DummyConnection("senderAddress");
 		this.senderConn.setInputTarget(this.receiverConn.getInputStream());
 		this.acknowledger = new StandardAcknowledger(senderConn);

@@ -1,21 +1,16 @@
 package dummyclient;
 
-import controller.BusinessEvent;
 import controller.Controller;
-import controller.StatusEvent;
-import controller.handler.AddDiscoveredClientHandler;
-import controller.handler.AddDishHandler;
-import controller.handler.AddKnownClientHandler;
+import controller.GeneralEvent;
+import controller.handler.AddDiscoveredDeviceHandler;
+import controller.handler.AddKnownDeviceHandler;
 import controller.handler.AddOrderHandler;
-import controller.handler.AllowKnownClientHandler;
-import controller.handler.BlockKnownClientHandler;
-import controller.handler.ClientConnectedHandler;
-import controller.handler.ClientDisconnectedHandler;
-import controller.handler.ConfirmOrderHandler;
-import controller.handler.DiscoverClientsHandler;
-import controller.handler.EditDishHandler;
-import controller.handler.RemoveDishHandler;
-import controller.handler.RemoveKnownClientHandler;
+import controller.handler.AllowKnownDeviceHandler;
+import controller.handler.BlockKnownDeviceHandler;
+import controller.handler.DeviceConnectedHandler;
+import controller.handler.DeviceDisconnectedHandler;
+import controller.handler.DiscoverDevicesHandler;
+import controller.handler.RemoveKnownDeviceHandler;
 import controller.handler.RemoveOrderHandler;
 import controller.manager.ApplicationEventManager;
 import controller.manager.IApplicationEventManager;
@@ -31,23 +26,19 @@ public class ClientController extends Controller {
 	@Override
 	protected IApplicationEventManager initEventManager() {
 		ApplicationEventManager bem = new ApplicationEventManager();
-		bem.addApplicationEventToHandlerMapping(BusinessEvent.ADD_DISH, new AddDishHandler(this));
-		bem.addApplicationEventToHandlerMapping(BusinessEvent.REMOVE_DISH, new RemoveDishHandler(this));
-		bem.addApplicationEventToHandlerMapping(BusinessEvent.EDIT_DISH, new EditDishHandler(this));
-		bem.addApplicationEventToHandlerMapping(BusinessEvent.ADD_ORDER, new AddOrderHandler(this));
-		bem.addApplicationEventToHandlerMapping(BusinessEvent.CONFIRM_ORDER, new ConfirmOrderHandler(this));
-		bem.addApplicationEventToHandlerMapping(BusinessEvent.REMOVE_ORDER, new RemoveOrderHandler(this));
+		bem.addApplicationEventToHandlerMapping(GeneralEvent.ADD_ORDER, new AddOrderHandler(this));
+		bem.addApplicationEventToHandlerMapping(GeneralEvent.REMOVE_ORDER, new RemoveOrderHandler(this));
 		
-		bem.addApplicationEventToHandlerMapping(BusinessEvent.DISCOVER_CLIENTS, new DiscoverClientsHandler(this));
+		bem.addApplicationEventToHandlerMapping(GeneralEvent.DISCOVER_DEVICES, new DiscoverDevicesHandler(this));
 		
-		bem.addApplicationEventToHandlerMapping(StatusEvent.KNOWN_CLIENT_ADDED, new AddKnownClientHandler(this));
-		bem.addApplicationEventToHandlerMapping(StatusEvent.KNOWN_CLIENT_REMOVED, new RemoveKnownClientHandler(this));
-		bem.addApplicationEventToHandlerMapping(StatusEvent.KNOWN_CLIENT_ALLOWED, new AllowKnownClientHandler(this));
-		bem.addApplicationEventToHandlerMapping(StatusEvent.KNOWN_CLIENT_BLOCKED, new BlockKnownClientHandler(this));
+		bem.addApplicationEventToHandlerMapping(GeneralEvent.KNOWN_DEVICE_ADDED, new AddKnownDeviceHandler(this));
+		bem.addApplicationEventToHandlerMapping(GeneralEvent.KNOWN_DEVICE_REMOVED, new RemoveKnownDeviceHandler(this));
+		bem.addApplicationEventToHandlerMapping(GeneralEvent.KNOWN_DEVICE_ALLOWED, new AllowKnownDeviceHandler(this));
+		bem.addApplicationEventToHandlerMapping(GeneralEvent.KNOWN_DEVICE_BLOCKED, new BlockKnownDeviceHandler(this));
 		
-		bem.addApplicationEventToHandlerMapping(StatusEvent.CLIENT_DISCOVERED, new AddDiscoveredClientHandler(this));
-		bem.addApplicationEventToHandlerMapping(StatusEvent.CLIENT_CONNECTED, new ClientConnectedHandler(this));
-		bem.addApplicationEventToHandlerMapping(StatusEvent.CLIENT_DISCONNECTED, new ClientDisconnectedHandler(this));
+		bem.addApplicationEventToHandlerMapping(GeneralEvent.DEVICE_DISCOVERED, new AddDiscoveredDeviceHandler(this));
+		bem.addApplicationEventToHandlerMapping(GeneralEvent.DEVICE_CONNECTED, new DeviceConnectedHandler(this));
+		bem.addApplicationEventToHandlerMapping(GeneralEvent.DEVICE_DISCONNECTED, new DeviceDisconnectedHandler(this));
 		return bem;
 	}
 

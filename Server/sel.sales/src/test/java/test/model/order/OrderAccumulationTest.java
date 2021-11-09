@@ -1,24 +1,18 @@
 package test.model.order;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.math.BigDecimal;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import model.IModel;
-import model.Model;
-import model.dish.IDishMenuItemDataFactory;
-import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
+import server.model.IServerModel;
+import server.model.ServerModel;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class OrderAccumulationTest {
-	private static IModel model;
+	private static IServerModel model;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -43,7 +37,7 @@ class OrderAccumulationTest {
 	
 	@BeforeEach
 	void startUp() {
-		model = new Model();
+		model = new ServerModel();
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));

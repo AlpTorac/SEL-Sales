@@ -1,7 +1,5 @@
 package test.model.settings;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -14,25 +12,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import model.IModel;
-import model.Model;
-import model.connectivity.FileClientDataParser;
-import model.connectivity.IClientData;
+import model.connectivity.FileDeviceDataParser;
+import model.connectivity.IDeviceData;
 import model.dish.IDishMenuData;
-import model.dish.serialise.FileDishMenuSerialiser;
-import model.dish.serialise.IDishMenuItemSerialiser;
-import model.dish.serialise.IDishMenuParser;
-import model.dish.serialise.IDishMenuSerialiser;
 import model.filemanager.FileManager;
 import model.filemanager.IFileManager;
 import model.filemanager.SettingsFile;
 import model.filemanager.StandardSettingsFile;
-import model.filewriter.ClientDataFile;
+import model.filewriter.DeviceDataFile;
 import model.filewriter.DishMenuFile;
 import model.filewriter.FileAccess;
-import model.filewriter.FileDishMenuItemSerialiser;
 import model.filewriter.OrderFile;
-import model.filewriter.StandardClientDataFile;
+import model.filewriter.StandardDeviceDataFile;
 import model.filewriter.StandardDishMenuFile;
 import model.filewriter.StandardOrderFile;
 import model.order.IOrderData;
@@ -44,19 +35,21 @@ import model.settings.Settings;
 import model.settings.SettingsField;
 import model.settings.StandardSettingsParser;
 import model.settings.StandardSettingsSerialiser;
+import server.model.IServerModel;
+import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
 
 class FileManagerPreloadTest {
 	private SettingsFile sf;
 	private DishMenuFile dmf;
 	private OrderFile of;
-	private ClientDataFile cdf;
+	private DeviceDataFile cdf;
 	
 	private ISettings settings;
 	private ISettingsSerialiser settingSerialiser;
 	private ISettingsParser settingsParser;
 	
-	private IModel model;
+	private IServerModel model;
 	private Collection<HasSettingsField> part;
 	private IFileManager fm;
 	
@@ -113,10 +106,10 @@ class FileManagerPreloadTest {
 	@BeforeEach
 	void prep() {
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
-		model = new Model();
+		model = new ServerModel();
 		this.addMenuToModel();
 		dishMenuData = model.getMenuData();
-		model = new Model();
+		model = new ServerModel();
 		
 		fm = new FileManager(model, this.testFolderAddress);
 //		fm = GeneralTestUtilityClass.getPrivateFieldValue(model, "fileManager");
@@ -126,7 +119,7 @@ class FileManagerPreloadTest {
 		dmf = new StandardDishMenuFile(this.testFolderAddress);
 		sf = new StandardSettingsFile(this.testFolderAddress);
 		of = new StandardOrderFile(this.testFolderAddress);
-		cdf = new StandardClientDataFile(this.testFolderAddress);
+		cdf = new StandardDeviceDataFile(this.testFolderAddress);
 		settingSerialiser = new StandardSettingsSerialiser();
 		settingsParser = new StandardSettingsParser();
 		this.fillSettingsFile();
@@ -241,8 +234,8 @@ class FileManagerPreloadTest {
 	}
 	
 	@Test
-	void loadExistingKnownClientsTest() {
-		String fileAddress = testFolderAddress+File.separator+"testClientFile.txt";
+	void loadExistingKnownDevicesTest() {
+		String fileAddress = testFolderAddress+File.separator+"testDeviceFile.txt";
 		File f = new File(fileAddress);
 		Assertions.assertFalse(f.length() > 0);
 		try {
@@ -271,9 +264,9 @@ class FileManagerPreloadTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		fm.loadKnownClients(fileAddress);
-		IClientData[] readClientData = model.getAllKnownClientData();
-		IClientData[] expectedClientData = (new FileClientDataParser()).parseClientDatas(fileContent);
-		GeneralTestUtilityClass.arrayContentEquals(readClientData, expectedClientData);
+		fm.loadKnownDevices(fileAddress);
+		IDeviceData[] readDeviceData = model.getAllKnownDeviceData();
+		IDeviceData[] expectedDeviceData = (new FileDeviceDataParser()).parseDeviceDatas(fileContent);
+		GeneralTestUtilityClass.arrayContentEquals(readDeviceData, expectedDeviceData);
 	}
 }

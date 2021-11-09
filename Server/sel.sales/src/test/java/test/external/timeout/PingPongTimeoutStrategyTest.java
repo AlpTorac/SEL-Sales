@@ -1,7 +1,5 @@
 package test.external.timeout;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
@@ -13,8 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import external.connection.timeout.FixTimeoutStrategy;
-import external.connection.timeout.ITimeoutStrategy;
 import external.connection.timeout.PingPongTimeoutStrategy;
 
 class PingPongTimeoutStrategyTest {

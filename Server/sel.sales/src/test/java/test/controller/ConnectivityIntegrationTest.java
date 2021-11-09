@@ -1,7 +1,5 @@
 package test.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.AfterEach;
@@ -9,33 +7,33 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import controller.BusinessEvent;
-import controller.IController;
-import controller.MainController;
-import model.IModel;
-import model.Model;
-import model.connectivity.ClientData;
-import model.connectivity.IClientData;
+import controller.GeneralEvent;
+import model.connectivity.DeviceData;
+import model.connectivity.IDeviceData;
 import model.connectivity.IConnectivityManager;
 import model.order.IOrderData;
+import server.controller.IServerController;
+import server.controller.StandardServerController;
+import server.model.IServerModel;
+import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
 
 class ConnectivityIntegrationTest {
 
-	private IModel model;
-	private IController controller;
+	private IServerModel model;
+	private IServerController controller;
 	private IConnectivityManager connManager;
 	
-	private IClientData discoveredClient1Data;
-	private IClientData discoveredClient2Data;
+	private IDeviceData discoveredDevice1Data;
+	private IDeviceData discoveredDevice2Data;
 	
-	private IClientData knownClient1Data;
-	private IClientData knownClient2Data;
+	private IDeviceData knownDevice1Data;
+	private IDeviceData knownDevice2Data;
 	
-	private String client1Name;
-	private String client1Address;
-	private String client2Name;
-	private String client2Address;
+	private String Device1Name;
+	private String Device1Address;
+	private String Device2Name;
+	private String Device2Address;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -58,18 +56,18 @@ class ConnectivityIntegrationTest {
 	@BeforeEach
 	void prep() {
 		init();
-		client1Name = "c1n";
-		client1Address = "c1a";
-		client2Name = "c2n";
-		client2Address = "c2a";
-		discoveredClient1Data = new ClientData(client1Name,client1Address,false,false);
-		discoveredClient2Data = new ClientData(client2Name,client2Address,false,false);
-		knownClient1Data = new ClientData(client1Name,client1Address,true,false);
-		knownClient2Data = new ClientData(client2Name,client2Address,true,false);
-		controller.getModel().addDiscoveredClient(client1Name, client1Address);
-		controller.getModel().addDiscoveredClient(client2Name, client2Address);
-		controller.getModel().addKnownClient(client1Address);
-		controller.getModel().addKnownClient(client2Address);
+		Device1Name = "c1n";
+		Device1Address = "c1a";
+		Device2Name = "c2n";
+		Device2Address = "c2a";
+		discoveredDevice1Data = new DeviceData(Device1Name,Device1Address,false,false);
+		discoveredDevice2Data = new DeviceData(Device2Name,Device2Address,false,false);
+		knownDevice1Data = new DeviceData(Device1Name,Device1Address,true,false);
+		knownDevice2Data = new DeviceData(Device2Name,Device2Address,true,false);
+		controller.getModel().addDiscoveredDevice(Device1Name, Device1Address);
+		controller.getModel().addDiscoveredDevice(Device2Name, Device2Address);
+		controller.getModel().addKnownDevice(Device1Address);
+		controller.getModel().addKnownDevice(Device2Address);
 	}
 	
 	@AfterEach
@@ -78,12 +76,12 @@ class ConnectivityIntegrationTest {
 	}
 	
 	private void initConnManager() {
-		connManager = GeneralTestUtilityClass.getPrivateFieldValue((Model) model, "connManager");
+		connManager = GeneralTestUtilityClass.getPrivateFieldValue((ServerModel) model, "connManager");
 	}
 	
 	private void init() {
-		model = new Model();
-		controller = new MainController(model);
+		model = new ServerModel();
+		controller = new StandardServerController(model);
 		
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
@@ -93,161 +91,161 @@ class ConnectivityIntegrationTest {
 	}
 	
 	@Test
-	void addDiscoveredClientTest() {
+	void addDiscoveredDeviceTest() {
 		init();
-		controller.getModel().addDiscoveredClient(client1Name, client1Address);
-		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(connManager.getAllDiscoveredClientData(), discoveredClient1Data,
+		controller.getModel().addDiscoveredDevice(Device1Name, Device1Address);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(connManager.getAllDiscoveredDeviceData(), discoveredDevice1Data,
 				(dc1, dc2) -> {
-					return dc1.getClientName().equals(dc2.getClientName()) && dc1.getClientAddress().equals(dc2.getClientAddress());
+					return dc1.getDeviceName().equals(dc2.getDeviceName()) && dc1.getDeviceAddress().equals(dc2.getDeviceAddress());
 				}));
-		Assertions.assertFalse(GeneralTestUtilityClass.arrayContains(connManager.getAllDiscoveredClientData(), discoveredClient2Data,
+		Assertions.assertFalse(GeneralTestUtilityClass.arrayContains(connManager.getAllDiscoveredDeviceData(), discoveredDevice2Data,
 				(dc1, dc2) -> {
-					return dc1.getClientName().equals(dc2.getClientName()) && dc1.getClientAddress().equals(dc2.getClientAddress());
+					return dc1.getDeviceName().equals(dc2.getDeviceName()) && dc1.getDeviceAddress().equals(dc2.getDeviceAddress());
 				}));
-		Assertions.assertFalse(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownClientData(), discoveredClient1Data,
+		Assertions.assertFalse(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownDeviceData(), discoveredDevice1Data,
 				(kc, dc) -> {
-					return kc.getClientName().equals(dc.getClientName()) && kc.getClientAddress().equals(dc.getClientAddress());
+					return kc.getDeviceName().equals(dc.getDeviceName()) && kc.getDeviceAddress().equals(dc.getDeviceAddress());
 				}));
 	}
 	
 	@Test
-	void addKnownClientTest() {
+	void addKnownDeviceTest() {
 		init();
-		controller.getModel().addDiscoveredClient(client1Name, client1Address);
-		controller.getModel().addDiscoveredClient(client2Name, client2Address);
-		controller.getModel().addKnownClient(client1Address);
-		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownClientData(), discoveredClient1Data,
+		controller.getModel().addDiscoveredDevice(Device1Name, Device1Address);
+		controller.getModel().addDiscoveredDevice(Device2Name, Device2Address);
+		controller.getModel().addKnownDevice(Device1Address);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownDeviceData(), discoveredDevice1Data,
 				(kc, dc) -> {
-					return kc.getClientName().equals(dc.getClientName()) && kc.getClientAddress().equals(dc.getClientAddress());
+					return kc.getDeviceName().equals(dc.getDeviceName()) && kc.getDeviceAddress().equals(dc.getDeviceAddress());
 				}));
-		Assertions.assertFalse(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownClientData(), discoveredClient2Data,
+		Assertions.assertFalse(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownDeviceData(), discoveredDevice2Data,
 				(kc, dc) -> {
-					return kc.getClientName().equals(dc.getClientName()) && kc.getClientAddress().equals(dc.getClientAddress());
-				}));
-	}
-	
-	@Test
-	void removeKnownClientTest() {
-		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownClientData(), discoveredClient1Data,
-				(kc, dc) -> {
-					return kc.getClientName().equals(dc.getClientName()) && kc.getClientAddress().equals(dc.getClientAddress());
-				}));
-		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownClientData(), discoveredClient2Data,
-				(kc, dc) -> {
-					return kc.getClientName().equals(dc.getClientName()) && kc.getClientAddress().equals(dc.getClientAddress());
-				}));
-		controller.getModel().removeKnownClient(client1Address);
-		Assertions.assertFalse(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownClientData(), discoveredClient1Data,
-				(kc, dc) -> {
-					return kc.getClientName().equals(dc.getClientName()) && kc.getClientAddress().equals(dc.getClientAddress());
-				}));
-		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownClientData(), discoveredClient2Data,
-				(kc, dc) -> {
-					return kc.getClientName().equals(dc.getClientName()) && kc.getClientAddress().equals(dc.getClientAddress());
-				}));
-		controller.getModel().removeKnownClient(client2Address);
-		Assertions.assertFalse(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownClientData(), discoveredClient1Data,
-				(kc, dc) -> {
-					return kc.getClientName().equals(dc.getClientName()) && kc.getClientAddress().equals(dc.getClientAddress());
-				}));
-		Assertions.assertFalse(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownClientData(), discoveredClient2Data,
-				(kc, dc) -> {
-					return kc.getClientName().equals(dc.getClientName()) && kc.getClientAddress().equals(dc.getClientAddress());
+					return kc.getDeviceName().equals(dc.getDeviceName()) && kc.getDeviceAddress().equals(dc.getDeviceAddress());
 				}));
 	}
 	
 	@Test
-	void blockClientTest() {
-		Assertions.assertTrue(connManager.isAllowedToConnect(client1Address));
-		Assertions.assertTrue(connManager.isAllowedToConnect(client2Address));
-		controller.getModel().blockKnownClient(client1Address);
-		Assertions.assertFalse(connManager.isAllowedToConnect(client1Address));
-		Assertions.assertTrue(connManager.isAllowedToConnect(client2Address));
-		controller.getModel().blockKnownClient(client2Address);
-		Assertions.assertFalse(connManager.isAllowedToConnect(client1Address));
-		Assertions.assertFalse(connManager.isAllowedToConnect(client2Address));
+	void removeKnownDeviceTest() {
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownDeviceData(), discoveredDevice1Data,
+				(kc, dc) -> {
+					return kc.getDeviceName().equals(dc.getDeviceName()) && kc.getDeviceAddress().equals(dc.getDeviceAddress());
+				}));
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownDeviceData(), discoveredDevice2Data,
+				(kc, dc) -> {
+					return kc.getDeviceName().equals(dc.getDeviceName()) && kc.getDeviceAddress().equals(dc.getDeviceAddress());
+				}));
+		controller.getModel().removeKnownDevice(Device1Address);
+		Assertions.assertFalse(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownDeviceData(), discoveredDevice1Data,
+				(kc, dc) -> {
+					return kc.getDeviceName().equals(dc.getDeviceName()) && kc.getDeviceAddress().equals(dc.getDeviceAddress());
+				}));
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownDeviceData(), discoveredDevice2Data,
+				(kc, dc) -> {
+					return kc.getDeviceName().equals(dc.getDeviceName()) && kc.getDeviceAddress().equals(dc.getDeviceAddress());
+				}));
+		controller.getModel().removeKnownDevice(Device2Address);
+		Assertions.assertFalse(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownDeviceData(), discoveredDevice1Data,
+				(kc, dc) -> {
+					return kc.getDeviceName().equals(dc.getDeviceName()) && kc.getDeviceAddress().equals(dc.getDeviceAddress());
+				}));
+		Assertions.assertFalse(GeneralTestUtilityClass.arrayContains(connManager.getAllKnownDeviceData(), discoveredDevice2Data,
+				(kc, dc) -> {
+					return kc.getDeviceName().equals(dc.getDeviceName()) && kc.getDeviceAddress().equals(dc.getDeviceAddress());
+				}));
 	}
 	
 	@Test
-	void allowClientTest() {
-		controller.getModel().blockKnownClient(client1Address);
-		controller.getModel().blockKnownClient(client2Address);
-		Assertions.assertFalse(connManager.isAllowedToConnect(client1Address));
-		Assertions.assertFalse(connManager.isAllowedToConnect(client2Address));
+	void blockDeviceTest() {
+		Assertions.assertTrue(connManager.isAllowedToConnect(Device1Address));
+		Assertions.assertTrue(connManager.isAllowedToConnect(Device2Address));
+		controller.getModel().blockKnownDevice(Device1Address);
+		Assertions.assertFalse(connManager.isAllowedToConnect(Device1Address));
+		Assertions.assertTrue(connManager.isAllowedToConnect(Device2Address));
+		controller.getModel().blockKnownDevice(Device2Address);
+		Assertions.assertFalse(connManager.isAllowedToConnect(Device1Address));
+		Assertions.assertFalse(connManager.isAllowedToConnect(Device2Address));
+	}
+	
+	@Test
+	void allowDeviceTest() {
+		controller.getModel().blockKnownDevice(Device1Address);
+		controller.getModel().blockKnownDevice(Device2Address);
+		Assertions.assertFalse(connManager.isAllowedToConnect(Device1Address));
+		Assertions.assertFalse(connManager.isAllowedToConnect(Device2Address));
 		
-		controller.getModel().allowKnownClient(client1Address);
-		Assertions.assertTrue(connManager.isAllowedToConnect(client1Address));
-		Assertions.assertFalse(connManager.isAllowedToConnect(client2Address));
+		controller.getModel().allowKnownDevice(Device1Address);
+		Assertions.assertTrue(connManager.isAllowedToConnect(Device1Address));
+		Assertions.assertFalse(connManager.isAllowedToConnect(Device2Address));
 		
-		controller.getModel().allowKnownClient(client2Address);
-		Assertions.assertTrue(connManager.isAllowedToConnect(client1Address));
-		Assertions.assertTrue(connManager.isAllowedToConnect(client2Address));
+		controller.getModel().allowKnownDevice(Device2Address);
+		Assertions.assertTrue(connManager.isAllowedToConnect(Device1Address));
+		Assertions.assertTrue(connManager.isAllowedToConnect(Device2Address));
 	}
 	
 	@Test
 	void requestRediscoveryTest() {
-		connManager.requestClientRediscovery();
-		Assertions.assertTrue(connManager.isClientRediscoveryRequested());
+		connManager.requestDeviceRediscovery();
+		Assertions.assertTrue(connManager.isDeviceRediscoveryRequested());
 	}
 	
 	@Test
 	void isConnectedTest() {
-		Assertions.assertFalse(connManager.isConnected(client1Address));
-		Assertions.assertFalse(connManager.isConnected(client2Address));
+		Assertions.assertFalse(connManager.isConnected(Device1Address));
+		Assertions.assertFalse(connManager.isConnected(Device2Address));
 		
-		controller.getModel().clientConnected(client1Address);
-		Assertions.assertTrue(connManager.isConnected(client1Address));
-		Assertions.assertFalse(connManager.isConnected(client2Address));
+		controller.getModel().deviceConnected(Device1Address);
+		Assertions.assertTrue(connManager.isConnected(Device1Address));
+		Assertions.assertFalse(connManager.isConnected(Device2Address));
 		
-		controller.getModel().clientConnected(client2Address);
-		Assertions.assertTrue(connManager.isConnected(client1Address));
-		Assertions.assertTrue(connManager.isConnected(client2Address));
+		controller.getModel().deviceConnected(Device2Address);
+		Assertions.assertTrue(connManager.isConnected(Device1Address));
+		Assertions.assertTrue(connManager.isConnected(Device2Address));
 		
-		controller.getModel().clientDisconnected(client1Address);
-		Assertions.assertFalse(connManager.isConnected(client1Address));
-		Assertions.assertTrue(connManager.isConnected(client2Address));
+		controller.getModel().deviceDisconnected(Device1Address);
+		Assertions.assertFalse(connManager.isConnected(Device1Address));
+		Assertions.assertTrue(connManager.isConnected(Device2Address));
 		
-		controller.getModel().clientDisconnected(client2Address);
-		Assertions.assertFalse(connManager.isConnected(client1Address));
-		Assertions.assertFalse(connManager.isConnected(client2Address));
+		controller.getModel().deviceDisconnected(Device2Address);
+		Assertions.assertFalse(connManager.isConnected(Device1Address));
+		Assertions.assertFalse(connManager.isConnected(Device2Address));
 	}
 	
 	@Test
-	void getKnownClientCountTest() {
-		Assertions.assertEquals(2, connManager.getKnownClientCount());
-		controller.getModel().removeKnownClient(client1Address);
-		Assertions.assertEquals(1, connManager.getKnownClientCount());
-		controller.getModel().removeKnownClient(client2Address);
-		Assertions.assertEquals(0, connManager.getKnownClientCount());
+	void getKnownDeviceCountTest() {
+		Assertions.assertEquals(2, connManager.getKnownDeviceCount());
+		controller.getModel().removeKnownDevice(Device1Address);
+		Assertions.assertEquals(1, connManager.getKnownDeviceCount());
+		controller.getModel().removeKnownDevice(Device2Address);
+		Assertions.assertEquals(0, connManager.getKnownDeviceCount());
 	}
 	
 	@Test
-	void getClientDataTest() {
+	void getDeviceDataTest() {
 		init();
-		Assertions.assertEquals(connManager.getAllDiscoveredClientData().length, 0);
-		Assertions.assertEquals(connManager.getAllKnownClientData().length, 0);
-		controller.getModel().addDiscoveredClient(client1Name, client1Address);
-		Assertions.assertEquals(connManager.getAllDiscoveredClientData().length, 1);
-		Assertions.assertTrue(connManager.getAllDiscoveredClientData()[0].equals(discoveredClient1Data));
-		Assertions.assertEquals(connManager.getAllKnownClientData().length, 0);
-		controller.getModel().addDiscoveredClient(client2Name, client2Address);
-		Assertions.assertEquals(connManager.getAllDiscoveredClientData().length, 2);
-		Assertions.assertTrue(connManager.getAllDiscoveredClientData()[0].equals(discoveredClient1Data));
-		Assertions.assertTrue(connManager.getAllDiscoveredClientData()[1].equals(discoveredClient2Data));
-		Assertions.assertEquals(connManager.getAllKnownClientData().length, 0);
-		controller.getModel().addKnownClient(client1Address);
-		Assertions.assertEquals(connManager.getAllDiscoveredClientData().length, 2);
-		Assertions.assertTrue(connManager.getAllDiscoveredClientData()[0].equals(discoveredClient1Data));
-		Assertions.assertTrue(connManager.getAllDiscoveredClientData()[1].equals(discoveredClient2Data));
-		Assertions.assertEquals(connManager.getAllKnownClientData().length, 1);
-		Assertions.assertTrue(connManager.getAllKnownClientData()[0].equals(knownClient1Data));
-		controller.getModel().addKnownClient(client2Address);
-		Assertions.assertEquals(connManager.getAllDiscoveredClientData().length, 2);
-		Assertions.assertTrue(connManager.getAllDiscoveredClientData()[0].equals(discoveredClient1Data));
-		Assertions.assertTrue(connManager.getAllDiscoveredClientData()[1].equals(discoveredClient2Data));
-		Assertions.assertEquals(connManager.getAllKnownClientData().length, 2);
-		Assertions.assertTrue(connManager.getAllKnownClientData()[0].equals(knownClient1Data));
-		Assertions.assertTrue(connManager.getAllKnownClientData()[1].equals(knownClient2Data));
+		Assertions.assertEquals(connManager.getAllDiscoveredDeviceData().length, 0);
+		Assertions.assertEquals(connManager.getAllKnownDeviceData().length, 0);
+		controller.getModel().addDiscoveredDevice(Device1Name, Device1Address);
+		Assertions.assertEquals(connManager.getAllDiscoveredDeviceData().length, 1);
+		Assertions.assertTrue(connManager.getAllDiscoveredDeviceData()[0].equals(discoveredDevice1Data));
+		Assertions.assertEquals(connManager.getAllKnownDeviceData().length, 0);
+		controller.getModel().addDiscoveredDevice(Device2Name, Device2Address);
+		Assertions.assertEquals(connManager.getAllDiscoveredDeviceData().length, 2);
+		Assertions.assertTrue(connManager.getAllDiscoveredDeviceData()[0].equals(discoveredDevice1Data));
+		Assertions.assertTrue(connManager.getAllDiscoveredDeviceData()[1].equals(discoveredDevice2Data));
+		Assertions.assertEquals(connManager.getAllKnownDeviceData().length, 0);
+		controller.getModel().addKnownDevice(Device1Address);
+		Assertions.assertEquals(connManager.getAllDiscoveredDeviceData().length, 2);
+		Assertions.assertTrue(connManager.getAllDiscoveredDeviceData()[0].equals(discoveredDevice1Data));
+		Assertions.assertTrue(connManager.getAllDiscoveredDeviceData()[1].equals(discoveredDevice2Data));
+		Assertions.assertEquals(connManager.getAllKnownDeviceData().length, 1);
+		Assertions.assertTrue(connManager.getAllKnownDeviceData()[0].equals(knownDevice1Data));
+		controller.getModel().addKnownDevice(Device2Address);
+		Assertions.assertEquals(connManager.getAllDiscoveredDeviceData().length, 2);
+		Assertions.assertTrue(connManager.getAllDiscoveredDeviceData()[0].equals(discoveredDevice1Data));
+		Assertions.assertTrue(connManager.getAllDiscoveredDeviceData()[1].equals(discoveredDevice2Data));
+		Assertions.assertEquals(connManager.getAllKnownDeviceData().length, 2);
+		Assertions.assertTrue(connManager.getAllKnownDeviceData()[0].equals(knownDevice1Data));
+		Assertions.assertTrue(connManager.getAllKnownDeviceData()[1].equals(knownDevice2Data));
 	}
 	
 	@Test
@@ -259,9 +257,9 @@ class ConnectivityIntegrationTest {
 		String serialisedOrder2 = "order6#20200813000000183#1#1:item3,5;item3,4;";
 		String serialisedOrder3 = "order7#20200909112233937#0#0:item1,2;item2,5;";
 		
-		controller.handleApplicationEvent(BusinessEvent.ADD_ORDER, new Object[] {serialisedOrder1});
-		controller.handleApplicationEvent(BusinessEvent.ADD_ORDER, new Object[] {serialisedOrder2});
-		controller.handleApplicationEvent(BusinessEvent.ADD_ORDER, new Object[] {serialisedOrder3});
+		controller.handleApplicationEvent(GeneralEvent.ADD_ORDER, new Object[] {serialisedOrder1});
+		controller.handleApplicationEvent(GeneralEvent.ADD_ORDER, new Object[] {serialisedOrder2});
+		controller.handleApplicationEvent(GeneralEvent.ADD_ORDER, new Object[] {serialisedOrder3});
 		
 		Assertions.assertEquals(3, model.getAllUnconfirmedOrders().length);
 		Assertions.assertEquals(0, model.getAllConfirmedOrders().length);

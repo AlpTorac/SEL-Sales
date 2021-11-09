@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import external.connection.IConnection;
 import test.GeneralTestUtilityClass;
-import test.external.buffer.BufferUtilityClass;
 
 public class DummyConnection implements IConnection {
 
@@ -17,13 +16,13 @@ public class DummyConnection implements IConnection {
 	
 	private ISwithBuffer is;
 	private OSwithBuffer os;
-	private String clientAddress;
+	private String DeviceAddress;
 	private boolean isClosed = false;
 	
 	private long lag = 150;
 	
-	public DummyConnection(String clientAddress) {
-		this.clientAddress = clientAddress;
+	public DummyConnection(String DeviceAddress) {
+		this.DeviceAddress = DeviceAddress;
 		inputBuffer = new byte[1000];
 		outputBuffer = new byte[1000];
 		this.is = new ISwithBuffer(inputBuffer);
@@ -101,8 +100,8 @@ public class DummyConnection implements IConnection {
 	}
 
 	@Override
-	public String getTargetClientAddress() {
-		return this.clientAddress;
+	public String getTargetDeviceAddress() {
+		return this.DeviceAddress;
 	}
 
 	@Override

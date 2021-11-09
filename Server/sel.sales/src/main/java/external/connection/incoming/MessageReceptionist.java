@@ -7,7 +7,6 @@ import java.util.concurrent.ExecutorService;
 import controller.IController;
 import external.acknowledgement.StandardAcknowledger;
 import external.connection.IConnection;
-import external.connection.outgoing.BasicMessageSender;
 import external.connection.outgoing.ISendBuffer;
 import external.connection.pingpong.IPingPong;
 import external.handler.AcknowledgementHandler;

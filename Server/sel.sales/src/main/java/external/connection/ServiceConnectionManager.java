@@ -1,18 +1,16 @@
 package external.connection;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 
 import controller.IController;
-import external.client.IClientManager;
+import external.device.IDeviceManager;
 import external.message.IMessage;
-import model.connectivity.IClientData;
+import model.connectivity.IDeviceData;
 import model.settings.ISettings;
-import model.settings.SettingsField;
 
 public abstract class ServiceConnectionManager implements IServiceConnectionManager {
 
@@ -20,7 +18,7 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	
 	protected ExecutorService es;
 	private Collection<IConnectionManager> connectionManagers;
-	private IClientManager manager;
+	private IDeviceManager manager;
 	protected IController controller;
 	
 	private ConnectionListener connListener;
@@ -31,14 +29,14 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	private volatile long sendTimeout;
 	private volatile int resendLimit;
 	
-//	protected ServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es) {
+//	protected ServiceConnectionManager(IDeviceManager manager, IController controller, ExecutorService es) {
 //		this.es = es;
 //		this.manager = manager;
 //		this.controller = controller;
 //		this.connListener = this.createConnListener();
 //		this.disconListener = this.createDisconListener();
 //	}
-	protected ServiceConnectionManager(IClientManager manager, IController controller, ExecutorService es, long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
+	protected ServiceConnectionManager(IDeviceManager manager, IController controller, ExecutorService es, long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		this.connectionManagers = new CopyOnWriteArrayList<IConnectionManager>();
 		this.es = es;
 		this.manager = manager;
@@ -122,11 +120,11 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 		this.resendLimit = pingPongResendLimit;
 	}
 	
-	private IConnectionManager getConnectionManager(String clientAddress) {
+	private IConnectionManager getConnectionManager(String deviceAddress) {
 		Iterator<IConnectionManager> it = this.connectionManagers.iterator();
 		while (it.hasNext()) {
 			IConnectionManager current = it.next();
-			if (current.getConnection().getTargetClientAddress().equals(clientAddress)) {
+			if (current.getConnection().getTargetDeviceAddress().equals(deviceAddress)) {
 				return current;
 			}
 		}
@@ -134,8 +132,8 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	}
 	
 	@Override
-	public IConnection getConnection(String clientAddress) {
-		IConnectionManager cm = this.getConnectionManager(clientAddress);
+	public IConnection getConnection(String deviceAddress) {
+		IConnectionManager cm = this.getConnectionManager(deviceAddress);
 		if (cm != null) {
 			return cm.getConnection();
 		}
@@ -151,15 +149,15 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	protected abstract IConnectionManager createConnectionManager(IConnection conn, long pingPongTimeout, long sendTimeout, int resendLimit, long minimalPingPongDelay);
 	
 	protected void reportConnection(IConnection conn) {
-		this.connListener.connectionEstablished(conn.getTargetClientAddress());
+		this.connListener.connectionEstablished(conn.getTargetDeviceAddress());
 	}
 	
 	protected boolean addConnection(IConnection conn) {
-		if (this.isConnectionAllowed(conn.getTargetClientAddress())) {
+		if (this.isConnectionAllowed(conn.getTargetDeviceAddress())) {
 			System.out.println("Connection added");
 //			IConnectionManager connManager = this.createConnectionManager(conn, this.getPingPongTimeout(), this.getSendTimeout(), this.getResendLimit(), this.getMinimalPingPongDelay());
 			IConnectionManager connManager = this.createConnectionManager(conn, this.getPingPongTimeoutInMillis(), this.getSendTimeoutInMillis(), this.getPingPongResendLimit(), this.getMinimalPingPongDelay());
-//			this.connListener.connectionEstablished(conn.getTargetClientAddress());
+//			this.connListener.connectionEstablished(conn.getTargetDeviceAddress());
 			this.reportConnection(conn);
 			connManager.setDisconnectionListener(this.disconListener);
 			System.out.println("Connection manager added");
@@ -191,8 +189,8 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 	}
 
 	@Override
-	public boolean isConnectionAllowed(String clientAddress) {
-		return this.manager.isAllowedToConnect(clientAddress);
+	public boolean isConnectionAllowed(String deviceAddress) {
+		return this.manager.isAllowedToConnect(deviceAddress);
 	}
 	@Override
 	public void makeNewConnectionThread() {
@@ -209,25 +207,25 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 		this.manager = null;
 	}
 	@Override
-	public void sendMessageTo(String clientAddress, IMessage message) {
-		this.getConnectionManager(clientAddress).sendMessage(message);
+	public void sendMessageTo(String deviceAddress, IMessage message) {
+		this.getConnectionManager(deviceAddress).sendMessage(message);
 	}
 	@Override
 	public void broadcastMessage(IMessage message) {
 		this.connectionManagers.forEach(cm -> cm.sendMessage(message));
 	}
 	@Override
-	public void receiveKnownClientData(IClientData[] clientData) {
+	public void receiveKnownDeviceData(IDeviceData[] deviceData) {
 //		Collection<IConnectionManager> closedCMs = new ArrayList<IConnectionManager>();
-		for (IClientData d : clientData) {
+		for (IDeviceData d : deviceData) {
 			this.connectionManagers.stream()
 			.filter(cm -> !cm.isClosed())
-			.filter(cm -> cm.getConnection().getTargetClientAddress().equals(d.getClientAddress()))
+			.filter(cm -> cm.getConnection().getTargetDeviceAddress().equals(d.getDeviceAddress()))
 			.forEach(cm -> {
 				if (!d.getIsAllowedToConnect() || !d.getIsConnected()) {
 					cm.close();
 					this.connectionManagers.remove(cm);
-					this.disconListener.connectionLost(d.getClientAddress());
+					this.disconListener.connectionLost(d.getDeviceAddress());
 //					closedCMs.add(cm);
 				}
 			});

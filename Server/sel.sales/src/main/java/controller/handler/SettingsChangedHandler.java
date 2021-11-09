@@ -2,7 +2,7 @@ package controller.handler;
 
 import controller.IController;
 
-public class SettingsChangedHandler extends StatusEventHandler {
+public class SettingsChangedHandler extends ApplicationEventHandler {
 
 	public SettingsChangedHandler(IController controller) {
 		super(controller);

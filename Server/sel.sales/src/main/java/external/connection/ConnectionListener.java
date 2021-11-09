@@ -3,29 +3,29 @@ package external.connection;
 import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
 import controller.IController;
-import controller.StatusEvent;
+import controller.GeneralEvent;
 
 public class ConnectionListener implements IApplicationEventShooter {
 
 	private IController controller;
-	private String clientAddress;
+	private String deviceAddress;
 	
 	public ConnectionListener(IController controller) {
 		this.controller = controller;
 	}
 	
-	public void connectionEstablished(String clientAddress) {
-		this.clientAddress = clientAddress;
+	public void connectionEstablished(String deviceAddress) {
+		this.deviceAddress = deviceAddress;
 		this.fireApplicationEvent(controller);
 	}
 	
 	@Override
 	public Object[] getArgs() {
-		return new Object[] {this.clientAddress};
+		return new Object[] {this.deviceAddress};
 	}
 
 	@Override
 	public IApplicationEvent getApplicationEvent() {
-		return StatusEvent.CLIENT_CONNECTED;
+		return GeneralEvent.DEVICE_CONNECTED;
 	}
 }

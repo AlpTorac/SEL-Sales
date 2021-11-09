@@ -5,14 +5,12 @@ import java.util.concurrent.ExecutorService;
 import javax.bluetooth.UUID;
 
 import controller.IController;
-import external.client.ClientDiscoveryListener;
-import external.connection.IServiceConnectionManager;
 import external.connection.Service;
 
 public abstract class BluetoothService extends Service {
-	public BluetoothService(UUID id, String name, BluetoothClientManager clientManager, IController controller, ExecutorService es,
+	public BluetoothService(UUID id, String name, BluetoothDeviceManager deviceManager, IController controller, ExecutorService es,
 			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
-		super(id.toString(), name, clientManager, controller, es, pingPongTimeout,
+		super(id.toString(), name, deviceManager, controller, es, pingPongTimeout,
 				minimalPingPongDelay, sendTimeout, resendLimit);
 	}
 
@@ -21,7 +19,7 @@ public abstract class BluetoothService extends Service {
 	
 //	@Override
 //	public void publish() {
-//		this.scm = new BluetoothServiceConnectionManager(this, this.getClientManager(), this.getController(), es);
+//		this.scm = new BluetoothServiceConnectionManager(this, this.getDeviceManager(), this.getController(), es);
 //		this.scm.makeNewConnectionThread();
 //	}
 
@@ -31,7 +29,7 @@ public abstract class BluetoothService extends Service {
 	}
 	
 	@Override
-	public BluetoothClientManager getClientManager() {
-		return (BluetoothClientManager) super.getClientManager();
+	public BluetoothDeviceManager getDeviceManager() {
+		return (BluetoothDeviceManager) super.getDeviceManager();
 	}
 }

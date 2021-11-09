@@ -3,15 +3,15 @@ package external.connection;
 import java.util.concurrent.ExecutorService;
 
 import controller.IController;
-import external.client.ClientDiscoveryListener;
-import external.client.IClientManager;
-import model.connectivity.IClientData;
+import external.device.DeviceDiscoveryListener;
+import external.device.IDeviceManager;
+import model.connectivity.IDeviceData;
 import model.settings.ISettings;
 
 public abstract class Service implements IService {
 	protected ExecutorService es;
 	protected IServiceConnectionManager scm;
-	private IClientManager clientManager;
+	private IDeviceManager deviceManager;
 	
 	private String id;
 	private String url;
@@ -24,19 +24,19 @@ public abstract class Service implements IService {
 	private volatile long sendTimeout;
 	private volatile int resendLimit;
 	
-	public Service(String id, String name, IClientManager clientManager, IController controller, ExecutorService es,
+	public Service(String id, String name, IDeviceManager deviceManager, IController controller, ExecutorService es,
 			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		this.id = id;
 		this.name = name;
 		this.es = es;
-		this.clientManager = clientManager;
+		this.deviceManager = deviceManager;
 		this.controller = controller;
 		this.url = this.generateURL();
 		this.pingPongTimeout = pingPongTimeout;
 		this.minimalPingPongDelay = minimalPingPongDelay;
 		this.sendTimeout = sendTimeout;
 		this.resendLimit = resendLimit;
-		this.getClientManager().setClientDiscoveryListener(new ClientDiscoveryListener(this.getController()));
+		this.getDeviceManager().setDeviceDiscoveryListener(new DeviceDiscoveryListener(this.getController()));
 	}
 	
 	protected IController getController() {
@@ -64,8 +64,8 @@ public abstract class Service implements IService {
 	}
 	
 	@Override
-	public IClientManager getClientManager() {
-		return this.clientManager;
+	public IDeviceManager getDeviceManager() {
+		return this.deviceManager;
 	}
 	
 	@Override
@@ -76,12 +76,12 @@ public abstract class Service implements IService {
 	}
 	
 	@Override
-	public void receiveKnownClientData(IClientData[] clientData) {
-		if (this.clientManager != null) {
-			this.getClientManager().receiveKnownClientData(clientData);
+	public void receiveKnownDeviceData(IDeviceData[] deviceData) {
+		if (this.deviceManager != null) {
+			this.getDeviceManager().receiveKnownDeviceData(deviceData);
 		}
 		if (this.scm != null) {
-			this.getServiceConnectionManager().receiveKnownClientData(clientData);
+			this.getServiceConnectionManager().receiveKnownDeviceData(deviceData);
 		}
 	}
 	@Override

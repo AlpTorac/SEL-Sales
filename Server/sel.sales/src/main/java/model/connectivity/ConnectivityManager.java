@@ -5,130 +5,130 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectivityManager implements IConnectivityManager {
 
-	private Map<String, ConnectivityManagerEntry> discoveredClients;
-	private Map<String, ConnectivityManagerEntry> knownClients;
+	private Map<String, ConnectivityManagerEntry> discoveredDevices;
+	private Map<String, ConnectivityManagerEntry> knownDevices;
 	
 	private boolean rediscover;
 	
 	public ConnectivityManager() {
 		rediscover = true;
-		this.discoveredClients = new ConcurrentHashMap<String, ConnectivityManagerEntry>();
-		this.knownClients = new ConcurrentHashMap<String, ConnectivityManagerEntry>();
+		this.discoveredDevices = new ConcurrentHashMap<String, ConnectivityManagerEntry>();
+		this.knownDevices = new ConcurrentHashMap<String, ConnectivityManagerEntry>();
 	}
 	
 	@Override
-	public void addDiscoveredClient(String clientName, String clientAddress) {
+	public void addDiscoveredDevice(String deviceName, String deviceAddress) {
 		this.rediscover = false;
-		this.discoveredClients.put(clientAddress, new ConnectivityManagerEntry(clientName,clientAddress,false));
+		this.discoveredDevices.put(deviceAddress, new ConnectivityManagerEntry(deviceName,deviceAddress,false));
 	}
 
 	@Override
-	public void addKnownClient(String clientAddress) {
-		this.knownClients.put(clientAddress, new ConnectivityManagerEntry(this.discoveredClients.get(clientAddress).getClientName(),clientAddress,true));
+	public void addKnownDevice(String deviceAddress) {
+		this.knownDevices.put(deviceAddress, new ConnectivityManagerEntry(this.discoveredDevices.get(deviceAddress).getDeviceName(),deviceAddress,true));
 	}
 
 	@Override
-	public void removeKnownClient(String clientAddress) {
-		this.knownClients.remove(clientAddress);
+	public void removeKnownDevice(String deviceAddress) {
+		this.knownDevices.remove(deviceAddress);
 	}
 
 	@Override
-	public void allowKnownClient(String clientAddress) {
-		this.knownClients.get(clientAddress).setConnectionAllowance(true);
+	public void allowKnownDevice(String deviceAddress) {
+		this.knownDevices.get(deviceAddress).setConnectionAllowance(true);
 	}
 
 	@Override
-	public void blockKnownClient(String clientAddress) {
-		this.knownClients.get(clientAddress).setConnectionAllowance(false);
+	public void blockKnownDevice(String deviceAddress) {
+		this.knownDevices.get(deviceAddress).setConnectionAllowance(false);
 	}
 
 	@Override
-	public boolean isAllowedToConnect(String clientAddress) {
-		return this.knownClients.get(clientAddress).isAllowedToConnect();
+	public boolean isAllowedToConnect(String deviceAddress) {
+		return this.knownDevices.get(deviceAddress).isAllowedToConnect();
 	}
 
 	@Override
-	public boolean isConnected(String clientAddress) {
-		return this.knownClients.get(clientAddress).isConnected();
+	public boolean isConnected(String deviceAddress) {
+		return this.knownDevices.get(deviceAddress).isConnected();
 	}
 
 	@Override
-	public int getKnownClientCount() {
-		return this.knownClients.size();
+	public int getKnownDeviceCount() {
+		return this.knownDevices.size();
 	}
 	
 	@Override
-	public IClientData[] getAllKnownClientData() {
-		return this.knownClients.values().stream()
-		.map(e -> new ClientData(e.getClientName(), e.getClientAddress(), e.isAllowedToConnect(), e.isConnected()))
-		.toArray(IClientData[]::new);
+	public IDeviceData[] getAllKnownDeviceData() {
+		return this.knownDevices.values().stream()
+		.map(e -> new DeviceData(e.getDeviceName(), e.getDeviceAddress(), e.isAllowedToConnect(), e.isConnected()))
+		.toArray(IDeviceData[]::new);
 	}
 	
 	@Override
-	public IClientData[] getAllDiscoveredClientData() {
-		return this.discoveredClients.values().stream()
-				.map(e -> new ClientData(e.getClientName(), e.getClientAddress(), e.isAllowedToConnect(), e.isConnected()))
-				.toArray(IClientData[]::new);
+	public IDeviceData[] getAllDiscoveredDeviceData() {
+		return this.discoveredDevices.values().stream()
+				.map(e -> new DeviceData(e.getDeviceName(), e.getDeviceAddress(), e.isAllowedToConnect(), e.isConnected()))
+				.toArray(IDeviceData[]::new);
 	}
 	
 	@Override
-	public void clientConnected(String clientAddress) {
-		this.knownClients.get(clientAddress).setConnectionStatus(true);
+	public void DeviceConnected(String deviceAddress) {
+		this.knownDevices.get(deviceAddress).setConnectionStatus(true);
 	}
 
 	@Override
-	public void clientDisconnected(String clientAddress) {
-		this.knownClients.get(clientAddress).setConnectionStatus(false);
+	public void DeviceDisconnected(String deviceAddress) {
+		this.knownDevices.get(deviceAddress).setConnectionStatus(false);
 	}
 	
 	@Override
-	public boolean isClientRediscoveryRequested() {
+	public boolean isDeviceRediscoveryRequested() {
 		return this.rediscover;
 	}
 	
 	@Override
-	public void requestClientRediscovery() {
+	public void requestDeviceRediscovery() {
 		this.rediscover = true;
 	}
 	
 //	@Override
-//	public void addClientData(IClientData cd) {
-//		this.addDiscoveredClient(cd.getClientName(), cd.getClientAddress());
-//		this.addKnownClient(cd.getClientAddress());
+//	public void addDeviceData(IDeviceData cd) {
+//		this.addDiscoveredDevice(cd.getDeviceName(), cd.getDeviceAddress());
+//		this.addKnownDevice(cd.getDeviceAddress());
 //		boolean allowance = cd.getIsAllowedToConnect();
 //		if (allowance) {
-//			this.allowKnownClient(cd.getClientAddress());
+//			this.allowKnownDevice(cd.getDeviceAddress());
 //		} else {
-//			this.blockKnownClient(cd.getClientAddress());
+//			this.blockKnownDevice(cd.getDeviceAddress());
 //		}
-////		this.discoveredClients.put(cd.getClientAddress(), new ConnectivityManagerEntry(
-////				cd.getClientName(),
-////				cd.getClientAddress(),
+////		this.discoveredDevices.put(cd.getDeviceAddress(), new ConnectivityManagerEntry(
+////				cd.getDeviceName(),
+////				cd.getDeviceAddress(),
 ////				cd.getIsAllowedToConnect()));
-////		this.knownClients.put(cd.getClientAddress(), new ConnectivityManagerEntry(
-////				cd.getClientName(),
-////				cd.getClientAddress(),
+////		this.knownDevices.put(cd.getDeviceAddress(), new ConnectivityManagerEntry(
+////				cd.getDeviceName(),
+////				cd.getDeviceAddress(),
 ////				cd.getIsAllowedToConnect()));
 //	}
 	
 	private class ConnectivityManagerEntry {
-		private String clientName;
-		private String clientAddress;
+		private String deviceName;
+		private String deviceAddress;
 		private boolean isAllowedToConnect;
 		private boolean isConnected;
 		
-		private ConnectivityManagerEntry(String clientName, String clientAddress, boolean isAllowedToConnect) {
-			this.clientName = clientName;
-			this.clientAddress = clientAddress;
+		private ConnectivityManagerEntry(String deviceName, String deviceAddress, boolean isAllowedToConnect) {
+			this.deviceName = deviceName;
+			this.deviceAddress = deviceAddress;
 			this.isAllowedToConnect = isAllowedToConnect;
 		}
 		
-		public String getClientName() {
-			return this.clientName;
+		public String getDeviceName() {
+			return this.deviceName;
 		}
 		
-		public String getClientAddress() {
-			return this.clientAddress;
+		public String getDeviceAddress() {
+			return this.deviceAddress;
 		}
 		
 		public boolean isAllowedToConnect() {

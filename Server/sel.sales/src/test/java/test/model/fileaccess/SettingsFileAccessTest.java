@@ -1,7 +1,5 @@
 package test.model.fileaccess;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.File;
 
 import org.junit.jupiter.api.AfterEach;
@@ -13,9 +11,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import model.filemanager.SettingsFile;
 import model.filemanager.StandardSettingsFile;
-import model.filewriter.DishMenuFile;
 import model.filewriter.FileAccess;
-import model.filewriter.OrderFile;
 import model.settings.ISettings;
 import model.settings.ISettingsParser;
 import model.settings.ISettingsSerialiser;

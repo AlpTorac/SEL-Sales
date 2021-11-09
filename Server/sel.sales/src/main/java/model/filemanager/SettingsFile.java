@@ -1,9 +1,6 @@
 package model.filemanager;
 
 import model.filewriter.FileAccess;
-import model.settings.ISettings;
-import model.settings.ISettingsParser;
-import model.settings.ISettingsSerialiser;
 
 public abstract class SettingsFile extends FileAccess {
 	private final static String defaultName = "settings";

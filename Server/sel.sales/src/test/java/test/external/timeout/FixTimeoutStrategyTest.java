@@ -1,7 +1,5 @@
 package test.external.timeout;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
@@ -16,9 +14,7 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import external.connection.timeout.FixTimeoutStrategy;
-import external.connection.timeout.HasTimeout;
 import external.connection.timeout.ITimeoutStrategy;
-import test.GeneralTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class FixTimeoutStrategyTest {
 	private long testCompensationInMillis = 100;

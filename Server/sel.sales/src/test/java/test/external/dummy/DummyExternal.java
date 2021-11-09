@@ -2,43 +2,41 @@ package test.external.dummy;
 
 import controller.IController;
 import external.External;
-import external.ServerExternal;
-import external.client.ClientDiscoveryStrategy;
-import external.client.IClientManager;
-import external.connection.IService;
+import external.device.DeviceDiscoveryStrategy;
 import model.IModel;
+import external.connection.IService;
 
 public class DummyExternal extends External {
-//	private IClientManager cm;
+//	private IDeviceManager cm;
 	private String id;
 	private String name;
 	
 	public DummyExternal(String id, String name, IController controller, IModel model, long pingPongTimeout, long minimalPingPongDelay,
 			long sendTimeout, int resendLimit) {
 		super(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
-//		this.cm = new DummyClientManager(es, controller);
+//		this.cm = new DummyDeviceManager(es, controller);
 		this.id = id;
 		this.name = name;
 		this.setService(this.initService());
 		this.getService().publish();
 	}
 
-	public void setDiscoveryStrategy(ClientDiscoveryStrategy cds) {
+	public void setDiscoveryStrategy(DeviceDiscoveryStrategy cds) {
 		System.out.println("Discovery strategy set");
 //		this.cm.setDiscoveryStrategy(cds);
-		this.getService().getClientManager().setDiscoveryStrategy(cds);
+		this.getService().getDeviceManager().setDiscoveryStrategy(cds);
 	}
 	
 //	@Override
-//	public void rediscoverClients() {
+//	public void rediscoverDevices() {
 //		System.out.println("Rediscovering");
-//		this.cm.discoverClients();
+//		this.cm.discoverDevices();
 //	}
 //	@Override
-//	public void refreshKnownClients() {
-//		System.out.println("Refreshing known clients");
+//	public void refreshKnownDevices() {
+//		System.out.println("Refreshing known Devices");
 //		if (this.cm != null) {
-//			this.cm.receiveKnownClientData(this.getModel().getAllKnownClientData());
+//			this.cm.receiveKnownDeviceData(this.getModel().getAllKnownDeviceData());
 //		}
 //	}
 	@Override
@@ -46,7 +44,7 @@ public class DummyExternal extends External {
 		return new DummyService(
 				id, 
 				name, 
-				new DummyClientManager(es, this.getController()), 
+				new DummyDeviceManager(es, this.getController()), 
 				this.getController(), 
 				es, 
 				this.getPingPongTimeout(), 

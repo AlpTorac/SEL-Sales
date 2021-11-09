@@ -1,8 +1,5 @@
 package test.external.buffer;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -38,7 +35,7 @@ class StandardSendBufferTest {
 	
 	@BeforeEach
 	void prep() {
-		senderConn = new DummyConnection("clientAddress");
+		senderConn = new DummyConnection("DeviceAddress");
 		receiverConn = new DummyConnection("receiverAddress");
 		senderConn.setInputTarget(receiverConn.getInputStream());
 		es = Executors.newCachedThreadPool();

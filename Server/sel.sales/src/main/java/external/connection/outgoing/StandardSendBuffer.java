@@ -1,7 +1,6 @@
 package external.connection.outgoing;
 
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.concurrent.ExecutorService;
 
 import external.connection.IConnection;

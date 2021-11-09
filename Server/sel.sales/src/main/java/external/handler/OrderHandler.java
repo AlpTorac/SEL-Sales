@@ -1,6 +1,6 @@
 package external.handler;
 
-import controller.BusinessEvent;
+import controller.GeneralEvent;
 import controller.IController;
 import external.message.IMessage;
 import external.message.IMessageParser;
@@ -17,7 +17,7 @@ public class OrderHandler extends MessageHandler {
 	@Override
 	public boolean performNeededAction(IMessage message) {
 //		System.out.println("order acknowledged");
-		this.controller.handleApplicationEvent(BusinessEvent.ADD_ORDER, new Object[] {message.getSerialisedData()});
+		this.controller.handleApplicationEvent(GeneralEvent.ADD_ORDER, new Object[] {message.getSerialisedData()});
 //		System.out.println("order action performed");
 		return true;
 	}

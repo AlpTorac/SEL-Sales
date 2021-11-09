@@ -1,7 +1,7 @@
 package external.connection;
 
-import external.client.IClientManager;
-import model.connectivity.IClientData;
+import external.device.IDeviceManager;
+import model.connectivity.IDeviceData;
 import model.settings.ISettings;
 
 public interface IService {
@@ -10,9 +10,9 @@ public interface IService {
 	String getURL();
 	void publish();
 	IServiceConnectionManager getServiceConnectionManager();
-	IClientManager getClientManager();
+	IDeviceManager getDeviceManager();
 	String generateURL();
-	void receiveKnownClientData(IClientData[] clientData);
+	void receiveKnownDeviceData(IDeviceData[] deviceData);
 	long getMinimalPingPongDelay();
 	int getResendLimit();
 	long getPingPongTimeout();

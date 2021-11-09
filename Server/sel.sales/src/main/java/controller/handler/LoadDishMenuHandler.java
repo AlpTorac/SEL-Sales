@@ -2,7 +2,7 @@ package controller.handler;
 
 import controller.IController;
 
-public class LoadDishMenuHandler extends BusinessEventHandler {
+public class LoadDishMenuHandler extends ApplicationEventHandler {
 
 	public LoadDishMenuHandler(IController controller) {
 		super(controller);

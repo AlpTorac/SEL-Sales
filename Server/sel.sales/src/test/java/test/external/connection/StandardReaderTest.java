@@ -1,10 +1,6 @@
 package test.external.connection;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -20,17 +16,12 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import external.connection.incoming.IMessageReadingStrategy;
-import external.connection.incoming.IMessageReceptionist;
 import external.connection.incoming.StandardReader;
 import external.message.IMessage;
 import external.message.IMessageSerialiser;
-import external.message.Message;
-import external.message.MessageContext;
-import external.message.MessageFlag;
 import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
 import test.GeneralTestUtilityClass;
-import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyConnection;
 import test.external.message.MessageTestUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
@@ -56,7 +47,7 @@ class StandardReaderTest {
 	@BeforeEach
 	void prep() {
 		es = Executors.newCachedThreadPool();
-		conn = new DummyConnection("clientaddress");
+		conn = new DummyConnection("Deviceaddress");
 		mrs = new StandardReader(conn.getInputStream());
 		isNotified = false;
 		continueCycle = true;

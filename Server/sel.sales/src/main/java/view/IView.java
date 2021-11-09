@@ -1,14 +1,14 @@
 package view;
 
 import controller.IController;
-import model.DiscoveredClientUpdatable;
+import model.DiscoveredDeviceUpdatable;
 import model.IModel;
-import model.KnownClientUpdatable;
+import model.KnownDeviceUpdatable;
 import model.MenuUpdatable;
 import model.OrderUpdatable;
 import model.SettingsUpdatable;
 
-public interface IView extends MenuUpdatable, OrderUpdatable, DiscoveredClientUpdatable, KnownClientUpdatable, SettingsUpdatable {
+public interface IView extends MenuUpdatable, OrderUpdatable, DiscoveredDeviceUpdatable, KnownDeviceUpdatable, SettingsUpdatable {
 	IController getController();
 	IModel getModel();
 	void show();

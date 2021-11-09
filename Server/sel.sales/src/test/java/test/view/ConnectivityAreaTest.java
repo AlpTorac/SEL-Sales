@@ -1,8 +1,5 @@
 package test.view;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -14,27 +11,24 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.testfx.framework.junit5.ApplicationTest;
 
-import controller.IController;
-import controller.MainController;
-import controller.StatusEvent;
 import external.External;
-import external.client.IClient;
-import external.connection.DisconnectionListener;
-import external.connection.pingpong.IPingPong;
+import external.device.IDevice;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import model.IModel;
-import model.Model;
-import model.connectivity.ClientData;
-import model.connectivity.IClientData;
+import model.connectivity.DeviceData;
+import model.connectivity.IDeviceData;
+import server.controller.IServerController;
+import server.controller.StandardServerController;
+import server.model.IServerModel;
+import server.model.ServerModel;
+import server.view.MainView;
 import test.GeneralTestUtilityClass;
 import test.MainViewOperationsUtilityClass;
-import test.external.dummy.DummyClient;
-import test.external.dummy.DummyClientDiscoveryStrategy;
+import test.external.dummy.DummyDevice;
+import test.external.dummy.DummyDeviceDiscoveryStrategy;
 import test.external.dummy.DummyExternal;
 import test.external.dummy.DummyService;
 import test.external.dummy.DummyServiceConnectionManager;
-import view.MainView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 @Execution(value = ExecutionMode.SAME_THREAD)
@@ -42,8 +36,8 @@ class ConnectivityAreaTest extends ApplicationTest {
 
 	private volatile boolean actionFinished = false;
 	
-	private IModel model;
-	private IController controller;
+	private IServerModel model;
+	private IServerController controller;
 	private MainView view;
 	private DummyExternal external;
 	
@@ -52,44 +46,44 @@ class ConnectivityAreaTest extends ApplicationTest {
 	private DummyService service;
 	private DummyServiceConnectionManager dscm;
 	
-	private DummyClientDiscoveryStrategy cds;
+	private DummyDeviceDiscoveryStrategy cds;
 	
-	private DummyClient dc1;
+	private DummyDevice dc1;
 	private final String dc1n = "dc1n";
 	private final String dc1a = "dc1a";
 	
-	private DummyClient dc2;
+	private DummyDevice dc2;
 	private final String dc2n = "dc2n";
 	private final String dc2a = "dc2a";
 	
-	private Collection<IClient> dcCol;
-	private IClientData[] dcdArray;
+	private Collection<IDevice> dcCol;
+	private IDeviceData[] dcdArray;
 	
-	private void initClients() {
+	private void initDevices() {
 //		dc1n = "dc1n";
 //		dc1a = "dc1a";
-		dc1 = new DummyClient(dc1n, dc1a);
+		dc1 = new DummyDevice(dc1n, dc1a);
 		
 //		dc2n = "dc2n";
 //		dc2a = "dc2a";
-		dc2 = new DummyClient(dc2n, dc2a);
+		dc2 = new DummyDevice(dc2n, dc2a);
 		
-		dcCol = new ArrayList<IClient>();
+		dcCol = new ArrayList<IDevice>();
 		dcCol.add(dc1);
 		dcCol.add(dc2);
 	}
 	
 	private void initDiscoveryStrategy() {
-		cds = new DummyClientDiscoveryStrategy();
-		cds.setDiscoveredClients(dcCol);
+		cds = new DummyDeviceDiscoveryStrategy();
+		cds.setDiscoveredDevices(dcCol);
 		dcdArray = dcCol.stream()
-				.map(c -> {return new ClientData(c.getClientName(), c.getClientAddress(), false, false);})
-				.toArray(IClientData[]::new);
+				.map(c -> {return new DeviceData(c.getDeviceName(), c.getDeviceAddress(), false, false);})
+				.toArray(IDeviceData[]::new);
 		this.external.setDiscoveryStrategy(cds);
 	}
 	
-	private void initialClientDiscovery() {
-		this.initClients();
+	private void initialDeviceDiscovery() {
+		this.initDevices();
 		this.initDiscoveryStrategy();
 	}
 	
@@ -116,17 +110,17 @@ class ConnectivityAreaTest extends ApplicationTest {
 	@BeforeEach
 	void prep() {
 		runFXAction(()->{
-			model = new Model();
-			controller = new MainController(model);
+			model = new ServerModel();
+			controller = new StandardServerController(model);
 			view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 			external = new DummyExternal("id", "name", controller, model, 10000, 1000, 2000, 5);
 			service = GeneralTestUtilityClass.getPrivateFieldValue((External) external, "service");
 			dscm = (DummyServiceConnectionManager) service.getServiceConnectionManager();
 			view.startUp();
 			view.show();
-			this.initialClientDiscovery();
+			this.initialDeviceDiscovery();
 			opHelper = new MainViewOperationsUtilityClass(view, controller, model);
-			opHelper.clickOnDiscoverClients();
+			opHelper.clickOnDiscoverDevices();
 		});
 	}
 	
@@ -139,200 +133,200 @@ class ConnectivityAreaTest extends ApplicationTest {
 	}
 	
 	@Test
-	void discoveredClientTest() {
+	void discoveredDeviceTest() {
 		runFXAction(()->{
-			Assertions.assertTrue(opHelper.getDiscoveredClients().size() == dcCol.size());
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getDiscoveredClients().toArray(IClientData[]::new),
+			Assertions.assertTrue(opHelper.getDiscoveredDevices().size() == dcCol.size());
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getDiscoveredDevices().toArray(IDeviceData[]::new),
 					dcdArray);
 		});
 	}
 	
 	@Test
-	void knownClientTest() {
+	void knownDeviceTest() {
 		runFXAction(()->{
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
 					null);
 			
-			opHelper.addKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {dcdArray[0]});
+			opHelper.addKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {dcdArray[0]});
 		});
 		runFXAction(()->{
-			opHelper.addKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+			opHelper.addKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
 					dcdArray);
 		});
 	}
 	
 	@Test
-	void knownClientRemoveTest() {
+	void knownDeviceRemoveTest() {
 		runFXAction(()->{
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
 					null);
 			
-			opHelper.addKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {dcdArray[0]});
+			opHelper.addKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {dcdArray[0]});
 		});
 		runFXAction(()->{
-			opHelper.addKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+			opHelper.addKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
 					dcdArray);
 		});
 		runFXAction(()->{
-			opHelper.removeKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {dcdArray[1]});
+			opHelper.removeKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {dcdArray[1]});
 		});
 	}
 	
 	@Test
-	void knownClientWithAllowTest() {
+	void knownDeviceWithAllowTest() {
 		runFXAction(()->{
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
 					null);
 			
-			opHelper.addKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {dcdArray[0]});
+			opHelper.addKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {dcdArray[0]});
 		});
 		runFXAction(()->{
-			opHelper.allowKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
-							dcdArray[0].getClientAddress(), true, false)});
+			opHelper.allowKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
+							dcdArray[0].getDeviceAddress(), true, false)});
 		});
 		runFXAction(()->{
-			opHelper.addKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
-							dcdArray[0].getClientAddress(),	true, false),
-							new ClientData(dcdArray[1].getClientName(),
-									dcdArray[1].getClientAddress(),	false, false)});
+			opHelper.addKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
+							dcdArray[0].getDeviceAddress(),	true, false),
+							new DeviceData(dcdArray[1].getDeviceName(),
+									dcdArray[1].getDeviceAddress(),	false, false)});
 		});
 	}
 	
 	@Test
-	void knownClientAllowBlockTest() {
+	void knownDeviceAllowBlockTest() {
 		runFXAction(()->{
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
 					null);
 			
-			opHelper.addKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {dcdArray[0]});
+			opHelper.addKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {dcdArray[0]});
 		});
 		runFXAction(()->{
-			opHelper.allowKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
-							dcdArray[0].getClientAddress(), true, false)});
+			opHelper.allowKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
+							dcdArray[0].getDeviceAddress(), true, false)});
 		});
 		runFXAction(()->{
-			opHelper.blockKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
-							dcdArray[0].getClientAddress(), false, false)});
+			opHelper.blockKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
+							dcdArray[0].getDeviceAddress(), false, false)});
 		});
 		runFXAction(()->{
-			opHelper.allowKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
-							dcdArray[0].getClientAddress(), true, false)});
+			opHelper.allowKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
+							dcdArray[0].getDeviceAddress(), true, false)});
 		});
 		runFXAction(()->{
-			opHelper.addKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
-							dcdArray[0].getClientAddress(),	true, false),
-							new ClientData(dcdArray[1].getClientName(),
-									dcdArray[1].getClientAddress(),	false, false)});
+			opHelper.addKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
+							dcdArray[0].getDeviceAddress(),	true, false),
+							new DeviceData(dcdArray[1].getDeviceName(),
+									dcdArray[1].getDeviceAddress(),	false, false)});
 		});
 	}
 	
 	@Test
-	void knownClientConnectionTest() {
+	void knownDeviceConnectionTest() {
 		runFXAction(()->{
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
 					null);
 			
-			opHelper.addKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {dcdArray[0]});
+			opHelper.addKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {dcdArray[0]});
 		});
 		runFXAction(()->{
-			opHelper.allowKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
-							dcdArray[0].getClientAddress(), true, false)});
+			opHelper.allowKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
+							dcdArray[0].getDeviceAddress(), true, false)});
 		});
 		runFXAction(()->{
 			dscm.setCurrentConnectionObject(dc1);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
-							dcdArray[0].getClientAddress(), true, true)});
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
+							dcdArray[0].getDeviceAddress(), true, true)});
 		});
 	}
 	
-	private DummyClient getClientByAddress(String clientAddress) {
-		DummyClient client = null;
-		switch (clientAddress) {
-		case dc1a: client = dc1; break;
-		case dc2a: client = dc2; break;
+	private DummyDevice getDeviceByAddress(String DeviceAddress) {
+		DummyDevice Device = null;
+		switch (DeviceAddress) {
+		case dc1a: Device = dc1; break;
+		case dc2a: Device = dc2; break;
 		}
-		return client;
+		return Device;
 	}
 	
 	@Test
-	void knownClientDisconnectionTest() {
+	void knownDeviceDisconnectionTest() {
 		runFXAction(()->{
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
 					null);
 			
-			opHelper.addKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {dcdArray[0]});
+			opHelper.addKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {dcdArray[0]});
 		});
 		runFXAction(()->{
-			opHelper.addKnownClient(1);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
+			opHelper.addKnownDevice(1);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
 					dcdArray);
 		});
 		runFXAction(()->{
-			opHelper.allowKnownClient(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
-							dcdArray[0].getClientAddress(), true, false), dcdArray[1]});
+			opHelper.allowKnownDevice(0);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
+							dcdArray[0].getDeviceAddress(), true, false), dcdArray[1]});
 		});
 		runFXAction(()->{
-			opHelper.allowKnownClient(1);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
-							dcdArray[0].getClientAddress(), true, false),
-							new ClientData(dcdArray[1].getClientName(),
-									dcdArray[1].getClientAddress(), true, false)});
+			opHelper.allowKnownDevice(1);
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
+							dcdArray[0].getDeviceAddress(), true, false),
+							new DeviceData(dcdArray[1].getDeviceName(),
+									dcdArray[1].getDeviceAddress(), true, false)});
 		});
 		runFXAction(()->{
-			dscm.setCurrentConnectionObject(getClientByAddress(dcdArray[0].getClientAddress()));
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
-							dcdArray[0].getClientAddress(), true, true), new ClientData(dcdArray[1].getClientName(),
-									dcdArray[1].getClientAddress(), true, false)});
+			dscm.setCurrentConnectionObject(getDeviceByAddress(dcdArray[0].getDeviceAddress()));
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
+							dcdArray[0].getDeviceAddress(), true, true), new DeviceData(dcdArray[1].getDeviceName(),
+									dcdArray[1].getDeviceAddress(), true, false)});
 		});
 		runFXAction(()->{
 //			dscm.getConnectionManagers().forEach(cm -> {
-//				if (cm.getConnection().getTargetClientAddress().equals(dcdArray[0].getClientAddress())) {
+//				if (cm.getConnection().getTargetDeviceAddress().equals(dcdArray[0].getDeviceAddress())) {
 //					DisconnectionListener dl = new DisconnectionListener(controller);
 //					cm.getPingPong().setDisconnectionListener(dl);
-//					dl.connectionLost(dcdArray[0].getClientAddress());
+//					dl.connectionLost(dcdArray[0].getDeviceAddress());
 //				}
 //			});
 			// wait for the ping pong to timeout and report the disconnection
 			GeneralTestUtilityClass.performWait(DummyServiceConnectionManager.ESTIMATED_PP_TIMEOUT);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownClients().toArray(IClientData[]::new),
-					new IClientData[] {new ClientData(dcdArray[0].getClientName(),
-							dcdArray[0].getClientAddress(), true, false), new ClientData(dcdArray[1].getClientName(),
-									dcdArray[1].getClientAddress(), true, false)});
+			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
+							dcdArray[0].getDeviceAddress(), true, false), new DeviceData(dcdArray[1].getDeviceName(),
+									dcdArray[1].getDeviceAddress(), true, false)});
 		});
 	}
 }

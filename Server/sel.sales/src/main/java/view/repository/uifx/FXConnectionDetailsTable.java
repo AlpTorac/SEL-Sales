@@ -1,10 +1,6 @@
 package view.repository.uifx;
 
-import javafx.beans.value.ObservableValue;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.util.Callback;
 import view.repository.IConnectionDetailsTable;
 
 public class FXConnectionDetailsTable<T> extends FXTable<T> implements IConnectionDetailsTable<T> {

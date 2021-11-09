@@ -1,8 +1,5 @@
 package test.external.handler;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.junit.jupiter.api.AfterEach;
@@ -12,11 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import controller.BusinessEvent;
 import controller.IController;
-import controller.handler.IApplicationEventHandler;
-import external.acknowledgement.IAcknowledger;
-import external.acknowledgement.StandardAcknowledger;
 import external.handler.OrderHandler;
 import external.message.IMessage;
 import external.message.IMessageParser;
@@ -28,12 +21,8 @@ import external.message.MessageFormat;
 import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
 import external.message.StandardMessageParser;
-import model.dish.IDishMenuItemData;
-import model.dish.serialise.IDishMenuItemSerialiser;
-import model.order.serialise.IOrderSerialiser;
-import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyConnection;
-import test.external.dummy.DummyController;
+import test.external.dummy.DummyServerController;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class OrderHandlerTest extends MessageHandlerSuperClass {
 	private MessageFormat format = new StandardMessageFormat();
@@ -48,7 +37,7 @@ class OrderHandlerTest extends MessageHandlerSuperClass {
 	
 	@BeforeEach
 	void prep() {
-		senderConn = new DummyConnection("clientAddress");
+		senderConn = new DummyConnection("DeviceAddress");
 		receiverConn = new DummyConnection("receiverAddress");
 		senderConn.setInputTarget(receiverConn.getInputStream());
 		parser = new StandardMessageParser();
@@ -68,7 +57,7 @@ class OrderHandlerTest extends MessageHandlerSuperClass {
 	}
 	
 	private IController initDummyController() {
-		DummyController controller = new DummyController() {
+		DummyServerController controller = new DummyServerController() {
 			@Override
 			public void addOrder(String serialisedOrder) {isOrderReceivedByController = true;}
 		};

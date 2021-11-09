@@ -1,8 +1,5 @@
 package test.external.connection;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
@@ -17,10 +14,9 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.IController;
-import external.client.IClient;
-import external.client.IClientManager;
+import external.device.IDevice;
+import external.device.IDeviceManager;
 import external.connection.DisconnectionListener;
-import external.connection.IConnection;
 import external.connection.IConnectionManager;
 import external.connection.outgoing.ISendBuffer;
 import external.connection.pingpong.IPingPong;
@@ -30,31 +26,30 @@ import external.message.Message;
 import external.message.MessageContext;
 import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
-import model.connectivity.ClientData;
-import model.connectivity.IClientData;
+import model.connectivity.DeviceData;
+import model.connectivity.IDeviceData;
 import test.GeneralTestUtilityClass;
-import test.external.buffer.BufferUtilityClass;
-import test.external.dummy.DummyClient;
-import test.external.dummy.DummyClientDiscoveryStrategy;
-import test.external.dummy.DummyClientManager;
+import test.external.dummy.DummyDevice;
+import test.external.dummy.DummyDeviceDiscoveryStrategy;
+import test.external.dummy.DummyDeviceManager;
 import test.external.dummy.DummyConnection;
-import test.external.dummy.DummyController;
+import test.external.dummy.DummyServerController;
 import test.external.dummy.DummyServiceConnectionManager;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class ServiceConnectionManagerTest {
 	private long waitTime = 100;
 	private DummyServiceConnectionManager serviceConnectionManager;
 	
-	private IClientManager manager;
-	private DummyClient client1;
-	private String client1Name;
-	private String client1Address;
-	private DummyClient client2;
-	private String client2Name;
-	private String client2Address;
-	private DummyClient client3;
-	private String client3Name;
-	private String client3Address;
+	private IDeviceManager manager;
+	private DummyDevice Device1;
+	private String Device1Name;
+	private String Device1Address;
+	private DummyDevice Device2;
+	private String Device2Name;
+	private String Device2Address;
+	private DummyDevice Device3;
+	private String Device3Name;
+	private String Device3Address;
 	
 	private IController controller;
 	private boolean isOrderReceivedByController;
@@ -65,37 +60,37 @@ class ServiceConnectionManagerTest {
 	@BeforeEach
 	void prep() {
 		es = Executors.newCachedThreadPool();
-		manager = new DummyClientManager(es);
-		client1Name = "client1Name";
-		client1Address = "client1Address";
-		client2Name = "client2Name";
-		client2Address = "client2Address";
-		client3Name = "client3Name";
-		client3Address = "client3Address";
-		client1 = new DummyClient(client1Name, client1Address);
-		client2 = new DummyClient(client2Name, client2Address);
-		client3 = new DummyClient(client3Name, client3Address);
-		this.discoverClients();
-		manager.addClient(client1Address);
-		manager.addClient(client2Address);
-		manager.addClient(client3Address);
-		manager.allowClient(client1Address);
-		manager.allowClient(client2Address);
-		manager.allowClient(client3Address);
+		manager = new DummyDeviceManager(es);
+		Device1Name = "Device1Name";
+		Device1Address = "Device1Address";
+		Device2Name = "Device2Name";
+		Device2Address = "Device2Address";
+		Device3Name = "Device3Name";
+		Device3Address = "Device3Address";
+		Device1 = new DummyDevice(Device1Name, Device1Address);
+		Device2 = new DummyDevice(Device2Name, Device2Address);
+		Device3 = new DummyDevice(Device3Name, Device3Address);
+		this.discoverDevices();
+		manager.addDevice(Device1Address);
+		manager.addDevice(Device2Address);
+		manager.addDevice(Device3Address);
+		manager.allowDevice(Device1Address);
+		manager.allowDevice(Device2Address);
+		manager.allowDevice(Device3Address);
 		controller = initController();
 		serviceConnectionManager = new DummyServiceConnectionManager(manager, controller, es);
 		isOrderReceivedByController = false;
 	}
 	
-	private void discoverClients() {
-		DummyClientDiscoveryStrategy cds = new DummyClientDiscoveryStrategy();
-		Collection<IClient> cs = new ArrayList<IClient>();
-		cs.add(client1);
-		cs.add(client2);
-		cs.add(client3);
-		cds.setDiscoveredClients(cs);
+	private void discoverDevices() {
+		DummyDeviceDiscoveryStrategy cds = new DummyDeviceDiscoveryStrategy();
+		Collection<IDevice> cs = new ArrayList<IDevice>();
+		cs.add(Device1);
+		cs.add(Device2);
+		cs.add(Device3);
+		cds.setDiscoveredDevices(cs);
 		this.manager.setDiscoveryStrategy(cds);
-		this.manager.discoverClients(()->{});
+		this.manager.discoverDevices(()->{});
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
@@ -113,7 +108,7 @@ class ServiceConnectionManagerTest {
 	}
 	
 	private IController initController() {
-		DummyController controller = new DummyController() {
+		DummyServerController controller = new DummyServerController() {
 //			@Override
 //			public void addOrder(String serialisedOrder) {isOrderReceivedByController = true;}
 		};
@@ -121,18 +116,18 @@ class ServiceConnectionManagerTest {
 	}
 	@Test
 	void getConnectionTest() {
-		serviceConnectionManager.setCurrentConnectionObject(client1);
+		serviceConnectionManager.setCurrentConnectionObject(Device1);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime * 2);
-		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
+		Assertions.assertEquals(Device1.getDeviceAddress(), serviceConnectionManager.getConnection(Device1Address).getTargetDeviceAddress());
 	}
 	@Test
 	void setConnectivitySettingsTest() {
-		serviceConnectionManager.setCurrentConnectionObject(client1);
+		serviceConnectionManager.setCurrentConnectionObject(Device1);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime * 2);
-		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
-		IConnectionManager cm = serviceConnectionManager.getConnectionManagers().stream().filter(connMan -> connMan.getConnection().getTargetClientAddress().equals(client1.getClientAddress())).findFirst().get();
+		Assertions.assertEquals(Device1.getDeviceAddress(), serviceConnectionManager.getConnection(Device1Address).getTargetDeviceAddress());
+		IConnectionManager cm = serviceConnectionManager.getConnectionManagers().stream().filter(connMan -> connMan.getConnection().getTargetDeviceAddress().equals(Device1.getDeviceAddress())).findFirst().get();
 		
 		long minimalPPDelay = 1000;
 		long ppTimeout = 2000;
@@ -151,52 +146,52 @@ class ServiceConnectionManagerTest {
 	}
 	@Test
 	void acceptIncomingConnectionTest() {
-		serviceConnectionManager.setCurrentConnectionObject(client1);
+		serviceConnectionManager.setCurrentConnectionObject(Device1);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime*2);
-		serviceConnectionManager.setCurrentConnectionObject(client2);
+		serviceConnectionManager.setCurrentConnectionObject(Device2);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime*2);
-		Assertions.assertEquals(client2.getClientAddress(), serviceConnectionManager.getConnection(client2Address).getTargetClientAddress());
-		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
+		Assertions.assertEquals(Device2.getDeviceAddress(), serviceConnectionManager.getConnection(Device2Address).getTargetDeviceAddress());
+		Assertions.assertEquals(Device1.getDeviceAddress(), serviceConnectionManager.getConnection(Device1Address).getTargetDeviceAddress());
 	}
 	@Test
 	void acceptIncomingUnknownConnectionTest() {
-		String strangerClientName = "stranger";
-		String strangerClientAddress = "fhgigdfhkigdf";
-		DummyClient strangerClient = new DummyClient(strangerClientName, strangerClientAddress);
+		String strangerDeviceName = "stranger";
+		String strangerDeviceAddress = "fhgigdfhkigdf";
+		DummyDevice strangerDevice = new DummyDevice(strangerDeviceName, strangerDeviceAddress);
 		GeneralTestUtilityClass.performWait(waitTime);
-		Assertions.assertNull(manager.getClient(strangerClientAddress));
-		Assertions.assertFalse(manager.isAllowedToConnect(strangerClientAddress));
-		serviceConnectionManager.setCurrentConnectionObject(strangerClient);
+		Assertions.assertNull(manager.getDevice(strangerDeviceAddress));
+		Assertions.assertFalse(manager.isAllowedToConnect(strangerDeviceAddress));
+		serviceConnectionManager.setCurrentConnectionObject(strangerDevice);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime);
-		Assertions.assertFalse(serviceConnectionManager.isConnectionAllowed(strangerClientAddress));
-		Assertions.assertNull(serviceConnectionManager.getConnection(strangerClientAddress));
+		Assertions.assertFalse(serviceConnectionManager.isConnectionAllowed(strangerDeviceAddress));
+		Assertions.assertNull(serviceConnectionManager.getConnection(strangerDeviceAddress));
 	}
 	@Test
 	void acceptIncomingBlockedConnectionTest() {
-		manager.blockClient(client2Address);
-		Assertions.assertEquals(client2.getClientAddress(),manager.getClient(client2Address).getClientAddress());
-		Assertions.assertFalse(manager.isAllowedToConnect(client2Address));
+		manager.blockDevice(Device2Address);
+		Assertions.assertEquals(Device2.getDeviceAddress(),manager.getDevice(Device2Address).getDeviceAddress());
+		Assertions.assertFalse(manager.isAllowedToConnect(Device2Address));
 		GeneralTestUtilityClass.performWait(waitTime);
-		serviceConnectionManager.setCurrentConnectionObject(client2);
+		serviceConnectionManager.setCurrentConnectionObject(Device2);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime);
-		Assertions.assertFalse(serviceConnectionManager.isConnectionAllowed(client2Address));
-		Assertions.assertNull(serviceConnectionManager.getConnection(client2Address));
+		Assertions.assertFalse(serviceConnectionManager.isConnectionAllowed(Device2Address));
+		Assertions.assertNull(serviceConnectionManager.getConnection(Device2Address));
 	}
 	
 	@Test
 	void sendMessageToTest() {
-		serviceConnectionManager.setCurrentConnectionObject(client1);
+		serviceConnectionManager.setCurrentConnectionObject(Device1);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime*2);
-		serviceConnectionManager.setCurrentConnectionObject(client2);
+		serviceConnectionManager.setCurrentConnectionObject(Device2);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime*2);
-		Assertions.assertEquals(client2.getClientAddress(), serviceConnectionManager.getConnection(client2Address).getTargetClientAddress());
-		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
+		Assertions.assertEquals(Device2.getDeviceAddress(), serviceConnectionManager.getConnection(Device2Address).getTargetDeviceAddress());
+		Assertions.assertEquals(Device1.getDeviceAddress(), serviceConnectionManager.getConnection(Device1Address).getTargetDeviceAddress());
 		
 		Collection<IConnectionManager> connectionManagers = serviceConnectionManager.getConnectionManagers();
 		connectionManagers.forEach(cm -> {
@@ -205,14 +200,14 @@ class ServiceConnectionManagerTest {
 		});
 		IMessage m = new Message(null, null, null);
 		
-		String targetClientAddress = client1Address;
+		String targetDeviceAddress = Device1Address;
 		
-		serviceConnectionManager.sendMessageTo(targetClientAddress, m);
+		serviceConnectionManager.sendMessageTo(targetDeviceAddress, m);
 		
 		GeneralTestUtilityClass.performWait(waitTime*2);
 		
 		// Make sure the right one gets it
-		connectionManagers.stream().filter(cm -> cm.getConnection().getTargetClientAddress().equals(targetClientAddress)).forEach(cm -> {
+		connectionManagers.stream().filter(cm -> cm.getConnection().getTargetDeviceAddress().equals(targetDeviceAddress)).forEach(cm -> {
 			ISendBuffer sb = cm.getSendBuffer();
 			Assertions.assertTrue(sb.isBlocked());
 			
@@ -223,12 +218,12 @@ class ServiceConnectionManagerTest {
 		GeneralTestUtilityClass.performWait(waitTime);
 		
 		// Make sure others do not receive it
-		connectionManagers.stream().filter(cm -> !cm.getConnection().getTargetClientAddress().equals(targetClientAddress)).forEach(cm -> {
+		connectionManagers.stream().filter(cm -> !cm.getConnection().getTargetDeviceAddress().equals(targetDeviceAddress)).forEach(cm -> {
 			ISendBuffer sb = cm.getSendBuffer();
 			Assertions.assertFalse(sb.isBlocked());
 		});
 		
-		connectionManagers.stream().filter(cm -> cm.getConnection().getTargetClientAddress().equals(targetClientAddress)).forEach(cm -> {
+		connectionManagers.stream().filter(cm -> cm.getConnection().getTargetDeviceAddress().equals(targetDeviceAddress)).forEach(cm -> {
 			ISendBuffer sb = cm.getSendBuffer();
 			DummyConnection conn = (DummyConnection) cm.getConnection();
 			
@@ -238,14 +233,14 @@ class ServiceConnectionManagerTest {
 	
 	@Test
 	void broadcastMessageTest() {
-		serviceConnectionManager.setCurrentConnectionObject(client1);
+		serviceConnectionManager.setCurrentConnectionObject(Device1);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime);
-		serviceConnectionManager.setCurrentConnectionObject(client2);
+		serviceConnectionManager.setCurrentConnectionObject(Device2);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime*2);
-		Assertions.assertEquals(client2.getClientAddress(), serviceConnectionManager.getConnection(client2Address).getTargetClientAddress());
-		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
+		Assertions.assertEquals(Device2.getDeviceAddress(), serviceConnectionManager.getConnection(Device2Address).getTargetDeviceAddress());
+		Assertions.assertEquals(Device1.getDeviceAddress(), serviceConnectionManager.getConnection(Device1Address).getTargetDeviceAddress());
 		
 		Collection<IConnectionManager> connectionManagers = serviceConnectionManager.getConnectionManagers();
 		
@@ -274,14 +269,14 @@ class ServiceConnectionManagerTest {
 	
 	@Test
 	void disconnectionViaWaitingTest() {
-		serviceConnectionManager.setCurrentConnectionObject(client1);
+		serviceConnectionManager.setCurrentConnectionObject(Device1);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime);
-		serviceConnectionManager.setCurrentConnectionObject(client2);
+		serviceConnectionManager.setCurrentConnectionObject(Device2);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime*2);
-		Assertions.assertEquals(client2.getClientAddress(), serviceConnectionManager.getConnection(client2Address).getTargetClientAddress());
-		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
+		Assertions.assertEquals(Device2.getDeviceAddress(), serviceConnectionManager.getConnection(Device2Address).getTargetDeviceAddress());
+		Assertions.assertEquals(Device1.getDeviceAddress(), serviceConnectionManager.getConnection(Device1Address).getTargetDeviceAddress());
 		
 		Collection<IConnectionManager> connectionManagers = serviceConnectionManager.getConnectionManagers();
 		
@@ -303,23 +298,23 @@ class ServiceConnectionManagerTest {
 	
 	@Test
 	void disconnectionViaDataTest() {
-		serviceConnectionManager.setCurrentConnectionObject(client1);
+		serviceConnectionManager.setCurrentConnectionObject(Device1);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime);
-		serviceConnectionManager.setCurrentConnectionObject(client2);
+		serviceConnectionManager.setCurrentConnectionObject(Device2);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime*2);
-		serviceConnectionManager.setCurrentConnectionObject(client3);
+		serviceConnectionManager.setCurrentConnectionObject(Device3);
 //		serviceConnectionManager.makeNewConnectionThread();
 		GeneralTestUtilityClass.performWait(waitTime*2);
-		Assertions.assertEquals(client3.getClientAddress(), serviceConnectionManager.getConnection(client3Address).getTargetClientAddress());
-		Assertions.assertEquals(client2.getClientAddress(), serviceConnectionManager.getConnection(client2Address).getTargetClientAddress());
-		Assertions.assertEquals(client1.getClientAddress(), serviceConnectionManager.getConnection(client1Address).getTargetClientAddress());
+		Assertions.assertEquals(Device3.getDeviceAddress(), serviceConnectionManager.getConnection(Device3Address).getTargetDeviceAddress());
+		Assertions.assertEquals(Device2.getDeviceAddress(), serviceConnectionManager.getConnection(Device2Address).getTargetDeviceAddress());
+		Assertions.assertEquals(Device1.getDeviceAddress(), serviceConnectionManager.getConnection(Device1Address).getTargetDeviceAddress());
 		
 		Collection<IConnectionManager> connectionManagers = serviceConnectionManager.getConnectionManagers();
-		IConnectionManager cm = connectionManagers.stream().filter(man -> man.getConnection().getTargetClientAddress().equals(client1Address)).findFirst().get();
-		IConnectionManager cm2 = connectionManagers.stream().filter(man -> man.getConnection().getTargetClientAddress().equals(client2Address)).findFirst().get();
-		IConnectionManager cm3 = connectionManagers.stream().filter(man -> man.getConnection().getTargetClientAddress().equals(client3Address)).findFirst().get();
+		IConnectionManager cm = connectionManagers.stream().filter(man -> man.getConnection().getTargetDeviceAddress().equals(Device1Address)).findFirst().get();
+		IConnectionManager cm2 = connectionManagers.stream().filter(man -> man.getConnection().getTargetDeviceAddress().equals(Device2Address)).findFirst().get();
+		IConnectionManager cm3 = connectionManagers.stream().filter(man -> man.getConnection().getTargetDeviceAddress().equals(Device3Address)).findFirst().get();
 		
 		DisconnectionListener l = new DisconnectionListener(null) {
 			@Override
@@ -330,10 +325,10 @@ class ServiceConnectionManagerTest {
 		
 		serviceConnectionManager.setDisconnectionListener(l);
 		
-		serviceConnectionManager.receiveKnownClientData(new IClientData[] {
-				new ClientData(client1Name, client1Address, false, true),
-				new ClientData(client2Name, client2Address, true, false),
-				new ClientData(client3Name, client3Address, false, false)
+		serviceConnectionManager.receiveKnownDeviceData(new IDeviceData[] {
+				new DeviceData(Device1Name, Device1Address, false, true),
+				new DeviceData(Device2Name, Device2Address, true, false),
+				new DeviceData(Device3Name, Device3Address, false, false)
 		});
 		
 		Assertions.assertTrue(isDisconnected);

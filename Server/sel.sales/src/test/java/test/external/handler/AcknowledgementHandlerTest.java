@@ -1,10 +1,6 @@
 package test.external.handler;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,7 +33,7 @@ class AcknowledgementHandlerTest extends MessageHandlerSuperClass {
 	
 	@BeforeEach
 	void prep() {
-		conn = new DummyConnection("clientaddress");
+		conn = new DummyConnection("Deviceaddress");
 		es = Executors.newFixedThreadPool(3);
 		parser = new StandardMessageParser();
 		buffer = new StandardSendBuffer(conn, es);

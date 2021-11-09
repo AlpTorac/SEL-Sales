@@ -1,32 +1,26 @@
 package test.view;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.math.BigDecimal;
-import java.util.Collection;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.testfx.framework.junit5.ApplicationTest;
 
-import controller.IController;
-import controller.MainController;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import model.IModel;
-import model.Model;
-import model.dish.serialise.IDishMenuItemSerialiser;
 import model.order.IOrderData;
+import server.controller.IServerController;
+import server.controller.StandardServerController;
+import server.model.IServerModel;
+import server.model.ServerModel;
+import server.view.MainView;
 import test.GeneralTestUtilityClass;
 import test.MainViewOperationsUtilityClass;
 import test.model.order.OrderTestUtilityClass;
 import view.IView;
-import view.MainView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
@@ -34,8 +28,8 @@ import view.repository.uifx.FXUIComponentFactory;
 class OrderInspectionAreaTest extends ApplicationTest {
 	private long waitTime = 100;
 	
-	private static IModel model;
-	private static IController controller;
+	private static IServerModel model;
+	private static IServerController controller;
 	private static IView view;
 	
 	private String i1Name = "aaa";
@@ -79,8 +73,8 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	@BeforeEach
 	void cleanUp() {
 		runFXAction(()->{
-			model = new Model();
-			controller = new MainController(model);
+			model = new ServerModel();
+			controller = new StandardServerController(model);
 			view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 			view.startUp();
 			view.show();

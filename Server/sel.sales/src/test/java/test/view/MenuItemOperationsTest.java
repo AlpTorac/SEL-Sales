@@ -1,39 +1,30 @@
 package test.view;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.testfx.framework.junit5.ApplicationTest;
 
-import controller.IController;
-import controller.MainController;
 import javafx.stage.Stage;
-import model.IModel;
-import model.Model;
-import model.dish.IDishMenuItem;
 import model.dish.IDishMenuItemData;
-import model.dish.IDishMenuItemDataFactory;
-import test.GeneralTestUtilityClass;
+import server.controller.IServerController;
+import server.controller.StandardServerController;
+import server.model.IServerModel;
+import server.model.ServerModel;
+import server.view.MainView;
 import test.MainViewOperationsUtilityClass;
 import test.model.dish.DishMenuItemTestUtilityClass;
 import view.IView;
-import view.MainView;
-import view.composites.MenuDesignArea;
-import view.repository.HasText;
-import view.repository.IEventShooterOnClickUIComponent;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class MenuItemOperationsTest extends ApplicationTest {
-	private static IModel model;
-	private static IController controller;
+	private static IServerModel model;
+	private static IServerController controller;
 	private static IView view;
 	
 	private String i1Name = "aaa";
@@ -64,8 +55,8 @@ class MenuItemOperationsTest extends ApplicationTest {
 	
 	@Override
 	public void start(Stage stage) {
-		model = new Model();
-		controller = new MainController(model);
+		model = new ServerModel();
+		controller = new StandardServerController(model);
 		view = new MainView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 		view.startUp();
 	}

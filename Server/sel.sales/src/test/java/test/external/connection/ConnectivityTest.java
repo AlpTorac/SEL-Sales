@@ -1,7 +1,5 @@
 package test.external.connection;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -10,30 +8,25 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.IController;
 import external.connection.DisconnectionListener;
-import external.message.IMessage;
 import external.message.IMessageParser;
 import external.message.IMessageSerialiser;
-import external.message.Message;
 import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
 import external.message.StandardMessageParser;
 import test.GeneralTestUtilityClass;
-import test.external.dummy.DummyClient;
 import test.external.dummy.DummyConnection;
-import test.external.dummy.DummyController;
+import test.external.dummy.DummyServerController;
 import test.external.dummy.DummyInteraction;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class ConnectivityTest {
 	private ExecutorService esServer;
-	private ExecutorService esClient;
+	private ExecutorService esDevice;
 	
 	private long maximalWaitTime;
 	private int cyclesToWait;
@@ -43,8 +36,8 @@ class ConnectivityTest {
 	
 	private DummyConnection conn;
 	
-	private String clientName;
-	private String clientAddress;
+	private String DeviceName;
+	private String DeviceAddress;
 	
 	private DummyInteraction interaction;
 	
@@ -54,16 +47,16 @@ class ConnectivityTest {
 	private int resendLimit;
 	
 	private boolean isServerConnected;
-	private boolean isClientConnected;
+	private boolean isDeviceConnected;
 	
 	private LocalDateTime startTime;
 	
 	@BeforeEach
 	void prep() {
 		esServer = Executors.newCachedThreadPool();
-		esClient = Executors.newCachedThreadPool();
-		clientName = "clientName";
-		clientAddress = "clientAddress";
+		esDevice = Executors.newCachedThreadPool();
+		DeviceName = "DeviceName";
+		DeviceAddress = "DeviceAddress";
 		cyclesToWait = 10;
 		pingPongTimeout = 1500;
 		minimalPingPongDelay = 1000;
@@ -73,7 +66,7 @@ class ConnectivityTest {
 		maximalWaitTime = 15000;
 		
 		isServerConnected = true;
-		isClientConnected = true;
+		isDeviceConnected = true;
 		this.initInteraction();
 		GeneralTestUtilityClass.performWait(1000);
 		startTime = LocalDateTime.now();
@@ -83,45 +76,45 @@ class ConnectivityTest {
 	void cleanUp() {
 		interaction.close();
 		isServerConnected = false;
-		isClientConnected = false;
+		isDeviceConnected = false;
 		startTime = null;
 		try {
 			esServer.awaitTermination(200, TimeUnit.MILLISECONDS);
-			esClient.awaitTermination(200, TimeUnit.MILLISECONDS);
+			esDevice.awaitTermination(200, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		esServer = null;
-		esClient = null;
+		esDevice = null;
 		GeneralTestUtilityClass.performWait(1000);
 	}
 	
 	private void initInteraction() {
-		this.interaction = new DummyInteraction(esServer, esClient, clientName, clientAddress, pingPongTimeout, sendTimeout, resendLimit, minimalPingPongDelay) {
+		this.interaction = new DummyInteraction(esServer, esDevice, DeviceName, DeviceAddress, pingPongTimeout, sendTimeout, resendLimit, minimalPingPongDelay) {
 			@Override
 			protected IController initServerController() {
-				return new DummyController() {
+				return new DummyServerController() {
 					@Override
-					public void clientConnected(String clientAddress) {
+					public void DeviceConnected(String DeviceAddress) {
 						isServerConnected = true;
 					}
 					@Override
-					public void clientDisconnected(String clientAddress) {
+					public void DeviceDisconnected(String DeviceAddress) {
 						isServerConnected = false;
 					}
 				};
 			}
 			@Override
-			protected IController initClientController() {
-				return new DummyController() {
+			protected IController initDeviceController() {
+				return new DummyServerController() {
 					@Override
-					public void clientConnected(String clientAddress) {
-						isClientConnected = true;
+					public void DeviceConnected(String DeviceAddress) {
+						isDeviceConnected = true;
 					}
 					@Override
-					public void clientDisconnected(String clientAddress) {
-						isClientConnected = false;
+					public void DeviceDisconnected(String DeviceAddress) {
+						isDeviceConnected = false;
 					}
 				};
 			}
@@ -129,7 +122,7 @@ class ConnectivityTest {
 			protected DisconnectionListener initServerDisconListener() {
 				return new DisconnectionListener(null) {
 					@Override
-					public void connectionLost(String clientAddress) {
+					public void connectionLost(String DeviceAddress) {
 						isServerConnected = false;
 						try {
 							if (conn != null) {
@@ -142,11 +135,11 @@ class ConnectivityTest {
 				};
 			}
 			@Override
-			protected DisconnectionListener initClientDisconListener() {
+			protected DisconnectionListener initDeviceDisconListener() {
 				return new DisconnectionListener(null) {
 					@Override
-					public void connectionLost(String clientAddress) {
-						isClientConnected = false;
+					public void connectionLost(String DeviceAddress) {
+						isDeviceConnected = false;
 						try {
 							if (conn != null) {
 								conn.close();
@@ -164,8 +157,8 @@ class ConnectivityTest {
 		return this.isServerConnected;
 	}
 	
-	private boolean isClientConnected() {
-		return this.isClientConnected;
+	private boolean isDeviceConnected() {
+		return this.isDeviceConnected;
 	}
 	
 	private long getTimeElapsedInMilis() {
@@ -177,7 +170,7 @@ class ConnectivityTest {
 //		int currentCycles = 0;
 //		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles < cyclesToWait) {
 //			currentCycles = this.interaction.getPingPongSuccessfulCycleCount();
-//			Assertions.assertTrue(this.isClientConnected());
+//			Assertions.assertTrue(this.isDeviceConnected());
 //			Assertions.assertTrue(this.isServerConnected());
 //		}
 //		Assertions.assertTrue(currentCycles >= cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
@@ -189,9 +182,9 @@ class ConnectivityTest {
 //		IMessage m = new Message(null, null, null);
 //		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles < cyclesToWait) {
 //			this.interaction.messageToServer(m);
-//			this.interaction.messageToClient(m);
+//			this.interaction.messageToDevice(m);
 //			currentCycles = this.interaction.getSendBufferSuccessfulCycleCount();
-//			Assertions.assertTrue(this.isClientConnected());
+//			Assertions.assertTrue(this.isDeviceConnected());
 //			Assertions.assertTrue(this.isServerConnected());
 //		}
 //		Assertions.assertTrue(currentCycles >= cyclesToWait, "was: " + currentCycles + " ,expected: " + cyclesToWait);
@@ -203,9 +196,9 @@ class ConnectivityTest {
 //		IMessage m = new Message(null, null, null);
 //		while (this.getTimeElapsedInMilis() < maximalWaitTime && currentCycles < cyclesToWait) {
 //			this.interaction.messageToServer(m);
-//			this.interaction.messageToClient(m);
+//			this.interaction.messageToDevice(m);
 //			currentCycles = this.interaction.getSendBufferSuccessfulCycleCount();
-//			Assertions.assertTrue(this.isClientConnected());
+//			Assertions.assertTrue(this.isDeviceConnected());
 //			Assertions.assertTrue(this.isServerConnected());
 //		}
 //		Assertions.assertEquals(currentCycles, cyclesToWait);
