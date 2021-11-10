@@ -1,5 +1,6 @@
 package test.external.broadcaster;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -86,6 +87,8 @@ class DishMenuBroadcasterTest {
 	private ExecutorService es;
 	
 	private IMessageSerialiser serialiser = new MessageSerialiser(new StandardMessageFormat());
+	
+	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	@BeforeEach
 	void prep() {
 		es = Executors.newCachedThreadPool();
@@ -141,7 +144,7 @@ class DishMenuBroadcasterTest {
 	}
 	
 	private void initModel() {
-		model = new ServerModel();
+		model = new ServerModel(this.testFolderAddress);
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));

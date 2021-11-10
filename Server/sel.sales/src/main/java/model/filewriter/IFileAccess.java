@@ -15,4 +15,5 @@ public interface IFileAccess extends Closeable {
 	boolean fileEmpty();
 	boolean remakeFile();
 	void close();
+	void setAddress(String address);
 }

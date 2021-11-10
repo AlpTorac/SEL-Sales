@@ -28,4 +28,6 @@ public interface IServerModel extends IModel {
 	void setAutoConfirmOrders(boolean autoConfirm);
 	boolean getAutoConfirmOrders();
 	boolean writeDishMenu();
+	void loadDishMenu(String fileAddress);
+	boolean writeOrders();
 }

@@ -1,5 +1,6 @@
 package test.view;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,6 +15,7 @@ import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
+import server.view.IServerView;
 import server.view.StandardServerView;
 import test.MainViewOperationsUtilityClass;
 import view.IView;
@@ -24,7 +26,7 @@ import view.repository.uifx.FXUIComponentFactory;
 class ParallelDataContainerAccessTest extends ApplicationTest {
 	private static IServerModel model;
 	private static IServerController controller;
-	private static IView view;
+	private static IServerView view;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -48,8 +50,10 @@ class ParallelDataContainerAccessTest extends ApplicationTest {
 	private String i3id = "item3";
 	private ExecutorService es = Executors.newCachedThreadPool();
 	
+	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
+	
 	public void start(Stage primaryStage) {
-		model = new ServerModel();
+		model = new ServerModel(this.testFolderAddress);
 		controller = new StandardServerController(model);
 		view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 		view.startUp();

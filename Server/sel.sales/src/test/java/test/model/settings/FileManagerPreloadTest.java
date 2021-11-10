@@ -51,7 +51,7 @@ class FileManagerPreloadTest {
 	
 	private IServerModel model;
 	private Collection<HasSettingsField> part;
-	private IFileManager fm;
+//	private IFileManager fm;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -106,16 +106,20 @@ class FileManagerPreloadTest {
 	@BeforeEach
 	void prep() {
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
-		model = new ServerModel();
+//		model = new ServerModel();
+//		this.addMenuToModel();
+//		dishMenuData = model.getMenuData();
+//		model = new ServerModel();
+//		
+//		fm = new FileManager(model, this.testFolderAddress);
+//		part = GeneralTestUtilityClass.getPrivateFieldValue(model, "part");
+//		part.clear();
+//		part.add(fm);
+		
+		model = new ServerModel(this.testFolderAddress);
 		this.addMenuToModel();
 		dishMenuData = model.getMenuData();
-		model = new ServerModel();
 		
-		fm = new FileManager(model, this.testFolderAddress);
-//		fm = GeneralTestUtilityClass.getPrivateFieldValue(model, "fileManager");
-		part = GeneralTestUtilityClass.getPrivateFieldValue(model, "part");
-		part.clear();
-		part.add(fm);
 		dmf = new StandardDishMenuFile(this.testFolderAddress);
 		sf = new StandardSettingsFile(this.testFolderAddress);
 		of = new StandardOrderFile(this.testFolderAddress);
@@ -139,7 +143,8 @@ class FileManagerPreloadTest {
 
 	@Test
 	void preloadTest() {
-		fm.loadSaved();
+		model.loadSaved();
+//		fm.loadSaved();
 		Assertions.assertTrue(model.getSettings().equals(settings));
 		String menuFileContent = dmf.readFile();
 		Assertions.assertTrue(model.getMenuData().equals(model.getDishMenuHelper().parseMenuData(menuFileContent)));
@@ -148,8 +153,12 @@ class FileManagerPreloadTest {
 	@Test
 	void writeSettingsTest() {
 		sf.deleteFile();
-		fm.writeSettings(settingSerialiser.serialise(settings));
-		fm.loadSaved();
+//		fm.writeSettings(settingSerialiser.serialise(settings));
+//		fm.loadSaved();
+		model.setSettings(settingSerialiser.serialise(settings));
+		model.writeSettings();
+		model.setSettings(new Settings());
+		model.loadSaved();
 		Assertions.assertTrue(settings.equals(settingsParser.parseSettings(sf.readFile())));
 	}
 	
@@ -185,7 +194,8 @@ class FileManagerPreloadTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		fm.loadDishMenu(fileAddress);
+//		fm.loadDishMenu(fileAddress);
+		model.loadDishMenu(fileAddress);
 		IDishMenuData readMenuData = model.getMenuData();
 		IDishMenuData expectedMenuData = model.getDishMenuHelper().parseMenuData(fileContent);
 		Assertions.assertTrue(expectedMenuData.equals(readMenuData));
@@ -227,7 +237,8 @@ class FileManagerPreloadTest {
 			e.printStackTrace();
 		}
 		this.addMenuToModel();
-		fm.loadOrders(fileAddress);
+//		fm.loadOrders(fileAddress);
+		model.loadOrders(fileAddress);
 		IOrderData[] readOrderData = model.getAllWrittenOrders();
 		IOrderData[] expectedOrderData = model.getOrderHelper().deserialiseOrderDatas(fileContent);
 		GeneralTestUtilityClass.arrayContentEquals(readOrderData, expectedOrderData);
@@ -264,7 +275,8 @@ class FileManagerPreloadTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		fm.loadKnownDevices(fileAddress);
+//		fm.loadKnownDevices(fileAddress);
+		model.loadKnownDevices(fileAddress);
 		IDeviceData[] readDeviceData = model.getAllKnownDeviceData();
 		IDeviceData[] expectedDeviceData = (new FileDeviceDataParser()).parseDeviceDatas(fileContent);
 		GeneralTestUtilityClass.arrayContentEquals(readDeviceData, expectedDeviceData);

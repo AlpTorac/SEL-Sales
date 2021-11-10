@@ -1,5 +1,6 @@
 package test.view;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +20,7 @@ import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
+import server.view.IServerView;
 import server.view.StandardServerView;
 import test.GeneralTestUtilityClass;
 import test.MainViewOperationsUtilityClass;
@@ -53,9 +55,11 @@ class UnconfirmedOrderTest extends ApplicationTest {
 	private String i3id = "item3";
 	
 	private static IServerController controller;
-	private static IView view;
+	private static IServerView view;
 	
 	private static ExecutorService pool = Executors.newCachedThreadPool();
+	
+	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	
 	@BeforeEach
 	public void prep() {
@@ -70,7 +74,7 @@ class UnconfirmedOrderTest extends ApplicationTest {
 	
 	@Override
 	public void start(Stage stage) {
-		model = new ServerModel();
+		model = new ServerModel(this.testFolderAddress);
 		controller = new StandardServerController(model);
 		view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 		view.startUp();

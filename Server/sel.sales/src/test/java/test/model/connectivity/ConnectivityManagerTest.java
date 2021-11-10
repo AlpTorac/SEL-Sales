@@ -1,5 +1,7 @@
 package test.model.connectivity;
 
+import java.io.File;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +32,8 @@ class ConnectivityManagerTest {
 	private String Device2Name;
 	private String Device2Address;
 	
+	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
+	
 	@BeforeEach
 	void prep() {
 		Device1Name = "c1n";
@@ -53,7 +57,7 @@ class ConnectivityManagerTest {
 	}
 	
 	private void initConnManager() {
-		model = new ServerModel();
+		model = new ServerModel(this.testFolderAddress);
 		connManager = GeneralTestUtilityClass.getPrivateFieldValue((ServerModel) model, "connManager");
 	}
 	
@@ -160,19 +164,19 @@ class ConnectivityManagerTest {
 		Assertions.assertFalse(connManager.isConnected(Device1Address));
 		Assertions.assertFalse(connManager.isConnected(Device2Address));
 		
-		connManager.DeviceConnected(Device1Address);
+		connManager.deviceConnected(Device1Address);
 		Assertions.assertTrue(connManager.isConnected(Device1Address));
 		Assertions.assertFalse(connManager.isConnected(Device2Address));
 		
-		connManager.DeviceConnected(Device2Address);
+		connManager.deviceConnected(Device2Address);
 		Assertions.assertTrue(connManager.isConnected(Device1Address));
 		Assertions.assertTrue(connManager.isConnected(Device2Address));
 		
-		connManager.DeviceDisconnected(Device1Address);
+		connManager.deviceDisconnected(Device1Address);
 		Assertions.assertFalse(connManager.isConnected(Device1Address));
 		Assertions.assertTrue(connManager.isConnected(Device2Address));
 		
-		connManager.DeviceDisconnected(Device2Address);
+		connManager.deviceDisconnected(Device2Address);
 		Assertions.assertFalse(connManager.isConnected(Device1Address));
 		Assertions.assertFalse(connManager.isConnected(Device2Address));
 	}

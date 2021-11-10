@@ -13,10 +13,10 @@ import controller.handler.RemoveKnownDeviceHandler;
 import controller.handler.RemoveOrderHandler;
 import controller.handler.SaveSettingsHandler;
 import controller.handler.SettingsChangedHandler;
-import controller.handler.WriteOrdersHandler;
 import controller.manager.ApplicationEventManager;
 import controller.manager.IApplicationEventManager;
 import model.IModel;
+import server.controller.handler.WriteOrdersHandler;
 
 public abstract class Controller implements IController {
 
@@ -50,7 +50,6 @@ public abstract class Controller implements IController {
 		bem.addApplicationEventToHandlerMapping(GeneralEvent.ADD_ORDER, new AddOrderHandler(this));
 		bem.addApplicationEventToHandlerMapping(GeneralEvent.REMOVE_ORDER, new RemoveOrderHandler(this));
 		bem.addApplicationEventToHandlerMapping(GeneralEvent.DISCOVER_DEVICES, new DiscoverDevicesHandler(this));
-		bem.addApplicationEventToHandlerMapping(GeneralEvent.WRITE_ORDERS, new WriteOrdersHandler(this));
 		bem.addApplicationEventToHandlerMapping(GeneralEvent.SAVE_SETTINGS, new SaveSettingsHandler(this));
 		bem.addApplicationEventToHandlerMapping(GeneralEvent.KNOWN_DEVICE_ADDED, new AddKnownDeviceHandler(this));
 		bem.addApplicationEventToHandlerMapping(GeneralEvent.KNOWN_DEVICE_REMOVED, new RemoveKnownDeviceHandler(this));

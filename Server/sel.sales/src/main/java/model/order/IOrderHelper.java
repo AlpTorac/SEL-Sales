@@ -20,7 +20,6 @@ public interface IOrderHelper {
 	void setOrderItemDataFactory(IOrderItemDataFactory fac);
 	
 	void setOrderDeserialiser(IOrderDeserialiser deserialiser);
-	void setMenuFinder(IDishMenuItemFinder finder);
 	
 	void setAppSerialiser(IntraAppOrderSerialiser appOrderSerialiser);
 	void setFileSerialiser(FileOrderSerialiser fileOrderSerialiser);

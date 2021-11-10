@@ -1,6 +1,7 @@
 package client.view.composites;
 
 import controller.IController;
+import model.IModel;
 import view.repository.IButton;
 import view.repository.IUIComponent;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
@@ -12,8 +13,8 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 	private IButton amountDecBtn;
 	private IButton removeBtn;
 	
-	public EditableMenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac) {
-		super(controller, fac, advFac);
+	public EditableMenuItemEntry(IModel model, IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget notifyTarget) {
+		super(model, controller, fac, advFac, notifyTarget);
 	}
 
 	@Override
@@ -38,6 +39,7 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 			public void clickAction() {
 				int amount = Integer.valueOf(getAmountTextBox().getText());
 				getAmountTextBox().setCaption(String.valueOf(amount+1));
+				notifyPriceDisplayingTarget();
 			}
 		});
 		return btn;
@@ -52,6 +54,7 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 				int amount = Integer.valueOf(getAmountTextBox().getText());
 				if (amount > 0) {
 					getAmountTextBox().setCaption(String.valueOf(amount-1));
+					notifyPriceDisplayingTarget();
 				}
 			}
 		});
@@ -65,6 +68,7 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 			@Override
 			public void clickAction() {
 				removeFromParent();
+				notifyPriceDisplayingTarget();
 			}
 		});
 		return btn;

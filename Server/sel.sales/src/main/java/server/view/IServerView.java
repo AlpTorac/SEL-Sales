@@ -1,11 +1,11 @@
 package server.view;
 
-import model.OrderUpdatable;
+import model.OrderConfirmationStatusUpdatable;
 import server.controller.IServerController;
 import server.model.IServerModel;
 import view.IView;
 
-public interface IServerView extends IView, OrderUpdatable {
+public interface IServerView extends IView, OrderConfirmationStatusUpdatable {
 	@Override
 	IServerController getController();
 	@Override

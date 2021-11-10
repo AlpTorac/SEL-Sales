@@ -72,8 +72,8 @@ class SettingsAreaTest extends ApplicationTest {
 	private String sendTimeout = "1000";
 	
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
-	private Collection<HasSettingsField> part;
-	private IFileManager fm;
+//	private Collection<HasSettingsField> part;
+//	private IFileManager fm;
 	
 	private void initDevices() {
 //		dc1n = "dc1n";
@@ -127,12 +127,14 @@ class SettingsAreaTest extends ApplicationTest {
 	void prep() {
 		runFXAction(()->{
 			GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
-			model = new ServerModel();
-			fm = new FileManager(model, this.testFolderAddress);
+			model = new ServerModel(this.testFolderAddress);
+			
+//			fm = new FileManager(model, this.testFolderAddress);
 //			fm = GeneralTestUtilityClass.getPrivateFieldValue(model, "fileManager");
-			part = GeneralTestUtilityClass.getPrivateFieldValue(model, "part");
-			part.clear();
-			part.add(fm);
+//			part = GeneralTestUtilityClass.getPrivateFieldValue(model, "part");
+//			part.clear();
+//			part.add(fm);
+			
 			controller = new StandardServerController(model);
 			view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 			external = new DummyExternal("id", "name", controller, model, 10000, 1000, 2000, 5);

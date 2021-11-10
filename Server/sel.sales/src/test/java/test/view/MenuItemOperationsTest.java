@@ -1,5 +1,6 @@
 package test.view;
 
+import java.io.File;
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Assertions;
@@ -48,6 +49,8 @@ class MenuItemOperationsTest extends ApplicationTest {
 	private BigDecimal i3Disc = BigDecimal.valueOf(1);
 	private String i3id = "item3";
 	
+	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
+	
 	@BeforeEach
 	void prep() {
 		model.removeAllOrders();
@@ -55,7 +58,7 @@ class MenuItemOperationsTest extends ApplicationTest {
 	
 	@Override
 	public void start(Stage stage) {
-		model = new ServerModel();
+		model = new ServerModel(this.testFolderAddress);
 		controller = new StandardServerController(model);
 		view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 		view.startUp();

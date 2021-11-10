@@ -47,7 +47,7 @@ class DishMenuFileAccessTest {
 	@BeforeEach
 	void prep() {
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
-		model = new ServerModel();
+		model = new ServerModel(this.testFolderAddress);
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));

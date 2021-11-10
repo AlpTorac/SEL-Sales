@@ -56,15 +56,16 @@ class DishMenuWriterTest {
 	private static String testFolder = "src"+File.separator+"test"+File.separator+"resources";
 	
 	private void initModel() {
-		model = new ServerModel();
+		model = new ServerModel(testFolder);
 		model.addSetting(SettingsField.DISH_MENU_FOLDER, testFolder);
 	}
 	
 	@BeforeEach
 	void startUp() {
 		GeneralTestUtilityClass.deletePathContent(new File(testFolder));
-		model = new ServerModel();
-		model.addSetting(SettingsField.DISH_MENU_FOLDER, testFolder);
+//		model = new ServerModel();
+//		model.addSetting(SettingsField.DISH_MENU_FOLDER, testFolder);
+		this.initModel();
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));

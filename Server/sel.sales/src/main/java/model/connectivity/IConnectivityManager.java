@@ -19,8 +19,8 @@ public interface IConnectivityManager {
 	boolean isDeviceRediscoveryRequested();
 	boolean isAllowedToConnect(String deviceAddress);
 	boolean isConnected(String deviceAddress);
-	void DeviceConnected(String deviceAddress);
-	void DeviceDisconnected(String deviceAddress);
+	void deviceConnected(String deviceAddress);
+	void deviceDisconnected(String deviceAddress);
 	
 	int getKnownDeviceCount();
 	

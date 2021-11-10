@@ -1,5 +1,6 @@
 package test.view;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -59,6 +60,8 @@ class ConnectivityAreaTest extends ApplicationTest {
 	private Collection<IDevice> dcCol;
 	private IDeviceData[] dcdArray;
 	
+	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
+	
 	private void initDevices() {
 //		dc1n = "dc1n";
 //		dc1a = "dc1a";
@@ -110,7 +113,7 @@ class ConnectivityAreaTest extends ApplicationTest {
 	@BeforeEach
 	void prep() {
 		runFXAction(()->{
-			model = new ServerModel();
+			model = new ServerModel(this.testFolderAddress);
 			controller = new StandardServerController(model);
 			view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 			external = new DummyExternal("id", "name", controller, model, 10000, 1000, 2000, 5);

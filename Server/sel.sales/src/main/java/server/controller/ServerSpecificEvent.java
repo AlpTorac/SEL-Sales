@@ -9,6 +9,8 @@ public enum ServerSpecificEvent implements IApplicationEvent {
 	WRITE_DISH_MENU,
 	LOAD_DISH_MENU,
 	
+	WRITE_ORDERS,
+	
 	CONFIRM_ORDER,
 	CONFIRM_ALL_ORDERS,
 	

@@ -1,5 +1,6 @@
 package test.controller;
 
+import java.io.File;
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.AfterEach;
@@ -53,6 +54,8 @@ class ConnectivityIntegrationTest {
 	private BigDecimal i3ProCost = BigDecimal.valueOf(3.5);
 	private String i3id = "item3";
 	
+	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
+	
 	@BeforeEach
 	void prep() {
 		init();
@@ -80,7 +83,7 @@ class ConnectivityIntegrationTest {
 	}
 	
 	private void init() {
-		model = new ServerModel();
+		model = new ServerModel(this.testFolderAddress);
 		controller = new StandardServerController(model);
 		
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));

@@ -62,7 +62,7 @@ public class StandardClientView extends ClientView {
 	}
 
 	protected OrderArea initOrderTakingArea() {
-		return new OrderArea(this.getController(), this.fac, this.advFac);
+		return new OrderArea(this.getModel(), this.getController(), this.fac, this.advFac);
 	}
 
 	protected UIInnerFrame initFrame(UIComponent parent) {
@@ -112,7 +112,7 @@ public class StandardClientView extends ClientView {
 
 	@Override
 	public void refreshMenu() {
-		this.oa.refreshMenu(this.getModel().getMenuData());
+		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshMenu(this.getModel().getMenuData());});
 	}
 
 	@Override

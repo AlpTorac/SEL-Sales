@@ -25,13 +25,7 @@ public interface IIndexedLayout extends ILayout {
 	 * @param reference component, before which componentToAdd will be added
 	 */
 	default public void addUIComponentBefore(IUIComponent componentToAdd, IUIComponent reference) {
-		int index = this.getUIComponentIndex(reference) - 1;
-		
-		if (index < 0) {
-			this.addUIComponent(0, componentToAdd);
-		} else {
-			this.addUIComponent(index, componentToAdd);
-		}
+		this.addUIComponent(this.getUIComponentIndex(reference), componentToAdd);
 	}
 	
 	default public int getUIComponentIndex(IUIComponent c) {

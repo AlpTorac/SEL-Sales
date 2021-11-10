@@ -1,5 +1,6 @@
 package test.view;
 
+import java.io.File;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -55,6 +56,8 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	
 	private volatile boolean actionFinished = false;
 	
+	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
+	
 	private void waitForAction() {
 		while (!actionFinished) {
 			
@@ -73,7 +76,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	@BeforeEach
 	void cleanUp() {
 		runFXAction(()->{
-			model = new ServerModel();
+			model = new ServerModel(this.testFolderAddress);
 			controller = new StandardServerController(model);
 			view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
 			view.startUp();

@@ -1,0 +1,348 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
+import model.connectivity.ConnectivityManager;
+import model.connectivity.FileDeviceDataParser;
+import model.connectivity.FileDeviceDataSerialiser;
+import model.connectivity.IConnectivityManager;
+import model.connectivity.IDeviceData;
+import model.dish.DishMenu;
+import model.dish.DishMenuHelper;
+import model.dish.DishMenuItemFinder;
+import model.dish.IDishMenu;
+import model.dish.IDishMenuData;
+import model.dish.IDishMenuHelper;
+import model.dish.IDishMenuItem;
+import model.dish.IDishMenuItemData;
+import model.dish.IDishMenuItemFinder;
+import model.filemanager.FileManager;
+import model.filemanager.IFileManager;
+import model.order.IOrderCollector;
+import model.order.IOrderData;
+import model.order.IOrderHelper;
+import model.order.OrderHelper;
+import model.settings.HasSettingsField;
+import model.settings.ISettings;
+import model.settings.ISettingsParser;
+import model.settings.ISettingsSerialiser;
+import model.settings.Settings;
+import model.settings.SettingsField;
+import model.settings.StandardSettingsParser;
+import model.settings.StandardSettingsSerialiser;
+
+public abstract class Model implements IModel {
+
+	private Collection<Updatable> updatables;
+	private Collection<HasSettingsField> part;
+	
+	private IOrderHelper orderHelper;
+	private IDishMenuHelper menuHelper;
+	
+	private IDishMenu dishMenu;
+	private IDishMenuItemFinder finder;
+	
+	private IConnectivityManager connManager;
+	
+	private IFileManager fileManager;
+	
+	private ISettings settings;
+	private ISettingsParser settingsParser;
+	private ISettingsSerialiser settingsSerialiser;
+	
+	private FileDeviceDataParser deviceDataParser;
+	private FileDeviceDataSerialiser deviceDataSerialiser;
+
+	protected Model() {
+		this.updatables = new ArrayList<Updatable>();
+		this.part = new ArrayList<HasSettingsField>();
+		
+		this.orderHelper = new OrderHelper();
+		this.menuHelper = new DishMenuHelper();
+		
+		this.deviceDataParser = new FileDeviceDataParser();
+		this.deviceDataSerialiser = new FileDeviceDataSerialiser();
+		
+		this.setDishMenu(this.menuHelper.createDishMenu());
+		
+		this.connManager = new ConnectivityManager();
+		
+		this.settings = new Settings();
+		this.settingsParser = new StandardSettingsParser();
+		this.settingsSerialiser = new StandardSettingsSerialiser();
+		
+		this.fileManager = new FileManager(this, "src/main/resources");
+		this.part.add(this.fileManager);
+	}
+	
+	protected Model(String resourceFolder) {
+		this();
+		this.fileManager.setResourcesFolderAddress(resourceFolder);
+	}
+	
+	protected abstract IOrderCollector getWrittenOrderCollector();
+
+	protected IFileManager getFileManager() {
+		return this.fileManager;
+	}
+	
+	protected IDishMenu getDishMenu() {
+		return this.dishMenu;
+	}
+	
+	protected void notifyUpdatableChange(Predicate<? super Updatable> filter, Consumer<? super Updatable> action) {
+		this.updatables.stream().filter(filter).forEach(action);
+	}
+	
+	protected void notifySettingsChange(Predicate<? super HasSettingsField> filter, Consumer<? super HasSettingsField> action) {
+		this.part.stream().filter(filter).forEach(action);
+	}
+	
+	protected void menuChanged() {
+		this.notifyUpdatableChange(u -> u instanceof MenuUpdatable,
+				u -> ((MenuUpdatable) u).refreshMenu());
+//		this.updatables.stream().filter(u -> u instanceof MenuUpdatable).forEach(u -> ((MenuUpdatable) u).refreshMenu());
+	}
+
+	private void discoveredDevicesChanged() {
+		this.notifyUpdatableChange(u -> u instanceof DiscoveredDeviceUpdatable,
+				u -> ((DiscoveredDeviceUpdatable) u).refreshDiscoveredDevices());
+//		this.updatables.stream().filter(u -> u instanceof DiscoveredDeviceUpdatable).forEach(u -> ((DiscoveredDeviceUpdatable) u).refreshDiscoveredDevices());
+	}
+
+	private void knownDevicesChanged() {
+		this.notifyUpdatableChange(u -> u instanceof KnownDeviceUpdatable,
+				u -> ((KnownDeviceUpdatable) u).refreshKnownDevices());
+//		this.updatables.stream().filter(u -> u instanceof KnownDeviceUpdatable).forEach(u -> ((KnownDeviceUpdatable) u).refreshKnownDevices());
+		this.getFileManager().writeDeviceDatas(this.deviceDataSerialiser.serialiseDeviceDatas(this.connManager.getAllKnownDeviceData()));
+	}
+
+	private void externalStatusChanged(Runnable afterDiscoveryAction) {
+		this.notifyUpdatableChange(u -> u instanceof ExternalUpdatable,
+				u -> ((ExternalUpdatable) u).rediscoverDevices(afterDiscoveryAction));
+//		this.updatables.stream().filter(u -> u instanceof ExternalUpdatable).forEach(u -> ((ExternalUpdatable) u).rediscoverDevices(afterDiscoveryAction));
+	}
+
+	private void settingsChanged() {
+		this.notifySettingsChange(u -> true,
+				p -> p.refreshValue());
+		this.notifyUpdatableChange(u -> u instanceof SettingsUpdatable,
+				u -> ((SettingsUpdatable) u).refreshSettings());
+//		this.part.stream().forEach(p -> p.refreshValue());
+//		this.updatables.stream().filter(u -> u instanceof SettingsUpdatable).forEach(u -> ((SettingsUpdatable) u).refreshSettings());
+	}
+
+	public IDishMenuItemData getMenuItem(String id) {
+			IDishMenuItem item = this.getDishMenu().getItem(id);
+			if (item != null) {
+				return this.getDishMenuHelper().dishMenuItemToData(item);
+	//			return this.dishMenuItemDataFac.menuItemToData(item);
+			}
+			return null;
+		}
+
+	@Override
+	public IDishMenuData getMenuData() {
+		return this.getDishMenuHelper().dishMenuToData(this.getDishMenu());
+	}
+
+	@Override
+	public void subscribe(Updatable updatable) {
+		this.updatables.add(updatable);
+	}
+
+	@Override
+	public boolean writeSettings() {
+		return this.getFileManager().writeSettings(this.settingsSerialiser.serialise(this.getSettings()));
+	}
+
+	@Override
+	public void addDiscoveredDevice(String deviceName, String deviceAddress) {
+		this.connManager.addDiscoveredDevice(deviceName, deviceAddress);
+		this.discoveredDevicesChanged();
+	}
+
+	@Override
+	public void addKnownDevice(String deviceAddress) {
+		this.connManager.addKnownDevice(deviceAddress);
+		this.knownDevicesChanged();
+	}
+
+	@Override
+	public void removeKnownDevice(String deviceAddress) {
+		this.connManager.removeKnownDevice(deviceAddress);
+		this.knownDevicesChanged();
+	}
+
+	@Override
+	public void allowKnownDevice(String deviceAddress) {
+		this.connManager.allowKnownDevice(deviceAddress);
+		this.knownDevicesChanged();
+	}
+
+	@Override
+	public void blockKnownDevice(String deviceAddress) {
+		this.connManager.blockKnownDevice(deviceAddress);
+		this.knownDevicesChanged();
+	}
+
+	@Override
+	public IDeviceData[] getAllKnownDeviceData() {
+		return this.connManager.getAllKnownDeviceData();
+	}
+
+	@Override
+	public IDeviceData[] getAllDiscoveredDeviceData() {
+		return this.connManager.getAllDiscoveredDeviceData();
+	}
+
+	@Override
+	public void deviceConnected(String deviceAddress) {
+		this.connManager.deviceConnected(deviceAddress);
+		this.knownDevicesChanged();
+	}
+
+	@Override
+	public void deviceDisconnected(String deviceAddress) {
+		this.connManager.deviceDisconnected(deviceAddress);
+		this.knownDevicesChanged();
+	}
+
+	@Override
+	public boolean isDeviceRediscoveryRequested() {
+		return this.connManager.isDeviceRediscoveryRequested();
+	}
+
+	@Override
+	public void requestDeviceRediscovery(Runnable afterDiscoveryAction) {
+		this.connManager.requestDeviceRediscovery();
+		this.externalStatusChanged(afterDiscoveryAction);
+	}
+
+	@Override
+	public ISettings getSettings() {
+		return this.settings;
+	}
+
+	@Override
+	public void setSettings(String settings) {
+		this.setSettings(this.settingsParser.parseSettings(settings));
+	}
+
+	@Override
+	public void setSettings(ISettings settings) {
+		this.settings = settings;
+		this.settingsChanged();
+	}
+
+	@Override
+	public void setSettings(String[][] settings) {
+		this.settings.addAllSettings(settings);
+		this.settingsChanged();
+	}
+
+	protected void setDishMenu(IDishMenu dishMenu) {
+		this.dishMenu = dishMenu;
+		this.finder = new DishMenuItemFinder(this.getDishMenu());
+		this.orderHelper.setFinder(this.finder);
+	}
+
+	@Override
+	public void setDishMenu(String menu) {
+		IDishMenu dishMenu = new DishMenu();
+		IDishMenuData menuData = this.menuHelper.parseMenuData(menu);
+		for (IDishMenuItemData data : menuData.getAllDishMenuItems()) {
+			dishMenu.addMenuItem(this.menuHelper.dishMenuItemDataToItem(data));
+		}
+		this.setDishMenu(dishMenu);
+		this.menuChanged();
+	}
+
+	@Override
+	public void loadSaved() {
+		this.getFileManager().loadSaved();
+	}
+
+	@Override
+	public void close() {
+		this.getFileManager().close();
+	}
+
+	@Override
+	public IDishMenuHelper getDishMenuHelper() {
+		return this.menuHelper;
+	}
+
+	@Override
+	public IOrderHelper getOrderHelper() {
+		return this.orderHelper;
+	}
+
+	@Override
+	public void setKnownDevices(String serialisedDeviceData) {
+		IDeviceData[] DeviceDatas = this.deviceDataParser.parseDeviceDatas(serialisedDeviceData);
+		if (DeviceDatas != null) {
+			this.requestDeviceRediscovery(()->{
+				for (IDeviceData d : DeviceDatas) {
+					this.addDiscoveredDevice(d.getDeviceName(), d.getDeviceAddress());
+					this.addKnownDevice(d.getDeviceAddress());
+					if (d.getIsAllowedToConnect()) {
+						this.allowKnownDevice(d.getDeviceAddress());
+					} else {
+						this.blockKnownDevice(d.getDeviceAddress());
+					}
+				}
+			});
+		}
+	}
+
+	@Override
+	public void loadKnownDevices(String fileAddress) {
+		this.getFileManager().loadKnownDevices(fileAddress);
+	}
+
+	@Override
+	public void loadOrders(String fileAddress) {
+		this.getFileManager().loadOrders(fileAddress);
+	}
+
+	@Override
+	public IDishMenuItemFinder getActiveDishMenuItemFinder() {
+		return this.finder;
+	}
+
+	@Override
+	public void addSetting(SettingsField sf, String serialisedValue) {
+		this.settings.addSetting(sf, serialisedValue);
+		this.settingsChanged();
+	}
+
+	@Override
+	public boolean writeOrder(String orderID) {
+		return this.getFileManager().writeOrderData(this.getOrderHelper().serialiseForFile(this.getOrder(orderID)));
+	}
+	
+	@Override
+	public boolean isOrderWritten(String orderID) {
+		return this.getWrittenOrderCollector().getOrder(orderID) != null;
+	}
+	
+	@Override
+	public void setWrittenOrders(String readFile) {
+		if (readFile == null) {
+			return;
+		}
+		IOrderData[] orderData = this.getOrderHelper().deserialiseOrderDatas(readFile);
+		for (IOrderData od : orderData) {
+			this.getWrittenOrderCollector().addOrder(od);
+		}
+	}
+	
+	@Override
+	public IOrderData[] getAllWrittenOrders() {
+		return this.getWrittenOrderCollector().getAllOrders();
+	}
+}

@@ -1,238 +1,155 @@
 package client.model;
 
-import model.Updatable;
-import model.connectivity.IDeviceData;
-import model.dish.IDishMenuData;
-import model.dish.IDishMenuHelper;
-import model.dish.IDishMenuItemData;
-import model.dish.IDishMenuItemFinder;
+import model.Model;
+import model.order.IOrderCollector;
 import model.order.IOrderData;
-import model.order.IOrderHelper;
-import model.settings.ISettings;
-import model.settings.SettingsField;
 
-public class ClientModel implements IClientModel {
-
+public class ClientModel extends Model implements IClientModel {
+	
+	/**
+	 * Orders that have been taken and are cooking at the moment
+	 */
+	private IOrderCollector cookingOrders;
+	/**
+	 * Orders that have been cooked and served
+	 */
+	private IOrderCollector pendingPaymentOrders;
+	/**
+	 * Orders that are to be sent to the server
+	 */
+	private IOrderCollector pendingSendOrders;
+	/**
+	 * Orders that have already been sent to the server
+	 */
+	private IOrderCollector pastOrders;
+	
+	public ClientModel() {
+		super();
+		
+		this.cookingOrders = this.getOrderHelper().createOrderCollector();
+		this.pendingPaymentOrders = this.getOrderHelper().createOrderCollector();
+		this.pendingSendOrders = this.getOrderHelper().createOrderCollector();
+		this.pastOrders = this.getOrderHelper().createOrderCollector();
+	}
+	
+	public ClientModel(String resourceFolder) {
+		this();
+		this.getFileManager().setResourcesFolderAddress(resourceFolder);
+	}
+	
 	@Override
 	public void addOrder(String serialisedOrderData) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void subscribe(Updatable updatable) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public IDishMenuItemData getMenuItem(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IDishMenuData getMenuData() {
-		// TODO Auto-generated method stub
-		return null;
+		this.addCookingOrder(serialisedOrderData);
 	}
 
 	@Override
 	public IOrderData getOrder(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IOrderData[] getAllWrittenOrders() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IDishMenuHelper getDishMenuHelper() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IOrderHelper getOrderHelper() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void addDiscoveredDevice(String deviceName, String deviceAddress) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void addKnownDevice(String deviceAddress) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void removeKnownDevice(String deviceAddress) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void allowKnownDevice(String deviceAddress) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void blockKnownDevice(String deviceAddress) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean isDeviceRediscoveryRequested() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void requestDeviceRediscovery(Runnable afterDiscoveryAction) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deviceConnected(String deviceAddress) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deviceDisconnected(String deviceAddress) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public IDeviceData[] getAllKnownDeviceData() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IDeviceData[] getAllDiscoveredDeviceData() {
-		// TODO Auto-generated method stub
-		return null;
+		IOrderData data = null;
+		if ((data = this.getCookingOrder(id)) != null) {
+			return data;
+		}
+		if ((data = this.getPendingPaymentOrder(id)) != null) {
+			return data;
+		}
+		if ((data = this.getPendingSendOrder(id)) != null) {
+			return data;
+		}
+		if ((data = this.getPastOrder(id)) != null) {
+			return data;
+		}
+		return data;
 	}
 
 	@Override
 	public void removeAllOrders() {
-		// TODO Auto-generated method stub
-
+		this.cookingOrders.clearOrders();
+		this.pendingPaymentOrders.clearOrders();
+		this.pendingSendOrders.clearOrders();
+		this.pastOrders.clearOrders();
 	}
 
 	@Override
 	public void removeOrder(String id) {
-		// TODO Auto-generated method stub
-
+		this.cookingOrders.removeOrder(id);
+		this.pendingPaymentOrders.removeOrder(id);
+		this.pendingSendOrders.removeOrder(id);
+		this.pastOrders.removeOrder(id);
 	}
 
 	@Override
-	public boolean writeOrders() {
-		// TODO Auto-generated method stub
-		return false;
+	public void addCookingOrder(String serialisedOrderData) {
+		this.cookingOrders.addOrder(this.getOrderHelper().deserialiseOrderData(serialisedOrderData));
 	}
 
 	@Override
-	public ISettings getSettings() {
-		// TODO Auto-generated method stub
-		return null;
+	public void makePendingPaymentOrder(String orderID) {
+		IOrderData data;
+		if ((data = this.getCookingOrder(orderID)) != null) {
+			this.pendingPaymentOrders.addOrder(data);
+		}
 	}
 
 	@Override
-	public void addSetting(SettingsField sf, String serialisedValue) {
-		// TODO Auto-generated method stub
-
+	public void makePendingSendOrder(String orderID) {
+		IOrderData data;
+		if ((data = this.getPendingPaymentOrder(orderID)) != null) {
+			if (this.isOrderWritten(orderID)) {
+				this.writeOrder(orderID);
+			}
+			this.pendingSendOrders.addOrder(data);
+		}
 	}
 
 	@Override
-	public void setSettings(String settings) {
-		// TODO Auto-generated method stub
-
+	public void makePastOrder(String orderID) {
+		IOrderData data;
+		if ((data = this.getPendingSendOrder(orderID)) != null) {
+			this.pastOrders.addOrder(data);
+		}
 	}
 
 	@Override
-	public void setSettings(ISettings settings) {
-		// TODO Auto-generated method stub
-
+	public IOrderData[] getAllCookingOrders() {
+		return this.cookingOrders.getAllOrders();
 	}
 
 	@Override
-	public void setSettings(String[][] settings) {
-		// TODO Auto-generated method stub
-
+	public IOrderData[] getAllPendingPaymentOrders() {
+		return this.pendingPaymentOrders.getAllOrders();
 	}
 
 	@Override
-	public void setDishMenu(String menu) {
-		// TODO Auto-generated method stub
-
+	public IOrderData[] getAllPendingSendOrders() {
+		return this.pendingSendOrders.getAllOrders();
 	}
 
 	@Override
-	public void setKnownDevices(String serialisedDeviceData) {
-		// TODO Auto-generated method stub
-
+	public IOrderData[] getAllPastOrders() {
+		return this.pastOrders.getAllOrders();
 	}
 
 	@Override
-	public void loadSaved() {
-		// TODO Auto-generated method stub
-
+	public IOrderData getCookingOrder(String orderID) {
+		return this.cookingOrders.getOrder(orderID);
 	}
 
 	@Override
-	public void loadDishMenu(String fileAddress) {
-		// TODO Auto-generated method stub
-
+	public IOrderData getPendingPaymentOrder(String orderID) {
+		return this.pendingPaymentOrders.getOrder(orderID);
 	}
 
 	@Override
-	public void loadKnownDevices(String fileAddress) {
-		// TODO Auto-generated method stub
-
+	public IOrderData getPendingSendOrder(String orderID) {
+		return this.pendingSendOrders.getOrder(orderID);
 	}
 
 	@Override
-	public void loadOrders(String fileAddress) {
-		// TODO Auto-generated method stub
-
+	public IOrderData getPastOrder(String orderID) {
+		return this.pastOrders.getOrder(orderID);
 	}
 
 	@Override
-	public boolean writeSettings() {
-		// TODO Auto-generated method stub
-		return false;
+	protected IOrderCollector getWrittenOrderCollector() {
+		return this.pastOrders;
 	}
-
-	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setWrittenOrders(String readFile) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public IDishMenuItemFinder getActiveDishMenuItemFinder() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

@@ -1,9 +1,9 @@
 package server.view.composites.listeners;
 
-import controller.GeneralEvent;
 import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
 import controller.IController;
+import server.controller.ServerSpecificEvent;
 import view.repository.uiwrapper.ClickEventListener;
 
 public class WriteOrdersListener extends ClickEventListener implements IApplicationEventShooter {
@@ -25,7 +25,7 @@ public class WriteOrdersListener extends ClickEventListener implements IApplicat
 
 	@Override
 	public IApplicationEvent getApplicationEvent() {
-		return GeneralEvent.WRITE_ORDERS;
+		return ServerSpecificEvent.WRITE_ORDERS;
 	}
 
 }

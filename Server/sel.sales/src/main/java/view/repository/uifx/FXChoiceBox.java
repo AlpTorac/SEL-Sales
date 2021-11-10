@@ -35,6 +35,8 @@ public class FXChoiceBox<T> extends ChoiceBox<T> implements FXDataCollectingUICo
 	
 	@Override
 	public void addItemChangeListener(ItemChangeListener l) {
+		super.setOnAction(event -> {l.selectedItemChanged(this.getSelectedElement());});
+		
 		ListChangeListener<T> listener = new ListChangeListener<T>() {
 			@Override
 			public void onChanged(Change<? extends T> c) {

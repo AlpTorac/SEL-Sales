@@ -18,4 +18,8 @@ public abstract class ItemChangeListener extends EditPart {
 	public void itemEditedAction(Collection<?> items) {
 		
 	}
+	
+	public void selectedItemChanged(Object item) {
+		
+	}
 }

@@ -1,15 +1,16 @@
 package server.controller;
 
 import controller.Controller;
-import controller.handler.LoadDishMenuHandler;
 import controller.manager.IApplicationEventManager;
 import server.controller.handler.AddDishHandler;
 import server.controller.handler.ConfirmAllOrdersHandler;
 import server.controller.handler.ConfirmOrderHandler;
 import server.controller.handler.EditDishHandler;
+import server.controller.handler.LoadDishMenuHandler;
 import server.controller.handler.OrderConfirmModelChangedHandler;
 import server.controller.handler.RemoveDishHandler;
 import server.controller.handler.WriteDishMenuHandler;
+import server.controller.handler.WriteOrdersHandler;
 import server.model.IServerModel;
 
 public abstract class ServerController extends Controller implements IServerController {
@@ -32,6 +33,7 @@ public abstract class ServerController extends Controller implements IServerCont
 		bem.addApplicationEventToHandlerMapping(ServerSpecificEvent.LOAD_DISH_MENU, new LoadDishMenuHandler(this));
 		bem.addApplicationEventToHandlerMapping(ServerSpecificEvent.CONFIRM_ORDER, new ConfirmOrderHandler(this));
 		bem.addApplicationEventToHandlerMapping(ServerSpecificEvent.CONFIRM_ALL_ORDERS, new ConfirmAllOrdersHandler(this));
+		bem.addApplicationEventToHandlerMapping(ServerSpecificEvent.WRITE_ORDERS, new WriteOrdersHandler(this));
 		bem.addApplicationEventToHandlerMapping(ServerSpecificEvent.ORDER_CONFIRM_MODEL_CHANGED, new OrderConfirmModelChangedHandler(this));
 		return bem;
 	}

@@ -1,6 +1,7 @@
 package client.view.composites;
 
 import controller.IController;
+import model.IModel;
 import model.dish.IDishMenuData;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.UIComponentFactory;
@@ -18,6 +19,7 @@ public class OrderArea extends UIVBoxLayout {
 	
 	private UITabPane tabPane;
 	
+	private IModel model;
 	private IController controller;
 	private UIComponentFactory fac;
 	private AdvancedUIComponentFactory advFac;
@@ -27,8 +29,9 @@ public class OrderArea extends UIVBoxLayout {
 	private String uoaTabName = "Unpaid Orders Area";
 	private String poaTabName = "Past Orders Area";
 	
-	public OrderArea(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac) {
+	public OrderArea(IModel model, IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac) {
 		super(fac.createVBoxLayout().getComponent());
+		this.model = model;
 		this.controller = controller;
 		this.fac = fac;
 		this.advFac = advFac;
@@ -47,7 +50,7 @@ public class OrderArea extends UIVBoxLayout {
 	}
 
 	protected OrderTakingArea initOrderTakingArea() {
-		return new OrderTakingArea(this.controller, this.fac, this.advFac);
+		return new OrderTakingArea(this.model, this.controller, this.fac, this.advFac);
 	}
 
 	protected CookingOrdersArea initCookingOrdersArea() {

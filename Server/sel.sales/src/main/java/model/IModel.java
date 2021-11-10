@@ -34,7 +34,7 @@ public interface IModel extends Closeable {
 	IDeviceData[] getAllDiscoveredDeviceData();
 	void removeAllOrders();
 	void removeOrder(String id);
-	boolean writeOrders();
+	boolean writeOrder(String orderID);
 	ISettings getSettings();
 	void addSetting(SettingsField sf, String serialisedValue);
 	void setSettings(String settings);
@@ -43,11 +43,11 @@ public interface IModel extends Closeable {
 	void setDishMenu(String menu);
 	void setKnownDevices(String serialisedDeviceData);
 	void loadSaved();
-	void loadDishMenu(String fileAddress);
 	void loadKnownDevices(String fileAddress);
 	void loadOrders(String fileAddress);
 	boolean writeSettings();
 	void close();
 	void setWrittenOrders(String readFile);
 	IDishMenuItemFinder getActiveDishMenuItemFinder();
+	boolean isOrderWritten(String orderID);
 }

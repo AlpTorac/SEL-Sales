@@ -108,11 +108,6 @@ public class OrderHelper implements IOrderHelper {
 	}
 
 	@Override
-	public void setMenuFinder(IDishMenuItemFinder finder) {
-		this.finder = finder;
-	}
-
-	@Override
 	public String serialiseForApp(IOrderData[] data) {
 		return this.appOrderSerialiser.serialiseOrderDatas(data);
 	}

@@ -21,9 +21,7 @@ public class FileManager implements IFileManager {
 	public FileManager(IModel model, String settingsFolderAddress) {
 		this.model = model;
 		
-		this.settingsFolderAddress = settingsFolderAddress;
-		this.deviceDataFile = new StandardDeviceDataFile(this.settingsFolderAddress);
-		this.settingsFile = new StandardSettingsFile(this.settingsFolderAddress);
+		this.setResourcesFolderAddress(settingsFolderAddress);
 		this.orderWriter = new StandardOrderFile(this.model.getSettings().getSetting(SettingsField.ORDER_FOLDER));
 		this.dishMenuWriter = new StandardDishMenuFile(this.model.getSettings().getSetting(SettingsField.DISH_MENU_FOLDER));
 	}
@@ -140,5 +138,12 @@ public class FileManager implements IFileManager {
 		OrderFile file = new StandardOrderFile(fileAddress);
 		this.model.setWrittenOrders(file.readFile());
 		file.close();
+	}
+
+	@Override
+	public void setResourcesFolderAddress(String folderAddress) {
+		this.settingsFolderAddress = folderAddress;
+		this.deviceDataFile = new StandardDeviceDataFile(this.settingsFolderAddress);
+		this.settingsFile = new StandardSettingsFile(this.settingsFolderAddress);
 	}
 }

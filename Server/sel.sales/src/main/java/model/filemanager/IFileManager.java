@@ -11,5 +11,6 @@ public interface IFileManager extends HasSettingsField {
 	void loadDishMenu(String fileAddress);
 	void loadOrders(String fileAddress);
 	void loadKnownDevices(String fileAddress);
+	void setResourcesFolderAddress(String folderAddress);
 	void close();
 }

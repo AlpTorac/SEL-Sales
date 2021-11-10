@@ -1,28 +1,38 @@
 package client.view.composites;
 
+import java.math.BigDecimal;
+import java.util.Collection;
+
 import controller.IController;
+import model.IModel;
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
 import view.repository.IChoiceBox;
 import view.repository.ITextBox;
 import view.repository.IUIComponent;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
+import view.repository.uiwrapper.ItemChangeListener;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIHBoxLayout;
 
 public class MenuItemEntry extends UIHBoxLayout {
+	private IModel model;
 	private IController controller;
 	private UIComponentFactory fac;
 	private AdvancedUIComponentFactory advFac;
 	
-	private IChoiceBox<String> cb;
+	private IChoiceBox<IDishMenuItemData> cb;
 	private ITextBox amount;
 	
-	public MenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac) {
+	private PriceUpdateTarget notifyTarget;
+	
+	public MenuItemEntry(IModel model, IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget notifyTarget) {
 		super(fac.createHBoxLayout().getComponent());
+		this.model = model;
 		this.controller = controller;
 		this.fac = fac;
 		this.advFac = advFac;
+		this.notifyTarget = notifyTarget;
 		this.initComponent();
 	}
 
@@ -36,8 +46,26 @@ public class MenuItemEntry extends UIHBoxLayout {
 		});
 	}
 	
-	protected IChoiceBox<String> initChoiceBox() {
-		return this.fac.createChoiceBox();
+	protected IChoiceBox<IDishMenuItemData> initChoiceBox() {
+		IChoiceBox<IDishMenuItemData> choiceBox = this.fac.createChoiceBox();
+		choiceBox.addItemChangeListener(new ItemChangeListener() {
+			public void selectedItemChanged(Object item) {
+				notifyPriceDisplayingTarget();
+			}
+			
+			public void itemRemovedAction(Collection<?> items) {
+				notifyPriceDisplayingTarget();
+			}
+			
+			public void itemAddedAction(Collection<?> items) {
+				notifyPriceDisplayingTarget();
+			}
+			
+			public void itemEditedAction(Collection<?> items) {
+				notifyPriceDisplayingTarget();
+			}
+		});
+		return choiceBox;
 	}
 	
 	protected ITextBox initAmount() {
@@ -56,7 +84,7 @@ public class MenuItemEntry extends UIHBoxLayout {
 		return this.fac;
 	}
 	
-	protected IChoiceBox<String> getMenuItemChoiceBox() {
+	protected IChoiceBox<IDishMenuItemData> getMenuItemChoiceBox() {
 		return this.cb;
 	}
 	
@@ -65,12 +93,37 @@ public class MenuItemEntry extends UIHBoxLayout {
 	}
 	
 	protected void removeFromParent() {
+		this.notifyTarget.remove(this);
 		this.dettach();
 	}
 	
 	public void refreshMenu(IDishMenuData menuData) {
+		this.cb.clear();
 		for (IDishMenuItemData data : menuData.getAllDishMenuItems()) {
-			this.cb.addItem(data.getDishName());
+			this.addMenuItem(data);
 		}
+	}
+	
+	protected void addMenuItem(IDishMenuItemData data) {
+		this.cb.addItem(data);
+	}
+	
+	protected IDishMenuItemData fetchMenuItemData() {
+		return model.getMenuItem(this.cb.getSelectedElement().getID().toString());
+	}
+	
+	protected BigDecimal getAmount() {
+		return BigDecimal.valueOf(Double.valueOf(this.amount.getText()));
+	}
+	
+	public BigDecimal getPrice() {
+		if (this.cb.getSelectedElement() != null) {
+			return this.fetchMenuItemData().getGrossPrice().multiply(this.getAmount());
+		}
+		return BigDecimal.ZERO;
+	}
+	
+	protected void notifyPriceDisplayingTarget() {
+		this.notifyTarget.refreshPrice();
 	}
 }

@@ -72,12 +72,12 @@ public class ConnectivityManager implements IConnectivityManager {
 	}
 	
 	@Override
-	public void DeviceConnected(String deviceAddress) {
+	public void deviceConnected(String deviceAddress) {
 		this.knownDevices.get(deviceAddress).setConnectionStatus(true);
 	}
 
 	@Override
-	public void DeviceDisconnected(String deviceAddress) {
+	public void deviceDisconnected(String deviceAddress) {
 		this.knownDevices.get(deviceAddress).setConnectionStatus(false);
 	}
 	

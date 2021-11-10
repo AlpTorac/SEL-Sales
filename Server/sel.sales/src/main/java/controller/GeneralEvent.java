@@ -15,6 +15,5 @@ public enum GeneralEvent implements IApplicationEvent {
 	SAVE_SETTINGS,
 	
 	ADD_ORDER,
-	REMOVE_ORDER,
-	WRITE_ORDERS;
+	REMOVE_ORDER;
 }
