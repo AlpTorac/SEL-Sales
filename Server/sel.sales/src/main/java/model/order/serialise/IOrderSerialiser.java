@@ -1,6 +1,5 @@
 package model.order.serialise;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import model.dish.IDishMenuItemData;
@@ -12,9 +11,9 @@ import model.util.ISerialiser;
 public interface IOrderSerialiser extends ISerialiser {
 	String serialiseOrderDatas(IOrderData[] orderDatas);
 	default String serialiseOrderData(IOrderData orderData) {
-		return this.serialiseOrderData(orderData.getOrderedItems(), orderData.getDate(), orderData.getIsCash(), orderData.getIsHere(), orderData.getOrderDiscount(), orderData.getID());
+		return this.serialiseOrderData(orderData.getOrderedItems(), orderData.getDate(), orderData.getIsCash(), orderData.getIsHere(), orderData.getID());
 	}
-	String serialiseOrderData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, EntityID orderID);
+	String serialiseOrderData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, EntityID orderID);
 	default String serialiseOrderID(EntityID orderID) {
 		return orderID.toString();
 	}

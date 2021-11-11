@@ -56,9 +56,13 @@ public abstract class Model implements IModel {
 	private FileDeviceDataParser deviceDataParser;
 	private FileDeviceDataSerialiser deviceDataSerialiser;
 
+	private IDateSettings ds;
+	
 	protected Model() {
 		this.updatables = new ArrayList<Updatable>();
 		this.part = new ArrayList<HasSettingsField>();
+		
+		this.ds = new DateSettings();
 		
 		this.orderHelper = new OrderHelper();
 		this.menuHelper = new DishMenuHelper();
@@ -344,5 +348,10 @@ public abstract class Model implements IModel {
 	@Override
 	public IOrderData[] getAllWrittenOrders() {
 		return this.getWrittenOrderCollector().getAllOrders();
+	}
+	
+	@Override
+	public IDateSettings getDateSettings() {
+		return this.ds;
 	}
 }

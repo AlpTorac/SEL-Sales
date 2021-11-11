@@ -3,6 +3,7 @@ package model.order;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemFinder;
 import model.filewriter.FileOrderSerialiser;
 import model.id.EntityID;
@@ -16,7 +17,6 @@ public interface IOrderHelper {
 	void setOrderFactory(IOrderFactory fac);
 	void setOrderDataFactory(IOrderDataFactory fac);
 	
-	void setOrderItemFactory(IOrderItemFactory fac);
 	void setOrderItemDataFactory(IOrderItemDataFactory fac);
 	
 	void setOrderDeserialiser(IOrderDeserialiser deserialiser);
@@ -24,8 +24,9 @@ public interface IOrderHelper {
 	void setAppSerialiser(IntraAppOrderSerialiser appOrderSerialiser);
 	void setFileSerialiser(FileOrderSerialiser fileOrderSerialiser);
 	
-	String serialiseForApp(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, Object... idParameters);
-	String serialiseForApp(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount, EntityID orderID);
+	String serialiseForApp(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, Object... idParameters);
+	String serialiseForApp(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, EntityID orderID);
+	String serialiseForApp(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere);
 	String serialiseForApp(IOrderData[] data);
 	String serialiseForFile(IOrderData[] data);
 	String serialiseForFile(IOrderData data);
@@ -35,4 +36,5 @@ public interface IOrderHelper {
 	IOrderData orderToData(IOrder order);
 	IOrderData[] deserialiseOrderDatas(String serialisedOrders);
 	IOrderData deserialiseOrderData(String serialisedOrder);
+	IOrderItemData createOrderItemData(IDishMenuItemData menuItem, BigDecimal amount);
 }

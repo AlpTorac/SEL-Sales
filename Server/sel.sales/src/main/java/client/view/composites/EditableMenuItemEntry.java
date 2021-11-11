@@ -1,7 +1,6 @@
 package client.view.composites;
 
 import controller.IController;
-import model.IModel;
 import view.repository.IButton;
 import view.repository.IUIComponent;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
@@ -13,8 +12,8 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 	private IButton amountDecBtn;
 	private IButton removeBtn;
 	
-	public EditableMenuItemEntry(IModel model, IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget notifyTarget) {
-		super(model, controller, fac, advFac, notifyTarget);
+	public EditableMenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget notifyTarget) {
+		super(controller, fac, advFac, notifyTarget);
 	}
 
 	@Override

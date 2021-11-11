@@ -50,4 +50,5 @@ public interface IModel extends Closeable {
 	void setWrittenOrders(String readFile);
 	IDishMenuItemFinder getActiveDishMenuItemFinder();
 	boolean isOrderWritten(String orderID);
+	IDateSettings getDateSettings();
 }

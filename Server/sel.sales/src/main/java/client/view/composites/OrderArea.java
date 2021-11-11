@@ -50,7 +50,7 @@ public class OrderArea extends UIVBoxLayout {
 	}
 
 	protected OrderTakingArea initOrderTakingArea() {
-		return new OrderTakingArea(this.model, this.controller, this.fac, this.advFac);
+		return new OrderTakingArea(this.controller, this.fac, this.advFac);
 	}
 
 	protected CookingOrdersArea initCookingOrdersArea() {

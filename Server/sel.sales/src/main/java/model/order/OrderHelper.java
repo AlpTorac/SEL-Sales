@@ -3,12 +3,14 @@ package model.order;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemFinder;
 import model.filewriter.FileOrderSerialiser;
 import model.id.EntityID;
 import model.id.EntityIDFactory;
 import model.id.FixIDFactory;
 import model.order.serialise.IOrderDeserialiser;
+import model.order.serialise.IntraAppOrderFormat;
 import model.order.serialise.IntraAppOrderSerialiser;
 import model.order.serialise.StandardOrderDeserialiser;
 
@@ -20,7 +22,6 @@ public class OrderHelper implements IOrderHelper {
 	private IOrderFactory orderFac;
 	private IOrderDataFactory orderDataFac;
 	
-	private IOrderItemFactory orderItemFac;
 	private IOrderItemDataFactory orderItemDataFac;
 	
 	private IOrderDeserialiser deserialiser;
@@ -29,16 +30,18 @@ public class OrderHelper implements IOrderHelper {
 	private IntraAppOrderSerialiser appOrderSerialiser;
 	private FileOrderSerialiser fileOrderSerialiser;
 	
+	private IntraAppOrderFormat appOrderFormat;
+	
 	public OrderHelper() {
 		this.idFac = new FixIDFactory();
 		this.orderColFac = new OrderCollectorFactory();
 		this.orderFac = new OrderFactory();
-		this.orderItemFac = new OrderItemFactory();
 		this.orderItemDataFac = new OrderItemDataFactory();
 		this.orderDataFac = new OrderDataFactory(this.orderItemDataFac, new FixIDFactory());
 		this.deserialiser = new StandardOrderDeserialiser();
 		this.appOrderSerialiser = new IntraAppOrderSerialiser();
 		this.fileOrderSerialiser = new FileOrderSerialiser();
+		this.appOrderFormat = new IntraAppOrderFormat();
 	}
 	
 	@Override
@@ -54,11 +57,6 @@ public class OrderHelper implements IOrderHelper {
 	@Override
 	public void setOrderDataFactory(IOrderDataFactory fac) {
 		this.orderDataFac = fac;
-	}
-
-	@Override
-	public void setOrderItemFactory(IOrderItemFactory fac) {
-		this.orderItemFac = fac;
 	}
 
 	@Override
@@ -119,8 +117,8 @@ public class OrderHelper implements IOrderHelper {
 
 	@Override
 	public String serialiseForApp(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere,
-			BigDecimal orderDiscount, EntityID orderID) {
-		return this.appOrderSerialiser.serialiseOrderData(orderData, date, isCash, isHere, orderDiscount, orderID);
+			EntityID orderID) {
+		return this.appOrderSerialiser.serialiseOrderData(orderData, date, isCash, isHere, orderID);
 	}
 
 	@Override
@@ -130,13 +128,22 @@ public class OrderHelper implements IOrderHelper {
 
 	@Override
 	public String serialiseForApp(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere,
-			BigDecimal orderDiscount, Object... idParameters) {
-		return this.appOrderSerialiser.serialiseOrderData(orderData, date, isCash, isHere, orderDiscount,
-				this.idFac.createID(idParameters));
+			Object... idParameters) {
+		return this.appOrderSerialiser.serialiseOrderData(orderData, date, isCash, isHere, this.idFac.createID(idParameters));
 	}
 
 	@Override
 	public String serialiseForFile(IOrderData data) {
 		return this.fileOrderSerialiser.serialiseOrderData(data);
+	}
+
+	@Override
+	public IOrderItemData createOrderItemData(IDishMenuItemData menuItem, BigDecimal amount) {
+		return this.orderItemDataFac.constructData(menuItem, amount);
+	}
+
+	@Override
+	public String serialiseForApp(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere) {
+		return this.serialiseForApp(orderData, date, isCash, isHere, this.appOrderFormat.formatDate(date));
 	}
 }

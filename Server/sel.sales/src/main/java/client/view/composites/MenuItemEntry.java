@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Collection;
 
 import controller.IController;
-import model.IModel;
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
 import view.repository.IChoiceBox;
@@ -16,7 +15,6 @@ import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIHBoxLayout;
 
 public class MenuItemEntry extends UIHBoxLayout {
-	private IModel model;
 	private IController controller;
 	private UIComponentFactory fac;
 	private AdvancedUIComponentFactory advFac;
@@ -26,9 +24,8 @@ public class MenuItemEntry extends UIHBoxLayout {
 	
 	private PriceUpdateTarget notifyTarget;
 	
-	public MenuItemEntry(IModel model, IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget notifyTarget) {
+	public MenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget notifyTarget) {
 		super(fac.createHBoxLayout().getComponent());
-		this.model = model;
 		this.controller = controller;
 		this.fac = fac;
 		this.advFac = advFac;
@@ -108,22 +105,23 @@ public class MenuItemEntry extends UIHBoxLayout {
 		this.cb.addItem(data);
 	}
 	
-	protected IDishMenuItemData fetchMenuItemData() {
-		return model.getMenuItem(this.cb.getSelectedElement().getID().toString());
-	}
-	
 	protected BigDecimal getAmount() {
 		return BigDecimal.valueOf(Double.valueOf(this.amount.getText()));
 	}
 	
 	public BigDecimal getPrice() {
-		if (this.cb.getSelectedElement() != null) {
-			return this.fetchMenuItemData().getGrossPrice().multiply(this.getAmount());
+		IDishMenuItemData data = null;
+		if ((data = this.getSelectedMenuItem()) != null) {
+			return data.getGrossPrice().multiply(this.getAmount());
 		}
 		return BigDecimal.ZERO;
 	}
 	
 	protected void notifyPriceDisplayingTarget() {
 		this.notifyTarget.refreshPrice();
+	}
+	
+	public IDishMenuItemData getSelectedMenuItem() {
+		return this.cb.getSelectedElement();
 	}
 }

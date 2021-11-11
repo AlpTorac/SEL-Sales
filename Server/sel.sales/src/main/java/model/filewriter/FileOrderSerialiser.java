@@ -22,15 +22,23 @@ public class FileOrderSerialiser implements IOrderSerialiser {
 	
 	@Override
 	public String serialiseOrderData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash,
-			boolean isHere, BigDecimal orderDiscount, EntityID orderID) {
+			boolean isHere, EntityID orderID) {
 		String result = "";
+		boolean isDiscounted = false;
+		for (int i = 0; i < orderData.length; i++) {
+//			isDiscounted = isDiscounted || orderData[i].getGrossPrice().compareTo(BigDecimal.ZERO) < 0;
+			if (isDiscounted = orderData[i].getGrossPrice().compareTo(BigDecimal.ZERO) < 0) {
+				break;
+			}
+		}
 		for (IOrderItemData d : orderData) {
 			result += this.getOrderFormat().getOrderStart();
 			result += this.serialiseOrderID(orderID) + this.getOrderDataFieldSeperator();
 			result += this.serialiseOrderDate(date) + this.getOrderDataFieldSeperator();
 			result += this.serialiseIsCash(isCash) + this.getOrderDataFieldSeperator();
 			result += this.serialiseIsHere(isHere) + this.getOrderDataFieldSeperator();
-			result += this.serialiseIsDiscounted(orderDiscount) + this.getOrderDataFieldEnd();
+//			result += this.serialiseIsDiscounted(orderDiscount) + this.getOrderDataFieldEnd();
+			result += this.serialiseBoolean(isDiscounted) + this.getOrderDataFieldEnd();
 			result += this.serialiseDishMenuItemID(d.getItemData()) + this.getOrderItemDataFieldSeperator();
 			result += this.serialiseOrderItemAmount(d) + this.getOrderItemDataFieldEnd();
 			result += this.getOrderFormat().getOrderEnd();
@@ -42,9 +50,4 @@ public class FileOrderSerialiser implements IOrderSerialiser {
 	public IOrderFormat getOrderFormat() {
 		return this.format;
 	}
-
-	public String serialiseIsDiscounted(BigDecimal orderDiscount) {
-		return this.serialiseBoolean(orderDiscount.compareTo(BigDecimal.ZERO) > 0);
-	}
-	
 }

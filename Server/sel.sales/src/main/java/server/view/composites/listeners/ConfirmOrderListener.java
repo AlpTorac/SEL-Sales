@@ -50,12 +50,13 @@ public class ConfirmOrderListener extends ClickEventListener implements IApplica
 		
 		String orderID = this.getOrderID().getText();
 		
-		BigDecimal menuItemDiscounts = BigDecimal.valueOf(Double.valueOf(this.oia.getDiscountDisplay().getText()));
-		BigDecimal orderDiscount = BigDecimal.valueOf(Double.valueOf(this.getTotalOrderDiscount().getText())).subtract(menuItemDiscounts);
+//		BigDecimal menuItemDiscounts = BigDecimal.valueOf(Double.valueOf(this.oia.getDiscountDisplay().getText()));
+//		BigDecimal orderDiscount = BigDecimal.valueOf(Double.valueOf(this.getTotalOrderDiscount().getText())).subtract(menuItemDiscounts);
 		
 		LocalDateTime date = this.oia.getDisplayedDate();
 		
-		String data = this.controller.getModel().getOrderHelper().serialiseForApp(orderItemDataCollection.toArray(IOrderItemData[]::new), date, isCash, isHere, orderDiscount, orderID);
+//		String data = this.controller.getModel().getOrderHelper().serialiseForApp(orderItemDataCollection.toArray(IOrderItemData[]::new), date, isCash, isHere, orderDiscount, orderID);
+		String data = this.controller.getModel().getOrderHelper().serialiseForApp(orderItemDataCollection.toArray(IOrderItemData[]::new), date, isCash, isHere, orderID);
 		
 		this.oia.clearOrderDisplay();
 		

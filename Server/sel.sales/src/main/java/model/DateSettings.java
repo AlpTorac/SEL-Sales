@@ -8,6 +8,8 @@ public class DateSettings implements IDateSettings {
 	private String timeInDaySeperator = ":";
 	private String dateInYearPattern = "dd"+dateInYearSeperator+"MM"+dateInYearSeperator+"yyyy";
 	private String timeInDayPattern = "HH"+timeInDaySeperator+"mm"+timeInDaySeperator+"ss"+timeInDaySeperator+"SSS";
+	
+	private DateTimeFormatter fullFormatter = DateTimeFormatter.ofPattern(dateInYearPattern+timeInDayPattern);
 	private DateTimeFormatter dateInYearFormat = DateTimeFormatter.ofPattern(dateInYearPattern);
 	private DateTimeFormatter timeInDayFormat = DateTimeFormatter.ofPattern(timeInDayPattern);
 	
@@ -16,7 +18,7 @@ public class DateSettings implements IDateSettings {
 	}
 	
 	public LocalDateTime parseDate(String date) {
-		return LocalDateTime.parse(date, DateTimeFormatter.ofPattern(dateInYearPattern+timeInDayPattern));
+		return LocalDateTime.parse(date, this.fullFormatter);
 	}
 	
 	public String getTimeInDay(LocalDateTime date) {
@@ -25,5 +27,10 @@ public class DateSettings implements IDateSettings {
 	
 	public String getDateInYear(LocalDateTime date) {
 		return dateInYearFormat.format(date);
+	}
+
+	@Override
+	public String serialiseDate(LocalDateTime date) {
+		return this.fullFormatter.format(date);
 	}
 }

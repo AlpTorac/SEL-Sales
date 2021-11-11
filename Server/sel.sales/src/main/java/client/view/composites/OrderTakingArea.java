@@ -1,12 +1,14 @@
 package client.view.composites;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import client.view.composites.listener.AddCookingOrderListener;
 import controller.IController;
-import model.IModel;
 import model.dish.IDishMenuData;
+import model.order.IOrderItemData;
 import view.repository.IButton;
 import view.repository.ILabel;
 import view.repository.IUIComponent;
@@ -17,7 +19,9 @@ import view.repository.uiwrapper.UIHBoxLayout;
 import view.repository.uiwrapper.UIVBoxLayout;
 
 public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget {
-	private IModel model;
+	private static final boolean DEFAULT_IS_CASH = false;
+	private static final boolean DEFAULT_IS_HERE = false;
+	
 	private IController controller;
 	private UIComponentFactory fac;
 	private AdvancedUIComponentFactory advFac;
@@ -32,9 +36,8 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget {
 	
 	private IDishMenuData activeMenu;
 	
-	protected OrderTakingArea(IModel model, IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac) {
+	protected OrderTakingArea(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac) {
 		super(fac.createVBoxLayout().getComponent());
-		this.model = model;
 		this.menuItemEntries = new CopyOnWriteArrayList<MenuItemEntry>();
 		this.controller = controller;
 		this.fac = fac;
@@ -67,6 +70,10 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget {
 	protected IButton initNextTabButton() {
 		IButton btn = this.fac.createButton();
 		btn.setCaption("Add to cooking");
+		
+		ClickEventListener aol = new AddCookingOrderListener(this, this.controller);
+		btn.addClickListener(aol);
+		
 		return btn;
 	}
 
@@ -96,7 +103,7 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget {
 	}
 	
 	protected MenuItemEntry createMenuItemEntry() {
-		return new EditableMenuItemEntry(this.model, this.controller, this.fac, this.advFac, this);
+		return new EditableMenuItemEntry(this.controller, this.fac, this.advFac, this);
 	}
 	
 	public void refreshMenu(IDishMenuData menuData) {
@@ -112,5 +119,17 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget {
 	@Override
 	public void remove(Object referenceOfCaller) {
 		this.menuItemEntries.remove(referenceOfCaller);
+	}
+	
+	public String serialiseCurrentOrder() {
+		IOrderItemData[] data =  this.menuItemEntries.stream()
+		.map(mie -> this.controller.getModel().getOrderHelper().createOrderItemData(mie.getSelectedMenuItem(), mie.getAmount()))
+		.toArray(IOrderItemData[]::new);
+		
+		return this.controller.getModel().getOrderHelper().serialiseForApp(
+				data,
+				LocalDateTime.now(),
+				DEFAULT_IS_CASH,
+				DEFAULT_IS_HERE);
 	}
 }
