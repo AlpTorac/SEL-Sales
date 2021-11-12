@@ -18,7 +18,7 @@ import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIHBoxLayout;
 import view.repository.uiwrapper.UIVBoxLayout;
 
-public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget {
+public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<MenuItemEntry> {
 	private static final boolean DEFAULT_IS_CASH = false;
 	private static final boolean DEFAULT_IS_HERE = false;
 	
@@ -57,6 +57,7 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget {
 		this.addUIComponent(this.addMenuItemBtn);
 		
 		UIHBoxLayout bottomPart = this.fac.createHBoxLayout();
+		bottomPart.setSpacing(50);
 		bottomPart.addUIComponents(new IUIComponent[] {
 			this.priceDisplay = this.initPriceDisplay(),
 					this.nextTabBtn = this.initNextTabButton()
@@ -117,7 +118,7 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget {
 	}
 
 	@Override
-	public void remove(Object referenceOfCaller) {
+	public void remove(MenuItemEntry referenceOfCaller) {
 		this.menuItemEntries.remove(referenceOfCaller);
 	}
 	
@@ -131,5 +132,12 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget {
 				LocalDateTime.now(),
 				DEFAULT_IS_CASH,
 				DEFAULT_IS_HERE);
+	}
+	
+	public void resetUserInput() {
+		for (MenuItemEntry mie : this.menuItemEntries.toArray(MenuItemEntry[]::new)) {
+			mie.removeFromParent();
+		}
+		this.refreshPrice();
 	}
 }

@@ -32,4 +32,19 @@ public class FXTabPane extends TabPane implements ITabPane, FXAttachable {
 	public void selectTab(int index) {
 		super.getSelectionModel().select(index);
 	}
+	
+	@Override
+	public void removeTab(String title) {
+		super.getTabs().removeIf(t -> t.getText().equals(title));
+	}
+	
+	@Override
+	public void removeTab(IUIComponent tabComponent) {
+		super.getTabs().removeIf(t -> t.getContent().equals((Node) tabComponent.getComponent()));
+	}
+	
+	@Override
+	public void removeAllTabs() {
+		super.getTabs().clear();
+	}
 }

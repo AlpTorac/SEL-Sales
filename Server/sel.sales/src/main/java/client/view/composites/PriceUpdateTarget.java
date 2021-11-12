@@ -1,6 +1,6 @@
 package client.view.composites;
 
-public interface PriceUpdateTarget {
+public interface PriceUpdateTarget<T> {
 	void refreshPrice();
-	void remove(Object referenceOfCaller);
+	void remove(T referenceOfCaller);
 }

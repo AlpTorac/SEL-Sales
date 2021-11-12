@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.TitledPane;
 import view.repository.IAccordion;
+import view.repository.ITabPane;
 import view.repository.IUIComponent;
 
 public class FXAccordion extends Accordion implements IFXSizable, IAccordion {
@@ -30,5 +31,10 @@ public class FXAccordion extends Accordion implements IFXSizable, IAccordion {
 	@Override
 	public void selectTab(int index) {
 		super.setExpandedPane(super.getPanes().get(index));
+	}
+	
+	@Override
+	public void removeAllTabs() {
+		super.getPanes().clear();
 	}
 }

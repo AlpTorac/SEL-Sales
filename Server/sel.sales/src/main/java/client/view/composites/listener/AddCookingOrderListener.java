@@ -21,6 +21,7 @@ public class AddCookingOrderListener extends ClickEventListener implements IAppl
 	@Override
 	public void clickAction() {
 		this.fireApplicationEvent(this.controller);
+		this.ota.resetUserInput();
 	}
 	
 	@Override

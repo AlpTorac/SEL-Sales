@@ -60,6 +60,11 @@ public interface FXDataCollectingUIComponent<T> extends IDataCollectingUICompone
 	}
 	
 	@SuppressWarnings("unchecked")
+	default public void artificiallySelectItem(T item) {
+		((FXDataCollectingUIComponent<T>) this.getComponent()).artificiallySelectItem(item);
+	}
+	
+	@SuppressWarnings("unchecked")
 	default public T getSelectedElement() {
 		return ((FXDataCollectingUIComponent<T>) this.getComponent()).getSelectedElement();
 	}

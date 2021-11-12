@@ -1,8 +1,8 @@
 package server.view;
 
-import model.OrderConfirmationStatusUpdatable;
 import server.controller.IServerController;
 import server.model.IServerModel;
+import server.model.OrderConfirmationStatusUpdatable;
 import view.IView;
 
 public interface IServerView extends IView, OrderConfirmationStatusUpdatable {

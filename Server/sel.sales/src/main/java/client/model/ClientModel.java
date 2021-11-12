@@ -66,6 +66,7 @@ public class ClientModel extends Model implements IClientModel {
 		this.pendingPaymentOrders.clearOrders();
 		this.pendingSendOrders.clearOrders();
 		this.pastOrders.clearOrders();
+		this.ordersChanged();
 	}
 
 	@Override
@@ -74,11 +75,13 @@ public class ClientModel extends Model implements IClientModel {
 		this.pendingPaymentOrders.removeOrder(id);
 		this.pendingSendOrders.removeOrder(id);
 		this.pastOrders.removeOrder(id);
+		this.ordersChanged();
 	}
 
 	@Override
 	public void addCookingOrder(String serialisedOrderData) {
 		this.cookingOrders.addOrder(this.getOrderHelper().deserialiseOrderData(serialisedOrderData));
+		this.ordersChanged();
 	}
 
 	@Override
@@ -86,6 +89,8 @@ public class ClientModel extends Model implements IClientModel {
 		IOrderData data;
 		if ((data = this.getCookingOrder(orderID)) != null) {
 			this.pendingPaymentOrders.addOrder(data);
+			this.cookingOrders.removeOrder(orderID);
+			this.ordersChanged();
 		}
 	}
 
@@ -97,6 +102,8 @@ public class ClientModel extends Model implements IClientModel {
 				this.writeOrder(orderID);
 			}
 			this.pendingSendOrders.addOrder(data);
+			this.pendingPaymentOrders.removeOrder(orderID);
+			this.ordersChanged();
 		}
 	}
 
@@ -105,6 +112,8 @@ public class ClientModel extends Model implements IClientModel {
 		IOrderData data;
 		if ((data = this.getPendingSendOrder(orderID)) != null) {
 			this.pastOrders.addOrder(data);
+			this.pendingSendOrders.removeOrder(orderID);
+			this.ordersChanged();
 		}
 	}
 

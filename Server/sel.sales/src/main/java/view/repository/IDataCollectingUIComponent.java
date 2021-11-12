@@ -75,6 +75,11 @@ public interface IDataCollectingUIComponent<T> extends ISizable {
 	}
 	
 	@SuppressWarnings("unchecked")
+	default public void artificiallySelectItem(T item) {
+		((IDataCollectingUIComponent<T>) this.getComponent()).artificiallySelectItem(item);
+	}
+	
+	@SuppressWarnings("unchecked")
 	default public void artificiallySelectItemProperty(int index, int itemPropertyIndex) {
 		((IDataCollectingUIComponent<T>) this.getComponent()).artificiallySelectItemProperty(index, itemPropertyIndex);
 	}

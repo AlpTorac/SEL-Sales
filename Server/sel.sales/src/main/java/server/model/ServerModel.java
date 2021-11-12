@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import model.Model;
-import model.OrderConfirmationStatusUpdatable;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderCollector;
 import model.order.IOrderData;
@@ -30,10 +29,10 @@ public class ServerModel extends Model implements IServerModel {
 		this.getFileManager().setResourcesFolderAddress(resourceFolder);
 	}
 	
-	protected void ordersChanged() {
-		this.unconfirmedOrdersChanged();
-		this.confirmedOrdersChanged();
-	}
+//	protected void ordersChanged() {
+//		this.unconfirmedOrdersChanged();
+//		this.confirmedOrdersChanged();
+//	}
 	
 	private void unconfirmedOrdersChanged() {
 		this.notifyUpdatableChange(u -> u instanceof OrderConfirmationStatusUpdatable,

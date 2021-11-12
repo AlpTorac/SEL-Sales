@@ -1,7 +1,10 @@
 package client.view.composites;
 
 import controller.IController;
+import model.dish.IDishMenuItemData;
+import model.order.IOrderItemData;
 import view.repository.IButton;
+import view.repository.IChoiceBox;
 import view.repository.IUIComponent;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.ClickEventListener;
@@ -14,6 +17,10 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 	
 	public EditableMenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget notifyTarget) {
 		super(controller, fac, advFac, notifyTarget);
+	}
+	
+	public EditableMenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget notifyTarget, IOrderItemData data) {
+		super(controller, fac, advFac, notifyTarget, data);
 	}
 
 	@Override
@@ -28,6 +35,10 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 				this.amountDecBtn,
 				this.removeBtn
 		});
+	}
+	
+	protected void choiceBoxInitExtra(IChoiceBox<IDishMenuItemData> choiceBox) {
+		
 	}
 	
 	protected IButton initAmountIncBtn() {

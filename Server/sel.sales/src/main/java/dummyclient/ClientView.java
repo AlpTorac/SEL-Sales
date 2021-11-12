@@ -48,4 +48,9 @@ public class ClientView extends View {
 		System.out.println("Settings changed");
 	}
 
+	@Override
+	public void refreshOrders() {
+		System.out.println("Orders refreshed");
+	}
+
 }

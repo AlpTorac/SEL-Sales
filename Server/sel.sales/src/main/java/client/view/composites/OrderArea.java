@@ -3,6 +3,7 @@ package client.view.composites;
 import controller.IController;
 import model.IModel;
 import model.dish.IDishMenuData;
+import model.order.IOrderData;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UILayout;
@@ -80,5 +81,9 @@ public class OrderArea extends UIVBoxLayout {
 	
 	public void refreshMenu(IDishMenuData menuData) {
 		this.ota.refreshMenu(menuData);
+	}
+	
+	public void refreshCookingOrders(IOrderData[] orderDatas) {
+		this.coa.refreshDisplayedOrders(orderDatas);
 	}
 }

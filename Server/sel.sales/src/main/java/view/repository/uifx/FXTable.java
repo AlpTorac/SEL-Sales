@@ -103,6 +103,13 @@ public class FXTable<T> extends TableView<T> implements FXHasText, ITable<T>, FX
 	}
 	
 	@Override
+	public void artificiallySelectItem(T item) {
+		super.requestFocus();
+		super.getSelectionModel().clearSelection();
+		super.getSelectionModel().select(item);
+	}
+	
+	@Override
 	public T getSelectedElement() {
 		return super.getSelectionModel().getSelectedItem();
 	}

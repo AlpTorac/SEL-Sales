@@ -29,6 +29,13 @@ public class FXChoiceBox<T> extends ChoiceBox<T> implements FXDataCollectingUICo
 	}
 	
 	@Override
+	public void artificiallySelectItem(T item) {
+		super.requestFocus();
+		super.getSelectionModel().clearSelection();
+		super.getSelectionModel().select(item);
+	}
+	
+	@Override
 	public T getSelectedElement() {
 		return super.getSelectionModel().getSelectedItem();
 	}

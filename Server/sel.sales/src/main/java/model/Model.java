@@ -138,6 +138,11 @@ public abstract class Model implements IModel {
 //		this.part.stream().forEach(p -> p.refreshValue());
 //		this.updatables.stream().filter(u -> u instanceof SettingsUpdatable).forEach(u -> ((SettingsUpdatable) u).refreshSettings());
 	}
+	
+	protected void ordersChanged() {
+		this.notifyUpdatableChange(u -> u instanceof OrderUpdatable,
+				u -> ((OrderUpdatable) u).refreshOrders());
+	}
 
 	public IDishMenuItemData getMenuItem(String id) {
 			IDishMenuItem item = this.getDishMenu().getItem(id);

@@ -6,6 +6,7 @@ import java.util.Collection;
 import controller.IController;
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
+import model.order.IOrderItemData;
 import view.repository.IChoiceBox;
 import view.repository.ITextBox;
 import view.repository.IUIComponent;
@@ -22,15 +23,21 @@ public class MenuItemEntry extends UIHBoxLayout {
 	private IChoiceBox<IDishMenuItemData> cb;
 	private ITextBox amount;
 	
-	private PriceUpdateTarget notifyTarget;
+	private PriceUpdateTarget<MenuItemEntry> notifyTarget;
 	
-	public MenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget notifyTarget) {
+	public MenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget<MenuItemEntry> notifyTarget) {
 		super(fac.createHBoxLayout().getComponent());
 		this.controller = controller;
 		this.fac = fac;
 		this.advFac = advFac;
 		this.notifyTarget = notifyTarget;
 		this.initComponent();
+	}
+	
+	public MenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget<MenuItemEntry> notifyTarget, IOrderItemData data) {
+		this(controller, fac, advFac, notifyTarget);
+		this.cb.artificiallySelectItem(data.getItemData());
+		this.amount.setCaption(data.getAmount().toPlainString());
 	}
 
 	protected void initComponent() {
@@ -41,6 +48,11 @@ public class MenuItemEntry extends UIHBoxLayout {
 				this.cb,
 				this.amount
 		});
+	}
+	
+	protected void choiceBoxInitExtra(IChoiceBox<IDishMenuItemData> choiceBox) {
+		choiceBox.setEnabled(false);
+		choiceBox.setOpacity(1);
 	}
 	
 	protected IChoiceBox<IDishMenuItemData> initChoiceBox() {
@@ -62,6 +74,7 @@ public class MenuItemEntry extends UIHBoxLayout {
 				notifyPriceDisplayingTarget();
 			}
 		});
+		this.choiceBoxInitExtra(choiceBox);
 		return choiceBox;
 	}
 	

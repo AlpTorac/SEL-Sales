@@ -133,4 +133,9 @@ public class StandardClientView extends ClientView {
 
 	}
 
+	@Override
+	public void refreshOrders() {
+		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshCookingOrders(this.getModel().getAllCookingOrders());});
+	}
+
 }
