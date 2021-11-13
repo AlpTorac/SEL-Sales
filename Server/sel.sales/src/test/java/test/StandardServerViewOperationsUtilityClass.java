@@ -32,7 +32,7 @@ import view.repository.IEventShooterOnClickUIComponent;
 import view.repository.uiwrapper.UILayout;
 import view.repository.uiwrapper.UITabPane;
 
-public class MainViewOperationsUtilityClass {
+public class StandardServerViewOperationsUtilityClass {
 	private long waitTime = 100;
 	private IServerModel model;
 	private IServerController controller;
@@ -74,7 +74,7 @@ public class MainViewOperationsUtilityClass {
 	
 	private IDateSettings ds;
 	
-	public MainViewOperationsUtilityClass(StandardServerView view, IServerController controller, IServerModel model) {
+	public StandardServerViewOperationsUtilityClass(StandardServerView view, IServerController controller, IServerModel model) {
 		this.model = model;
 		this.controller = controller;
 		this.view = view;

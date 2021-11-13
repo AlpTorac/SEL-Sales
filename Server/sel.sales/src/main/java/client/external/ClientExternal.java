@@ -27,5 +27,11 @@ public abstract class ClientExternal extends External implements IClientExternal
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public void refreshOrders() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

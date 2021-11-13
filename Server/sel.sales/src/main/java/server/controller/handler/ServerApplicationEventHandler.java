@@ -1,5 +1,6 @@
-package controller.handler;
+package server.controller.handler;
 
+import controller.handler.ApplicationEventHandler;
 import server.controller.IServerController;
 
 public abstract class ServerApplicationEventHandler extends ApplicationEventHandler {

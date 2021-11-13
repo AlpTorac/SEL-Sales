@@ -27,6 +27,7 @@ public interface IOrderHelper {
 	String serialiseForApp(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, Object... idParameters);
 	String serialiseForApp(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, EntityID orderID);
 	String serialiseForApp(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere);
+	String serialiseForApp(IOrderData data);
 	String serialiseForApp(IOrderData[] data);
 	String serialiseForFile(IOrderData[] data);
 	String serialiseForFile(IOrderData data);

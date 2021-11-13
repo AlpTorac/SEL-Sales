@@ -87,7 +87,7 @@ public abstract class Model implements IModel {
 		this.fileManager.setResourcesFolderAddress(resourceFolder);
 	}
 	
-	protected abstract IOrderCollector getWrittenOrderCollector();
+//	protected abstract IOrderCollector getWrittenOrderCollector();
 
 	protected IFileManager getFileManager() {
 		return this.fileManager;
@@ -271,11 +271,6 @@ public abstract class Model implements IModel {
 	}
 
 	@Override
-	public void loadSaved() {
-		this.getFileManager().loadSaved();
-	}
-
-	@Override
 	public void close() {
 		this.getFileManager().close();
 	}
@@ -336,7 +331,12 @@ public abstract class Model implements IModel {
 	
 	@Override
 	public boolean isOrderWritten(String orderID) {
-		return this.getWrittenOrderCollector().getOrder(orderID) != null;
+		for (IOrderData data : this.getAllWrittenOrders()) {
+			if (data.getID().serialisedIDequals(orderID)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@Override
@@ -346,14 +346,11 @@ public abstract class Model implements IModel {
 		}
 		IOrderData[] orderData = this.getOrderHelper().deserialiseOrderDatas(readFile);
 		for (IOrderData od : orderData) {
-			this.getWrittenOrderCollector().addOrder(od);
+			this.addWrittenOrder(od);
 		}
 	}
 	
-	@Override
-	public IOrderData[] getAllWrittenOrders() {
-		return this.getWrittenOrderCollector().getAllOrders();
-	}
+	protected abstract void addWrittenOrder(IOrderData data);
 	
 	@Override
 	public IDateSettings getDateSettings() {

@@ -28,7 +28,7 @@ import server.model.IServerModel;
 import server.model.ServerModel;
 import server.view.StandardServerView;
 import test.GeneralTestUtilityClass;
-import test.MainViewOperationsUtilityClass;
+import test.StandardServerViewOperationsUtilityClass;
 import test.external.dummy.DummyDevice;
 import test.external.dummy.DummyDeviceDiscoveryStrategy;
 import test.external.dummy.DummyExternal;
@@ -46,7 +46,7 @@ class SettingsAreaTest extends ApplicationTest {
 	private StandardServerView view;
 	private DummyExternal external;
 	
-	private MainViewOperationsUtilityClass opHelper;
+	private StandardServerViewOperationsUtilityClass opHelper;
 	
 	private DummyService service;
 	private DummyServiceConnectionManager dscm;
@@ -143,7 +143,7 @@ class SettingsAreaTest extends ApplicationTest {
 			view.startUp();
 			view.show();
 			this.initialDeviceDiscovery();
-			opHelper = new MainViewOperationsUtilityClass(view, controller, model);
+			opHelper = new StandardServerViewOperationsUtilityClass(view, controller, model);
 			opHelper.clickOnDiscoverDevices();
 		});
 	}

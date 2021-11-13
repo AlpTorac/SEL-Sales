@@ -1,6 +1,5 @@
 package server.controller.handler;
 
-import controller.handler.ServerApplicationEventHandler;
 import server.controller.IServerController;
 
 public class ConfirmAllOrdersHandler extends ServerApplicationEventHandler {

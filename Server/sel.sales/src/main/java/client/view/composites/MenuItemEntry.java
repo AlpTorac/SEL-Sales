@@ -33,12 +33,6 @@ public class MenuItemEntry extends UIHBoxLayout {
 		this.notifyTarget = notifyTarget;
 		this.initComponent();
 	}
-	
-	public MenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget<MenuItemEntry> notifyTarget, IOrderItemData data) {
-		this(controller, fac, advFac, notifyTarget);
-		this.cb.artificiallySelectItem(data.getItemData());
-		this.amount.setCaption(data.getAmount().toPlainString());
-	}
 
 	protected void initComponent() {
 		this.cb = this.initChoiceBox();
@@ -48,6 +42,11 @@ public class MenuItemEntry extends UIHBoxLayout {
 				this.cb,
 				this.amount
 		});
+	}
+	
+	public void displayData(IOrderItemData data) {
+		this.cb.artificiallySelectItem(data.getItemData());
+		this.amount.setCaption(data.getAmount().toPlainString());
 	}
 	
 	protected void choiceBoxInitExtra(IChoiceBox<IDishMenuItemData> choiceBox) {
@@ -108,9 +107,15 @@ public class MenuItemEntry extends UIHBoxLayout {
 	}
 	
 	public void refreshMenu(IDishMenuData menuData) {
-		this.cb.clear();
-		for (IDishMenuItemData data : menuData.getAllDishMenuItems()) {
-			this.addMenuItem(data);
+		IDishMenuItemData selection = this.getSelectedMenuItem();
+		if (menuData != null) {
+			this.cb.clear();
+			for (IDishMenuItemData data : menuData.getAllDishMenuItems()) {
+				this.addMenuItem(data);
+			}
+		}
+		if (selection != null) {
+			this.cb.artificiallySelectItem(selection);
 		}
 	}
 	

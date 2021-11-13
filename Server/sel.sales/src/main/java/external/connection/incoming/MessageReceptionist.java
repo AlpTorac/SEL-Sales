@@ -12,6 +12,7 @@ import external.connection.pingpong.IPingPong;
 import external.handler.AcknowledgementHandler;
 import external.handler.AcknowledgingHandler;
 import external.handler.IMessageHandler;
+import external.handler.MenuHandler;
 import external.handler.OrderHandler;
 import external.handler.PingPongHandler;
 import external.message.IMessageParser;
@@ -44,9 +45,10 @@ public class MessageReceptionist implements IMessageReceptionist {
 
 	protected Collection<IMessageHandler> initMessageHandlers() {
 		Collection<IMessageHandler> col = new CopyOnWriteArrayList<IMessageHandler>();
-		col.add(new OrderHandler(this.messageParser, this.controller));
-		col.add(new AcknowledgementHandler(this.messageParser, this.sendBuffer));
 		col.add(new PingPongHandler(this.messageParser, this.pingPong));
+		col.add(new AcknowledgementHandler(this.messageParser, this.sendBuffer));
+		col.add(new MenuHandler(this.messageParser, this.controller));
+		col.add(new OrderHandler(this.messageParser, this.controller));
 		col.add(new AcknowledgingHandler(this.messageParser, new StandardAcknowledger(this.conn)));
 		return col;
 	}

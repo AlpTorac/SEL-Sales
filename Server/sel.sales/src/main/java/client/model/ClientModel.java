@@ -21,7 +21,9 @@ public class ClientModel extends Model implements IClientModel {
 	/**
 	 * Orders that have already been sent to the server
 	 */
-	private IOrderCollector pastOrders;
+	private IOrderCollector sentOrders;
+	
+	private String editOrderID;
 	
 	public ClientModel() {
 		super();
@@ -29,7 +31,7 @@ public class ClientModel extends Model implements IClientModel {
 		this.cookingOrders = this.getOrderHelper().createOrderCollector();
 		this.pendingPaymentOrders = this.getOrderHelper().createOrderCollector();
 		this.pendingSendOrders = this.getOrderHelper().createOrderCollector();
-		this.pastOrders = this.getOrderHelper().createOrderCollector();
+		this.sentOrders = this.getOrderHelper().createOrderCollector();
 	}
 	
 	public ClientModel(String resourceFolder) {
@@ -44,6 +46,9 @@ public class ClientModel extends Model implements IClientModel {
 
 	@Override
 	public IOrderData getOrder(String id) {
+		if (id == null) {
+			return null;
+		}
 		IOrderData data = null;
 		if ((data = this.getCookingOrder(id)) != null) {
 			return data;
@@ -54,7 +59,7 @@ public class ClientModel extends Model implements IClientModel {
 		if ((data = this.getPendingSendOrder(id)) != null) {
 			return data;
 		}
-		if ((data = this.getPastOrder(id)) != null) {
+		if ((data = this.getSentOrder(id)) != null) {
 			return data;
 		}
 		return data;
@@ -65,7 +70,7 @@ public class ClientModel extends Model implements IClientModel {
 		this.cookingOrders.clearOrders();
 		this.pendingPaymentOrders.clearOrders();
 		this.pendingSendOrders.clearOrders();
-		this.pastOrders.clearOrders();
+		this.sentOrders.clearOrders();
 		this.ordersChanged();
 	}
 
@@ -74,13 +79,18 @@ public class ClientModel extends Model implements IClientModel {
 		this.cookingOrders.removeOrder(id);
 		this.pendingPaymentOrders.removeOrder(id);
 		this.pendingSendOrders.removeOrder(id);
-		this.pastOrders.removeOrder(id);
+		this.sentOrders.removeOrder(id);
 		this.ordersChanged();
 	}
 
 	@Override
 	public void addCookingOrder(String serialisedOrderData) {
-		this.cookingOrders.addOrder(this.getOrderHelper().deserialiseOrderData(serialisedOrderData));
+		IOrderData data = this.getOrderHelper().deserialiseOrderData(serialisedOrderData);
+		if (this.editOrderID != null) {
+			this.removeOrder(editOrderID);
+			this.clearEditTarget();
+		}
+		this.cookingOrders.addOrder(data);
 		this.ordersChanged();
 	}
 
@@ -95,23 +105,24 @@ public class ClientModel extends Model implements IClientModel {
 	}
 
 	@Override
-	public void makePendingSendOrder(String orderID) {
-		IOrderData data;
-		if ((data = this.getPendingPaymentOrder(orderID)) != null) {
-			if (this.isOrderWritten(orderID)) {
-				this.writeOrder(orderID);
-			}
+	public void makePendingSendOrder(String formerID, String serialisedOrderData) {
+		IOrderData data = this.getOrderHelper().deserialiseOrderData(serialisedOrderData);
+		if (data != null) {
 			this.pendingSendOrders.addOrder(data);
-			this.pendingPaymentOrders.removeOrder(orderID);
+			this.removeOrder(formerID);
+			this.pendingPaymentOrders.removeOrder(data.getID().toString());
+			if (!this.isOrderWritten(data.getID().toString())) {
+				this.writeOrder(data.getID().toString());
+			}
 			this.ordersChanged();
 		}
 	}
 
 	@Override
-	public void makePastOrder(String orderID) {
+	public void makeSentOrder(String orderID) {
 		IOrderData data;
 		if ((data = this.getPendingSendOrder(orderID)) != null) {
-			this.pastOrders.addOrder(data);
+			this.sentOrders.addOrder(data);
 			this.pendingSendOrders.removeOrder(orderID);
 			this.ordersChanged();
 		}
@@ -133,8 +144,8 @@ public class ClientModel extends Model implements IClientModel {
 	}
 
 	@Override
-	public IOrderData[] getAllPastOrders() {
-		return this.pastOrders.getAllOrders();
+	public IOrderData[] getAllSentOrders() {
+		return this.sentOrders.getAllOrders();
 	}
 
 	@Override
@@ -153,12 +164,44 @@ public class ClientModel extends Model implements IClientModel {
 	}
 
 	@Override
-	public IOrderData getPastOrder(String orderID) {
-		return this.pastOrders.getOrder(orderID);
+	public IOrderData getSentOrder(String orderID) {
+		return this.sentOrders.getOrder(orderID);
+	}
+	
+	@Override
+	public void loadSaved() {
+		this.getFileManager().loadSavedSettings();
+		this.getFileManager().loadSavedDishMenu();
+		this.getFileManager().loadSavedKnownDevices();
 	}
 
 	@Override
-	protected IOrderCollector getWrittenOrderCollector() {
-		return this.pastOrders;
+	public void editOrder(String orderID) {
+		this.editOrderID = orderID;
+		this.ordersChanged();
+	}
+
+	@Override
+	public IOrderData getEditTarget() {
+		return this.getOrder(this.editOrderID);
+	}
+
+	protected void clearEditTarget() {
+		this.editOrderID = null;
+	}
+
+	@Override
+	public void orderSent(String orderID) {
+		this.makeSentOrder(orderID);
+	}
+
+	@Override
+	public IOrderData[] getAllWrittenOrders() {
+		return this.sentOrders.getAllOrders();
+	}
+
+	@Override
+	protected void addWrittenOrder(IOrderData data) {
+		this.sentOrders.addOrder(data);
 	}
 }

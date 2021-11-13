@@ -1,5 +1,7 @@
 package client.view.composites.listener;
 
+import client.controller.ClientSpecificEvent;
+import client.view.composites.CookingOrdersArea;
 import client.view.composites.OrderEntry;
 import client.view.composites.OrderTakingArea;
 import controller.GeneralEvent;
@@ -8,12 +10,12 @@ import controller.IApplicationEventShooter;
 import controller.IController;
 import view.repository.uiwrapper.ClickEventListener;
 
-public class AddCookingOrderListener extends ClickEventListener implements IApplicationEventShooter {
+public class AddPendingPaymentOrderListener extends ClickEventListener implements IApplicationEventShooter {
 	
 	private IController controller;
 	private OrderEntry oe;
 	
-	public AddCookingOrderListener(OrderEntry oe, IController controller) {
+	public AddPendingPaymentOrderListener(OrderEntry oe, IController controller) {
 		super();
 		this.controller = controller;
 		this.oe = oe;
@@ -22,17 +24,17 @@ public class AddCookingOrderListener extends ClickEventListener implements IAppl
 	@Override
 	public void clickAction() {
 		this.fireApplicationEvent(this.controller);
-		this.oe.resetUserInput();
+		this.oe.removeFromParent();
 	}
 	
 	@Override
 	public Object[] getArgs() {
-		return new Object[] {this.oe.serialiseCurrentOrder()};
+		return new Object[] {this.oe.getSerialisedOrderID()};
 	}
 
 	@Override
 	public IApplicationEvent getApplicationEvent() {
-		return GeneralEvent.ADD_ORDER;
+		return ClientSpecificEvent.ADD_PENDING_PAYMENT_ORDER;
 	}
 
 }

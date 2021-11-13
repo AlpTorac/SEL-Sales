@@ -17,7 +17,6 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.IController;
-import external.broadcaster.DishMenuBroadcaster;
 import external.broadcaster.IBroadcaster;
 import external.device.IDevice;
 import external.device.IDeviceManager;
@@ -29,6 +28,7 @@ import external.message.Message;
 import external.message.MessageContext;
 import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
+import server.external.broadcaster.DishMenuBroadcaster;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;

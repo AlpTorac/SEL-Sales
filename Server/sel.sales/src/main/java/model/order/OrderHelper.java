@@ -146,4 +146,9 @@ public class OrderHelper implements IOrderHelper {
 	public String serialiseForApp(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere) {
 		return this.serialiseForApp(orderData, date, isCash, isHere, this.appOrderFormat.formatDate(date));
 	}
+
+	@Override
+	public String serialiseForApp(IOrderData data) {
+		return this.appOrderSerialiser.serialiseOrderData(data);
+	}
 }

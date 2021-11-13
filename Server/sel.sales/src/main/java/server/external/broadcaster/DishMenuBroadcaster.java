@@ -1,5 +1,6 @@
-package external.broadcaster;
+package server.external.broadcaster;
 
+import external.broadcaster.Broadcaster;
 import external.connection.IServiceConnectionManager;
 import external.message.IMessage;
 import external.message.Message;
@@ -12,7 +13,6 @@ public class DishMenuBroadcaster extends Broadcaster {
 		super(scm);
 		this.model = model;
 	}
-
 	@Override
 	public IMessage createMessage() {
 		return new Message(MessageContext.MENU, null, this.model.getDishMenuHelper().serialiseForExternal(this.model.getMenuData()));

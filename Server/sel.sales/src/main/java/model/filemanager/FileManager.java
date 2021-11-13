@@ -66,14 +66,6 @@ public class FileManager implements IFileManager {
 		return this.settingsFile.remakeFile() && this.settingsFile.writeToFile(settings);
 	}
 
-	@Override
-	public void loadSaved() {
-		this.initSettings();
-		this.initDishMenu();
-		this.initOrders();
-		this.initKnownDevices();
-	}
-
 	protected void initOrders() {
 		this.setWrittenOrdersInModel(this.orderWriter);
 	}
@@ -145,5 +137,25 @@ public class FileManager implements IFileManager {
 		this.settingsFolderAddress = folderAddress;
 		this.deviceDataFile = new StandardDeviceDataFile(this.settingsFolderAddress);
 		this.settingsFile = new StandardSettingsFile(this.settingsFolderAddress);
+	}
+
+	@Override
+	public void loadSavedSettings() {
+		this.initSettings();
+	}
+
+	@Override
+	public void loadSavedDishMenu() {
+		this.initDishMenu();
+	}
+
+	@Override
+	public void loadSavedKnownDevices() {
+		this.initKnownDevices();
+	}
+
+	@Override
+	public void loadSavedOrders() {
+		this.initOrders();
 	}
 }

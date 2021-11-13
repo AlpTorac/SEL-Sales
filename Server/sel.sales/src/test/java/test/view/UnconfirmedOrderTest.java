@@ -23,7 +23,7 @@ import server.model.ServerModel;
 import server.view.IServerView;
 import server.view.StandardServerView;
 import test.GeneralTestUtilityClass;
-import test.MainViewOperationsUtilityClass;
+import test.StandardServerViewOperationsUtilityClass;
 import test.model.order.ClientSimulant;
 import view.IView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
@@ -93,7 +93,7 @@ class UnconfirmedOrderTest extends ApplicationTest {
 		
 		Assertions.assertEquals(model.getAllUnconfirmedOrders().length, 1);
 		
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
+		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		
 		Assertions.assertEquals(opHelper.getUnconfirmedOrders().size(), 1);
 	}
@@ -138,7 +138,7 @@ class UnconfirmedOrderTest extends ApplicationTest {
 		
 		Assertions.assertEquals(model.getAllUnconfirmedOrders().length, 4);
 		
-		MainViewOperationsUtilityClass opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
+		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		
 		GeneralTestUtilityClass.performWait(300);
 		

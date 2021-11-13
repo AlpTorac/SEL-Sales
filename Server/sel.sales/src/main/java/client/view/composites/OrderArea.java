@@ -15,7 +15,7 @@ public class OrderArea extends UIVBoxLayout {
 	
 	private OrderTakingArea ota;
 	private CookingOrdersArea coa;
-	private UnpaidOrdersArea uoa;
+	private PendingPaymentOrdersArea uoa;
 	private PastOrdersArea poa;
 	
 	private UITabPane tabPane;
@@ -58,8 +58,8 @@ public class OrderArea extends UIVBoxLayout {
 		return new CookingOrdersArea(this.controller, this.fac, this.advFac);
 	}
 
-	protected UnpaidOrdersArea initUnpaidOrdersArea() {
-		return new UnpaidOrdersArea(this.controller, this.fac, this.advFac);
+	protected PendingPaymentOrdersArea initUnpaidOrdersArea() {
+		return new PendingPaymentOrdersArea(this.controller, this.fac, this.advFac);
 	}
 
 	protected PastOrdersArea initPastOrdersArea() {
@@ -85,5 +85,21 @@ public class OrderArea extends UIVBoxLayout {
 	
 	public void refreshCookingOrders(IOrderData[] orderDatas) {
 		this.coa.refreshDisplayedOrders(orderDatas);
+	}
+	
+	public void refreshPendingPaymentOrders(IOrderData[] orderDatas) {
+		this.uoa.refreshDisplayedOrders(orderDatas);
+	}
+	
+	public void refreshPendingSendOrders(IOrderData[] orderDatas) {
+		this.poa.refreshPendingSendOrders(orderDatas);
+	}
+
+	public void refreshSentOrders(IOrderData[] orderDatas) {
+		this.poa.refreshSentOrders(orderDatas);
+	}
+	
+	public void displayOrder(IOrderData data) {
+		this.ota.displayOrder(data);
 	}
 }

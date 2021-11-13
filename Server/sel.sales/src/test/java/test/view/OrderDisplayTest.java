@@ -19,7 +19,7 @@ import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import server.view.StandardServerView;
-import test.MainViewOperationsUtilityClass;
+import test.StandardServerViewOperationsUtilityClass;
 import view.IView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
@@ -29,7 +29,7 @@ class OrderDisplayTest extends ApplicationTest {
 	private static IServerController controller;
 	private static IView view;
 	
-	private MainViewOperationsUtilityClass opHelper;
+	private StandardServerViewOperationsUtilityClass opHelper;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -92,7 +92,7 @@ class OrderDisplayTest extends ApplicationTest {
 			model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
 			model.addUnconfirmedOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
 			
-			opHelper = new MainViewOperationsUtilityClass((StandardServerView) view, controller, model);
+			opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		});
 	}
 	

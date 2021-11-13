@@ -2,7 +2,6 @@ package client.view.composites;
 
 import controller.IController;
 import model.dish.IDishMenuItemData;
-import model.order.IOrderItemData;
 import view.repository.IButton;
 import view.repository.IChoiceBox;
 import view.repository.IUIComponent;
@@ -15,12 +14,8 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 	private IButton amountDecBtn;
 	private IButton removeBtn;
 	
-	public EditableMenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget notifyTarget) {
+	public EditableMenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget<MenuItemEntry> notifyTarget) {
 		super(controller, fac, advFac, notifyTarget);
-	}
-	
-	public EditableMenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget notifyTarget, IOrderItemData data) {
-		super(controller, fac, advFac, notifyTarget, data);
 	}
 
 	@Override
@@ -47,7 +42,7 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 		btn.addClickListener(new ClickEventListener() {
 			@Override
 			public void clickAction() {
-				int amount = Integer.valueOf(getAmountTextBox().getText());
+				int amount = getAmount().intValue();
 				getAmountTextBox().setCaption(String.valueOf(amount+1));
 				notifyPriceDisplayingTarget();
 			}
@@ -61,7 +56,7 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 		btn.addClickListener(new ClickEventListener() {
 			@Override
 			public void clickAction() {
-				int amount = Integer.valueOf(getAmountTextBox().getText());
+				int amount = getAmount().intValue();
 				if (amount > 0) {
 					getAmountTextBox().setCaption(String.valueOf(amount-1));
 					notifyPriceDisplayingTarget();
@@ -83,5 +78,4 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 		});
 		return btn;
 	}
-	
 }

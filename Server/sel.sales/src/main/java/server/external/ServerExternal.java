@@ -1,16 +1,16 @@
 package server.external;
 
 import external.External;
-import external.broadcaster.DishMenuBroadcaster;
 import external.broadcaster.IBroadcaster;
 import external.device.IDeviceManager;
 import external.connection.IService;
 import external.connection.IServiceConnectionManager;
 import model.MenuUpdatable;
 import server.controller.IServerController;
+import server.external.broadcaster.DishMenuBroadcaster;
 import server.model.IServerModel;
 
-public abstract class ServerExternal extends External implements IServerExternal, MenuUpdatable {
+public abstract class ServerExternal extends External implements IServerExternal {
 	
 	protected ServerExternal(IServerController controller, IServerModel model,
 			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {

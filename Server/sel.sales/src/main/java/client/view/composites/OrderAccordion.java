@@ -10,7 +10,7 @@ import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.UIAccordion;
 import view.repository.uiwrapper.UIComponentFactory;
 
-public class OrderAccordion extends UIAccordion implements PriceUpdateTarget<OrderEntry> {
+public abstract class OrderAccordion extends UIAccordion implements PriceUpdateTarget<OrderEntry> {
 	
 	private IController controller;
 	private UIComponentFactory fac;
@@ -35,7 +35,7 @@ public class OrderAccordion extends UIAccordion implements PriceUpdateTarget<Ord
 			this.remove(pastEntry);
 		}
 	}
-
+	
 	protected OrderEntry createOrderEntry(IOrderData data) {
 		return new OrderEntry(controller, fac, advFac, this, data);
 	}
@@ -48,6 +48,5 @@ public class OrderAccordion extends UIAccordion implements PriceUpdateTarget<Ord
 	@Override
 	public void remove(OrderEntry referenceOfCaller) {
 		this.orderEntries.values().remove(referenceOfCaller);
-		
 	}
 }

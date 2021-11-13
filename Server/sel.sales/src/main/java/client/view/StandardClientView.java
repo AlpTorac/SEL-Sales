@@ -5,6 +5,7 @@ import client.model.IClientModel;
 import client.view.composites.ClientConnectionArea;
 import client.view.composites.ClientSettingsArea;
 import client.view.composites.OrderArea;
+import model.order.IOrderData;
 import view.repository.IUILibraryHelper;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.UIComponent;
@@ -135,7 +136,18 @@ public class StandardClientView extends ClientView {
 
 	@Override
 	public void refreshOrders() {
+		this.checkEditOrder();
 		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshCookingOrders(this.getModel().getAllCookingOrders());});
+		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshPendingPaymentOrders(this.getModel().getAllPendingPaymentOrders());});
+		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshPendingSendOrders(this.getModel().getAllPendingSendOrders());});
+		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshSentOrders(this.getModel().getAllSentOrders());});	
 	}
-
+	
+	public void checkEditOrder() {
+		IOrderData data;
+		if ((data = this.getModel().getEditTarget()) != null) {
+			this.helper.queueAsynchroneRunnable(()->{this.oa.displayOrder(data);});
+		}
+	}
+	
 }

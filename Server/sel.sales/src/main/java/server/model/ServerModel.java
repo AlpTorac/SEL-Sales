@@ -34,6 +34,11 @@ public class ServerModel extends Model implements IServerModel {
 //		this.confirmedOrdersChanged();
 //	}
 	
+	@Override
+	public void loadSaved() {
+		this.getFileManager().loadSaved();
+	}
+	
 	private void unconfirmedOrdersChanged() {
 		this.notifyUpdatableChange(u -> u instanceof OrderConfirmationStatusUpdatable,
 				u -> ((OrderConfirmationStatusUpdatable) u).refreshUnconfirmedOrders());
@@ -72,7 +77,7 @@ public class ServerModel extends Model implements IServerModel {
 		boolean allWritten = this.getFileManager().writeOrderData(this.getOrderHelper().serialiseForFile(array));
 		if (allWritten) {
 			for (IOrderData od : array) {
-				this.getWrittenOrderCollector().addOrder(od);
+				this.writtenOrderCollector.addOrder(od);
 			}
 		}
 		return allWritten;
@@ -136,7 +141,7 @@ public class ServerModel extends Model implements IServerModel {
 		this.orderConfirmedCollector.addOrder(orderData);
 		if (!this.isOrderWritten(orderData.getID().toString())) {
 			this.getFileManager().writeOrderData(this.getOrderHelper().serialiseForFile(orderData));
-			this.getWrittenOrderCollector().addOrder(orderData);
+			this.writtenOrderCollector.addOrder(orderData);
 		}
 		this.ordersChanged();
 	}
@@ -205,7 +210,17 @@ public class ServerModel extends Model implements IServerModel {
 	}
 
 	@Override
-	protected IOrderCollector getWrittenOrderCollector() {
-		return this.writtenOrderCollector;
+	public IOrderData[] getAllWrittenOrders() {
+		return this.writtenOrderCollector.getAllOrders();
 	}
+
+	@Override
+	protected void addWrittenOrder(IOrderData data) {
+		this.writtenOrderCollector.addOrder(data);
+	}
+
+//	@Override
+//	protected IOrderCollector getWrittenOrderCollector() {
+//		return this.writtenOrderCollector;
+//	}
 }
