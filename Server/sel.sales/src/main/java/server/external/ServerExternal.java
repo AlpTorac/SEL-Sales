@@ -2,10 +2,6 @@ package server.external;
 
 import external.External;
 import external.broadcaster.IBroadcaster;
-import external.device.IDeviceManager;
-import external.connection.IService;
-import external.connection.IServiceConnectionManager;
-import model.MenuUpdatable;
 import server.controller.IServerController;
 import server.external.broadcaster.DishMenuBroadcaster;
 import server.model.IServerModel;
@@ -18,31 +14,30 @@ public abstract class ServerExternal extends External implements IServerExternal
 		this.setService(this.initService());
 	}
 	
-	protected abstract IDeviceManager initDeviceManager();
+//	protected abstract IDeviceManager initDeviceManager();
 	
-	protected IServiceConnectionManager getServiceConnectionManager() {
-		return this.getService().getServiceConnectionManager();
-	}
-	
-	protected IDeviceManager getDeviceManager() {
-		return this.getService().getDeviceManager();
-	}
+//	protected IServiceConnectionManager getServiceConnectionManager() {
+//		return this.getService().getServiceConnectionManager();
+//	}
+//	
+//	protected IDeviceManager getDeviceManager() {
+//		return this.getService().getDeviceManager();
+//	}
 	
 	@Override
 	public void refreshMenu() {
 		this.sendMenuData();
 	}
 	
-	public void sendMenuData() {
-		IBroadcaster broadcaster = new DishMenuBroadcaster(this.getServiceConnectionManager(), this.getModel());
-		broadcaster.broadcast();
+	protected void sendMenuData() {
+		new DishMenuBroadcaster(this.getServiceConnectionManager(), this.getModel()).broadcast();
 	}
 	
-	@Override
-	protected void setService(IService service) {
-		super.setService(service);
-		super.getService().publish();
-	}
+//	@Override
+//	protected void setService(IService service) {
+//		super.setService(service);
+//		super.getService().publish();
+//	}
 	
 	@Override
 	protected IServerModel getModel() {

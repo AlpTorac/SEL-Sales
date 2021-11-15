@@ -18,14 +18,14 @@ import server.controller.IServerController;
 import server.model.IServerModel;
 import server.view.IServerView;
 import server.view.StandardServerView;
-import server.view.composites.ServerConnectionArea;
 import server.view.composites.MainArea;
 import server.view.composites.MenuDesignArea;
 import server.view.composites.OrderInspectionArea;
 import server.view.composites.OrderTrackingArea;
-import server.view.composites.ServerSettingsArea;
 import test.model.order.OrderTestUtilityClass;
 import view.IView;
+import view.composites.ConnectionArea;
+import view.composites.SettingsArea;
 import view.repository.HasText;
 import view.repository.IButton;
 import view.repository.IEventShooterOnClickUIComponent;
@@ -46,8 +46,8 @@ public class StandardServerViewOperationsUtilityClass {
 	private String settingsAreaTabName;
 	
 	private MainArea ma;
-	private ServerConnectionArea ca;
-	private ServerSettingsArea sa;
+	private ConnectionArea ca;
+	private SettingsArea sa;
 	
 	private MenuDesignArea mda;
 	private OrderTrackingArea ota;

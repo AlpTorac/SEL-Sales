@@ -5,6 +5,8 @@ import java.util.concurrent.Executors;
 
 import controller.IController;
 import external.connection.IService;
+import external.connection.IServiceConnectionManager;
+import external.device.IDeviceManager;
 import model.IModel;
 
 public abstract class External implements IExternal {
@@ -30,6 +32,16 @@ public abstract class External implements IExternal {
 		this.subscribe();
 	}
 	
+	protected abstract IDeviceManager initDeviceManager();
+	
+	protected IServiceConnectionManager getServiceConnectionManager() {
+		return this.getService().getServiceConnectionManager();
+	}
+	
+	protected IDeviceManager getDeviceManager() {
+		return this.getService().getDeviceManager();
+	}
+	
 	protected abstract IService initService();
 	
 	@Override
@@ -49,10 +61,16 @@ public abstract class External implements IExternal {
 		return this.service;
 	}
 	
+//	protected void setService(IService service) {
+//		this.service = service;
+//		System.out.println("Service set");
+//	}
+	
 	protected void setService(IService service) {
 		this.service = service;
-		System.out.println("Service set");
+		this.getService().publish();
 	}
+	
 	@Override
 	public void rediscoverDevices(Runnable afterDiscoveryAction) {
 		if (this.getService() != null) {

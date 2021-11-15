@@ -1,4 +1,4 @@
-package server.view.composites.listeners;
+package view.composites.listeners;
 
 import controller.GeneralEvent;
 import controller.IApplicationEvent;

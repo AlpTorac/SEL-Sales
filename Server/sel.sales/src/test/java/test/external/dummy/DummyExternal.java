@@ -3,6 +3,7 @@ package test.external.dummy;
 import controller.IController;
 import external.External;
 import external.device.DeviceDiscoveryStrategy;
+import external.device.IDeviceManager;
 import model.IModel;
 import external.connection.IService;
 
@@ -51,6 +52,11 @@ public class DummyExternal extends External {
 				this.getMinimalPingPongDelay(), 
 				this.getSendTimeout(), 
 				this.getResendLimit());
+	}
+
+	@Override
+	protected IDeviceManager initDeviceManager() {
+		return new DummyDeviceManager(es, this.getController());
 	}
 
 }

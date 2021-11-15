@@ -2,10 +2,12 @@ package server.view;
 
 import server.controller.IServerController;
 import server.model.IServerModel;
-import server.view.composites.ServerConnectionArea;
 import server.view.composites.MainArea;
+import server.view.composites.ServerConnectionArea;
 import server.view.composites.ServerSettingsArea;
 import server.view.composites.listeners.LoadDishMenuListener;
+import view.composites.ConnectionArea;
+import view.composites.SettingsArea;
 import view.repository.IUILibraryHelper;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.ClickEventListener;
@@ -159,6 +161,6 @@ public class StandardServerView extends ServerView {
 
 	@Override
 	public void refreshSettings() {
-		this.settingsArea.refreshSettings(this.getModel().getSettings());
+		this.helper.queueAsynchroneRunnable(()->{this.settingsArea.refreshSettings(this.getModel().getSettings());});
 	}
 }

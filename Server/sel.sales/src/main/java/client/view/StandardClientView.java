@@ -55,7 +55,7 @@ public class StandardClientView extends ClientView {
 	}
 	
 	protected ClientSettingsArea initClientSettingsArea() {
-		return new ClientSettingsArea(this.getController(), this.fac, this.advFac);
+		return new ClientSettingsArea(this.getController(), this.fac, this.mainWindow.getComponent());
 	}
 
 	protected ClientConnectionArea initClientConnectionArea() {
@@ -118,20 +118,17 @@ public class StandardClientView extends ClientView {
 
 	@Override
 	public void refreshDiscoveredDevices() {
-		// TODO Auto-generated method stub
-
+		this.helper.queueAsynchroneRunnable(() -> {this.cca.refreshDiscoveredDevices(this.getModel().getAllDiscoveredDeviceData());});
 	}
 
 	@Override
 	public void refreshKnownDevices() {
-		// TODO Auto-generated method stub
-
+		this.helper.queueAsynchroneRunnable(() -> {this.cca.refreshKnownDevices(this.getModel().getAllKnownDeviceData());});
 	}
 
 	@Override
 	public void refreshSettings() {
-		// TODO Auto-generated method stub
-
+		this.helper.queueAsynchroneRunnable(()->{this.csa.refreshSettings(this.getModel().getSettings());});
 	}
 
 	@Override
