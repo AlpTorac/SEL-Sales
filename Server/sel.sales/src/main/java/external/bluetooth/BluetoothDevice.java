@@ -36,4 +36,9 @@ public class BluetoothDevice implements IDevice {
 		}
 		return this.getDeviceAddress().equals(((IDevice) o).getDeviceAddress());
 	}
+
+	@Override
+	public RemoteDevice getDeviceObject() {
+		return this.device;
+	}
 }

@@ -31,4 +31,9 @@ public class DummyDevice implements IDevice {
 		}
 		return this.getDeviceAddress().equals(((IDevice) o).getDeviceAddress());
 	}
+
+	@Override
+	public Object getDeviceObject() {
+		return null;
+	}
 }
