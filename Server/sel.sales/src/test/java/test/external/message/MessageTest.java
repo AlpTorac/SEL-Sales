@@ -50,7 +50,7 @@ class MessageTest {
 	@Test
 	void getMinimalAcknowledgementTest() {
 		IMessage acknowledgement = message.getMinimalAcknowledgementMessage();
-		MessageTestUtilityClass.assertMessageContentEquals(sequenceNumber, context, new MessageFlag[] {MessageFlag.ACKNOWLEDGEMENT}, "", acknowledgement);
+		MessageTestUtilityClass.assertMessageContentEquals(sequenceNumber, context, new MessageFlag[] {MessageFlag.ACKNOWLEDGEMENT}, serialisedData, acknowledgement);
 	}
 	
 	@Test

@@ -1,9 +1,11 @@
 package external.connection.incoming;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 
+import client.external.connection.incoming.MenuHandler;
 import controller.IController;
 import external.acknowledgement.StandardAcknowledger;
 import external.connection.IConnection;
@@ -12,13 +14,12 @@ import external.connection.pingpong.IPingPong;
 import external.handler.AcknowledgementHandler;
 import external.handler.AcknowledgingHandler;
 import external.handler.IMessageHandler;
-import external.handler.MenuHandler;
 import external.handler.OrderHandler;
 import external.handler.PingPongHandler;
 import external.message.IMessageParser;
 import external.message.StandardMessageParser;
 
-public class MessageReceptionist implements IMessageReceptionist {
+public abstract class MessageReceptionist implements IMessageReceptionist {
 	protected ExecutorService es;
 	private Collection<IMessageHandler> messageHandlers;
 	private IMessageReadingStrategy mrs;
@@ -39,17 +40,36 @@ public class MessageReceptionist implements IMessageReceptionist {
 		this.mrs = this.initMessageReadingStrategy();
 	}
 	
+	protected IMessageParser getMessageParser() {
+		return this.messageParser;
+	}
+	
+	protected IPingPong getPingPong() {
+		return this.pingPong;
+	}
+	
+	protected ISendBuffer getSendBuffer() {
+		return this.sendBuffer;
+	}
+	
+	protected IController getController() {
+		return this.controller;
+	}
+	
+	protected IConnection getConnection() {
+		return this.conn;
+	}
+	
 	protected boolean handleMessage(String message) {
 		return this.messageHandlers.stream().map(h -> h.handleMessage(message)).reduce(false, (a,b) -> Boolean.logicalOr(a, b));
 	}
 
 	protected Collection<IMessageHandler> initMessageHandlers() {
 		Collection<IMessageHandler> col = new CopyOnWriteArrayList<IMessageHandler>();
-		col.add(new PingPongHandler(this.messageParser, this.pingPong));
-		col.add(new AcknowledgementHandler(this.messageParser, this.sendBuffer));
-		col.add(new MenuHandler(this.messageParser, this.controller));
-		col.add(new OrderHandler(this.messageParser, this.controller));
-		col.add(new AcknowledgingHandler(this.messageParser, new StandardAcknowledger(this.conn)));
+		col.add(new PingPongHandler(this.getMessageParser(), this.getPingPong()));
+		col.add(new AcknowledgementHandler(this.getMessageParser(), this.getSendBuffer()));
+		col.add(new AcknowledgingHandler(this.getMessageParser(), new StandardAcknowledger(this.getConnection())));
+		col.add(new OrderHandler(this.getMessageParser(), this.getController()));
 		return col;
 	}
 

@@ -1,7 +1,8 @@
-package external.handler;
+package client.external.connection.incoming;
 
 import client.controller.ClientSpecificEvent;
 import controller.IController;
+import external.handler.MessageHandler;
 import external.message.IMessage;
 import external.message.IMessageParser;
 import external.message.MessageContext;

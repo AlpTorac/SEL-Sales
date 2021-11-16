@@ -44,7 +44,7 @@ public class Message implements IMessage {
 		if (this.isAcknowledgementMessage()) {
 			return null;
 		}
-		IMessage ackMessage = new Message(this.sequenceNumber, this.context, new MessageFlag[] {MessageFlag.ACKNOWLEDGEMENT}, "");
+		IMessage ackMessage = new Message(this.sequenceNumber, this.context, new MessageFlag[] {MessageFlag.ACKNOWLEDGEMENT}, this.serialisedData);
 		return ackMessage;
 	}
 
