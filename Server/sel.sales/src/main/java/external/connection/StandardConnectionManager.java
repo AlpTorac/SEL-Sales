@@ -4,11 +4,11 @@ import java.util.concurrent.ExecutorService;
 
 import controller.IController;
 import external.connection.incoming.IMessageReceptionist;
+import external.connection.incoming.MessageReceptionist;
 import external.connection.outgoing.ISendBuffer;
 import external.connection.outgoing.StandardSendBuffer;
 import external.connection.pingpong.IPingPong;
 import external.connection.pingpong.StandardPingPong;
-import server.external.connection.incoming.ServerMessageReceptionist;
 
 public class StandardConnectionManager extends ConnectionManager {
 
@@ -27,7 +27,7 @@ public class StandardConnectionManager extends ConnectionManager {
 
 	@Override
 	protected IMessageReceptionist createMessageReceptionist(ISendBuffer sb, IPingPong pingPong) {
-		return new ServerMessageReceptionist(this.getConnection(),
+		return new MessageReceptionist(this.getConnection(),
 				controller,
 				sb, pingPong, this.getExecutorService());
 	}

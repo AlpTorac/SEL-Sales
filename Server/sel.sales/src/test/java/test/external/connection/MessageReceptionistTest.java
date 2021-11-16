@@ -14,6 +14,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import controller.IController;
 import external.connection.incoming.IMessageReceptionist;
+import external.connection.incoming.MessageReceptionist;
 import external.connection.outgoing.ISendBuffer;
 import external.connection.outgoing.StandardSendBuffer;
 import external.connection.pingpong.IPingPong;
@@ -24,7 +25,6 @@ import external.message.MessageContext;
 import external.message.MessageFlag;
 import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
-import server.external.connection.incoming.ServerMessageReceptionist;
 import test.GeneralTestUtilityClass;
 import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyConnection;
@@ -59,7 +59,7 @@ class MessageReceptionistTest {
 		es = Executors.newCachedThreadPool();
 		buffer = new StandardSendBuffer(senderConn, es);
 		pingPong = new DummyPingPong(senderConn, es, minimalPingPongDelay, resendLimit, 100);
-		listener = new ServerMessageReceptionist(senderConn, controller, buffer, pingPong, es);
+		listener = new MessageReceptionist(senderConn, controller, buffer, pingPong, es);
 	}
 	
 	@AfterEach

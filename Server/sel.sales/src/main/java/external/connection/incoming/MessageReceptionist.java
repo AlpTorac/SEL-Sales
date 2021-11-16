@@ -6,6 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 
 import client.external.connection.incoming.MenuHandler;
+import client.external.connection.incoming.OrderAcknowledgementHandler;
 import controller.IController;
 import external.acknowledgement.StandardAcknowledger;
 import external.connection.IConnection;
@@ -19,7 +20,7 @@ import external.handler.PingPongHandler;
 import external.message.IMessageParser;
 import external.message.StandardMessageParser;
 
-public abstract class MessageReceptionist implements IMessageReceptionist {
+public class MessageReceptionist implements IMessageReceptionist {
 	protected ExecutorService es;
 	private Collection<IMessageHandler> messageHandlers;
 	private IMessageReadingStrategy mrs;
@@ -70,6 +71,8 @@ public abstract class MessageReceptionist implements IMessageReceptionist {
 		col.add(new AcknowledgementHandler(this.getMessageParser(), this.getSendBuffer()));
 		col.add(new AcknowledgingHandler(this.getMessageParser(), new StandardAcknowledger(this.getConnection())));
 		col.add(new OrderHandler(this.getMessageParser(), this.getController()));
+		col.add(new MenuHandler(this.getMessageParser(), this.getController()));
+		col.add(new OrderAcknowledgementHandler(this.getMessageParser(), this.getController()));
 		return col;
 	}
 

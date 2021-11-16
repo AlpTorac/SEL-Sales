@@ -8,11 +8,11 @@ import controller.IController;
 import external.connection.IConnection;
 import external.connection.StandardConnectionManager;
 import external.connection.incoming.IMessageReceptionist;
+import external.connection.incoming.MessageReceptionist;
 import external.connection.outgoing.ISendBuffer;
 import external.connection.outgoing.StandardSendBuffer;
 import external.connection.pingpong.IPingPong;
 import external.connection.pingpong.StandardPingPong;
-import server.external.connection.incoming.ServerMessageReceptionist;
 
 public class DummyConnectionManager extends StandardConnectionManager {
 
@@ -70,7 +70,7 @@ public class DummyConnectionManager extends StandardConnectionManager {
 	
 	@Override
 	protected IMessageReceptionist createMessageReceptionist(ISendBuffer sb, IPingPong pingPong) {
-		return new ServerMessageReceptionist(this.getConnection(),
+		return new MessageReceptionist(this.getConnection(),
 				controller,
 				sb, pingPong, this.getExecutorService()) {
 			@Override

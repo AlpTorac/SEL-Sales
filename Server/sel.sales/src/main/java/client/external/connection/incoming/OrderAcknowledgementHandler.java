@@ -23,8 +23,11 @@ public class OrderAcknowledgementHandler extends MessageHandler {
 
 	@Override
 	public boolean performNeededAction(IMessage message) {
-		IOrderData orderData = this.controller.getModel().getOrderHelper().deserialiseOrderData(message.getSerialisedData());
-		this.controller.handleApplicationEvent(ClientSpecificEvent.ORDER_SENT, new Object[] {orderData.getID()});
+		if (message.getSerialisedData() != null && this.controller.getModel() != null) {
+			IOrderData orderData = this.controller.getModel().getOrderHelper().deserialiseOrderData(message.getSerialisedData());
+			this.controller.handleApplicationEvent(ClientSpecificEvent.ORDER_SENT, new Object[] {orderData.getID().toString()});
+			System.out.println("Order acknowledgement received for: ------------------------------------------ " + orderData.getID().toString());
+		}
 		return true;
 	}
 
