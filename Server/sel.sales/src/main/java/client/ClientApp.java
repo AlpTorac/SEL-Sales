@@ -19,9 +19,9 @@ public class ClientApp extends Application {
 	private static IClientView view;
 	private static IClientExternal external;
 	
-	private static volatile long pingPongTimeout = 1000;
-	private static volatile long minimalPingPongDelay = 200;
-	private static volatile long sendTimeout = 1000;
+	private static volatile long pingPongTimeout = 10000;
+	private static volatile long minimalPingPongDelay = 5000;
+	private static volatile long sendTimeout = 5000;
 	private static volatile int resendLimit = 3;
 	
 	public static void main(String[] args) {

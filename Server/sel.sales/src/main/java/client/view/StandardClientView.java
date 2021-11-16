@@ -136,8 +136,9 @@ public class StandardClientView extends ClientView {
 		this.checkEditOrder();
 		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshCookingOrders(this.getModel().getAllCookingOrders());});
 		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshPendingPaymentOrders(this.getModel().getAllPendingPaymentOrders());});
-		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshPendingSendOrders(this.getModel().getAllPendingSendOrders());});
-		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshSentOrders(this.getModel().getAllSentOrders());});	
+		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshPastOrdersTab(this.getModel().getAllPendingSendOrders(), this.getModel().getAllSentOrders());});
+//		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshPendingSendOrders(this.getModel().getAllPendingSendOrders());});
+//		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshSentOrders(this.getModel().getAllSentOrders());});
 	}
 	
 	public void checkEditOrder() {

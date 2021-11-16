@@ -34,14 +34,19 @@ public class PastOrdersArea extends UIVBoxLayout {
 		this.addUIComponent(this.pendingSendAccordion);
 	}
 	
-	public void refreshPendingSendOrders(IOrderData[] pendingSendOrders) {
+	public void refreshPastOrdersTab(IOrderData[] pendingSendOrders, IOrderData[] sentOrders) {
+		this.refreshPendingSendOrders(pendingSendOrders);
+		this.refreshSentOrders(sentOrders);
+	}
+	
+	protected void refreshPendingSendOrders(IOrderData[] pendingSendOrders) {
 		this.pendingSendAccordion.removeAllTabs();
 		for (IOrderData data : pendingSendOrders) {
 			this.pendingSendAccordion.addOrderData(data);
 		}
 	}
 	
-	public void refreshSentOrders(IOrderData[] sentOrders) {
+	protected void refreshSentOrders(IOrderData[] sentOrders) {
 		this.sentAccordion.removeAllTabs();
 		for (IOrderData data : sentOrders) {
 			this.sentAccordion.addOrderData(data);

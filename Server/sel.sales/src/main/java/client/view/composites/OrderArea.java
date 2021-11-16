@@ -91,11 +91,16 @@ public class OrderArea extends UIVBoxLayout {
 		this.uoa.refreshDisplayedOrders(orderDatas);
 	}
 	
-	public void refreshPendingSendOrders(IOrderData[] orderDatas) {
+	public void refreshPastOrdersTab(IOrderData[] pendingSendOrders, IOrderData[] sentOrders) {
+		this.refreshPendingSendOrders(pendingSendOrders);
+		this.refreshSentOrders(sentOrders);
+	}
+	
+	protected void refreshPendingSendOrders(IOrderData[] orderDatas) {
 		this.poa.refreshPendingSendOrders(orderDatas);
 	}
 
-	public void refreshSentOrders(IOrderData[] orderDatas) {
+	protected void refreshSentOrders(IOrderData[] orderDatas) {
 		this.poa.refreshSentOrders(orderDatas);
 	}
 	
