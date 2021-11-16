@@ -5,7 +5,7 @@ import model.connectivity.IDeviceData;
 import model.settings.ISettings;
 
 public interface IService {
-	String getID();
+	Object getID();
 	String getName();
 	String getURL();
 	void publish();

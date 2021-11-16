@@ -2,7 +2,6 @@ package client;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import model.dish.IDishMenuData;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 import client.controller.IClientController;

@@ -2,8 +2,6 @@ package server.external;
 
 import java.util.concurrent.ExecutorService;
 
-import javax.bluetooth.UUID;
-
 import controller.IController;
 import external.ServiceInfo;
 import external.bluetooth.BluetoothDeviceManager;
@@ -14,7 +12,7 @@ public class BluetoothServerService extends BluetoothService {
 
 	public BluetoothServerService(BluetoothDeviceManager deviceManager, IController controller,
 			ExecutorService es, long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
-		super(new UUID(Long.decode(ServiceInfo.getInstance().getServiceID())),
+		super(ServiceInfo.getInstance().getServiceID(),
 				ServiceInfo.getInstance().getServiceName(), deviceManager, controller, es,
 				pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 	}

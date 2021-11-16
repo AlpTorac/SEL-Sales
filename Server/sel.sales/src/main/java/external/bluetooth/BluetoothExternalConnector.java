@@ -35,11 +35,12 @@ public class BluetoothExternalConnector extends ExternalConnector {
 	}
 
 	@Override
-	protected Object getConnectionObject(String serviceID, IDevice serviceHost) {
+	protected Object getConnectionObject(Object serviceID, IDevice serviceHost) {
 		StreamConnection conn = null;
 		try {
-			System.out.println("Connecting to service");
-			conn = (StreamConnection) Connector.open(this.getConnectionAddress(serviceID, serviceHost));
+			String address = this.getConnectionAddress(serviceID, serviceHost);
+			System.out.println("Connecting to service: " + address);
+			conn = (StreamConnection) Connector.open(address);
 			System.out.println("Connected to service");
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -54,7 +55,8 @@ public class BluetoothExternalConnector extends ExternalConnector {
 	}
 
 	@Override
-	protected String getConnectionAddress(String serviceID, IDevice serviceHost) {
+	protected String getConnectionAddress(Object serviceID, IDevice serviceHost) {
+		UUID serviceUUID = (UUID) serviceID;
 		LocalDevice lDev = null;
 		try {
 			lDev = LocalDevice.getLocalDevice();
@@ -69,11 +71,12 @@ public class BluetoothExternalConnector extends ExternalConnector {
 
 			@Override
 			public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
-				
+				System.out.println("discovered device");
 			}
 
 			@Override
 			public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
+				System.out.println("discovered service");
 				for (ServiceRecord sr : servRecord) {
 					try {
 						if (sr.getHostDevice().getFriendlyName(false).equals(serviceHost.getDeviceName())) {
@@ -89,6 +92,7 @@ public class BluetoothExternalConnector extends ExternalConnector {
 			@Override
 			public void serviceSearchCompleted(int transID, int respCode) {
 				synchronized (lock) {
+					System.out.println("service search over");
 					lock.notifyAll();
 				}
 			}
@@ -96,24 +100,26 @@ public class BluetoothExternalConnector extends ExternalConnector {
 			@Override
 			public void inquiryCompleted(int discType) {
 				synchronized (lock) {
+					System.out.println("inquiry over");
 					lock.notifyAll();
 				}
 			}
 			
 		};
-		boolean started = false;
+		boolean started = true;
 		try {
 			started = lDev.getDiscoveryAgent().startInquiry(DiscoveryAgent.GIAC, l);
 		} catch (BluetoothStateException e) {
 			e.printStackTrace();
 		}
-
+		System.out.println("searching for serviceID: " + serviceUUID);
 		if (started) {
 			try {
 				synchronized (lock) {
 					lock.wait();
 					try {
-						lDev.getDiscoveryAgent().searchServices(null, new UUID[] {new UUID(Long.valueOf(serviceID))}, (RemoteDevice) serviceHost.getDeviceObject(), l);
+						System.out.println("service discovery begin for: " + serviceUUID);
+						lDev.getDiscoveryAgent().searchServices(null, new UUID[] {serviceUUID}, (RemoteDevice) serviceHost.getDeviceObject(), l);
 					} catch (BluetoothStateException e) {
 						e.printStackTrace();
 					}

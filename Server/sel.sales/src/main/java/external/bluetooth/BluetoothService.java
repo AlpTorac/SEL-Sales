@@ -10,10 +10,15 @@ import external.connection.Service;
 public abstract class BluetoothService extends Service {
 	public BluetoothService(UUID id, String name, BluetoothDeviceManager deviceManager, IController controller, ExecutorService es,
 			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
-		super(id.toString(), name, deviceManager, controller, es, pingPongTimeout,
+		super(id, name, deviceManager, controller, es, pingPongTimeout,
 				minimalPingPongDelay, sendTimeout, resendLimit);
 	}
-
+	
+	@Override
+	public UUID getID() {
+		return (UUID) super.getID();
+	}
+	
 	@Override
 	public abstract void publish();
 	

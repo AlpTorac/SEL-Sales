@@ -2,8 +2,6 @@ package external.connection.outgoing;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 
@@ -133,7 +131,7 @@ public abstract class ExternalConnector implements IExternalConnector {
 	 */
 	protected abstract IConnection initConnection(Object connectionObject);
 	
-	protected abstract Object getConnectionObject(String serviceID, IDevice serviceHost);
+	protected abstract Object getConnectionObject(Object serviceID, IDevice serviceHost);
 	
 	protected abstract IConnectionManager createConnectionManager(IConnection conn, long pingPongTimeout, long sendTimeout, int resendLimit, long minimalPingPongDelay);
 	
@@ -143,20 +141,20 @@ public abstract class ExternalConnector implements IExternalConnector {
 	
 	protected void reportDisconnection(IConnection conn) {
 		this.disconListener.connectionLost(conn.getTargetDeviceAddress());
-		if (this.getService().getDeviceManager().isAllowedToConnect(conn.getTargetDeviceAddress())) {
-			final Object o = new Object();
-			
-			while (!this.getService().getDeviceManager().isAllowedToConnect(conn.getTargetDeviceAddress())) {
-				synchronized (o) {
-					this.connectToService(this.getService().getID(), conn.getTargetDeviceAddress());
-				}
-				try {
-					o.wait(5000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+//		if (this.getService().getDeviceManager().isAllowedToConnect(conn.getTargetDeviceAddress())) {
+//			final Object o = new Object();
+//			
+//			while (!this.getService().getDeviceManager().isAllowedToConnect(conn.getTargetDeviceAddress())) {
+//				synchronized (o) {
+//					this.connectToService(this.getService().getID(), conn.getTargetDeviceAddress());
+//				}
+//				try {
+//					o.wait(5000);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
 	}
 	
 	protected boolean addConnection(IConnection conn) {
@@ -170,7 +168,7 @@ public abstract class ExternalConnector implements IExternalConnector {
 		return this.connectionManagers.add(connManager);
 	}
 	
-	protected Runnable initConnectionRunnable(String serviceID, IDevice serviceHost) {
+	protected Runnable initConnectionRunnable(Object serviceID, IDevice serviceHost) {
 		return new Runnable() {
 			@Override
 			public void run() {
@@ -184,6 +182,10 @@ public abstract class ExternalConnector implements IExternalConnector {
 				}
 				hasRunningRunnable = false;
 				activeConnRunnables.remove(serviceHost.getDeviceAddress());
+//				IConnection conn = initConnection(getConnectionObject(serviceID, serviceHost));
+//				if (!addConnection(conn)) {
+//					return;
+//				}
 			}
 		};
 	}
@@ -214,6 +216,7 @@ public abstract class ExternalConnector implements IExternalConnector {
 					reportDisconnection(cm.getConnection());
 				}
 			} else if (d.getIsAllowedToConnect() && !d.getIsConnected()) {
+				System.out.println("ServiceID: " + this.getService().getID());
 				this.connectToService(this.getService().getID(), d.getDeviceAddress());
 			}
 //			this.connectionManagers.stream()
@@ -242,13 +245,14 @@ public abstract class ExternalConnector implements IExternalConnector {
 		return new DisconnectionListener(this.controller);
 	}
 	
-	protected abstract String getConnectionAddress(String serviceID, IDevice serviceHost);
+	protected abstract String getConnectionAddress(Object serviceID, IDevice serviceHost);
 	
 	@Override
-	public void connectToService(String serviceID, String serviceHostAddress) {
+	public void connectToService(Object serviceID, String serviceHostAddress) {
 		if (!this.activeConnRunnables.contains(serviceHostAddress)) {
 			this.activeConnRunnables.add(serviceHostAddress);
 			this.es.submit(this.initConnectionRunnable(serviceID, this.getService().getDeviceManager().getDevice(serviceHostAddress)));
 		}
+//		this.es.submit(this.initConnectionRunnable(serviceID, this.getService().getDeviceManager().getDevice(serviceHostAddress)));
 	}
 }

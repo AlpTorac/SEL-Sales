@@ -13,7 +13,7 @@ public abstract class Service implements IService {
 	protected IServiceConnectionManager scm;
 	private IDeviceManager deviceManager;
 	
-	private String id;
+	private Object id;
 	private String url;
 	private String name;
 	
@@ -24,7 +24,7 @@ public abstract class Service implements IService {
 	private volatile long sendTimeout;
 	private volatile int resendLimit;
 	
-	public Service(String id, String name, IDeviceManager deviceManager, IController controller, ExecutorService es,
+	public Service(Object id, String name, IDeviceManager deviceManager, IController controller, ExecutorService es,
 			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		this.id = id;
 		this.name = name;
@@ -44,7 +44,7 @@ public abstract class Service implements IService {
 	}
 	
 	@Override
-	public String getID() {
+	public Object getID() {
 		return this.id;
 	}
 
