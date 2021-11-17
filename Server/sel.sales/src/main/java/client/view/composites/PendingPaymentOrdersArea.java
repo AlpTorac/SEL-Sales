@@ -70,7 +70,7 @@ public class PendingPaymentOrdersArea extends UIVBoxLayout {
 		
 		public PendingPaymentOrderEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac,
 				PriceUpdateTarget<OrderEntry> notifyTarget, IOrderData data) {
-			super(controller, fac, advFac, notifyTarget, data);
+			super(controller, fac, notifyTarget, data);
 			
 			this.isHere = fac.createToggleGroup();
 			this.here = fac.createRadioButton();

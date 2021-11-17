@@ -37,7 +37,7 @@ public abstract class OrderAccordion extends UIAccordion implements PriceUpdateT
 	}
 	
 	protected OrderEntry createOrderEntry(IOrderData data) {
-		return new OrderEntry(controller, fac, advFac, this, data);
+		return new OrderEntry(controller, fac, this, data);
 	}
 	
 	@Override

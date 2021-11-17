@@ -56,7 +56,7 @@ public class CookingOrdersArea extends UIVBoxLayout {
 		
 		public CookingOrderEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac,
 				PriceUpdateTarget<OrderEntry> notifyTarget, IOrderData data) {
-			super(controller, fac, advFac, notifyTarget, data);
+			super(controller, fac, notifyTarget, data);
 		}
 		
 		protected IIndexedLayout initBottomPart() {

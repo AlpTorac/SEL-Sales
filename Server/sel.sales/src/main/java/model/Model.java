@@ -82,11 +82,6 @@ public abstract class Model implements IModel {
 		this.part.add(this.fileManager);
 	}
 	
-	protected Model(String resourceFolder) {
-		this();
-		this.fileManager.setResourcesFolderAddress(resourceFolder);
-	}
-	
 //	protected abstract IOrderCollector getWrittenOrderCollector();
 
 	protected IFileManager getFileManager() {
@@ -261,9 +256,20 @@ public abstract class Model implements IModel {
 
 	@Override
 	public void setDishMenu(String menu) {
+//		IDishMenu dishMenu = new DishMenu();
+//		IDishMenuData menuData = this.menuHelper.parseMenuData(menu);
+//		for (IDishMenuItemData data : menuData.getAllDishMenuItems()) {
+//			dishMenu.addMenuItem(this.menuHelper.dishMenuItemDataToItem(data));
+//		}
+//		this.setDishMenu(dishMenu);
+//		this.menuChanged();
+		this.setDishMenu(this.menuHelper.parseMenuData(menu));
+	}
+	
+	@Override
+	public void setDishMenu(IDishMenuData menu) {
 		IDishMenu dishMenu = new DishMenu();
-		IDishMenuData menuData = this.menuHelper.parseMenuData(menu);
-		for (IDishMenuItemData data : menuData.getAllDishMenuItems()) {
+		for (IDishMenuItemData data : menu.getAllDishMenuItems()) {
 			dishMenu.addMenuItem(this.menuHelper.dishMenuItemDataToItem(data));
 		}
 		this.setDishMenu(dishMenu);
@@ -287,10 +293,10 @@ public abstract class Model implements IModel {
 
 	@Override
 	public void setKnownDevices(String serialisedDeviceData) {
-		IDeviceData[] DeviceDatas = this.deviceDataParser.parseDeviceDatas(serialisedDeviceData);
-		if (DeviceDatas != null) {
+		IDeviceData[] deviceDatas = this.deviceDataParser.parseDeviceDatas(serialisedDeviceData);
+		if (deviceDatas != null) {
 			this.requestDeviceRediscovery(()->{
-				for (IDeviceData d : DeviceDatas) {
+				for (IDeviceData d : deviceDatas) {
 					this.addDiscoveredDevice(d.getDeviceName(), d.getDeviceAddress());
 					this.addKnownDevice(d.getDeviceAddress());
 					if (d.getIsAllowedToConnect()) {

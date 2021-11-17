@@ -16,7 +16,7 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<O
 	private UIComponentFactory fac;
 	private AdvancedUIComponentFactory advFac;
 	
-	private OrderEntry orderEntry;
+	private OrderTakingAreaOrderEntry orderEntry;
 	
 //	private Collection<MenuItemEntry> menuItemEntries;
 	
@@ -36,7 +36,7 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<O
 		this.orderEntry.displayData(data);
 	}
 	
-	protected OrderEntry initOrderEntry() {
+	protected OrderTakingAreaOrderEntry initOrderEntry() {
 		return new OrderTakingAreaOrderEntry(controller, fac, advFac, this);
 	}
 	
@@ -138,21 +138,29 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<O
 		
 	}
 	
-	public class OrderTakingAreaOrderEntry extends OrderEntry {
+	public IButton getAddMenuItemButton() {
+		return this.orderEntry.addMenuItemBtn;
+	}
+	
+	public IButton getNextTabButton() {
+		return this.orderEntry.nextTabBtn;
+	}
+	
+	protected class OrderTakingAreaOrderEntry extends OrderEntry {
 		private IButton addMenuItemBtn;
 		private IButton nextTabBtn;
 		
 		public OrderTakingAreaOrderEntry(IController controller, UIComponentFactory fac,
 				AdvancedUIComponentFactory advFac, PriceUpdateTarget<OrderEntry> notifyTarget) {
-			super(controller, fac, advFac, notifyTarget);
+			super(controller, fac, notifyTarget);
 		}
 		public OrderTakingAreaOrderEntry(IController controller, UIComponentFactory fac,
 				AdvancedUIComponentFactory advFac, PriceUpdateTarget<OrderEntry> notifyTarget, IOrderData data) {
-			super(controller, fac, advFac, notifyTarget, data);
+			super(controller, fac, notifyTarget, data);
 		}
 		
 		public MenuItemEntry createItemEntry() {
-			return new EditableMenuItemEntry(controller, fac, advFac, this);
+			return new EditableMenuItemEntry(fac, this);
 		}
 		
 		protected void initComponent() {
@@ -192,5 +200,7 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<O
 		protected void addMenuItemEntryToUI(MenuItemEntry entry) {
 			this.addUIComponentBefore(entry, this.addMenuItemBtn);
 		}
+		
+		
 	}
 }

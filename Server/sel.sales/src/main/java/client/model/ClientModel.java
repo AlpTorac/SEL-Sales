@@ -86,12 +86,14 @@ public class ClientModel extends Model implements IClientModel {
 	@Override
 	public void addCookingOrder(String serialisedOrderData) {
 		IOrderData data = this.getOrderHelper().deserialiseOrderData(serialisedOrderData);
-		if (this.editOrderID != null) {
-			this.removeOrder(editOrderID);
-			this.clearEditTarget();
+		if (this.getOrder(data.getID().toString()) == null) {
+			if (this.editOrderID != null) {
+				this.removeOrder(editOrderID);
+				this.clearEditTarget();
+			}
+			this.cookingOrders.addOrder(data);
+			this.ordersChanged();
 		}
-		this.cookingOrders.addOrder(data);
-		this.ordersChanged();
 	}
 
 	@Override
@@ -107,9 +109,11 @@ public class ClientModel extends Model implements IClientModel {
 	@Override
 	public void makePendingSendOrder(String formerID, String serialisedOrderData) {
 		IOrderData data = this.getOrderHelper().deserialiseOrderData(serialisedOrderData);
-		if (data != null) {
+		if (data != null && this.getPendingPaymentOrder(formerID) != null) {
 			this.pendingSendOrders.addOrder(data);
-			this.removeOrder(formerID);
+			if (!formerID.equals(data.getID().toString())) {
+				this.removeOrder(formerID);
+			}
 			this.pendingPaymentOrders.removeOrder(data.getID().toString());
 			if (!this.isOrderWritten(data.getID().toString())) {
 				this.writeOrder(data.getID().toString());
@@ -122,7 +126,8 @@ public class ClientModel extends Model implements IClientModel {
 	public void makeSentOrder(String orderID) {
 		IOrderData data;
 		if ((data = this.getPendingSendOrder(orderID)) != null) {
-			this.sentOrders.addOrder(data);
+//			this.sentOrders.addOrder(data);
+			this.addWrittenOrder(data);
 			this.pendingSendOrders.removeOrder(orderID);
 			this.ordersChanged();
 		}

@@ -8,47 +8,23 @@ import java.util.Collection;
 
 import org.junit.jupiter.api.Assertions;
 
-import controller.IController;
-import model.IDateSettings;
-import model.connectivity.IDeviceData;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
 import model.order.IOrderItemData;
 import server.controller.IServerController;
 import server.model.IServerModel;
-import server.view.IServerView;
 import server.view.StandardServerView;
 import server.view.composites.MainArea;
 import server.view.composites.MenuDesignArea;
 import server.view.composites.OrderInspectionArea;
 import server.view.composites.OrderTrackingArea;
 import test.model.order.OrderTestUtilityClass;
-import view.IView;
-import view.composites.ConnectionArea;
-import view.composites.SettingsArea;
 import view.repository.HasText;
-import view.repository.IButton;
 import view.repository.IEventShooterOnClickUIComponent;
-import view.repository.uiwrapper.UILayout;
-import view.repository.uiwrapper.UITabPane;
 
-public class StandardServerViewOperationsUtilityClass {
-	private long waitTime = 100;
-	private IServerModel model;
-	private IServerController controller;
-	private IServerView view;
-	
-	private UILayout tabArea;
-	private UITabPane tabPane;
-	
+public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtilityClass {
 	private String menuOrderAreaTabName;
-	private String connAreaTabName;
-	private String settingsAreaTabName;
-	
 	private MainArea ma;
-	private ConnectionArea ca;
-	private SettingsArea sa;
-	
 	private MenuDesignArea mda;
 	private OrderTrackingArea ota;
 	private OrderInspectionArea oia;
@@ -63,28 +39,14 @@ public class StandardServerViewOperationsUtilityClass {
 	private IEventShooterOnClickUIComponent removeButton;
 	private IEventShooterOnClickUIComponent editButton;
 	
-	private HasText menuFolderAddress;
-	private HasText orderFolderAddress;
-	private HasText ppTimeout;
-	private HasText ppMinimalDelay;
-	private HasText ppResendLimit;
-	private HasText sendTimeout;
-	
-	private IButton applySettingsButton;
-	
-	private IDateSettings ds;
-	
 	public StandardServerViewOperationsUtilityClass(StandardServerView view, IServerController controller, IServerModel model) {
-		this.model = model;
-		this.controller = controller;
-		this.view = view;
+		super(view, controller, model);
 		this.ma = GeneralTestUtilityClass.getPrivateFieldValue(view, "mainArea");
-		this.ca = GeneralTestUtilityClass.getPrivateFieldValue(view, "connArea");
-		this.sa = GeneralTestUtilityClass.getPrivateFieldValue(view, "settingsArea");
+//		this.ca = GeneralTestUtilityClass.getPrivateFieldValue(view, "connArea");
+//		this.sa = GeneralTestUtilityClass.getPrivateFieldValue(view, "settingsArea");
 		mda = GeneralTestUtilityClass.getPrivateFieldValue(ma, "mda");
 		ota = GeneralTestUtilityClass.getPrivateFieldValue(ma, "ota");
 		oia = GeneralTestUtilityClass.getPrivateFieldValue(ma, "oia");
-		ds = GeneralTestUtilityClass.getPrivateFieldValue(oia, "ds");
 		this.tabPane = GeneralTestUtilityClass.getPrivateFieldValue(view, "tabPane");
 		this.menuOrderAreaTabName = GeneralTestUtilityClass.getPrivateFieldValue(view, "menuOrderAreaTabName");
 		this.connAreaTabName = GeneralTestUtilityClass.getPrivateFieldValue(view, "connAreaTabName");
@@ -98,14 +60,18 @@ public class StandardServerViewOperationsUtilityClass {
 		addButton = mda.getAddButton();
 		removeButton = mda.getRemoveButton();
 		editButton = mda.getEditButton();
-		
-		menuFolderAddress = sa.getMenuFolderAddress();
-		orderFolderAddress = sa.getOrderFolderAddress();
-		ppTimeout = sa.getPpTimeout();
-		ppMinimalDelay = sa.getPpMinimalDelay();
-		ppResendLimit = sa.getPpResendLimit();
-		sendTimeout = sa.getSendTimeout();
-		applySettingsButton = sa.getApplyButton();
+	}
+	
+	protected IServerModel getModel() {
+		return (IServerModel) super.getModel();
+	}
+	
+	protected IServerController getController() {
+		return (IServerController) super.getController();
+	}
+	
+	protected StandardServerView getView() {
+		return (StandardServerView) super.getView();
 	}
 	
 	public IDishMenuItemData addMenuItem(String name, String id, BigDecimal price, BigDecimal productionCost, BigDecimal portionSize, BigDecimal discount) {
@@ -122,12 +88,12 @@ public class StandardServerViewOperationsUtilityClass {
 		
 		GeneralTestUtilityClass.performWait(waitTime);
 		
-		return model.getMenuItem(id);
+		return this.getModel().getMenuItem(id);
 	}
 	
 	public IDishMenuItemData removeMenuItem(String id) {
 		this.setMenuOrderTabActive();
-		IDishMenuItemData itemToBeRemoved = model.getMenuItem(id);
+		IDishMenuItemData itemToBeRemoved = this.getModel().getMenuItem(id);
 		
 		idBox.setCaption(id);
 		
@@ -135,7 +101,7 @@ public class StandardServerViewOperationsUtilityClass {
 		removeButton.performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 		
-		if (model.getMenuItem(id) == null) {
+		if (this.getModel().getMenuItem(id) == null) {
 			return itemToBeRemoved;
 		} else {
 			return null;
@@ -156,7 +122,7 @@ public class StandardServerViewOperationsUtilityClass {
 		
 		GeneralTestUtilityClass.performWait(waitTime);
 		
-		IDishMenuItemData editedItem = model.getMenuItem(id);
+		IDishMenuItemData editedItem = this.getModel().getMenuItem(id);
 		
 		return editedItem;
 	}
@@ -170,9 +136,9 @@ public class StandardServerViewOperationsUtilityClass {
 		GeneralTestUtilityClass.performWait(waitTime);
 		this.oia.getAddConfirmButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
-		this.view.refreshUnconfirmedOrders();
+		this.getView().refreshUnconfirmedOrders();
 		GeneralTestUtilityClass.performWait(waitTime);
-		this.view.refreshConfirmedOrders();
+		this.getView().refreshConfirmedOrders();
 		GeneralTestUtilityClass.performWait(waitTime);
 		return data;
 	}
@@ -205,7 +171,7 @@ public class StandardServerViewOperationsUtilityClass {
 		this.clickOnConfirmAllOrdersButton();
 		GeneralTestUtilityClass.performWait(waitTime);
 		Collection<IOrderData> col = new ArrayList<IOrderData>();
-		for (IOrderData d : model.getAllConfirmedOrders()) {
+		for (IOrderData d : this.getModel().getAllConfirmedOrders()) {
 			col.add(d);
 		}
 		return col;
@@ -236,9 +202,9 @@ public class StandardServerViewOperationsUtilityClass {
 		GeneralTestUtilityClass.performWait(waitTime);
 		this.oia.getRemoveButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
-		this.view.refreshUnconfirmedOrders();
+		this.getView().refreshUnconfirmedOrders();
 		GeneralTestUtilityClass.performWait(waitTime);
-		this.view.refreshConfirmedOrders();
+		this.getView().refreshConfirmedOrders();
 		GeneralTestUtilityClass.performWait(waitTime);
 		return data;
 	}
@@ -252,9 +218,9 @@ public class StandardServerViewOperationsUtilityClass {
 		GeneralTestUtilityClass.performWait(waitTime);
 		this.oia.getRemoveButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
-		this.view.refreshUnconfirmedOrders();
+		this.getView().refreshUnconfirmedOrders();
 		GeneralTestUtilityClass.performWait(waitTime);
-		this.view.refreshConfirmedOrders();
+		this.getView().refreshConfirmedOrders();
 		GeneralTestUtilityClass.performWait(waitTime);
 		return data;
 	}
@@ -322,116 +288,7 @@ public class StandardServerViewOperationsUtilityClass {
 		}
 	}
 	
-	public void clickOnDiscoverDevices() {
-		this.setConnAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getRefreshButton().performArtificialClick();
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
-	public Collection<IDeviceData> getDiscoveredDevices() {
-		this.setConnAreaTabActive();
-		return this.ca.getDiscoveredDevices().getAllItems();
-	}
-	
-	public Collection<IDeviceData> getKnownDevices() {
-		this.setConnAreaTabActive();
-		return this.ca.getKnownDevices().getAllItems();
-	}
-	
-	public void addKnownDevice(int index) {
-		this.setConnAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getDiscoveredDevices().artificiallySelectItem(index);
-		GeneralTestUtilityClass.performWait(waitTime);
-		System.out.println("discovered Device size: " + ca.getDiscoveredDevices().getSize());
-		this.ca.getAddKnownDeviceButton().performArtificialClick();
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
-	public void removeKnownDevice(int index) {
-		this.setConnAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getKnownDevices().artificiallySelectItem(index);
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getRemoveKnownDeviceButton().performArtificialClick();
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
-	public void allowKnownDevice(int index) {
-		this.setConnAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getKnownDevices().artificiallySelectItem(index);
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getAllowDeviceButton().performArtificialClick();
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
-	public void blockKnownDevice(int index) {
-		this.setConnAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getKnownDevices().artificiallySelectItem(index);
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ca.getBlockDeviceButton().performArtificialClick();
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
-	public void inputMenuFolderAddress(String text) {
-		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.menuFolderAddress.setCaption(text);
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
-	public void inputOrderFolderAddress(String text) {
-		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.orderFolderAddress.setCaption(text);
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
-	public void inputPPMinimalDelay(String text) {
-		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ppMinimalDelay.setCaption(text);
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
-	public void inputPPResendLimit(String text) {
-		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ppResendLimit.setCaption(text);
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
-	public void inputPPTimeout(String text) {
-		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ppTimeout.setCaption(text);
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
-	public void inputSendTimeout(String text) {
-		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.sendTimeout.setCaption(text);
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
-	public void applySettings() {
-		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.applySettingsButton.performArtificialClick();
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
 	private void setMenuOrderTabActive() {
 		this.tabPane.selectTab(this.menuOrderAreaTabName);
-	}
-	private void setConnAreaTabActive() {
-		this.tabPane.selectTab(this.connAreaTabName);
-	}
-	private void setSettingsAreaTabActive() {
-		this.tabPane.selectTab(this.settingsAreaTabName);
 	}
 }

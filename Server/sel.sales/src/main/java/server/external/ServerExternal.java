@@ -1,7 +1,6 @@
 package server.external;
 
 import external.External;
-import external.broadcaster.IBroadcaster;
 import server.controller.IServerController;
 import server.external.broadcaster.DishMenuBroadcaster;
 import server.model.IServerModel;

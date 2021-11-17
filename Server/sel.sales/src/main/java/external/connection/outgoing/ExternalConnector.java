@@ -249,7 +249,7 @@ public abstract class ExternalConnector implements IExternalConnector {
 	
 	@Override
 	public void connectToService(Object serviceID, String serviceHostAddress) {
-		if (!this.activeConnRunnables.contains(serviceHostAddress)) {
+		if (this.getService().getDeviceManager().isAllowedToConnect(serviceHostAddress) && !this.activeConnRunnables.contains(serviceHostAddress)) {
 			this.activeConnRunnables.add(serviceHostAddress);
 			this.es.submit(this.initConnectionRunnable(serviceID, this.getService().getDeviceManager().getDevice(serviceHostAddress)));
 		}

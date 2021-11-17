@@ -41,6 +41,7 @@ public interface IModel extends Closeable {
 	void setSettings(ISettings settings);
 	void setSettings(String[][] settings);
 	void setDishMenu(String menu);
+	void setDishMenu(IDishMenuData menu);
 	void setKnownDevices(String serialisedDeviceData);
 	void loadSaved();
 	void loadKnownDevices(String fileAddress);

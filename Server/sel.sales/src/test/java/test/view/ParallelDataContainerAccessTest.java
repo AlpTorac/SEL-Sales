@@ -18,6 +18,7 @@ import server.model.ServerModel;
 import server.view.IServerView;
 import server.view.StandardServerView;
 import test.StandardServerViewOperationsUtilityClass;
+import test.ViewOperationsUtilityClass;
 import view.IView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
@@ -65,7 +66,7 @@ class ParallelDataContainerAccessTest extends ApplicationTest {
 	
 	@Test
 	void test() {
-		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
+		ViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		for (int i = 0; i < 10; i++) {
 			final int num = i;
 			final String serialisedOrder = "order"+num+"-20200813000000183-1-1:item3,5;item3,4;";

@@ -151,6 +151,9 @@ public final class GeneralTestUtilityClass {
 	public static void deletePathContent(File folderToEmpty) {
 		deleteRecursively(folderToEmpty);
 	}
+	public static void deletePathContent(String folderToEmptyAddress) {
+		deleteRecursively(new File(folderToEmptyAddress));
+	}
 	private static void deleteRecursively(File folderToEmpty) {
 		File testFolder = folderToEmpty;
 		File[] subFiles = testFolder.listFiles();

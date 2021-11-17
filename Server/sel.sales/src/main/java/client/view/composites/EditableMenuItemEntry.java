@@ -1,11 +1,9 @@
 package client.view.composites;
 
-import controller.IController;
 import model.dish.IDishMenuItemData;
 import view.repository.IButton;
 import view.repository.IChoiceBox;
 import view.repository.IUIComponent;
-import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.ClickEventListener;
 import view.repository.uiwrapper.UIComponentFactory;
 
@@ -14,8 +12,8 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 	private IButton amountDecBtn;
 	private IButton removeBtn;
 	
-	public EditableMenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget<MenuItemEntry> notifyTarget) {
-		super(controller, fac, advFac, notifyTarget);
+	public EditableMenuItemEntry(UIComponentFactory fac, PriceUpdateTarget<MenuItemEntry> notifyTarget) {
+		super(fac, notifyTarget);
 	}
 
 	@Override
@@ -77,5 +75,25 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 			}
 		});
 		return btn;
+	}
+	
+	public IButton getAmountIncButton() {
+		return this.amountIncBtn;
+	}
+	
+	public IButton getAmountDecButton() {
+		return this.amountDecBtn;
+	}
+	
+	public IButton getRemoveButton() {
+		return this.removeBtn;
+	}
+	
+	protected EditableMenuItemEntry constructClone() {
+		return new EditableMenuItemEntry(this.getUIFactory(), this.getNotifyTarget());
+	}
+	
+	public EditableMenuItemEntry clone() {
+		return (EditableMenuItemEntry) super.clone();
 	}
 }

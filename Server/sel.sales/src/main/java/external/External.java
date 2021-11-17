@@ -46,7 +46,7 @@ public abstract class External implements IExternal {
 	
 	@Override
 	public void subscribe() {
-		this.model.subscribe(this);
+		this.getModel().subscribe(this);
 	}
 	
 	protected IController getController() {
@@ -80,13 +80,13 @@ public abstract class External implements IExternal {
 	@Override
 	public void refreshKnownDevices() {
 		if (this.getService() != null) {
-			this.getService().receiveKnownDeviceData(this.model.getAllKnownDeviceData());
+			this.getService().receiveKnownDeviceData(this.getModel().getAllKnownDeviceData());
 		}
 	}
 	@Override
 	public void refreshSettings() {
 		if (this.getService() != null) {
-			this.getService().receiveSettings(this.model.getSettings());
+			this.getService().receiveSettings(this.getModel().getSettings());
 		}
 	}
 	@Override

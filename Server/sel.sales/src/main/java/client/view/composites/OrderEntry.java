@@ -11,17 +11,15 @@ import model.order.IOrderData;
 import model.order.IOrderItemData;
 import view.repository.IIndexedLayout;
 import view.repository.ILabel;
-import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIVBoxLayout;
 
-public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuItemEntry> {
+public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuItemEntry>, Cloneable {
 	private static final boolean DEFAULT_IS_CASH = false;
 	private static final boolean DEFAULT_IS_HERE = false;
 	
 	private IController controller;
 	private UIComponentFactory fac;
-	private AdvancedUIComponentFactory advFac;
 	private PriceUpdateTarget<OrderEntry> notifyTarget;
 	
 	private IOrderData activeData;
@@ -34,25 +32,43 @@ public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuIt
 	
 	private String priceDisplayAffix = "Price: ";
 	
-	public OrderEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget<OrderEntry> notifyTarget) {
+	public OrderEntry(IController controller, UIComponentFactory fac, PriceUpdateTarget<OrderEntry> notifyTarget) {
 		super(fac.createVBoxLayout().getComponent());
 		this.menuItemEntries = new CopyOnWriteArrayList<MenuItemEntry>();
 		this.controller = controller;
 		this.fac = fac;
-		this.advFac = advFac;
 		this.notifyTarget = notifyTarget;
 		this.initComponent();
 	}
 	
-	public OrderEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget<OrderEntry> notifyTarget, IOrderData data) {
-		this(controller, fac, advFac, notifyTarget);
+	public OrderEntry(IController controller, UIComponentFactory fac, PriceUpdateTarget<OrderEntry> notifyTarget, IOrderData data) {
+		this(controller, fac, notifyTarget);
 		this.activeData = data;
 		this.displayData(this.activeData);
 	}
 
+	protected void setActiveMenu(IDishMenuData menu) {
+		this.activeMenu = menu;
+	}
+	
+	public IDishMenuData getActiveMenu() {
+		return this.activeMenu;
+	}
+	
+	public IOrderData getActiveData() {
+		return this.activeData;
+	}
+	
+	protected void setActiveData(IOrderData data) {
+		this.activeData = data;
+	}
+	
 	public void displayData(IOrderData data) {
-		this.resetUserInput();
-		this.initMenuItemEntries(this.activeData = data);
+		if (data != null) {
+			this.resetUserInput();
+			this.setActiveData(data);
+			this.initMenuItemEntries(this.getActiveData());
+		}
 	}
 	
 	protected void initComponent() {
@@ -85,7 +101,7 @@ public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuIt
 	
 	protected void addMenuItemEntry(MenuItemEntry entry) {
 		this.menuItemEntries.add(entry);
-		this.refreshMenu(this.activeMenu);
+		this.refreshMenu(this.getActiveMenu());
 		this.addMenuItemEntryToUI(entry);
 		this.refreshPriceDisplay();
 	}
@@ -94,8 +110,8 @@ public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuIt
 		this.addUIComponentBefore(entry, this.bottomPart);
 	}
 	
-	public MenuItemEntry createItemEntry() {
-		return new MenuItemEntry(controller, fac, advFac, this);
+	protected MenuItemEntry createItemEntry() {
+		return new MenuItemEntry(fac, this);
 	}
 	
 	protected MenuItemEntry createItemEntry(IOrderItemData data) {
@@ -106,8 +122,8 @@ public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuIt
 	
 	@Override
 	public void refreshPrice() {
-		this.notifyTarget.refreshPrice();
 		this.refreshPriceDisplay();
+		this.notifyTarget.refreshPrice();
 	}
 
 	public void removeFromParent() {
@@ -122,8 +138,9 @@ public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuIt
 	
 	public void refreshMenu(IDishMenuData menuData) {
 		if (menuData != null) {
-			this.activeMenu = menuData;
-			this.menuItemEntries.forEach(mie -> mie.refreshMenu(this.activeMenu));
+			this.setActiveMenu(menuData);
+			this.menuItemEntries.forEach(mie -> mie.refreshMenu(this.getActiveMenu()));
+			this.getNotifyTarget().refreshPrice();
 		}
 	}
 	
@@ -135,12 +152,12 @@ public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuIt
 		return this.getNetPrice().toPlainString();
 	}
 	
-	protected BigDecimal getNetPrice() {
+	public BigDecimal getNetPrice() {
 		return this.menuItemEntries.stream().map(mie -> mie.getPrice()).reduce(BigDecimal.ZERO, (p1,p2)-> p1.add(p2));
 	}
 	
 	public String getSerialisedOrderID() {
-		return this.activeData.getID().toString();
+		return this.getActiveData().getID().toString();
 	}
 	
 	protected IOrderItemData[] getCurrentOrder() {
@@ -170,5 +187,34 @@ public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuIt
 			mie.removeFromParent();
 		}
 		this.refreshPrice();
+	}
+	
+	public Collection<MenuItemEntry> cloneMenuItemEntries() {
+		Collection<MenuItemEntry> col = new CopyOnWriteArrayList<MenuItemEntry>();
+		this.menuItemEntries.forEach(mie -> {col.add(mie.clone());});
+		return col;
+	}
+	
+	protected IController getController() {
+		return this.controller;
+	}
+	
+	protected UIComponentFactory getUIFactory() {
+		return this.fac;
+	}
+	
+	protected PriceUpdateTarget<OrderEntry> getNotifyTarget() {
+		return this.notifyTarget;
+	}
+	
+	protected OrderEntry constructClone() {
+		return new OrderEntry(this.getController(), this.getUIFactory(), this.getNotifyTarget());
+	}
+	
+	public OrderEntry clone() {
+		OrderEntry clone = this.constructClone();
+		clone.refreshMenu(this.getActiveMenu());
+		clone.displayData(this.getActiveData());
+		return clone;
 	}
 }

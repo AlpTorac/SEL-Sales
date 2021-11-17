@@ -3,33 +3,29 @@ package client.view.composites;
 import java.math.BigDecimal;
 import java.util.Collection;
 
-import controller.IController;
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderItemData;
 import view.repository.IChoiceBox;
 import view.repository.ITextBox;
 import view.repository.IUIComponent;
-import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.ItemChangeListener;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIHBoxLayout;
 
-public class MenuItemEntry extends UIHBoxLayout {
-	private IController controller;
+public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 	private UIComponentFactory fac;
-	private AdvancedUIComponentFactory advFac;
 	
 	private IChoiceBox<IDishMenuItemData> cb;
 	private ITextBox amount;
 	
 	private PriceUpdateTarget<MenuItemEntry> notifyTarget;
 	
-	public MenuItemEntry(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac, PriceUpdateTarget<MenuItemEntry> notifyTarget) {
+	private IDishMenuData activeMenu;
+	
+	public MenuItemEntry(UIComponentFactory fac, PriceUpdateTarget<MenuItemEntry> notifyTarget) {
 		super(fac.createHBoxLayout().getComponent());
-		this.controller = controller;
 		this.fac = fac;
-		this.advFac = advFac;
 		this.notifyTarget = notifyTarget;
 		this.initComponent();
 	}
@@ -45,8 +41,12 @@ public class MenuItemEntry extends UIHBoxLayout {
 	}
 	
 	public void displayData(IOrderItemData data) {
-		this.cb.artificiallySelectItem(data.getItemData());
-		this.amount.setCaption(data.getAmount().toPlainString());
+		if (data != null) {
+			this.selectMenuItem(data.getItemData());
+			this.setAmount(data.getAmount().intValue());
+		}
+//		this.cb.artificiallySelectItem(data.getItemData());
+//		this.amount.setCaption(data.getAmount().toPlainString());
 	}
 	
 	protected void choiceBoxInitExtra(IChoiceBox<IDishMenuItemData> choiceBox) {
@@ -85,45 +85,59 @@ public class MenuItemEntry extends UIHBoxLayout {
 		return tb;
 	}
 	
-	protected IController getController() {
-		return this.controller;
-	}
-	
 	protected UIComponentFactory getUIFactory() {
 		return this.fac;
 	}
 	
-	protected IChoiceBox<IDishMenuItemData> getMenuItemChoiceBox() {
+	public IChoiceBox<IDishMenuItemData> getMenuItemChoiceBox() {
 		return this.cb;
 	}
 	
-	protected ITextBox getAmountTextBox() {
+	public ITextBox getAmountTextBox() {
 		return this.amount;
 	}
 	
 	protected void removeFromParent() {
-		this.notifyTarget.remove(this);
+		this.getNotifyTarget().remove(this);
 		this.dettach();
+	}
+	
+	protected void setActiveMenu(IDishMenuData menuData) {
+		this.activeMenu = menuData;
+	}
+	
+	public IDishMenuData getActiveMenu() {
+		return this.activeMenu;
 	}
 	
 	public void refreshMenu(IDishMenuData menuData) {
 		IDishMenuItemData selection = this.getSelectedMenuItem();
 		if (menuData != null) {
+			this.setActiveMenu(menuData);
 			this.cb.clear();
-			for (IDishMenuItemData data : menuData.getAllDishMenuItems()) {
+			for (IDishMenuItemData data : this.getActiveMenu().getAllDishMenuItems()) {
 				this.addMenuItem(data);
 			}
 		}
+		this.selectMenuItem(selection);
+		this.getNotifyTarget().refreshPrice();
+	}
+	
+	protected void selectMenuItem(IDishMenuItemData selection) {
 		if (selection != null) {
 			this.cb.artificiallySelectItem(selection);
 		}
+	}
+	
+	protected void setAmount(int amount) {
+		this.amount.setCaption(String.valueOf(amount));
 	}
 	
 	protected void addMenuItem(IDishMenuItemData data) {
 		this.cb.addItem(data);
 	}
 	
-	protected BigDecimal getAmount() {
+	public BigDecimal getAmount() {
 		return BigDecimal.valueOf(Double.valueOf(this.amount.getText()));
 	}
 	
@@ -136,10 +150,26 @@ public class MenuItemEntry extends UIHBoxLayout {
 	}
 	
 	protected void notifyPriceDisplayingTarget() {
-		this.notifyTarget.refreshPrice();
+		this.getNotifyTarget().refreshPrice();
 	}
 	
 	public IDishMenuItemData getSelectedMenuItem() {
 		return this.cb.getSelectedElement();
+	}
+	
+	protected PriceUpdateTarget<MenuItemEntry> getNotifyTarget() {
+		return this.notifyTarget;
+	}
+	
+	protected MenuItemEntry constructClone() {
+		return new MenuItemEntry(this.getUIFactory(), this.getNotifyTarget());
+	}
+	
+	public MenuItemEntry clone() {
+		MenuItemEntry clone = this.constructClone();
+		clone.refreshMenu(this.getActiveMenu());
+		clone.selectMenuItem(this.getSelectedMenuItem());
+		clone.setAmount(this.getAmount().intValue());
+		return clone;
 	}
 }

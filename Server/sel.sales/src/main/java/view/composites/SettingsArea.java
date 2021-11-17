@@ -81,7 +81,7 @@ public class SettingsArea extends UIVBoxLayout {
 		return this.applyButton;
 	}
 	
-	private interface ISettingsInputArea {
+	protected interface ISettingsInputArea {
 		SettingsField getSettingsField();
 		String getSetting();
 		void setSetting(String settingValue);
@@ -96,7 +96,7 @@ public class SettingsArea extends UIVBoxLayout {
 		}
 	}
 	
-	private class FileAddressArea extends UIVBoxLayout {
+	protected class FileAddressArea extends UIVBoxLayout {
 		FileAddressArea() {
 			super(fac.createVBoxLayout().getComponent());
 			this.setSpacing(5);
@@ -107,7 +107,7 @@ public class SettingsArea extends UIVBoxLayout {
 		}
 	}
 	
-	private class ConnectivityArea extends UIVBoxLayout {
+	protected class ConnectivityArea extends UIVBoxLayout {
 		ConnectivityArea() {
 			super(fac.createVBoxLayout().getComponent());
 			this.setSpacing(5);
@@ -120,7 +120,7 @@ public class SettingsArea extends UIVBoxLayout {
 		}
 	}
 	
-	private class FileAddressUI extends UIHBoxLayout implements ISettingsInputArea {
+	protected class FileAddressUI extends UIHBoxLayout implements ISettingsInputArea {
 		private ILabel descriptionLabel;
 		private ITextBox addressBox;
 		private IButton fileChooserButton;
@@ -193,7 +193,7 @@ public class SettingsArea extends UIVBoxLayout {
 		}
 	}
 
-	private class ConnectivityUI extends UIHBoxLayout implements ISettingsInputArea {
+	protected class ConnectivityUI extends UIHBoxLayout implements ISettingsInputArea {
 		private ILabel descriptionLabel;
 		private ITextBox addressBox;
 		

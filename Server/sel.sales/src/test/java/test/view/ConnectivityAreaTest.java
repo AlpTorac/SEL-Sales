@@ -25,6 +25,7 @@ import server.model.ServerModel;
 import server.view.StandardServerView;
 import test.GeneralTestUtilityClass;
 import test.StandardServerViewOperationsUtilityClass;
+import test.ViewOperationsUtilityClass;
 import test.external.dummy.DummyDevice;
 import test.external.dummy.DummyDeviceDiscoveryStrategy;
 import test.external.dummy.DummyExternal;
@@ -42,7 +43,7 @@ class ConnectivityAreaTest extends ApplicationTest {
 	private StandardServerView view;
 	private DummyExternal external;
 	
-	private StandardServerViewOperationsUtilityClass opHelper;
+	private ViewOperationsUtilityClass opHelper;
 	
 	private DummyService service;
 	private DummyServiceConnectionManager dscm;
