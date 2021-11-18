@@ -90,6 +90,7 @@ class MenuItemEntryTest extends ApplicationTest {
 
 	@AfterEach
 	void cleanUp() {
+		model.close();
 		entry = null;
 		u = null;
 	}
@@ -103,11 +104,13 @@ class MenuItemEntryTest extends ApplicationTest {
 		IOrderItemData itemData = model.getOrderHelper().createOrderItemData(item1, amount);
 		entry.displayData(itemData);
 		
-		Assertions.assertEquals(entry.getMenuItemChoiceBox().getSelectedElement(), item1);
-		Assertions.assertEquals(entry.getSelectedMenuItem(), item1);
-		Assertions.assertEquals(Integer.valueOf(entry.getAmountTextBox().getText()), amount.intValue());
-		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
-		Assertions.assertEquals(entry.getPrice().doubleValue(), item1.getGrossPrice().multiply(amount).doubleValue());
+		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, item1, amount);
+		
+//		Assertions.assertEquals(entry.getMenuItemChoiceBox().getSelectedElement(), item1);
+//		Assertions.assertEquals(entry.getSelectedMenuItem(), item1);
+//		Assertions.assertEquals(Integer.valueOf(entry.getAmountTextBox().getText()), amount.intValue());
+//		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
+//		Assertions.assertEquals(entry.getPrice().doubleValue(), item1.getGrossPrice().multiply(amount).doubleValue());
 	}
 	
 	@Test
@@ -162,11 +165,13 @@ class MenuItemEntryTest extends ApplicationTest {
 		
 		Assertions.assertFalse(clone == entry);
 		
-		Assertions.assertEquals(clone.getMenuItemChoiceBox().getSelectedElement(), item1);
-		Assertions.assertEquals(clone.getSelectedMenuItem(), item1);
-		Assertions.assertEquals(Integer.valueOf(clone.getAmountTextBox().getText()), amount.intValue());
-		Assertions.assertEquals(clone.getAmount().intValue(), amount.intValue());
-		Assertions.assertEquals(clone.getPrice().doubleValue(), item1.getGrossPrice().multiply(amount).doubleValue());
+		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(clone, item1, amount);
+		
+//		Assertions.assertEquals(clone.getMenuItemChoiceBox().getSelectedElement(), item1);
+//		Assertions.assertEquals(clone.getSelectedMenuItem(), item1);
+//		Assertions.assertEquals(Integer.valueOf(clone.getAmountTextBox().getText()), amount.intValue());
+//		Assertions.assertEquals(clone.getAmount().intValue(), amount.intValue());
+//		Assertions.assertEquals(clone.getPrice().doubleValue(), item1.getGrossPrice().multiply(amount).doubleValue());
 	}
 	
 	@Test

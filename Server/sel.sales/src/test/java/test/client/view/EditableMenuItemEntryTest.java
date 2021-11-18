@@ -89,6 +89,7 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 
 	@AfterEach
 	void cleanUp() {
+		model.close();
 		entry = null;
 		u = null;
 	}
@@ -102,11 +103,13 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 		IOrderItemData itemData = model.getOrderHelper().createOrderItemData(item1, amount);
 		entry.displayData(itemData);
 		
-		Assertions.assertEquals(entry.getMenuItemChoiceBox().getSelectedElement(), item1);
-		Assertions.assertEquals(entry.getSelectedMenuItem(), item1);
-		Assertions.assertEquals(Integer.valueOf(entry.getAmountTextBox().getText()), amount.intValue());
-		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
-		Assertions.assertEquals(entry.getPrice().doubleValue(), item1.getGrossPrice().multiply(amount).doubleValue());
+		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, item1, amount);
+		
+//		Assertions.assertEquals(entry.getMenuItemChoiceBox().getSelectedElement(), item1);
+//		Assertions.assertEquals(entry.getSelectedMenuItem(), item1);
+//		Assertions.assertEquals(Integer.valueOf(entry.getAmountTextBox().getText()), amount.intValue());
+//		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
+//		Assertions.assertEquals(entry.getPrice().doubleValue(), item1.getGrossPrice().multiply(amount).doubleValue());
 	}
 	
 	@Test
@@ -139,9 +142,12 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
 		
 		entry.getMenuItemChoiceBox().artificiallySelectItem(item2);
-		Assertions.assertEquals(entry.getMenuItemChoiceBox().getSelectedElement(), item2);
-		Assertions.assertEquals(entry.getSelectedMenuItem(), item2);
-		Assertions.assertEquals(entry.getPrice().doubleValue(), item2.getGrossPrice().multiply(amount).doubleValue());
+		
+		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, item2, amount);
+		
+//		Assertions.assertEquals(entry.getMenuItemChoiceBox().getSelectedElement(), item2);
+//		Assertions.assertEquals(entry.getSelectedMenuItem(), item2);
+//		Assertions.assertEquals(entry.getPrice().doubleValue(), item2.getGrossPrice().multiply(amount).doubleValue());
 		Assertions.assertTrue(isPriceRefreshed);
 	}
 	
@@ -159,9 +165,12 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 		
 		entry.getAmountIncButton().performArtificialClick();
 		amount = amount.add(BigDecimal.ONE);
-		Assertions.assertEquals(Integer.valueOf(entry.getAmountTextBox().getText()), amount.intValue());
-		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
-		Assertions.assertEquals(entry.getPrice().doubleValue(), item2.getGrossPrice().multiply(amount).doubleValue());
+		
+		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, item2, amount);
+		
+//		Assertions.assertEquals(Integer.valueOf(entry.getAmountTextBox().getText()), amount.intValue());
+//		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
+//		Assertions.assertEquals(entry.getPrice().doubleValue(), item2.getGrossPrice().multiply(amount).doubleValue());
 		Assertions.assertTrue(isPriceRefreshed);
 	}
 	
@@ -180,17 +189,23 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 		// amount = 0
 		entry.getAmountDecButton().performArtificialClick();
 		amount = amount.subtract(BigDecimal.ONE);
-		Assertions.assertEquals(Integer.valueOf(entry.getAmountTextBox().getText()), amount.intValue());
-		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
-		Assertions.assertEquals(entry.getPrice().doubleValue(), item2.getGrossPrice().multiply(amount).doubleValue());
+		
+		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, item2, amount);
+		
+//		Assertions.assertEquals(Integer.valueOf(entry.getAmountTextBox().getText()), amount.intValue());
+//		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
+//		Assertions.assertEquals(entry.getPrice().doubleValue(), item2.getGrossPrice().multiply(amount).doubleValue());
 		Assertions.assertTrue(isPriceRefreshed);
 		isPriceRefreshed = false;
 		
 		// amount still = 0
 		entry.getAmountDecButton().performArtificialClick();
-		Assertions.assertEquals(Integer.valueOf(entry.getAmountTextBox().getText()), amount.intValue());
-		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
-		Assertions.assertEquals(entry.getPrice().doubleValue(), item2.getGrossPrice().multiply(amount).doubleValue());
+		
+		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, item2, amount);
+		
+//		Assertions.assertEquals(Integer.valueOf(entry.getAmountTextBox().getText()), amount.intValue());
+//		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
+//		Assertions.assertEquals(entry.getPrice().doubleValue(), item2.getGrossPrice().multiply(amount).doubleValue());
 		Assertions.assertFalse(isPriceRefreshed);
 	}
 	
@@ -207,10 +222,12 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 		
 		Assertions.assertFalse(clone == entry);
 		
-		Assertions.assertEquals(clone.getMenuItemChoiceBox().getSelectedElement(), item1);
-		Assertions.assertEquals(clone.getSelectedMenuItem(), item1);
-		Assertions.assertEquals(Integer.valueOf(clone.getAmountTextBox().getText()), amount.intValue());
-		Assertions.assertEquals(clone.getAmount().intValue(), amount.intValue());
-		Assertions.assertEquals(clone.getPrice().doubleValue(), item1.getGrossPrice().multiply(amount).doubleValue());
+		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(clone, item1, amount);
+		
+//		Assertions.assertEquals(clone.getMenuItemChoiceBox().getSelectedElement(), item1);
+//		Assertions.assertEquals(clone.getSelectedMenuItem(), item1);
+//		Assertions.assertEquals(Integer.valueOf(clone.getAmountTextBox().getText()), amount.intValue());
+//		Assertions.assertEquals(clone.getAmount().intValue(), amount.intValue());
+//		Assertions.assertEquals(clone.getPrice().doubleValue(), item1.getGrossPrice().multiply(amount).doubleValue());
 	}
 }

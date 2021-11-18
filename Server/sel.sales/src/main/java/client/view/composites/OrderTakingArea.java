@@ -1,20 +1,15 @@
 package client.view.composites;
 
-import client.view.composites.listener.AddCookingOrderListener;
 import controller.IController;
 import model.dish.IDishMenuData;
 import model.order.IOrderData;
 import view.repository.IButton;
-import view.repository.IIndexedLayout;
-import view.repository.uiwrapper.AdvancedUIComponentFactory;
-import view.repository.uiwrapper.ClickEventListener;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIVBoxLayout;
 
 public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<OrderEntry> {
 	private IController controller;
 	private UIComponentFactory fac;
-	private AdvancedUIComponentFactory advFac;
 	
 	private OrderTakingAreaOrderEntry orderEntry;
 	
@@ -22,13 +17,12 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<O
 	
 	private IDishMenuData activeMenu;
 	
-	protected OrderTakingArea(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac) {
+	public OrderTakingArea(IController controller, UIComponentFactory fac) {
 		super(fac.createVBoxLayout().getComponent());
 //		this.menuItemEntries = new CopyOnWriteArrayList<MenuItemEntry>();
 		
 		this.controller = controller;
 		this.fac = fac;
-		this.advFac = advFac;
 		this.init();
 	}
 
@@ -37,7 +31,7 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<O
 	}
 	
 	protected OrderTakingAreaOrderEntry initOrderEntry() {
-		return new OrderTakingAreaOrderEntry(controller, fac, advFac, this);
+		return new OrderTakingAreaOrderEntry(controller, fac, this);
 	}
 	
 	protected void init() {
@@ -135,72 +129,6 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<O
 
 	@Override
 	public void remove(OrderEntry referenceOfCaller) {
-		
-	}
-	
-	public IButton getAddMenuItemButton() {
-		return this.orderEntry.addMenuItemBtn;
-	}
-	
-	public IButton getNextTabButton() {
-		return this.orderEntry.nextTabBtn;
-	}
-	
-	protected class OrderTakingAreaOrderEntry extends OrderEntry {
-		private IButton addMenuItemBtn;
-		private IButton nextTabBtn;
-		
-		public OrderTakingAreaOrderEntry(IController controller, UIComponentFactory fac,
-				AdvancedUIComponentFactory advFac, PriceUpdateTarget<OrderEntry> notifyTarget) {
-			super(controller, fac, notifyTarget);
-		}
-		public OrderTakingAreaOrderEntry(IController controller, UIComponentFactory fac,
-				AdvancedUIComponentFactory advFac, PriceUpdateTarget<OrderEntry> notifyTarget, IOrderData data) {
-			super(controller, fac, notifyTarget, data);
-		}
-		
-		public MenuItemEntry createItemEntry() {
-			return new EditableMenuItemEntry(fac, this);
-		}
-		
-		protected void initComponent() {
-			this.addUIComponent(this.addMenuItemBtn = this.initAddMenuItemButton());
-			super.initComponent();
-		}
-		
-		protected IIndexedLayout initBottomPart() {
-			IIndexedLayout bottom = super.initBottomPart();
-			bottom.addUIComponent(this.nextTabBtn = this.initNextTabButton());
-			return bottom;
-		}
-		
-		protected IButton initAddMenuItemButton() {
-			IButton btn = fac.createButton();
-			btn.setCaption("+");
-			btn.addClickListener(new ClickEventListener() {
-				@Override
-				public void clickAction() {
-					addMenuItemEntry(createItemEntry());
-					refreshPrice();
-				}
-			});
-			return btn;
-		}
-		
-		protected IButton initNextTabButton() {
-			IButton btn = fac.createButton();
-			btn.setCaption("To cooking area");
-			
-			ClickEventListener cel = new AddCookingOrderListener(this, controller);
-			btn.addClickListener(cel);
-			
-			return btn;
-		}
-		
-		protected void addMenuItemEntryToUI(MenuItemEntry entry) {
-			this.addUIComponentBefore(entry, this.addMenuItemBtn);
-		}
-		
 		
 	}
 }

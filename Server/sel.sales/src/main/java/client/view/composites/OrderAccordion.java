@@ -1,12 +1,13 @@
 package client.view.composites;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import controller.IController;
 import model.id.EntityID;
 import model.order.IOrderData;
-import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.UIAccordion;
 import view.repository.uiwrapper.UIComponentFactory;
 
@@ -14,16 +15,14 @@ public abstract class OrderAccordion extends UIAccordion implements PriceUpdateT
 	
 	private IController controller;
 	private UIComponentFactory fac;
-	private AdvancedUIComponentFactory advFac;
 	
 	private Map<EntityID, OrderEntry> orderEntries;
 	
-	public OrderAccordion(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac) {
+	public OrderAccordion(IController controller, UIComponentFactory fac) {
 		super(fac.createAccordion().getComponent());
 		this.orderEntries = new ConcurrentHashMap<EntityID, OrderEntry>();
 		this.controller = controller;
 		this.fac = fac;
-		this.advFac = advFac;
 	}
 	
 	public void addOrderData(IOrderData data) {
@@ -36,9 +35,10 @@ public abstract class OrderAccordion extends UIAccordion implements PriceUpdateT
 		}
 	}
 	
-	protected OrderEntry createOrderEntry(IOrderData data) {
-		return new OrderEntry(controller, fac, this, data);
-	}
+	protected abstract OrderEntry createOrderEntry(IOrderData data);
+//	{
+//		return new OrderEntry(controller, fac, this, data);
+//	}
 	
 	@Override
 	public void refreshPrice() {
@@ -48,5 +48,19 @@ public abstract class OrderAccordion extends UIAccordion implements PriceUpdateT
 	@Override
 	public void remove(OrderEntry referenceOfCaller) {
 		this.orderEntries.values().remove(referenceOfCaller);
+	}
+	
+	protected IController getController() {
+		return this.controller;
+	}
+	
+	protected UIComponentFactory getUIFactory() {
+		return this.fac;
+	}
+	
+	public Collection<OrderEntry> cloneOrderEntries() {
+		Collection<OrderEntry> col = new CopyOnWriteArrayList<OrderEntry>();
+		this.orderEntries.values().forEach(e -> col.add(e.clone()));
+		return col;
 	}
 }

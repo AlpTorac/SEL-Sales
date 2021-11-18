@@ -52,19 +52,19 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 		this.poaTabName = GeneralTestUtilityClass.getPrivateFieldValue(this.oa, "poaTabName");
 	}
 	
-	public void clickOnNewMenuItemEntryButton() {
-		this.setOrderTakingAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ota.getAddMenuItemButton().performArtificialClick();
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
-	public void clickOnOTANextTabButton() {
-		this.setOrderTakingAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.ota.getNextTabButton().performArtificialClick();
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
+//	public void clickOnNewMenuItemEntryButton() {
+//		this.setOrderTakingAreaTabActive();
+//		GeneralTestUtilityClass.performWait(waitTime);
+//		this.ota.getAddMenuItemButton().performArtificialClick();
+//		GeneralTestUtilityClass.performWait(waitTime);
+//	}
+//	
+//	public void clickOnOTANextTabButton() {
+//		this.setOrderTakingAreaTabActive();
+//		GeneralTestUtilityClass.performWait(waitTime);
+//		this.ota.getNextTabButton().performArtificialClick();
+//		GeneralTestUtilityClass.performWait(waitTime);
+//	}
 	
 	protected void setOrderAreaTabActive() {
 		this.tabPane.selectTab(this.oaTabName);

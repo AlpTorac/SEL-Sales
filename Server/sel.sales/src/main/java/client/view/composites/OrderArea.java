@@ -51,19 +51,19 @@ public class OrderArea extends UIVBoxLayout {
 	}
 
 	protected OrderTakingArea initOrderTakingArea() {
-		return new OrderTakingArea(this.controller, this.fac, this.advFac);
+		return new OrderTakingArea(this.controller, this.fac);
 	}
 
 	protected CookingOrdersArea initCookingOrdersArea() {
-		return new CookingOrdersArea(this.controller, this.fac, this.advFac);
+		return new CookingOrdersArea(this.controller, this.fac);
 	}
 
 	protected PendingPaymentOrdersArea initUnpaidOrdersArea() {
-		return new PendingPaymentOrdersArea(this.controller, this.fac, this.advFac);
+		return new PendingPaymentOrdersArea(this.controller, this.fac);
 	}
 
 	protected PastOrdersArea initPastOrdersArea() {
-		return new PastOrdersArea(this.controller, this.fac, this.advFac);
+		return new PastOrdersArea(this.controller, this.fac);
 	}
 
 	protected UITabPane initTabPane() {
