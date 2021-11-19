@@ -11,10 +11,16 @@ public interface IDishMenuSerialiser extends ISerialiser {
 		for (int i = 0; i < itemData.length - 1; i++) {
 			result += this.serialiseItem(itemData[i]);
 		}
-		if (this.addLastEnd()) {
-			result += this.serialiseItem(itemData[itemData.length - 1]);
+		if (itemData.length > 0) {
+			if (this.addLastEnd()) {
+				result += this.serialiseItem(itemData[itemData.length - 1]);
+			} else {
+				result += this.serialiseItemWithoutFieldEnd(itemData[itemData.length - 1]);
+			}
 		} else {
-			result += this.serialiseItemWithoutFieldEnd(itemData[itemData.length - 1]);
+			if (this.addLastEnd()) {
+				result += this.getDishMenuFormat().getDishMenuItemDataFieldEnd();
+			}
 		}
 		return result;
 	}

@@ -92,6 +92,9 @@ public abstract class External implements IExternal {
 	@Override
 	public void close() {
 		this.es.shutdown();
+		if (this.getServiceConnectionManager() != null) {
+			this.getServiceConnectionManager().close();
+		}
 	}
 	@Override
 	public long getMinimalPingPongDelay() {

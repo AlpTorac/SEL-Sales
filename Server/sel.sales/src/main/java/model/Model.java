@@ -10,7 +10,6 @@ import model.connectivity.FileDeviceDataParser;
 import model.connectivity.FileDeviceDataSerialiser;
 import model.connectivity.IConnectivityManager;
 import model.connectivity.IDeviceData;
-import model.dish.DishMenu;
 import model.dish.DishMenuHelper;
 import model.dish.DishMenuItemFinder;
 import model.dish.IDishMenu;
@@ -21,7 +20,6 @@ import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemFinder;
 import model.filemanager.FileManager;
 import model.filemanager.IFileManager;
-import model.order.IOrderCollector;
 import model.order.IOrderData;
 import model.order.IOrderHelper;
 import model.order.OrderHelper;
@@ -103,6 +101,7 @@ public abstract class Model implements IModel {
 	protected void menuChanged() {
 		this.notifyUpdatableChange(u -> u instanceof MenuUpdatable,
 				u -> ((MenuUpdatable) u).refreshMenu());
+//		System.out.println(this + " Menu changed");
 //		this.updatables.stream().filter(u -> u instanceof MenuUpdatable).forEach(u -> ((MenuUpdatable) u).refreshMenu());
 	}
 
@@ -252,10 +251,15 @@ public abstract class Model implements IModel {
 		this.dishMenu = dishMenu;
 		this.finder = new DishMenuItemFinder(this.getDishMenu());
 		this.orderHelper.setFinder(this.finder);
+//		if (dishMenu != null) {
+//			System.out.println(this+" New menu: " + this.getDishMenuHelper().serialiseForExternal(
+//					this.getDishMenuHelper().dishMenuToData(this.dishMenu)
+//					));
+//		}
 	}
 
 	@Override
-	public void setDishMenu(String menu) {
+	public void setDishMenuFromFile(String menu) {
 //		IDishMenu dishMenu = new DishMenu();
 //		IDishMenuData menuData = this.menuHelper.parseMenuData(menu);
 //		for (IDishMenuItemData data : menuData.getAllDishMenuItems()) {
@@ -263,15 +267,42 @@ public abstract class Model implements IModel {
 //		}
 //		this.setDishMenu(dishMenu);
 //		this.menuChanged();
-		this.setDishMenu(this.menuHelper.parseMenuData(menu));
+//		System.out.println(this+" serialised menu received: " + menu);
+//		try {
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		this.setDishMenu(this.menuHelper.parseFileMenuData(menu));
+	}
+	
+	@Override
+	public void setDishMenuFromExternal(String menu) {
+//		IDishMenu dishMenu = new DishMenu();
+//		IDishMenuData menuData = this.menuHelper.parseMenuData(menu);
+//		for (IDishMenuItemData data : menuData.getAllDishMenuItems()) {
+//			dishMenu.addMenuItem(this.menuHelper.dishMenuItemDataToItem(data));
+//		}
+//		this.setDishMenu(dishMenu);
+//		this.menuChanged();
+//		System.out.println(this+" serialised menu received: " + menu);
+//		try {
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		this.setDishMenu(this.menuHelper.parseExternalMenuData(menu));
 	}
 	
 	@Override
 	public void setDishMenu(IDishMenuData menu) {
-		IDishMenu dishMenu = new DishMenu();
+		IDishMenu dishMenu = this.getDishMenuHelper().createDishMenu();
 		for (IDishMenuItemData data : menu.getAllDishMenuItems()) {
 			dishMenu.addMenuItem(this.menuHelper.dishMenuItemDataToItem(data));
 		}
+//		System.out.println(this+" Menu with items: " + this.getDishMenuHelper().serialiseForExternal(
+//				this.getDishMenuHelper().dishMenuToData(dishMenu)
+//				));
 		this.setDishMenu(dishMenu);
 		this.menuChanged();
 	}

@@ -1,6 +1,7 @@
 package client.external;
 
 import client.controller.IClientController;
+import client.external.broadcaster.OrderBroadcaster;
 import client.model.IClientModel;
 import external.External;
 import external.connection.outgoing.IExternalConnector;
@@ -17,6 +18,10 @@ public abstract class ClientExternal extends External implements IClientExternal
 		super(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		this.setService(this.initService());
 		this.connector = this.initConnector();
+	}
+	
+	protected IExternalConnector getConnector() {
+		return this.connector;
 	}
 	
 	@Override
@@ -45,10 +50,18 @@ public abstract class ClientExternal extends External implements IClientExternal
 			IOrderData[] orders = this.getModel().getAllPendingSendOrders();
 			if (orders != null) {
 				for (IOrderData order : orders) {
-					this.connector.broadcastMessage(new Message(MessageContext.ORDER, null, this.getModel().getOrderHelper().serialiseForApp(order)));
+					new OrderBroadcaster(this.getConnector(), this.getModel(), order).broadcast();
+//					this.connector.broadcastMessage(new Message(MessageContext.ORDER, null, this.getModel().getOrderHelper().serialiseForApp(order)));
 				}
 			}
 		}
 	}
-
+	
+	@Override
+	public void close() {
+		super.close();
+		if (this.getConnector() != null) {
+			this.getConnector().close();
+		}
+	}
 }

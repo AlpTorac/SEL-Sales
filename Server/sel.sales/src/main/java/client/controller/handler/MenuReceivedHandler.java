@@ -10,7 +10,7 @@ public class MenuReceivedHandler extends ClientApplicationEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().getModel().setDishMenu((String) args[0]);
+		this.getController().getModel().setDishMenuFromExternal((String) args[0]);
 	}
 
 }

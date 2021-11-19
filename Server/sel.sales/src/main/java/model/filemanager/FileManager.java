@@ -30,7 +30,7 @@ public class FileManager implements IFileManager {
 		String menu = f.readFile();
 		if (menu != null && !menu.isEmpty()) {
 //			System.out.println("Dish menu preloaded");
-			this.model.setDishMenu(menu);
+			this.model.setDishMenuFromFile(menu);
 		}
 	}
 	

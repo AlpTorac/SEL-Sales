@@ -10,6 +10,7 @@ import external.connection.IConnectionManager;
 import external.connection.IService;
 import external.connection.outgoing.ExternalConnector;
 import external.device.IDevice;
+import model.connectivity.IDeviceData;
 import test.GeneralTestUtilityClass;
 
 public class DummyExternalConnector extends ExternalConnector {
@@ -38,13 +39,20 @@ public class DummyExternalConnector extends ExternalConnector {
 	}
 	
 	public void setCurrentConnectionObject(DummyDevice currentDevice) {
-		this.currentDevice = currentDevice;
-		this.connectToService(null, this.currentDevice.getDeviceAddress());
+		if (!this.getConnectionManagers().stream().anyMatch(cm -> cm.getConnection().getTargetDeviceAddress().equals(currentDevice.getDeviceAddress()))) {
+			this.currentDevice = currentDevice;
+			this.connectToService(null, this.currentDevice.getDeviceAddress());
+		}
 	}
 	
 	public void setDisconnectionListener(DisconnectionListener dl) {
 		this.newDl = dl;
 		this.initDisconListener();
+	}
+	
+	@Override
+	protected void connectToKnownDevice(IDeviceData d) {
+		this.setCurrentConnectionObject((DummyDevice) this.getService().getDeviceManager().getDevice(d.getDeviceAddress()));
 	}
 	
 	@Override

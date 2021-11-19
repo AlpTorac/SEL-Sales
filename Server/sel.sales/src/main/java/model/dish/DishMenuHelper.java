@@ -3,6 +3,7 @@ package model.dish;
 import java.math.BigDecimal;
 
 import model.dish.serialise.DishMenuParser;
+import model.dish.serialise.ExternalDishMenuFormat;
 import model.dish.serialise.ExternalDishMenuSerialiser;
 import model.dish.serialise.FileDishMenuSerialiser;
 import model.dish.serialise.IDishMenuDeserialiser;
@@ -25,7 +26,8 @@ public class DishMenuHelper implements IDishMenuHelper {
 	private IDishMenuItemDataFactory menuItemDataFac;
 	
 	private IDishMenuDeserialiser deserialiser;
-	private IDishMenuParser dishMenuParser;
+	private IDishMenuParser fileMenuParser;
+	private IDishMenuParser appMenuParser;
 	
 	private ExternalDishMenuSerialiser externalDishMenuSerialiser;
 	private IntraAppDishMenuItemSerialiser menuItemSerialiser;
@@ -40,7 +42,8 @@ public class DishMenuHelper implements IDishMenuHelper {
 		this.menuDataFac = new DishMenuDataFactory(this.menuItemDataFac);
 		this.deserialiser = new StandardDishMenuDeserialiser();
 		
-		this.dishMenuParser = new DishMenuParser(new FileDishMenuFormat(), this.menuDataFac, this.entityIDFac);
+		this.fileMenuParser = new DishMenuParser(new FileDishMenuFormat(), this.menuDataFac, this.entityIDFac);
+		this.appMenuParser = new DishMenuParser(new ExternalDishMenuFormat(), this.menuDataFac, this.entityIDFac);
 		
 		this.externalDishMenuSerialiser = new ExternalDishMenuSerialiser();
 		this.menuItemSerialiser = new IntraAppDishMenuItemSerialiser();
@@ -123,8 +126,13 @@ public class DishMenuHelper implements IDishMenuHelper {
 	}
 
 	@Override
-	public IDishMenuData parseMenuData(String serialisedMenu) {
-		return this.dishMenuParser.parseDishMenuData(serialisedMenu);
+	public IDishMenuData parseFileMenuData(String serialisedMenu) {
+		return this.fileMenuParser.parseDishMenuData(serialisedMenu);
+	}
+	
+	@Override
+	public IDishMenuData parseExternalMenuData(String serialisedMenu) {
+		return this.appMenuParser.parseDishMenuData(serialisedMenu);
 	}
 
 	@Override

@@ -40,7 +40,8 @@ public interface IModel extends Closeable {
 	void setSettings(String settings);
 	void setSettings(ISettings settings);
 	void setSettings(String[][] settings);
-	void setDishMenu(String menu);
+	void setDishMenuFromFile(String menu);
+	void setDishMenuFromExternal(String menu);
 	void setDishMenu(IDishMenuData menu);
 	void setKnownDevices(String serialisedDeviceData);
 	void loadSaved();

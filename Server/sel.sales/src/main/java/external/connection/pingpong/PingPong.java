@@ -74,7 +74,7 @@ public abstract class PingPong implements IPingPong {
 	}
 	
 	public boolean sendPingPongMessage() {
-		if (!this.hasRunningTimer() && this.isBlocked()) {
+		if (!this.isClosed() && !this.hasRunningTimer() && this.isBlocked()) {
 			this.resendPingPongMessage();
 		}
 		if (this.hasRunningTimer() || this.isBlocked() || this.isClosed()) {
@@ -136,6 +136,7 @@ public abstract class PingPong implements IPingPong {
 			System.out.println("Disconnection listener not null");
 			this.disconListener.connectionLost(conn.getTargetDeviceAddress());
 			System.out.println("Reported disconnection");
+//			this.close();
 		}
 	}
 	
@@ -167,6 +168,7 @@ public abstract class PingPong implements IPingPong {
 //				this.resendPingPongMessage();
 			} else {
 				this.reportDisconnection();
+				this.close();
 			}
 		} 
 //		else if (wasReset && !wasTerminated && !this.isClosed()) {
@@ -176,11 +178,13 @@ public abstract class PingPong implements IPingPong {
 	
 	@Override
 	public void close() {
-		this.isClosed = true;
-		this.resendCount = this.resendLimit;
-		System.out.println("Ping pong close");
-		this.ts.terminateTimer();
-		this.ts = null;
+		if (!this.isClosed) {
+			this.isClosed = true;
+//			this.resendCount = this.resendLimit;
+			System.out.println("Ping pong close");
+			this.ts.terminateTimer();
+//			this.ts = null;
+		}
 	}
 	
 //	@Override

@@ -1,7 +1,7 @@
 package client.external.broadcaster;
 
 import external.broadcaster.Broadcaster;
-import external.connection.IServiceConnectionManager;
+import external.connection.ConnectionContainer;
 import external.message.IMessage;
 import external.message.Message;
 import external.message.MessageContext;
@@ -12,8 +12,8 @@ public class OrderBroadcaster extends Broadcaster {
 	private IModel model;
 	private IOrderData data;
 	
-	protected OrderBroadcaster(IServiceConnectionManager scm, IModel model, IOrderData data) {
-		super(scm);
+	public OrderBroadcaster(ConnectionContainer cc, IModel model, IOrderData data) {
+		super(cc);
 		this.model = model;
 		this.data = data;
 	}

@@ -17,11 +17,13 @@ public class MenuHandler extends MessageHandler {
 
 	@Override
 	public boolean verify(IMessage message) {
+		System.out.println("Menu handler verifying received message");
 		return !message.isAcknowledgementMessage() && message.hasContext(MessageContext.MENU);
 	}
 
 	@Override
 	public boolean performNeededAction(IMessage message) {
+		System.out.println(this.controller.getModel()+" Menu forwarded to model -------------------------------------------------------------------------------------");
 		this.controller.handleApplicationEvent(ClientSpecificEvent.MENU_RECEIVED, new Object[] {message.getSerialisedData()});
 		return true;
 	}

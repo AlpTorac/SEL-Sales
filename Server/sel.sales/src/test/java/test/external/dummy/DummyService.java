@@ -15,13 +15,26 @@ public class DummyService extends Service {
 	
 	public final static long ESTIMATED_PP_TIMEOUT = DEFAULT_PP_TIMEOUT * (RESEND_LIMIT + 1);
 	
+	private boolean attemptToReconnect = false;
+	
 	public DummyService(String id, String name, IDeviceManager DeviceManager, IController controller, ExecutorService es,
 			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		super(id, name, DeviceManager, controller, es, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 	}
 	
+	public DummyService(String id, String name, IDeviceManager DeviceManager, IController controller, ExecutorService es,
+			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit, boolean attemptToReconnect) {
+		this(id, name, DeviceManager, controller, es, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
+		this.attemptToReconnect = attemptToReconnect;
+	}
+	
 	public DummyService(String id, String name, IDeviceManager DeviceManager, IController controller, ExecutorService es) {
 		this(id, name, DeviceManager, controller, es, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
+	}
+	
+	public DummyService(String id, String name, IDeviceManager DeviceManager, IController controller, ExecutorService es, boolean attemptToReconnect) {
+		this(id, name, DeviceManager, controller, es, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
+		this.attemptToReconnect = attemptToReconnect;
 	}
 
 	@Override
@@ -33,7 +46,8 @@ public class DummyService extends Service {
 				this.getPingPongTimeout(),
 				this.getMinimalPingPongDelay(),
 				this.getSendTimeout(),
-				this.getResendLimit());
+				this.getResendLimit(),
+				this.attemptToReconnect);
 		this.scm.makeNewConnectionThread();
 	}
 

@@ -57,7 +57,10 @@ public abstract class FileAccess implements IFileAccess {
 	public boolean deleteFile() {
 		if (this.fileExists()) {
 			this.closeRAF();
-			boolean isDeleted = this.activeFile.delete();
+			boolean isDeleted = false;
+			if (this.activeFile != null) {
+				isDeleted = this.activeFile.delete();
+			}
 			this.activeFile = null;
 			return isDeleted;
 		}

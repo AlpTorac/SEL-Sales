@@ -197,7 +197,7 @@ class PingPongTest {
 	}
 	
 	@Test
-	void nonBlockingReadTest() {
+	void nonBlockingTest() {
 		resendLimit = 10;
 		waitTime = 110;
 		minimalPingPongDelay = 0;

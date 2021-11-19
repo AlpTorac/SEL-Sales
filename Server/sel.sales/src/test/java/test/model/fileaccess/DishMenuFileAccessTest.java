@@ -71,7 +71,7 @@ class DishMenuFileAccessTest {
 	
 	@Test
 	void loadTest() {
-		IDishMenuData s = model.getDishMenuHelper().parseMenuData(dmf.readFile());
+		IDishMenuData s = model.getDishMenuHelper().parseFileMenuData(dmf.readFile());
 		Assertions.assertTrue(dishMenuData.equals(s));
 	}
 }

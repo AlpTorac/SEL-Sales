@@ -1,14 +1,14 @@
 package external.broadcaster;
 
-import external.connection.IServiceConnectionManager;
+import external.connection.ConnectionContainer;
 
 public abstract class Broadcaster implements IBroadcaster {
-	private IServiceConnectionManager scm;
-	protected Broadcaster(IServiceConnectionManager scm) {
-		this.scm = scm;
+	private ConnectionContainer cc;
+	protected Broadcaster(ConnectionContainer cc) {
+		this.cc = cc;
 	}
 	@Override
 	public void broadcast() {
-		this.scm.broadcastMessage(this.createMessage());
+		this.cc.broadcastMessage(this.createMessage());
 	}
 }

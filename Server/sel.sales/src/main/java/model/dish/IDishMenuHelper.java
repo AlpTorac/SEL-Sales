@@ -30,7 +30,8 @@ public interface IDishMenuHelper {
 	String serialiseForExternal(IDishMenuData menuData);
 	
 	IDishMenu createDishMenu();
-	IDishMenuData parseMenuData(String serialisedMenu);
+	IDishMenuData parseFileMenuData(String serialisedMenu);
+	IDishMenuData parseExternalMenuData(String serialisedMenu);
 	IDishMenuData dishMenuToData(IDishMenu menu);
 	
 	default IDishMenuItem createDishMenuItem(String serialisedDishMenuItem) {
@@ -46,6 +47,9 @@ public interface IDishMenuHelper {
 				data.getID());
 	}
 	IDishMenuItem createDishMenuItem(String dishName, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, EntityID idParameters);
+	default IDishMenuItem createDishMenuItem(String dishName, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, Object... idParameters) {
+		return this.createDishMenuItem(dishName, portionSize, price, productionCost, this.createID(idParameters));
+	}
 	IDishMenuItemData dishMenuItemToData(IDishMenuItem item);
 	
 	IDishMenuItemData deserialiseDishMenuItem(String serialisedDishMenuItem);

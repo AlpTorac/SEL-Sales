@@ -51,6 +51,10 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 		this.resendLimit = resendLimit;
 	}
 
+	protected IDeviceManager getDeviceManager() {
+		return this.manager;
+	}
+	
 	protected void initConnListener() {
 		this.connListener = this.createConnListener();
 	}
@@ -229,12 +233,20 @@ public abstract class ServiceConnectionManager implements IServiceConnectionMana
 //					closedCMs.add(cm);
 				}
 			});
+			if (d.getIsAllowedToConnect() && !d.getIsConnected()) {
+				connectionAlgorithm(d);
+			}
 		}
 //		this.connectionManagers.removeAll(closedCMs);
 //		this.connectionManagers.stream().filter(cm -> cm.getConnection().isClosed()).forEach(cm -> {
 //
 //		});
 	}
+	
+	protected void connectionAlgorithm(IDeviceData d) {
+		
+	}
+	
 	@Override
 	public boolean isClosed() {
 		return this.isClosed;

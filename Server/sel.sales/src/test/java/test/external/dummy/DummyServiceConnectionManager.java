@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutorService;
 
 import controller.IController;
 import external.device.IDeviceManager;
+import model.connectivity.IDeviceData;
 import external.connection.DisconnectionListener;
 import external.connection.IConnection;
 import external.connection.IConnectionManager;
@@ -19,16 +20,30 @@ public class DummyServiceConnectionManager extends ServiceConnectionManager {
 	
 	public final static long ESTIMATED_PP_TIMEOUT = DEFAULT_PP_TIMEOUT * (RESEND_LIMIT + 1);
 	
+	private boolean attemptToReconnect = false;
+	
 	private volatile DummyDevice currentDevice;
 	private DisconnectionListener newDl = new DisconnectionListener(controller);
 	
+	public DummyServiceConnectionManager(IDeviceManager manager, IController controller, ExecutorService es, boolean attemptToReconnect) {
+//		super(manager, controller, es, 10000, 1000, 2000, 10);
+		this(manager, controller, es, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
+		this.attemptToReconnect = attemptToReconnect;
+	}
+	
 	public DummyServiceConnectionManager(IDeviceManager manager, IController controller, ExecutorService es) {
 //		super(manager, controller, es, 10000, 1000, 2000, 10);
-		super(manager, controller, es, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
+		this(manager, controller, es, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
 	}
 	
 	public DummyServiceConnectionManager(IDeviceManager manager, IController controller, ExecutorService es, long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		super(manager, controller, es, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
+		this.setDisconnectionListener(new DisconnectionListener(controller));
+	}
+	
+	public DummyServiceConnectionManager(IDeviceManager manager, IController controller, ExecutorService es, long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit, boolean attemptToReconnect) {
+		this(manager, controller, es, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
+		this.attemptToReconnect = attemptToReconnect;
 	}
 	
 	public Collection<IConnectionManager> getConnectionManagers() {
@@ -36,13 +51,24 @@ public class DummyServiceConnectionManager extends ServiceConnectionManager {
 	}
 	
 	public void setCurrentConnectionObject(DummyDevice currentDevice) {
-		this.currentDevice = currentDevice;
-		this.makeNewConnectionThread();
+		if (!this.getConnectionManagers().stream().anyMatch(cm -> cm.getConnection().getTargetDeviceAddress().equals(currentDevice.getDeviceAddress()))) {
+			this.currentDevice = currentDevice;
+			this.makeNewConnectionThread();
+		}
+
 	}
 	
 	public void setDisconnectionListener(DisconnectionListener dl) {
 		this.newDl = dl;
 		this.initDisconListener();
+	}
+	
+	@Override
+	protected void connectionAlgorithm(IDeviceData d) {
+		if (this.attemptToReconnect) {
+			System.out.println("Set connection target: " + d.getDeviceAddress() + " -----------------------------------------");
+			this.setCurrentConnectionObject((DummyDevice) this.getDeviceManager().getDevice(d.getDeviceAddress()));
+		}
 	}
 	
 	@Override
@@ -53,7 +79,7 @@ public class DummyServiceConnectionManager extends ServiceConnectionManager {
 	@Override
 	protected boolean addConnection(IConnection conn) {
 		boolean result = super.addConnection(conn);
-		System.out.println(conn.getTargetDeviceAddress() + " added");
+		System.out.println(conn.getTargetDeviceAddress() + " added---------------------------------------------------");
 		return result;
 	}
 	

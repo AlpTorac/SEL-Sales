@@ -19,6 +19,9 @@ public interface IDishMenuParser extends IParser {
 	
 	default IDishMenuItemData[] parseDishMenuItemDatas(String[] ss) {
 		Collection<IDishMenuItemData> datas = new ArrayList<IDishMenuItemData>();
+//		for (String s : ss) {
+//			System.out.println("format "+this.getDishMenuFormat().getClass().getSimpleName()+" parsing item: " + s);
+//		}
 		for (String s : ss) {
 			datas.add(this.parseDishMenuItemData(s));
 		}

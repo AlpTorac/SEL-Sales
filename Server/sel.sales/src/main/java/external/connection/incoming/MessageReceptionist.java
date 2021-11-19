@@ -1,6 +1,5 @@
 package external.connection.incoming;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;

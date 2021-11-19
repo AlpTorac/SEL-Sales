@@ -147,7 +147,7 @@ class FileManagerPreloadTest {
 //		fm.loadSaved();
 		Assertions.assertTrue(model.getSettings().equals(settings));
 		String menuFileContent = dmf.readFile();
-		Assertions.assertTrue(model.getMenuData().equals(model.getDishMenuHelper().parseMenuData(menuFileContent)));
+		Assertions.assertTrue(model.getMenuData().equals(model.getDishMenuHelper().parseFileMenuData(menuFileContent)));
 	}
 	
 	@Test
@@ -197,7 +197,7 @@ class FileManagerPreloadTest {
 //		fm.loadDishMenu(fileAddress);
 		model.loadDishMenu(fileAddress);
 		IDishMenuData readMenuData = model.getMenuData();
-		IDishMenuData expectedMenuData = model.getDishMenuHelper().parseMenuData(fileContent);
+		IDishMenuData expectedMenuData = model.getDishMenuHelper().parseFileMenuData(fileContent);
 		Assertions.assertTrue(expectedMenuData.equals(readMenuData));
 	}
 	

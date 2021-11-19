@@ -216,8 +216,7 @@ public abstract class ExternalConnector implements IExternalConnector {
 					reportDisconnection(cm.getConnection());
 				}
 			} else if (d.getIsAllowedToConnect() && !d.getIsConnected()) {
-				System.out.println("ServiceID: " + this.getService().getID());
-				this.connectToService(this.getService().getID(), d.getDeviceAddress());
+				this.connectToKnownDevice(d);
 			}
 //			this.connectionManagers.stream()
 //			.filter(cm -> !cm.isClosed())
@@ -231,6 +230,10 @@ public abstract class ExternalConnector implements IExternalConnector {
 //				}
 //			});
 		}
+	}
+	
+	protected void connectToKnownDevice(IDeviceData d) {
+		this.connectToService(this.getService().getID(), d.getDeviceAddress());
 	}
 	
 	@Override
@@ -252,6 +255,7 @@ public abstract class ExternalConnector implements IExternalConnector {
 		if (this.getService().getDeviceManager().isAllowedToConnect(serviceHostAddress) && !this.activeConnRunnables.contains(serviceHostAddress)) {
 			this.activeConnRunnables.add(serviceHostAddress);
 			this.es.submit(this.initConnectionRunnable(serviceID, this.getService().getDeviceManager().getDevice(serviceHostAddress)));
+			System.out.println("Connection runnable submitted");
 		}
 //		this.es.submit(this.initConnectionRunnable(serviceID, this.getService().getDeviceManager().getDevice(serviceHostAddress)));
 	}
