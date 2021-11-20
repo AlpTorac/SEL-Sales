@@ -20,6 +20,7 @@ import server.view.composites.OrderInspectionArea;
 import server.view.composites.OrderTrackingArea;
 import test.model.order.OrderTestUtilityClass;
 import view.repository.HasText;
+import view.repository.IButton;
 import view.repository.IEventShooterOnClickUIComponent;
 
 public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtilityClass {
@@ -38,6 +39,8 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 	private IEventShooterOnClickUIComponent addButton;
 	private IEventShooterOnClickUIComponent removeButton;
 	private IEventShooterOnClickUIComponent editButton;
+	
+	private IButton menuSaveButton;
 	
 	public StandardServerViewOperationsUtilityClass(StandardServerView view, IServerController controller, IServerModel model) {
 		super(view, controller, model);
@@ -60,6 +63,7 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		addButton = mda.getAddButton();
 		removeButton = mda.getRemoveButton();
 		editButton = mda.getEditButton();
+		menuSaveButton = mda.getSaveButton();
 	}
 	
 	protected IServerModel getModel() {
@@ -286,6 +290,14 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 			OrderTestUtilityClass.assertOrderItemDataEqual(idatas[i], itemIDs[i], itemAmounts[i]);
 			Assertions.assertEquals(idatas[i].getGrossPrice().compareTo(itemGrossPrices[i]), 0);
 		}
+	}
+	
+	public void writeDishMenu() {
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.setMenuOrderTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.menuSaveButton.performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
 	private void setMenuOrderTabActive() {

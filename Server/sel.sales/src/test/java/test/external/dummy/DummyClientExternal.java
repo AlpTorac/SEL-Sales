@@ -13,7 +13,7 @@ import external.device.IDeviceManager;
 import server.controller.IServerController;
 import server.model.IServerModel;
 
-public class DummyClientExternal extends ClientExternal {
+public class DummyClientExternal extends ClientExternal implements IDummyExternal {
 
 	public final static long DEFAULT_PP_TIMEOUT = 200;
 	public final static long DEFAULT_PP_MINIMAL_TIMEOUT = 100;

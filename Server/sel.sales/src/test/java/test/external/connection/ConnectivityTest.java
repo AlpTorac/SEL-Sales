@@ -22,7 +22,7 @@ import external.message.StandardMessageParser;
 import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyServerController;
-import test.external.dummy.DummyInteraction;
+import test.external.dummy.DummyConnectivityTestWrapper;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class ConnectivityTest {
 	private ExecutorService esServer;
@@ -39,7 +39,7 @@ class ConnectivityTest {
 	private String DeviceName;
 	private String DeviceAddress;
 	
-	private DummyInteraction interaction;
+	private DummyConnectivityTestWrapper interaction;
 	
 	private long minimalPingPongDelay;
 	private long pingPongTimeout;
@@ -91,7 +91,7 @@ class ConnectivityTest {
 	}
 	
 	private void initInteraction() {
-		this.interaction = new DummyInteraction(esServer, esDevice, DeviceName, DeviceAddress, pingPongTimeout, sendTimeout, resendLimit, minimalPingPongDelay) {
+		this.interaction = new DummyConnectivityTestWrapper(esServer, esDevice, DeviceName, DeviceAddress, pingPongTimeout, sendTimeout, resendLimit, minimalPingPongDelay) {
 			@Override
 			protected IController initServerController() {
 				return new DummyServerController() {

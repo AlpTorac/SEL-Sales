@@ -3,6 +3,7 @@ package test.view;
 import java.io.File;
 import java.math.BigDecimal;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,12 +12,19 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import javafx.stage.Stage;
+import model.dish.DishMenu;
+import model.dish.IDishMenu;
+import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
+import model.settings.ISettings;
+import model.settings.Settings;
+import model.settings.SettingsField;
 import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import server.view.StandardServerView;
+import test.GeneralTestUtilityClass;
 import test.StandardServerViewOperationsUtilityClass;
 import test.model.dish.DishMenuItemTestUtilityClass;
 import view.IView;
@@ -53,7 +61,14 @@ class MenuItemOperationsTest extends ApplicationTest {
 	
 	@BeforeEach
 	void prep() {
+		GeneralTestUtilityClass.deletePathContent(testFolderAddress);
 		model.removeAllOrders();
+	}
+	
+	@AfterEach
+	void cleanUp() {
+		model.close();
+		GeneralTestUtilityClass.deletePathContent(testFolderAddress);
 	}
 	
 	@Override
@@ -106,4 +121,26 @@ class MenuItemOperationsTest extends ApplicationTest {
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(editedItem, i2Name, i1id, i3PorSize, i3Price, i2ProCost);
 	}
 
+	@Test
+	void writeMenuTest() {
+		Assertions.assertEquals(model.getMenuData().getAllDishMenuItems().length, 0);
+		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
+		IDishMenuItemData addedItem1 = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
+		IDishMenuItemData addedItem2 = opHelper.addMenuItem(i2Name, i2id, i2Price, i2Price, i2PorSize, i2Disc);
+		IDishMenuItemData addedItem3 = opHelper.addMenuItem(i3Name, i3id, i3Price, i3Price, i3PorSize, i3Disc);
+		
+		IDishMenuData menu = model.getMenuData();
+		
+		GeneralTestUtilityClass.performWait(300);
+		GeneralTestUtilityClass.deletePathContent(testFolderAddress);
+		model.addSetting(SettingsField.DISH_MENU_FOLDER, testFolderAddress);
+		opHelper.writeDishMenu();
+		
+		IServerModel model2 = new ServerModel(testFolderAddress);
+		model2.addSetting(SettingsField.DISH_MENU_FOLDER, testFolderAddress);
+		model2.loadDishMenu(testFolderAddress);
+		Assertions.assertTrue(model2.getMenuData().equals(menu));
+		
+		model2.close();
+	}
 }

@@ -99,7 +99,7 @@ public class MenuDesignArea extends UIVBoxLayout {
 		return this.loadButton;
 	}
 
-	protected IButton getSaveButton() {
+	public IButton getSaveButton() {
 		return this.saveButton;
 	}
 

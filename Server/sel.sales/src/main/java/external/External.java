@@ -74,7 +74,8 @@ public abstract class External implements IExternal {
 	@Override
 	public void rediscoverDevices(Runnable afterDiscoveryAction) {
 		if (this.getService() != null) {
-			this.getService().getDeviceManager().discoverDevices(afterDiscoveryAction);
+			this.getDeviceManager().discoverDevices(afterDiscoveryAction);
+//			this.getService().getDeviceManager().discoverDevices(afterDiscoveryAction);
 		}
 	}
 	@Override

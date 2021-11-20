@@ -7,7 +7,7 @@ import external.connection.outgoing.ISendBuffer;
 import external.connection.pingpong.IPingPong;
 import external.message.IMessage;
 
-public class DummyInteraction {
+public class DummyConnectivityTestWrapper {
 	public final static long DEFAULT_PP_TIMEOUT = 200;
 	public final static long DEFAULT_PP_MINIMAL_TIMEOUT = 100;
 	public final static long SEND_TIMEOUT = 2000;
@@ -50,7 +50,7 @@ public class DummyInteraction {
 	protected IPingPong serverPP;
 	protected IPingPong DevicePP;
 	
-	public DummyInteraction(ExecutorService esServer, ExecutorService esDevice, String DeviceName, String DeviceAddress, long pingPongTimeout,
+	public DummyConnectivityTestWrapper(ExecutorService esServer, ExecutorService esDevice, String DeviceName, String DeviceAddress, long pingPongTimeout,
 			long sendTimeout, int resendLimit, long minimalPingPongDelay) {
 		this.esServer = esServer;
 		this.esDevice = esDevice;
@@ -75,7 +75,7 @@ public class DummyInteraction {
 		this.DeviceServerConnManager.setDisconnectionListener(this.dlDevice);
 	}
 	
-	public DummyInteraction(ExecutorService esServer, ExecutorService esDevice, String DeviceName, String DeviceAddress) {
+	public DummyConnectivityTestWrapper(ExecutorService esServer, ExecutorService esDevice, String DeviceName, String DeviceAddress) {
 		this(esServer, esDevice, DeviceName, DeviceAddress, DEFAULT_PP_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT, DEFAULT_PP_MINIMAL_TIMEOUT);
 	}
 	

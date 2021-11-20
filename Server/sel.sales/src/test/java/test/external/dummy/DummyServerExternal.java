@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import external.connection.IConnection;
 import external.connection.IService;
 
-public class DummyServerExternal extends ServerExternal {
+public class DummyServerExternal extends ServerExternal implements IDummyExternal {
 	public final static long DEFAULT_PP_TIMEOUT = 200;
 	public final static long DEFAULT_PP_MINIMAL_TIMEOUT = 100;
 	public final static long SEND_TIMEOUT = 2000;
