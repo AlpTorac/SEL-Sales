@@ -26,7 +26,11 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<O
 		this.init();
 	}
 
-	protected void displayOrder(IOrderData data) {
+	public OrderTakingAreaOrderEntry getEntry() {
+		return this.orderEntry;
+	}
+	
+	public void displayOrder(IOrderData data) {
 		this.orderEntry.displayData(data);
 	}
 	

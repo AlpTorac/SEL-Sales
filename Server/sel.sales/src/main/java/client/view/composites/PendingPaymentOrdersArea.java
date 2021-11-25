@@ -11,7 +11,7 @@ public class PendingPaymentOrdersArea extends UIVBoxLayout {
 	private IController controller;
 	private UIComponentFactory fac;
 	
-	private OrderAccordion accordion;
+	private PendingPaymentOrderAccordion accordion;
 	
 	protected PendingPaymentOrdersArea(IController controller, UIComponentFactory fac) {
 		super(fac.createVBoxLayout().getComponent());
@@ -30,5 +30,9 @@ public class PendingPaymentOrdersArea extends UIVBoxLayout {
 		for (IOrderData data : datas) {
 			this.accordion.addOrderData(data);
 		}
+	}
+	
+	public PendingPaymentOrderAccordion getOrderAccordion() {
+		return this.accordion;
 	}
 }

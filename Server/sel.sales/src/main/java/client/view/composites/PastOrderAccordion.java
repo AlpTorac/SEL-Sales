@@ -8,8 +8,8 @@ public class PastOrderAccordion extends OrderAccordion {
 	public PastOrderAccordion(IController controller, UIComponentFactory fac) {
 		super(controller, fac);
 	}
-	
-	protected OrderEntry createOrderEntry(IOrderData data) {
+	@Override
+	protected PastOrderEntry createOrderEntry(IOrderData data) {
 		return new PastOrderEntry(this.getController(), this.getUIFactory(), this, data);
 	}
 }

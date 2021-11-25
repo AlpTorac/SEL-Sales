@@ -2,6 +2,7 @@ package client.view.composites;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -62,5 +63,22 @@ public abstract class OrderAccordion extends UIAccordion implements PriceUpdateT
 		Collection<OrderEntry> col = new CopyOnWriteArrayList<OrderEntry>();
 		this.orderEntries.values().forEach(e -> col.add(e.clone()));
 		return col;
+	}
+	
+	public Collection<IOrderData> getDisplayedOrders() {
+		Collection<IOrderData> col = new CopyOnWriteArrayList<IOrderData>();
+		this.orderEntries.values().forEach(e -> col.add(e.getActiveData()));
+		return col;
+	}
+	
+	protected OrderEntry getEntry(String orderID) {
+		if (orderID != null) {
+			Optional<OrderEntry> o = this.orderEntries.values().stream()
+					.filter(e -> e.getSerialisedOrderID().equals(orderID))
+					.findFirst();
+			
+			return o.isPresent() ? o.get() : null;
+		}
+		return null;
 	}
 }

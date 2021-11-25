@@ -8,8 +8,8 @@ public class CookingOrderAccordion extends OrderAccordion {
 	public CookingOrderAccordion(IController controller, UIComponentFactory fac) {
 		super(controller, fac);
 	}
-	
-	protected OrderEntry createOrderEntry(IOrderData data) {
+	@Override
+	protected CookingOrderEntry createOrderEntry(IOrderData data) {
 		return new CookingOrderEntry(this.getController(), this.getUIFactory(), this, data);
 	}
 }

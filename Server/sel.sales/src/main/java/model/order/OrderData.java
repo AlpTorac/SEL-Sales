@@ -16,7 +16,7 @@ public class OrderData implements IOrderData {
 	
 	OrderData(Collection<IOrderItemData> orderItems, LocalDateTime date, boolean isCash, boolean isHere, EntityID id) {
 		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>();
-		this.orderItems.addAll(orderItems);
+		this.orderItems.addAll(this.flatten(orderItems));
 		this.date = date;
 		this.isCash = isCash;
 		this.isHere = isHere;
@@ -24,10 +24,8 @@ public class OrderData implements IOrderData {
 	}
 	
 	OrderData(IOrderItemData[] orderItems, LocalDateTime date, boolean isCash, boolean isHere, EntityID id) {
-		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>();
-		for (IOrderItemData d : orderItems) {
-			this.orderItems.add(d);
-		}
+		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>(orderItems);
+		this.orderItems = this.flatten(this.orderItems);
 		this.date = date;
 		this.isCash = isCash;
 		this.isHere = isHere;
@@ -88,16 +86,6 @@ public class OrderData implements IOrderData {
 		return new CopyOnWriteArrayList<IOrderItemData>(this.orderItems);
 	}
 	
-	public static boolean equals(OrderData od1, OrderData od2) {
-		if (od1 == od2) {
-			return true;
-		} else if (od1 == null ^ od2 == null) {
-			return false;
-		} else {
-			return od1.equals(od2);
-		}
-	}
-	
 	@Override
 	public boolean equals(Object o) {
 		if (o == null || !(o instanceof IOrderData)) {
@@ -107,8 +95,8 @@ public class OrderData implements IOrderData {
 			return this.getID().equals(otherOrderData.getID()) && 
 					this.getIsCash() == otherOrderData.getIsCash() &&
 					this.getIsHere() == otherOrderData.getIsHere() && 
-					this.getIsDiscounted() == otherOrderData.getIsDiscounted() &&
-					this.getDate().equals(otherOrderData.getDate());
+					this.getDate().equals(otherOrderData.getDate()) &&
+					this.itemsEqual(otherOrderData);
 //			this.getOrderItems().containsAll(otherOrderData.getOrderItems()) &&
 //			otherOrderData.getOrderItems().containsAll(this.getOrderItems())
 		}

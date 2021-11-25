@@ -9,7 +9,14 @@ public class PendingPaymentOrderAccordion extends OrderAccordion {
 		super(controller, fac);
 	}
 	
-	protected OrderEntry createOrderEntry(IOrderData data) {
+	protected PendingPaymentOrderEntry createOrderEntry(IOrderData data) {
 		return new PendingPaymentOrderEntry(this.getController(), this.getUIFactory(), this, data);
 	}
+	
+	@Override
+	public PendingPaymentOrderEntry getEntry(String orderID) {
+		return (PendingPaymentOrderEntry) super.getEntry(orderID);
+	}
+	
+	
 }

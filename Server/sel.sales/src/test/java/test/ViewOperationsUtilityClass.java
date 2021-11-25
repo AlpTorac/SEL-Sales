@@ -37,8 +37,8 @@ public abstract class ViewOperationsUtilityClass {
 		this.view = view;
 		this.controller = controller;
 		this.model = model;
-		this.ca = GeneralTestUtilityClass.getPrivateFieldValue(view, "connArea");
-		this.sa = GeneralTestUtilityClass.getPrivateFieldValue(view, "settingsArea");
+		this.ca = GeneralTestUtilityClass.getPrivateFieldValue(view, this.getConnectionAreaFieldName());
+		this.sa = GeneralTestUtilityClass.getPrivateFieldValue(view, this.getSettingsAreaFieldName());
 		
 		menuFolderAddress = sa.getMenuFolderAddress();
 		orderFolderAddress = sa.getOrderFolderAddress();
@@ -47,6 +47,14 @@ public abstract class ViewOperationsUtilityClass {
 		ppResendLimit = sa.getPpResendLimit();
 		sendTimeout = sa.getSendTimeout();
 		applySettingsButton = sa.getApplyButton();
+	}
+	
+	protected String getConnectionAreaFieldName() {
+		return "connArea";
+	}
+	
+	protected String getSettingsAreaFieldName() {
+		return "settingsArea";
 	}
 	
 	protected IModel getModel() {

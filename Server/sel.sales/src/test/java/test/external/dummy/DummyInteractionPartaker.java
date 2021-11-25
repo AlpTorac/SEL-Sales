@@ -14,6 +14,12 @@ import model.dish.IDishMenu;
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuItem;
 import model.order.IOrderData;
+import view.IView;
+import view.repository.IUILibraryHelper;
+import view.repository.uifx.FXAdvancedUIComponentFactory;
+import view.repository.uifx.FXUIComponentFactory;
+import view.repository.uiwrapper.AdvancedUIComponentFactory;
+import view.repository.uiwrapper.UIComponentFactory;
 
 public abstract class DummyInteractionPartaker implements Closeable {
 	private static final String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
@@ -44,7 +50,7 @@ public abstract class DummyInteractionPartaker implements Closeable {
 		ddds = new DummyDeviceDiscoveryStrategy();
 		external.setDiscoveryStrategy(ddds);
 	}
-
+	
 	protected abstract IModel initModel();
 	protected abstract IController initController();
 	protected abstract IDummyExternal initExternal();

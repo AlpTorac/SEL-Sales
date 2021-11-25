@@ -14,14 +14,14 @@ import server.controller.IServerController;
 import server.model.IServerModel;
 
 public class DummyClientExternal extends ClientExternal implements IDummyExternal {
-	private String id;
-	private String name;
+	private String serviceID;
+	private String serviceName;
 	
-	protected DummyClientExternal(String id, String name, IClientController controller, IClientModel model, long pingPongTimeout,
+	protected DummyClientExternal(String serviceID, String serviceName, IClientController controller, IClientModel model, long pingPongTimeout,
 			long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		super(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
-		this.id = id;
-		this.name = name;
+		this.serviceID = serviceID;
+		this.serviceName = serviceName;
 		System.out.println("Service: " + this.getService());
 	}
 
@@ -53,8 +53,8 @@ public class DummyClientExternal extends ClientExternal implements IDummyExterna
 	@Override
 	protected IService initService() {
 		return new DummyService(
-				id, 
-				name, 
+				serviceID, 
+				serviceName, 
 				this.initDeviceManager(), 
 				this.getController(), 
 				this.getES(), 

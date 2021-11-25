@@ -4,16 +4,21 @@ import client.controller.IClientController;
 import client.controller.StandardClientController;
 import client.model.ClientModel;
 import client.model.IClientModel;
+import client.view.IClientView;
+import client.view.StandardClientView;
 import controller.IController;
 import model.IModel;
 import model.order.IOrderData;
+import view.IView;
+import view.repository.uifx.FXUIComponentFactory;
+import view.repository.uiwrapper.UIComponentFactory;
 
 public class DummyClient extends DummyInteractionPartaker {
 
 	public DummyClient(String serviceID, String serviceName, String name, String address) {
 		super(serviceID, serviceName, name, address);
 	}
-
+	
 	@Override
 	protected IModel initModel() {
 		return new ClientModel(this.getTestFolderAddress());
@@ -29,7 +34,7 @@ public class DummyClient extends DummyInteractionPartaker {
 		return new DummyClientExternal(this.getServiceID(),
 				this.getServiceName(), this.getController(), this.getModel());
 	}
-
+	
 	@Override
 	public IClientModel getModel() {
 		return (IClientModel) super.getModel();

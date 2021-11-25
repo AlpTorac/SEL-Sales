@@ -23,6 +23,18 @@ public interface IOrderData {
 	default BigDecimal getNetSum() {
 		return this.getGrossSum().subtract(this.getOrderDiscount());
 	}
+	default Collection<IOrderItemData> flatten(Collection<IOrderItemData> orderItems) {
+		Map<String, IOrderItemData> newOrderItems = new HashMap<String, IOrderItemData>();
+		orderItems.forEach(oid -> {
+			String id;
+			if (newOrderItems.containsKey(id = oid.getItemData().getID().toString())) {
+				newOrderItems.put(id, newOrderItems.get(id).combine(oid));
+			} else {
+				newOrderItems.put(id, oid);
+			}
+		});
+		return newOrderItems.values();
+	}
 	default Collection<IOrderItemData> combineData(IOrderData data) {
 //		Map<String, IOrderItemData> result = new HashMap<String, IOrderItemData>();
 //		Collection<IOrderItemData> orderItems = new ArrayList<IOrderItemData>();
@@ -47,18 +59,30 @@ public interface IOrderData {
 		for (IOrderItemData oid : data.getOrderedItems()) {
 			orderItems.add(oid);
 		}
-		Map<String, IOrderItemData> newOrderItems = new HashMap<String, IOrderItemData>();
-		orderItems.forEach(oid -> {
-			String id;
-			if (newOrderItems.containsKey(id = oid.getItemData().getID().toString())) {
-				newOrderItems.put(id, newOrderItems.get(id).combine(oid));
-			} else {
-				newOrderItems.put(id, oid);
-			}
-		});
-		return newOrderItems.values();
+		return this.flatten(orderItems);
+//		Map<String, IOrderItemData> newOrderItems = new HashMap<String, IOrderItemData>();
+//		orderItems.forEach(oid -> {
+//			String id;
+//			if (newOrderItems.containsKey(id = oid.getItemData().getID().toString())) {
+//				newOrderItems.put(id, newOrderItems.get(id).combine(oid));
+//			} else {
+//				newOrderItems.put(id, oid);
+//			}
+//		});
+//		return newOrderItems.values();
 	}
 	IOrderData combine(IOrderData data);
 	String toString();
 	boolean equals(Object o);
+	default boolean itemsEqual(IOrderData od) {
+		return this.getOrderItems().stream()
+				.map(oi -> {
+					for (IOrderItemData oid : od.getOrderItems()) {
+						if (oi.equals(oid)) {
+							return true;
+						}
+					}
+					return false;
+				}).reduce(true, (b1,b2)->Boolean.logicalAnd(b1, b2)) && this.getOrderItems().size() == od.getOrderItems().size();
+	}
 }

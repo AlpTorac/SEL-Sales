@@ -90,8 +90,8 @@ class OrderFileTest {
 		Assertions.assertEquals(s1, "order1#20200809112233343#0#0#0:item1,2.0;"+System.lineSeparator());
 		IOrderData d2 = ds[1];
 		String s2 = fos.serialiseOrderData(d2);
-		Assertions.assertEquals(s2, "order2#20200809235959111#1#0#0:item1,2.0;" + System.lineSeparator()
-				+ "order2#20200809235959111#1#0#0:item2,3.0;"+System.lineSeparator());
+		Assertions.assertEquals(s2, "order2#20200809235959111#1#0#0:item2,3.0;"+System.lineSeparator() +
+				"order2#20200809235959111#1#0#0:item1,2.0;" + System.lineSeparator());
 		IOrderData d3 = ds[2];
 		String s3 = fos.serialiseOrderData(d3);
 		Assertions.assertEquals(s3, "order3#20200809000000222#1#1#0:item3,5.0;"+System.lineSeparator());

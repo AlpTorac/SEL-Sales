@@ -3,6 +3,7 @@ package client.view.composites;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import controller.IController;
@@ -25,7 +26,7 @@ public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuIt
 	private IOrderData activeData;
 	private IDishMenuData activeMenu;
 	
-	private Collection<MenuItemEntry> menuItemEntries;
+	private List<MenuItemEntry> menuItemEntries;
 	
 	private IIndexedLayout bottomPart;
 	private ILabel priceDisplay;
@@ -46,7 +47,15 @@ public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuIt
 		this.activeData = data;
 		this.displayData(this.activeData);
 	}
-
+	
+	public List<MenuItemEntry> getEntries() {
+		return this.menuItemEntries;
+	}
+	
+	public MenuItemEntry getEntry(int pos) {
+		return this.getEntries().get(pos);
+	}
+	
 	protected void setActiveMenu(IDishMenuData menu) {
 		this.activeMenu = menu;
 	}
@@ -100,7 +109,7 @@ public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuIt
 	}
 	
 	protected void addMenuItemEntry(MenuItemEntry entry) {
-		this.menuItemEntries.add(entry);
+		this.getEntries().add(entry);
 		this.refreshMenu(this.getActiveMenu());
 		this.addMenuItemEntryToUI(entry);
 		this.refreshPriceDisplay();
@@ -133,13 +142,13 @@ public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuIt
 	
 	@Override
 	public void remove(MenuItemEntry referenceOfCaller) {
-		this.menuItemEntries.remove(referenceOfCaller);
+		this.getEntries().remove(referenceOfCaller);
 	}
 	
 	public void refreshMenu(IDishMenuData menuData) {
 		if (menuData != null) {
 			this.setActiveMenu(menuData);
-			this.menuItemEntries.forEach(mie -> mie.refreshMenu(this.getActiveMenu()));
+			this.getEntries().forEach(mie -> mie.refreshMenu(this.getActiveMenu()));
 			this.getNotifyTarget().refreshPrice();
 		}
 	}
@@ -153,15 +162,15 @@ public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuIt
 	}
 	
 	public BigDecimal getNetPrice() {
-		return this.menuItemEntries.stream().map(mie -> mie.getPrice()).reduce(BigDecimal.ZERO, (p1,p2)-> p1.add(p2));
+		return this.getEntries().stream().map(mie -> mie.getPrice()).reduce(BigDecimal.ZERO, (p1,p2)-> p1.add(p2));
 	}
 	
 	public String getSerialisedOrderID() {
 		return this.getActiveData().getID().toString();
 	}
 	
-	protected IOrderItemData[] getCurrentOrder() {
-		return this.menuItemEntries.stream()
+	public IOrderItemData[] getCurrentOrder() {
+		return this.getEntries().stream()
 		.map(mie -> this.controller.getModel().getOrderHelper().createOrderItemData(mie.getSelectedMenuItem(), mie.getAmount()))
 		.toArray(IOrderItemData[]::new);
 	}
@@ -183,7 +192,7 @@ public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuIt
 	}
 	
 	public void resetUserInput() {
-		for (MenuItemEntry mie : this.menuItemEntries.toArray(MenuItemEntry[]::new)) {
+		for (MenuItemEntry mie : this.getEntries().toArray(MenuItemEntry[]::new)) {
 			mie.removeFromParent();
 		}
 		this.refreshPrice();
@@ -191,7 +200,7 @@ public class OrderEntry extends UIVBoxLayout implements PriceUpdateTarget<MenuIt
 	
 	public Collection<MenuItemEntry> cloneMenuItemEntries() {
 		Collection<MenuItemEntry> col = new CopyOnWriteArrayList<MenuItemEntry>();
-		this.menuItemEntries.forEach(mie -> {col.add(mie.clone());});
+		this.getEntries().forEach(mie -> {col.add(mie.clone());});
 		return col;
 	}
 	

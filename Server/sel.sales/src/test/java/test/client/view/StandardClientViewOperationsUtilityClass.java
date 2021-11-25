@@ -1,12 +1,19 @@
 package test.client.view;
 
+import java.util.Collection;
+
 import client.view.composites.CookingOrdersArea;
+import client.view.composites.EditableMenuItemEntry;
 import client.view.composites.OrderArea;
 import client.view.composites.OrderTakingArea;
 import client.view.composites.PastOrdersArea;
+import client.view.composites.PendingPaymentOrderEntry;
 import client.view.composites.PendingPaymentOrdersArea;
 import controller.IController;
 import model.IModel;
+import model.dish.IDishMenuItemData;
+import model.order.IOrderData;
+import model.order.IOrderItemData;
 import test.GeneralTestUtilityClass;
 import test.ViewOperationsUtilityClass;
 import view.IView;
@@ -52,6 +59,14 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 		this.poaTabName = GeneralTestUtilityClass.getPrivateFieldValue(this.oa, "poaTabName");
 	}
 	
+	protected String getConnectionAreaFieldName() {
+		return "cca";
+	}
+	
+	protected String getSettingsAreaFieldName() {
+		return "csa";
+	}
+	
 //	public void clickOnNewMenuItemEntryButton() {
 //		this.setOrderTakingAreaTabActive();
 //		GeneralTestUtilityClass.performWait(waitTime);
@@ -65,6 +80,115 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 //		this.ota.getNextTabButton().performArtificialClick();
 //		GeneralTestUtilityClass.performWait(waitTime);
 //	}
+	
+	public void orderTakingAreaNewEntry() {
+		this.setOrderTakingAreaTabActive();
+		GeneralTestUtilityClass.performWait(this.waitTime);
+		this.ota.getEntry().getAddMenuItemButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(this.waitTime);
+	}
+	
+	public void orderTakingAreaSetEntryItem(IDishMenuItemData item, int pos) {
+		this.setOrderTakingAreaTabActive();
+		GeneralTestUtilityClass.performWait(this.waitTime);
+		EditableMenuItemEntry e = this.ota.getEntry().getEntry(pos);
+		GeneralTestUtilityClass.performWait(this.waitTime);
+		e.getMenuItemChoiceBox().artificiallySelectItem(item);
+//		for (IDishMenuItemData d : e.getActiveMenu().getAllDishMenuItems()) {
+//			if (d.equals(item)) {
+//				e.getMenuItemChoiceBox().artificiallySelectItem(d);
+//				break;
+//			}
+//		}
+		GeneralTestUtilityClass.performWait(this.waitTime);
+	}
+	
+	public void orderTakingAreaIncEntryAmount(int pos) {
+		this.setOrderTakingAreaTabActive();
+		GeneralTestUtilityClass.performWait(this.waitTime);
+		EditableMenuItemEntry e = this.ota.getEntry().getEntry(pos);
+		e.getAmountIncButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(this.waitTime);
+	}
+	
+	public void orderTakingAreaDecEntryAmount(int pos) {
+		this.setOrderTakingAreaTabActive();
+		GeneralTestUtilityClass.performWait(this.waitTime);
+		EditableMenuItemEntry e = this.ota.getEntry().getEntry(pos);
+		e.getAmountDecButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(this.waitTime);
+	}
+	
+	public void orderTakingAreaRemoveEntry(int pos) {
+		this.setOrderTakingAreaTabActive();
+		GeneralTestUtilityClass.performWait(this.waitTime);
+		EditableMenuItemEntry e = this.ota.getEntry().getEntry(pos);
+		e.getRemoveButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(this.waitTime);
+	}
+	
+	public void orderTakingAreaNextTab() {
+		this.setOrderTakingAreaTabActive();
+		GeneralTestUtilityClass.performWait(this.waitTime);
+		this.ota.getEntry().getNextTabButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(this.waitTime);
+	}
+	
+	public int getOrderTakingAreaEntryCount() {
+		return this.ota.getEntry().getEntries().size();
+	}
+	
+	public IOrderItemData[] getOrderTakingAreaCurrentOrder() {
+		return this.ota.getEntry().getCurrentOrder();
+	}
+	
+	public String getOrderTakingAreaSerialisedOrder() {
+		return this.ota.getEntry().serialiseCurrentOrder();
+	}
+	
+	public void getOrderTakingAreaDisplayOrder(IOrderData data) {
+		this.oa.displayOrder(data);
+	}
+	
+	public Collection<IOrderData> getCookingOrders() {
+		return this.coa.getOrderAccordion().getDisplayedOrders();
+	}
+	
+	public Collection<IOrderData> getPendingPaymentOrders() {
+		return this.uoa.getOrderAccordion().getDisplayedOrders();
+	}
+	
+	public Collection<IOrderData> getPendingSendOrders() {
+		return this.poa.getPendingSendOrderAccordion().getDisplayedOrders();
+	}
+	
+	public Collection<IOrderData> getSentOrders() {
+		return this.poa.getSentOrderAccordion().getDisplayedOrders();
+	}
+	
+	public void ppoaSetPaymentOption(String orderID, boolean isCash) {
+		PendingPaymentOrderEntry e = this.uoa.getOrderAccordion().getEntry(orderID);
+		e.getCashRadioButton().setToggled(isCash);
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void ppoaSetPlaceOption(String orderID, boolean isHere) {
+		PendingPaymentOrderEntry e = this.uoa.getOrderAccordion().getEntry(orderID);
+		e.getHereRadioButton().setToggled(isHere);
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public boolean ppoaGetIsCash(String orderID) {
+		return this.uoa.getOrderAccordion().getEntry(orderID).getCashRadioButton().isToggled();
+	}
+	
+	public boolean ppoaGetIsHere(String orderID) {
+		return this.uoa.getOrderAccordion().getEntry(orderID).getHereRadioButton().isToggled();
+	}
+	
+	public String ppoaGetSerialisedOrder(String formerID) {
+		return this.uoa.getOrderAccordion().getEntry(formerID).serialiseCurrentOrder();
+	}
 	
 	protected void setOrderAreaTabActive() {
 		this.tabPane.selectTab(this.oaTabName);

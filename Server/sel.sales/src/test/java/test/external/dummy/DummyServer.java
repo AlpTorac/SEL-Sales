@@ -2,6 +2,8 @@ package test.external.dummy;
 
 import java.io.Closeable;
 
+import client.view.IClientView;
+import client.view.StandardClientView;
 import controller.IController;
 import model.IModel;
 import model.dish.IDishMenu;
@@ -11,12 +13,15 @@ import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
+import server.view.IServerView;
+import server.view.StandardServerView;
+import view.IView;
 
 public class DummyServer extends DummyInteractionPartaker implements Closeable {
 	public DummyServer(String serviceID, String serviceName, String serverName, String serverAddress) {
 		super(serviceID, serviceName, serverName, serverAddress);
 	}
-
+	
 	@Override
 	protected IModel initModel() {
 		return new ServerModel(this.getTestFolderAddress());

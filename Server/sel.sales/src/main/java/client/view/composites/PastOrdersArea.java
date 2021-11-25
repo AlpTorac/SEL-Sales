@@ -9,8 +9,8 @@ public class PastOrdersArea extends UIVBoxLayout {
 	private IController controller;
 	private UIComponentFactory fac;
 	
-	private OrderAccordion pendingSendAccordion;
-	private OrderAccordion sentAccordion;
+	private PastOrderAccordion pendingSendAccordion;
+	private PastOrderAccordion sentAccordion;
 	
 	protected PastOrdersArea(IController controller, UIComponentFactory fac) {
 		super(fac.createVBoxLayout().getComponent());
@@ -48,5 +48,13 @@ public class PastOrdersArea extends UIVBoxLayout {
 		for (IOrderData data : sentOrders) {
 			this.sentAccordion.addOrderData(data);
 		}
+	}
+	
+	public PastOrderAccordion getPendingSendOrderAccordion() {
+		return this.pendingSendAccordion;
+	}
+	
+	public PastOrderAccordion getSentOrderAccordion() {
+		return this.sentAccordion;
 	}
 }

@@ -9,7 +9,7 @@ public class CookingOrdersArea extends UIVBoxLayout {
 	private IController controller;
 	private UIComponentFactory fac;
 	
-	private OrderAccordion accordion;
+	private CookingOrderAccordion accordion;
 	
 	protected CookingOrdersArea(IController controller, UIComponentFactory fac) {
 		super(fac.createVBoxLayout().getComponent());
@@ -28,5 +28,9 @@ public class CookingOrdersArea extends UIVBoxLayout {
 		for (IOrderData data : datas) {
 			this.accordion.addOrderData(data);
 		}
+	}
+	
+	public CookingOrderAccordion getOrderAccordion() {
+		return this.accordion;
 	}
 }

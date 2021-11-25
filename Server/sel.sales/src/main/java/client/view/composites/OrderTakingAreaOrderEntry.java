@@ -22,7 +22,12 @@ public class OrderTakingAreaOrderEntry extends OrderEntry {
 	}
 	
 	@Override
-	public MenuItemEntry createItemEntry() {
+	public EditableMenuItemEntry getEntry(int pos) {
+		return (EditableMenuItemEntry) super.getEntry(pos);
+	}
+	
+	@Override
+	public EditableMenuItemEntry createItemEntry() {
 		return new EditableMenuItemEntry(this.getUIFactory(), this);
 	}
 	

@@ -68,10 +68,10 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 			public void itemAddedAction(Collection<?> items) {
 				notifyPriceDisplayingTarget();
 			}
-			
-			public void itemEditedAction(Collection<?> items) {
-				notifyPriceDisplayingTarget();
-			}
+			// Commented out, since it is never used. Enable, if necessary
+//			public void itemEditedAction(Collection<?> items) {
+//				notifyPriceDisplayingTarget();
+//			}
 		});
 		this.choiceBoxInitExtra(choiceBox);
 		return choiceBox;
