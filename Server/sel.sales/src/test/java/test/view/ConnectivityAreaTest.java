@@ -7,6 +7,7 @@ import java.util.Collection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -33,7 +34,7 @@ import test.external.dummy.DummyService;
 import test.external.dummy.DummyServiceConnectionManager;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
-@Execution(value = ExecutionMode.SAME_THREAD)
+
 class ConnectivityAreaTest extends ApplicationTest {
 
 	private volatile boolean actionFinished = false;
@@ -60,6 +61,7 @@ class ConnectivityAreaTest extends ApplicationTest {
 	
 	private Collection<IDevice> dcCol;
 	private IDeviceData[] dcdArray;
+	private IDeviceData[] kddArray;
 	
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	
@@ -80,8 +82,11 @@ class ConnectivityAreaTest extends ApplicationTest {
 	private void initDiscoveryStrategy() {
 		cds = new DummyDeviceDiscoveryStrategy();
 		cds.setDiscoveredDevices(dcCol);
-		dcdArray = dcCol.stream()
+		dcdArray = cds.discoverDevices().stream()
 				.map(c -> {return new DeviceData(c.getDeviceName(), c.getDeviceAddress(), false, false);})
+				.toArray(IDeviceData[]::new);
+		kddArray = cds.discoverDevices().stream()
+				.map(c -> {return new DeviceData(c.getDeviceName(), c.getDeviceAddress(), true, false);})
 				.toArray(IDeviceData[]::new);
 		this.external.setDiscoveryStrategy(cds);
 	}
@@ -117,7 +122,7 @@ class ConnectivityAreaTest extends ApplicationTest {
 			model = new ServerModel(this.testFolderAddress);
 			controller = new StandardServerController(model);
 			view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
-			external = new DummyServerExternal("id", "name", controller, model, 10000, 1000, 2000, 5);
+			external = new DummyServerExternal("id", "name", controller, model, 1000, 100, 2000, 3);
 			service = GeneralTestUtilityClass.getPrivateFieldValue((External) external, "service");
 			dscm = (DummyServiceConnectionManager) service.getServiceConnectionManager();
 			view.startUp();
@@ -140,136 +145,108 @@ class ConnectivityAreaTest extends ApplicationTest {
 	void discoveredDeviceTest() {
 		runFXAction(()->{
 			Assertions.assertTrue(opHelper.getDiscoveredDevices().size() == dcCol.size());
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getDiscoveredDevices().toArray(IDeviceData[]::new),
-					dcdArray);
+			Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(opHelper.getDiscoveredDevices().toArray(IDeviceData[]::new),
+					dcdArray));
 		});
 	}
 	
 	@Test
 	void knownDeviceTest() {
-		runFXAction(()->{
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					null);
-			
-			opHelper.addKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {dcdArray[0]});
-		});
-		runFXAction(()->{
-			opHelper.addKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					dcdArray);
-		});
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+				new IDeviceData[] {}));
+		runFXAction(()->{opHelper.addKnownDevice(0);});
+		IDeviceData[] ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 1);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(kddArray, ddarr[0]));
+		runFXAction(()->{opHelper.addKnownDevice(1);});
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 2);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(ddarr, kddArray));
 	}
 	
 	@Test
 	void knownDeviceRemoveTest() {
-		runFXAction(()->{
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					null);
-			
-			opHelper.addKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {dcdArray[0]});
-		});
-		runFXAction(()->{
-			opHelper.addKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					dcdArray);
-		});
-		runFXAction(()->{
-			opHelper.removeKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {dcdArray[1]});
-		});
+		this.knownDeviceTest();
+		runFXAction(()->{opHelper.removeKnownDevice(0);});
+		IDeviceData[] kddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(kddarr.length, 1);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(kddArray, kddarr[0]));
 	}
 	
 	@Test
 	void knownDeviceWithAllowTest() {
-		runFXAction(()->{
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					null);
-			
-			opHelper.addKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {dcdArray[0]});
-		});
-		runFXAction(()->{
-			opHelper.allowKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
-							dcdArray[0].getDeviceAddress(), true, false)});
-		});
-		runFXAction(()->{
-			opHelper.addKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
-							dcdArray[0].getDeviceAddress(),	true, false),
-							new DeviceData(dcdArray[1].getDeviceName(),
-									dcdArray[1].getDeviceAddress(),	false, false)});
-		});
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+				new IDeviceData[] {}));
+		runFXAction(()->{opHelper.addKnownDevice(0);});
+		IDeviceData[] ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 1);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(kddArray, ddarr[0]));
+		runFXAction(()->{opHelper.allowKnownDevice(0);});
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 1);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(kddArray, ddarr[0]));
+		runFXAction(()->{opHelper.addKnownDevice(1);});
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 2);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(kddArray, ddarr));
+//		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+//				new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
+//						dcdArray[0].getDeviceAddress(),	true, false),
+//						new DeviceData(dcdArray[1].getDeviceName(),
+//								dcdArray[1].getDeviceAddress(),	false, false)}));
 	}
 	
 	@Test
 	void knownDeviceAllowBlockTest() {
-		runFXAction(()->{
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					null);
-			
-			opHelper.addKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {dcdArray[0]});
-		});
-		runFXAction(()->{
-			opHelper.allowKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
-							dcdArray[0].getDeviceAddress(), true, false)});
-		});
-		runFXAction(()->{
-			opHelper.blockKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
-							dcdArray[0].getDeviceAddress(), false, false)});
-		});
-		runFXAction(()->{
-			opHelper.allowKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
-							dcdArray[0].getDeviceAddress(), true, false)});
-		});
-		runFXAction(()->{
-			opHelper.addKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
-							dcdArray[0].getDeviceAddress(),	true, false),
-							new DeviceData(dcdArray[1].getDeviceName(),
-									dcdArray[1].getDeviceAddress(),	false, false)});
-		});
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+				new IDeviceData[] {}));
+		runFXAction(()->{opHelper.addKnownDevice(0);});
+		IDeviceData[] ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 1);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(kddArray, ddarr[0]));
+		runFXAction(()->{opHelper.allowKnownDevice(0);});
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 1);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(kddArray, ddarr[0]));
+		runFXAction(()->{opHelper.blockKnownDevice(0);});
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 1);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(dcdArray, ddarr[0]));
+		runFXAction(()->{opHelper.allowKnownDevice(0);});
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 1);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(kddArray, ddarr[0]));
+		runFXAction(()->{opHelper.addKnownDevice(1);});
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 2);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(kddArray, ddarr));
 	}
 	
 	@Test
 	void knownDeviceConnectionTest() {
-		runFXAction(()->{
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					null);
-			
-			opHelper.addKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {dcdArray[0]});
-		});
-		runFXAction(()->{
-			opHelper.allowKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
-							dcdArray[0].getDeviceAddress(), true, false)});
-		});
-		runFXAction(()->{
-			dscm.setCurrentConnectionObject(dc1);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
-							dcdArray[0].getDeviceAddress(), true, true)});
-		});
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+				new IDeviceData[] {}));
+		runFXAction(()->{opHelper.addKnownDevice(0);});
+		IDeviceData[] ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 1);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(kddArray, ddarr[0]));
+//		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+//				new IDeviceData[] {dcdArray[0]}));
+		runFXAction(()->{opHelper.allowKnownDevice(0);});
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 1);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(kddArray, ddarr[0]));
+//		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+//				new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
+//						dcdArray[0].getDeviceAddress(), true, false)}));
+		dscm.setCurrentConnectionObject(this.getDeviceByAddress(ddarr[0].getDeviceAddress()));
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 1);
+		ddarr[0].equals(new DeviceData(ddarr[0].getDeviceName(),
+				ddarr[0].getDeviceAddress(), true, true));
+//		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(ddarr,
+//				new IDeviceData[] {new DeviceData(ddarr[0].getDeviceName(),
+//						ddarr[0].getDeviceAddress(), true, true)}));
 	}
 	
 	private DummyDevice getDeviceByAddress(String DeviceAddress) {
@@ -283,54 +260,62 @@ class ConnectivityAreaTest extends ApplicationTest {
 	
 	@Test
 	void knownDeviceDisconnectionTest() {
-		runFXAction(()->{
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					null);
-			
-			opHelper.addKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {dcdArray[0]});
-		});
-		runFXAction(()->{
-			opHelper.addKnownDevice(1);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					dcdArray);
-		});
-		runFXAction(()->{
-			opHelper.allowKnownDevice(0);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
-							dcdArray[0].getDeviceAddress(), true, false), dcdArray[1]});
-		});
-		runFXAction(()->{
-			opHelper.allowKnownDevice(1);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
-							dcdArray[0].getDeviceAddress(), true, false),
-							new DeviceData(dcdArray[1].getDeviceName(),
-									dcdArray[1].getDeviceAddress(), true, false)});
-		});
-		runFXAction(()->{
-			dscm.setCurrentConnectionObject(getDeviceByAddress(dcdArray[0].getDeviceAddress()));
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
-							dcdArray[0].getDeviceAddress(), true, true), new DeviceData(dcdArray[1].getDeviceName(),
-									dcdArray[1].getDeviceAddress(), true, false)});
-		});
-		runFXAction(()->{
-//			dscm.getConnectionManagers().forEach(cm -> {
-//				if (cm.getConnection().getTargetDeviceAddress().equals(dcdArray[0].getDeviceAddress())) {
-//					DisconnectionListener dl = new DisconnectionListener(controller);
-//					cm.getPingPong().setDisconnectionListener(dl);
-//					dl.connectionLost(dcdArray[0].getDeviceAddress());
-//				}
-//			});
-			// wait for the ping pong to timeout and report the disconnection
-			GeneralTestUtilityClass.performWait(DummyServiceConnectionManager.ESTIMATED_PP_TIMEOUT);
-			GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
-					new IDeviceData[] {new DeviceData(dcdArray[0].getDeviceName(),
-							dcdArray[0].getDeviceAddress(), true, false), new DeviceData(dcdArray[1].getDeviceName(),
-									dcdArray[1].getDeviceAddress(), true, false)});
-		});
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+				new IDeviceData[] {}));
+		runFXAction(()->{opHelper.addKnownDevice(0);});
+		IDeviceData[] ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 1);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(kddArray, ddarr[0]));
+		runFXAction(()->{opHelper.addKnownDevice(1);});
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 2);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(ddarr, kddArray));
+//		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+//				new IDeviceData[] {}));
+//		runFXAction(()->{opHelper.addKnownDevice(0);});
+//		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+//				new IDeviceData[] {dcdArray[0]}));
+//		runFXAction(()->{opHelper.addKnownDevice(1);});
+//		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(opHelper.getKnownDevices().toArray(IDeviceData[]::new),
+//				dcdArray));
+		runFXAction(()->{opHelper.allowKnownDevice(0);});
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 2);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(kddArray, ddarr));
+		
+		runFXAction(()->{opHelper.allowKnownDevice(1);});
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 2);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(kddArray, ddarr));
+		
+		dscm.setCurrentConnectionObject(getDeviceByAddress(ddarr[0].getDeviceAddress()));
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 2);
+		
+		GeneralTestUtilityClass.performWait(10);
+		
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		
+		Assertions.assertTrue(ddarr[0].getIsAllowedToConnect());
+		Assertions.assertTrue(ddarr[0].getIsConnected());
+		
+		Assertions.assertTrue(ddarr[1].getIsAllowedToConnect());
+		Assertions.assertFalse(ddarr[1].getIsConnected());		
+		
+		// wait for the ping pong to timeout and report the disconnection
+//		GeneralTestUtilityClass.performWait(DummyServiceConnectionManager.ESTIMATED_PP_TIMEOUT);
+		
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		Assertions.assertEquals(ddarr.length, 2);
+		
+		GeneralTestUtilityClass.performWait(this.external.getEstimatedPPTimeout());
+		
+		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
+		
+		Assertions.assertTrue(ddarr[0].getIsAllowedToConnect());
+		Assertions.assertFalse(ddarr[0].getIsConnected());
+		
+		Assertions.assertTrue(ddarr[1].getIsAllowedToConnect());
+		Assertions.assertFalse(ddarr[1].getIsConnected());		
 	}
 }

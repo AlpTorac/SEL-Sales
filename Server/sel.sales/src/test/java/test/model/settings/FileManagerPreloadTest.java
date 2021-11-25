@@ -50,7 +50,6 @@ class FileManagerPreloadTest {
 	private ISettingsParser settingsParser;
 	
 	private IServerModel model;
-	private Collection<HasSettingsField> part;
 //	private IFileManager fm;
 	
 	private String i1Name = "aaa";
@@ -74,8 +73,6 @@ class FileManagerPreloadTest {
 	private IDishMenuData dishMenuData;
 	
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
-	
-	private String settingsFileNAE = SettingsFile.getDefaultFileNameForClass()+FileAccess.getExtensionForClass();
 
 	private ISettings initSettings() {
 		ISettings settings = new Settings();
@@ -116,7 +113,12 @@ class FileManagerPreloadTest {
 //		part.clear();
 //		part.add(fm);
 		
-		model = new ServerModel(this.testFolderAddress);
+		model = new ServerModel(this.testFolderAddress) {
+			@Override
+			protected void externalStatusChanged(Runnable afterDiscoveryAction) {
+				afterDiscoveryAction.run();
+			}
+		};
 		this.addMenuToModel();
 		dishMenuData = model.getMenuData();
 		
@@ -241,7 +243,7 @@ class FileManagerPreloadTest {
 		model.loadOrders(fileAddress);
 		IOrderData[] readOrderData = model.getAllWrittenOrders();
 		IOrderData[] expectedOrderData = model.getOrderHelper().deserialiseOrderDatas(fileContent);
-		GeneralTestUtilityClass.arrayContentEquals(readOrderData, expectedOrderData);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(readOrderData, expectedOrderData));
 	}
 	
 	@Test
@@ -279,6 +281,6 @@ class FileManagerPreloadTest {
 		model.loadKnownDevices(fileAddress);
 		IDeviceData[] readDeviceData = model.getAllKnownDeviceData();
 		IDeviceData[] expectedDeviceData = (new FileDeviceDataParser()).parseDeviceDatas(fileContent);
-		GeneralTestUtilityClass.arrayContentEquals(readDeviceData, expectedDeviceData);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(readDeviceData, expectedDeviceData));
 	}
 }

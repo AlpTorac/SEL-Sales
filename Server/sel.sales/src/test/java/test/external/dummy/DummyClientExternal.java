@@ -14,14 +14,6 @@ import server.controller.IServerController;
 import server.model.IServerModel;
 
 public class DummyClientExternal extends ClientExternal implements IDummyExternal {
-
-	public final static long DEFAULT_PP_TIMEOUT = 200;
-	public final static long DEFAULT_PP_MINIMAL_TIMEOUT = 100;
-	public final static long SEND_TIMEOUT = 2000;
-	public final static int RESEND_LIMIT = 10;
-	
-	public final static long ESTIMATED_PP_TIMEOUT = DEFAULT_PP_TIMEOUT * (RESEND_LIMIT + 1);
-	
 	private String id;
 	private String name;
 	

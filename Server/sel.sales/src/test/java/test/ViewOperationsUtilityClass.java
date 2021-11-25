@@ -84,6 +84,7 @@ public abstract class ViewOperationsUtilityClass {
 		this.ca.getDiscoveredDevices().artificiallySelectItem(index);
 		GeneralTestUtilityClass.performWait(waitTime);
 		System.out.println("discovered Device size: " + ca.getDiscoveredDevices().getSize());
+		System.out.println("Selected discovered device: " + ca.getDiscoveredDevices().getSelectedElement().getDeviceAddress());
 		this.ca.getAddKnownDeviceButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
@@ -166,10 +167,12 @@ public abstract class ViewOperationsUtilityClass {
 
 	protected void setConnAreaTabActive() {
 		this.tabPane.selectTab(this.connAreaTabName);
+		GeneralTestUtilityClass.performWait(waitTime);
 	}
 
 	protected void setSettingsAreaTabActive() {
 		this.tabPane.selectTab(this.settingsAreaTabName);
+		GeneralTestUtilityClass.performWait(waitTime);
 	}
 
 }

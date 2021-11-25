@@ -34,6 +34,9 @@ public interface IModel extends Closeable {
 	IDeviceData[] getAllDiscoveredDeviceData();
 	void removeAllOrders();
 	void removeOrder(String id);
+	/**
+	 * @return True, if the order is written (now or in the past)
+	 */
 	boolean writeOrder(String orderID);
 	ISettings getSettings();
 	void addSetting(SettingsField sf, String serialisedValue);

@@ -267,12 +267,18 @@ class ConnectivityIntegrationTest {
 		Assertions.assertEquals(3, model.getAllUnconfirmedOrders().length);
 		Assertions.assertEquals(0, model.getAllConfirmedOrders().length);
 		
-		IOrderData[] orders = model.getOrderHelper().deserialiseOrderDatas(
-				serialisedOrder1 + System.lineSeparator() + 
-				serialisedOrder2 + System.lineSeparator() +
-				serialisedOrder3 + System.lineSeparator()
-				);
+//		IOrderData[] orders = model.getOrderHelper().deserialiseOrderDatas(
+//				serialisedOrder1 + System.lineSeparator() + 
+//				serialisedOrder2 + System.lineSeparator() +
+//				serialisedOrder3 + System.lineSeparator()
+//				);
 		
-		GeneralTestUtilityClass.arrayContentEquals(model.getAllUnconfirmedOrders(), orders);
+		IOrderData[] orders = new IOrderData[3];
+		
+		orders[0] = model.getOrderHelper().deserialiseOrderData(serialisedOrder1);
+		orders[1] = model.getOrderHelper().deserialiseOrderData(serialisedOrder2);
+		orders[2] = model.getOrderHelper().deserialiseOrderData(serialisedOrder3);
+		
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(model.getAllUnconfirmedOrders(), orders));
 	}
 }

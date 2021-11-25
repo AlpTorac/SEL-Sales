@@ -146,23 +146,32 @@ class OrderFileTest {
 		model.confirmOrder("order3#20200809000000222#1#1:item3,"+o3a3.toPlainString()+";");
 		Assertions.assertEquals(model.getAllConfirmedOrders().length, 3);
 		Assertions.assertTrue(model.writeOrders());
+		Assertions.assertEquals(model.getAllWrittenOrders().length, 3);
+		this.fileCheck();
 		model.close();
 		this.initModel();
 		model.loadSaved();
+		Assertions.assertEquals(model.getAllWrittenOrders().length, 3);
 		model.addSetting(SettingsField.ORDER_FOLDER, testFolder);
 		model.confirmOrder("order1#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";");
 		model.confirmOrder("order2#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
 		Assertions.assertEquals(model.getAllConfirmedOrders().length, 2);
 		Assertions.assertTrue(model.writeOrders());
+		this.fileCheck();
 		model.close();
 		this.initModel();
 		model.loadSaved();
+		Assertions.assertEquals(model.getAllWrittenOrders().length, 3);
 		model.addSetting(SettingsField.ORDER_FOLDER, testFolder);
 		model.confirmOrder("order2#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
 		model.confirmOrder("order3#20200809000000222#1#1:item3,"+o3a3.toPlainString()+";");
 		Assertions.assertEquals(model.getAllConfirmedOrders().length, 2);
 		Assertions.assertTrue(model.writeOrders());
-		
+		this.fileCheck();
+		this.deleteFile(new File(this.testFolder+File.separator+OrderFile.getDefaultFileNameForClass()+OrderFile.getExtensionForClass()));
+	}
+	
+	private void fileCheck() {
 		File f = new File(this.testFolder+File.separator+OrderFile.getDefaultFileNameForClass()+OrderFile.getExtensionForClass());
 		try {
 			BufferedReader r = null;
@@ -195,8 +204,8 @@ class OrderFileTest {
 			this.deleteFile(f);
 			fail();
 		}
-		this.deleteFile(f);
 	}
+	
 	private void deleteFile(File f) {
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolder));
 	}

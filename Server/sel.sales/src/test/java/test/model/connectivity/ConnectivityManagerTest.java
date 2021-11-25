@@ -92,7 +92,7 @@ class ConnectivityManagerTest {
 				knownDevice2Data
 			};
 		this.model.setKnownDevices(this.deviceDataSerialiser.serialiseDeviceDatas(deviceDatas));
-		GeneralTestUtilityClass.arrayContentEquals(this.model.getAllKnownDeviceData(), deviceDatas);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(this.model.getAllKnownDeviceData(), deviceDatas));
 	}
 	
 	@Test
@@ -101,7 +101,7 @@ class ConnectivityManagerTest {
 		this.initConnManager();
 		IDeviceData[] deviceDatas = new IDeviceData[0];
 		this.model.setKnownDevices(this.deviceDataSerialiser.serialiseDeviceDatas(deviceDatas));
-		GeneralTestUtilityClass.arrayContentEquals(this.model.getAllKnownDeviceData(), deviceDatas);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(this.model.getAllKnownDeviceData(), deviceDatas));
 	}
 	
 	@Test

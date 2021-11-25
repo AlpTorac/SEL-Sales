@@ -37,6 +37,7 @@ import test.external.dummy.DummyClientExternal;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyDevice;
 import test.external.dummy.DummyDeviceDiscoveryStrategy;
+import test.external.dummy.DummyInteraction;
 import test.external.dummy.DummyServer;
 import test.external.dummy.DummyConnectivityTestWrapper;
 import test.external.dummy.DummyServerExternal;
@@ -44,8 +45,6 @@ import test.external.dummy.InteractionUtilityClass;
 @Execution(value = ExecutionMode.SAME_THREAD)
 class InteractionTest {
 	private long waitTime = 100;
-	
-	private ExecutorService es;
 	
 //	private DummyDevice client;
 	private String clientAddress = "clientAddress";
@@ -99,134 +98,33 @@ class InteractionTest {
 	private String serviceID = "serviceID";
 	private String serviceName = "serviceName";
 	
-	private volatile DummyConnection clientToServer = null;
-	private volatile DummyConnection serverToClient = null;
-	
 	private IDishMenu menu;
+	
+	private DummyInteraction interaction;
 	
 	private DummyServer server;
 	private DummyClient client;
 	
 	@BeforeEach
 	void prep() {
-		es = Executors.newCachedThreadPool();
-		
 		server = new DummyServer(serviceID, serviceName, serverName, serverAddress);
 		client = new DummyClient(serviceID, serviceName, clientName, clientAddress);
-//		server = new DummyDevice(serverName, serverAddress);
-//		serverModel = new ServerModel(this.testFolderAddress);
-//		serverController = new StandardServerController(this.serverModel);
-//		serverExternal = new DummyServerExternal(serviceID, serviceName, serverController, serverModel, true);
 		
 		menu = server.createDishMenu();
 		menu.addMenuItem(server.createDishMenuItem(i1Name, i1PorSize, i1ProCost, i1Price, i1id));
 		menu.addMenuItem(server.createDishMenuItem(i2Name, i2PorSize, i2ProCost, i2Price, i2id));
 		menu.addMenuItem(server.createDishMenuItem(i3Name, i3PorSize, i3ProCost, i3Price, i3id));
 		
-//		client = new DummyDevice(clientName, clientAddress);
-//		clientModel = new ClientModel(this.testFolderAddress);
-//		clientController = new StandardClientController(this.clientModel);
-//		clientExternal = new DummyClientExternal(serviceID, serviceName, clientController, clientModel);
-	
-		this.initialDiscovery();
-		this.initialDeviceSetup();
-		
-//		es.submit(()->{
-//			while (!es.isShutdown()) {
-//				bindConnections();
-//			}
-//		});
-		
-		bindConnections();
-		
 		so1 = o1id+"#20200809235959866#1#0:item1,2;item2,3;";
 		so2 = o2id+"#20200809235959866#1#0:item1,2;item2,3;item3,5;";
-	}
-	
-	private void getClientMenuFromServer() {
-		this.setServerMenu(menu);
-		GeneralTestUtilityClass.performWait(waitTime);
-		while (client.getMenuData().getAllDishMenuItems().length == 0 || !client.menuDatasEqual(server)) {
-			this.reSetServerMenu();
-			GeneralTestUtilityClass.performWait(waitTime);
-		}
-	}
-	
-	private void addPendingSendOrderToClient(String orderID, String serialisedOrder) {
-		this.client.addCookingOrder(serialisedOrder);
-		this.client.makePendingPaymentOrder(orderID);
-		this.client.makePendingSendOrder(orderID, serialisedOrder);
-		while (server.getOrder(orderID) == null ||
-				!GeneralTestUtilityClass.arrayContains(client.getAllSentOrders(),
-						client.deserialiseOrderData(serialisedOrder))) {
-			GeneralTestUtilityClass.performWait(waitTime);
-			this.client.refreshOrders();
-		}
-	}
-	
-	private void bindConnections() {
-		while (clientToServer == null || serverToClient == null) {
-//			clientToServer = (DummyConnection) clientExternal.getConnection(serverAddress);
-//			serverToClient = (DummyConnection) serverExternal.getConnection(clientAddress);
-			
-			clientToServer = (DummyConnection) client.getConnection(serverAddress);
-			serverToClient = (DummyConnection) server.getConnection(clientAddress);
-		}
-		InteractionUtilityClass.bindConnectionStreams(clientToServer, serverToClient);
-	}
-	
-	private void setServerMenu(IDishMenu menu) {
-		server.setMenu(menu);
-//		serverModel.setDishMenu(serverModel.getDishMenuHelper().dishMenuToData(menu));
-	}
-	
-	private void reSetServerMenu() {
-		server.reSetMenu();
-//		serverModel.setDishMenu(serverModel.getDishMenuHelper().dishMenuToData(menu));
-	}
-	
-	private void initialDeviceSetup() {
-//		this.serverModel.addKnownDevice(clientAddress);
-//		GeneralTestUtilityClass.performWait(waitTime);
-//		this.clientModel.addKnownDevice(serverAddress);
-//		GeneralTestUtilityClass.performWait(waitTime);
-		this.server.addKnownDevice(clientAddress);
-		GeneralTestUtilityClass.performWait(waitTime);
-		this.client.addKnownDevice(serverAddress);
-		GeneralTestUtilityClass.performWait(waitTime);
-	}
-	
-	private void initialDiscovery() {
-		Collection<IDevice> devicesServer = new ArrayList<IDevice>();
-		devicesServer.add(client.getDeviceObject());
-		server.discoverDevices(devicesServer);
-//		DummyDeviceDiscoveryStrategy dddsServer = new DummyDeviceDiscoveryStrategy();
-//		dddsServer.setDiscoveredDevices(devicesServer);
-//		serverExternal.setDiscoveryStrategy(dddsServer);
-//		serverModel.requestDeviceRediscovery(()->{});
-//		GeneralTestUtilityClass.performWait(waitTime);
 		
-		Collection<IDevice> devicesClient = new ArrayList<IDevice>();
-		devicesClient.add(server.getDeviceObject());
-		client.discoverDevices(devicesClient);
-//		DummyDeviceDiscoveryStrategy dddsClient = new DummyDeviceDiscoveryStrategy();
-//		dddsClient.setDiscoveredDevices(devicesClient);
-//		clientExternal.setDiscoveryStrategy(dddsClient);
-//		clientModel.requestDeviceRediscovery(()->{});
-//		GeneralTestUtilityClass.performWait(waitTime);
+		interaction = new DummyInteraction(server, client);
+		interaction.connectPartakers(server, client);
 	}
 	
 	@AfterEach
 	void cleanUp() {
-		es.shutdownNow();
-		
-//		clientExternal.close();
-//		clientModel.close();
-		client.close();
-		
-//		serverExternal.close();
-//		serverModel.close();
-		server.close();
+		interaction.close();
 		
 		GeneralTestUtilityClass.deletePathContent(this.testFolderAddress);
 		GeneralTestUtilityClass.performWait(waitTime);
@@ -286,13 +184,13 @@ class InteractionTest {
 	
 	@Test
 	void menuExchangeTest() {
-		this.setServerMenu(menu);
+		interaction.setServerMenu(menu);
 //		GeneralTestUtilityClass.performWait(100);
 //		menuData = clientModel.getMenuData();
 		
 		IDishMenuData menuData = client.getMenuData();
 		while (menuData.getAllDishMenuItems().length == 0) {
-			this.reSetServerMenu();
+			interaction.reSetServerMenu();
 			GeneralTestUtilityClass.performWait(waitTime);
 			menuData = client.getMenuData();
 		}
@@ -301,8 +199,8 @@ class InteractionTest {
 	
 	@Test
 	void orderExchangeTest() {
-		this.getClientMenuFromServer();
-		this.addPendingSendOrderToClient(o1id, so1);
+		interaction.broadcastMenu(menu);
+		interaction.addPendingSendOrderToClient(client, o1id, so1);
 		
 		Assertions.assertEquals(server.getAllUnconfirmedOrders().length, 1);
 		Assertions.assertTrue(server.getAllUnconfirmedOrders()[0].equals(server.deserialiseOrderData(so1)));
@@ -313,8 +211,8 @@ class InteractionTest {
 	
 	@Test
 	void multipleOrderExchangeTest() {
-		this.getClientMenuFromServer();
-		this.addPendingSendOrderToClient(o1id, so1);
+		interaction.broadcastMenu(menu);
+		interaction.addPendingSendOrderToClient(client, o1id, so1);
 		
 		Assertions.assertEquals(server.getAllUnconfirmedOrders().length, 1);
 		Assertions.assertTrue(server.getAllUnconfirmedOrders()[0].equals(server.deserialiseOrderData(so1)));
@@ -322,7 +220,7 @@ class InteractionTest {
 		Assertions.assertEquals(client.getAllSentOrders().length, 1);
 		Assertions.assertTrue(client.getAllSentOrders()[0].equals(client.deserialiseOrderData(so1)));
 		
-		this.addPendingSendOrderToClient(o1id, so1);
+		interaction.addPendingSendOrderToClient(client, o1id, so1);
 		
 		Assertions.assertEquals(server.getAllUnconfirmedOrders().length, 1);
 		Assertions.assertTrue(server.getAllUnconfirmedOrders()[0].equals(server.deserialiseOrderData(so1)));
@@ -330,7 +228,7 @@ class InteractionTest {
 		Assertions.assertEquals(client.getAllSentOrders().length, 1);
 		Assertions.assertTrue(client.getAllSentOrders()[0].equals(client.deserialiseOrderData(so1)));
 		
-		this.addPendingSendOrderToClient(o2id, so2);
+		interaction.addPendingSendOrderToClient(client, o2id, so2);
 		
 		Assertions.assertEquals(server.getAllUnconfirmedOrders().length, 2);
 		Assertions.assertTrue(server.getOrder(o2id).equals(server.deserialiseOrderData(so2)));
@@ -341,23 +239,23 @@ class InteractionTest {
 	
 	@Test
 	void menuUpdateTest() {
-		this.getClientMenuFromServer();
+		interaction.broadcastMenu(menu);
 		Assertions.assertTrue(server.menuEqual(menu));
 		Assertions.assertTrue(client.menuDatasEqual(server));
 		
 		menu.removeMenuItem(i1id);
-		this.getClientMenuFromServer();
+		interaction.broadcastMenu(menu);
 		Assertions.assertTrue(server.menuEqual(menu));
 		Assertions.assertTrue(client.menuDatasEqual(server));
 		
 		menu.removeMenuItem(i2id);
-		this.getClientMenuFromServer();
+		interaction.broadcastMenu(menu);
 		Assertions.assertTrue(server.menuEqual(menu));
 		Assertions.assertTrue(client.menuDatasEqual(server));
 		
 		menu.addMenuItem(server.createDishMenuItem(i1Name, i1PorSize, i1ProCost, i1Price, i1Name));
 		menu.addMenuItem(server.createDishMenuItem(i2Name, i2PorSize, i2ProCost, i2Price, i2Name));
-		this.getClientMenuFromServer();
+		interaction.broadcastMenu(menu);
 		Assertions.assertTrue(server.menuEqual(menu));
 		Assertions.assertTrue(client.menuDatasEqual(server));
 	}

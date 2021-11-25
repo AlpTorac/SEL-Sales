@@ -105,7 +105,9 @@ public final class GeneralTestUtilityClass {
 	 * that is assumed to be inside the array
 	 */
 	public static <T> boolean arrayContains(T[] array, T element, BiFunction<T,T,Boolean> comparer) {
-		if (array == null) {
+		if (array == null && element == null) {
+			return true;
+		} else if (array == null ^ element == null) {
 			return false;
 		}
 		for (T t : array) {

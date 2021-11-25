@@ -66,7 +66,7 @@ class GetOrderTest {
 		IOrderData[] data = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(data.length, 3);
 		IOrderData[] gottenOrders = {model.getOrder(o1id), model.getOrder(o2id), model.getOrder(o3id)};
-		GeneralTestUtilityClass.arrayContentEquals(data, gottenOrders);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(data, gottenOrders));
 //		Assertions.assertTrue(model.getOrder(o1id).equals(data[0]));
 //		Assertions.assertTrue(model.getOrder(o2id).equals(data[1]));
 //		Assertions.assertTrue(model.getOrder(o3id).equals(data[2]));
@@ -77,7 +77,7 @@ class GetOrderTest {
 		IOrderData[] data = model.getAllConfirmedOrders();
 		Assertions.assertEquals(data.length, 3);
 		IOrderData[] gottenOrders = {model.getOrder(o1id), model.getOrder(o2id), model.getOrder(o3id)};
-		GeneralTestUtilityClass.arrayContentEquals(data, gottenOrders);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(data, gottenOrders));
 //		Assertions.assertTrue(model.getOrder(o1id).equals(data[0]));
 //		Assertions.assertTrue(model.getOrder(o2id).equals(data[1]));
 //		Assertions.assertTrue(model.getOrder(o3id).equals(data[2]));
@@ -91,8 +91,8 @@ class GetOrderTest {
 		Assertions.assertEquals(dataU.length, 2);
 		IOrderData[] gottenCOrders = new IOrderData[] {model.getOrder(o1id)};
 		IOrderData[] gottenUOrders = new IOrderData[] {model.getOrder(o2id), model.getOrder(o3id)};
-		GeneralTestUtilityClass.arrayContentEquals(dataC, gottenCOrders);
-		GeneralTestUtilityClass.arrayContentEquals(dataU, gottenUOrders);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(dataC, gottenCOrders));
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(dataU, gottenUOrders));
 //		Assertions.assertTrue(model.getOrder(o1id).equals(dataC[0]));
 //		Assertions.assertTrue(model.getOrder(o2id).equals(dataU[0]));
 //		Assertions.assertTrue(model.getOrder(o3id).equals(dataU[1]));
@@ -107,8 +107,8 @@ class GetOrderTest {
 		Assertions.assertEquals(dataU.length, 1);
 		IOrderData[] gottenCOrders = new IOrderData[] {model.getOrder(o1id), model.getOrder(o2id)};
 		IOrderData[] gottenUOrders = new IOrderData[] {model.getOrder(o3id)};
-		GeneralTestUtilityClass.arrayContentEquals(dataC, gottenCOrders);
-		GeneralTestUtilityClass.arrayContentEquals(dataU, gottenUOrders);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(dataC, gottenCOrders));
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(dataU, gottenUOrders));
 //		Assertions.assertTrue(model.getOrder(o1id).equals(dataC[0]));
 //		Assertions.assertTrue(model.getOrder(o2id).equals(dataC[1]));
 //		Assertions.assertTrue(model.getOrder(o3id).equals(dataU[0]));

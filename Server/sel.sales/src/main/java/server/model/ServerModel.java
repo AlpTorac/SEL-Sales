@@ -5,29 +5,33 @@ import java.util.Collection;
 
 import model.Model;
 import model.dish.IDishMenuItemData;
-import model.order.IOrderCollector;
 import model.order.IOrderData;
+import model.order.OrderStatus;
 
 public class ServerModel extends Model implements IServerModel {
 	
 	private volatile boolean autoConfirmOrders = false;
 	
-	private IOrderCollector orderUnconfirmedCollector;
-	private IOrderCollector orderConfirmedCollector;
-	private IOrderCollector writtenOrderCollector;
-	
 	public ServerModel() {
 		super();
-		
-		this.orderUnconfirmedCollector = this.getOrderHelper().createOrderCollector();
-		this.orderConfirmedCollector = this.getOrderHelper().createOrderCollector();
-		this.writtenOrderCollector = this.getOrderHelper().createOrderCollector();
 	}
 	
 	public ServerModel(String resourceFolder) {
 		this();
 		this.getFileManager().setResourcesFolderAddress(resourceFolder);
 	}
+	
+//	protected void makeUnconfirmedOrder(String id) {
+//		this.getOrderCollector().editOrderStatus(id, OrderStatus.UNCONFIRMED);
+//	}
+//	
+//	protected void makeConfirmedOrder(String id) {
+//		this.getOrderCollector().editOrderStatus(id, OrderStatus.CONFIRMED);
+//	}
+//	
+//	protected void makePastOrder(String id) {
+//		this.getOrderCollector().editOrderStatus(id, OrderStatus.PAST);
+//	}
 	
 //	protected void ordersChanged() {
 //		this.unconfirmedOrdersChanged();
@@ -39,19 +43,19 @@ public class ServerModel extends Model implements IServerModel {
 		this.getFileManager().loadSaved();
 	}
 	
-	private void unconfirmedOrdersChanged() {
+	protected void unconfirmedOrdersChanged() {
 		this.notifyUpdatableChange(u -> u instanceof OrderConfirmationStatusUpdatable,
 				u -> ((OrderConfirmationStatusUpdatable) u).refreshUnconfirmedOrders());
 //		this.updatables.stream().filter(u -> u instanceof OrderUpdatable).forEach(u -> ((OrderUpdatable) u).refreshUnconfirmedOrders());
 	}
 	
-	private void confirmedOrdersChanged() {
+	protected void confirmedOrdersChanged() {
 		this.notifyUpdatableChange(u -> u instanceof OrderConfirmationStatusUpdatable,
 				u -> ((OrderConfirmationStatusUpdatable) u).refreshConfirmedOrders());
 //		this.updatables.stream().filter(u -> u instanceof OrderUpdatable).forEach(u -> ((OrderUpdatable) u).refreshConfirmedOrders());
 	}
 	
-	private void orderConfirmModeChanged() {
+	protected void orderConfirmModeChanged() {
 		this.notifyUpdatableChange(u -> u instanceof OrderConfirmationStatusUpdatable,
 				u -> ((OrderConfirmationStatusUpdatable) u).refreshConfirmMode());
 //		this.updatables.stream().filter(u -> u instanceof OrderUpdatable).forEach(u -> ((OrderUpdatable) u).refreshConfirmMode());
@@ -67,31 +71,39 @@ public class ServerModel extends Model implements IServerModel {
 	@Override
 	public boolean writeOrders() {
 		IOrderData[] orders = this.getAllConfirmedOrders();
-		Collection<IOrderData> ordersToBeWritten = new ArrayList<IOrderData>();
+		
+//		Collection<IOrderData> ordersToBeWritten = new ArrayList<IOrderData>();
+//		for (IOrderData od : orders) {
+//			if (!this.isOrderWritten(od.getID().toString())) {
+//				ordersToBeWritten.add(od);
+//			}
+//		}
+		boolean allWritten = true;
+//		boolean current = false;
 		for (IOrderData od : orders) {
-			if (!this.isOrderWritten(od.getID().toString())) {
-				ordersToBeWritten.add(od);
-			}
+			allWritten = allWritten && this.writeOrder(od.getID().toString());
 		}
-		IOrderData[] array = ordersToBeWritten.toArray(IOrderData[]::new);
-		boolean allWritten = this.getFileManager().writeOrderData(this.getOrderHelper().serialiseForFile(array));
-		if (allWritten) {
-			for (IOrderData od : array) {
-				this.writtenOrderCollector.addOrder(od);
-			}
-		}
+		
+//		IOrderData[] array = ordersToBeWritten.toArray(IOrderData[]::new);
+//		boolean allWritten = this.getFileManager().writeOrderData(this.getOrderHelper().serialiseForFile(array));
+//		if (allWritten) {
+//			for (IOrderData od : array) {
+//				this.getOrderCollector().editWritten(od.getID().toString(), true);
+////				this.writtenOrderCollector.addOrder(od);
+//			}
+//		}
+		
 		return allWritten;
 	}
 	
 	@Override
 	public IOrderData getOrder(String id) {
-		IOrderData order = this.orderUnconfirmedCollector.getOrder(id);
-		
-		if (order == null) {
-			order = this.orderConfirmedCollector.getOrder(id);
-		}
-		
-		return order;
+//		IOrderData order = this.orderUnconfirmedCollector.getOrder(id);
+//		
+//		if (order == null) {
+//			order = this.orderConfirmedCollector.getOrder(id);
+//		}
+		return this.getOrderCollector().getOrder(id);
 	}
 	
 	public void addMenuItem(String serialisedItemData) {
@@ -110,22 +122,26 @@ public class ServerModel extends Model implements IServerModel {
 	@Override
 	public void addUnconfirmedOrder(String orderData) {
 		IOrderData order = this.getOrderHelper().deserialiseOrderData(orderData);
-		this.orderUnconfirmedCollector.addOrder(order);
+//		this.orderUnconfirmedCollector.addOrder(order);
 		if (this.autoConfirmOrders) {
-			this.confirmOrder(orderData);
+			this.confirmOrder(order);
 		} else {
+//			this.makeUnconfirmedOrder(order.getID().toString());
+			this.getOrderCollector().addOrder(order, OrderStatus.UNCONFIRMED);
 			this.unconfirmedOrdersChanged();
 		}
 	}
 
 	@Override
 	public IOrderData[] getAllUnconfirmedOrders() {
-		return this.orderUnconfirmedCollector.getAllOrders();
+//		return this.orderUnconfirmedCollector.getAllOrders();
+		return this.getOrderCollector().getAllOrdersWithStatus(OrderStatus.UNCONFIRMED);
 	}
 
 	@Override
 	public void removeAllUnconfirmedOrders() {
-		this.orderUnconfirmedCollector.clearOrders();
+		this.getOrderCollector().removeOrdersWithStatus(OrderStatus.UNCONFIRMED);
+//		this.orderUnconfirmedCollector.clearOrders();
 		this.unconfirmedOrdersChanged();
 	}
 
@@ -135,14 +151,12 @@ public class ServerModel extends Model implements IServerModel {
 		this.getDishMenu().editMenuItem(data);
 		this.menuChanged();
 	}
-
+	
 	protected void confirmOrder(IOrderData orderData) {
-		this.orderUnconfirmedCollector.removeOrder(orderData.getID().toString());
-		this.orderConfirmedCollector.addOrder(orderData);
-		if (!this.isOrderWritten(orderData.getID().toString())) {
-			this.getFileManager().writeOrderData(this.getOrderHelper().serialiseForFile(orderData));
-			this.writtenOrderCollector.addOrder(orderData);
-		}
+//		this.orderUnconfirmedCollector.removeOrder(orderData.getID().toString());
+//		this.orderConfirmedCollector.addOrder(orderData);
+		this.getOrderCollector().addOrder(orderData, OrderStatus.CONFIRMED);
+		this.writeOrder(orderData.getID().toString());
 		this.ordersChanged();
 	}
 	
@@ -154,24 +168,28 @@ public class ServerModel extends Model implements IServerModel {
 
 	@Override
 	public IOrderData[] getAllConfirmedOrders() {
-		return this.orderConfirmedCollector.getAllOrders();
+		return this.getOrderCollector().getAllOrdersWithStatus(OrderStatus.CONFIRMED);
+//		return this.orderConfirmedCollector.getAllOrders();
 	}
 
 	@Override
 	public void removeUnconfirmedOrder(String id) {
-		this.orderUnconfirmedCollector.removeOrder(id);
+//		this.orderUnconfirmedCollector.removeOrder(id);
+		this.getOrderCollector().removeOrderIfStatusEqual(id, OrderStatus.UNCONFIRMED);
 		this.unconfirmedOrdersChanged();
 	}
 
 	@Override
 	public void removeConfirmedOrder(String id) {
-		this.orderConfirmedCollector.removeOrder(id);
+//		this.orderConfirmedCollector.removeOrder(id);
+		this.getOrderCollector().removeOrderIfStatusEqual(id, OrderStatus.CONFIRMED);
 		this.confirmedOrdersChanged();
 	}
 
 	@Override
 	public void removeAllConfirmedOrders() {
-		this.orderConfirmedCollector.clearOrders();
+//		this.orderConfirmedCollector.clearOrders();
+		this.getOrderCollector().removeOrdersWithStatus(OrderStatus.CONFIRMED);
 		this.confirmedOrdersChanged();
 	}
 
@@ -182,7 +200,8 @@ public class ServerModel extends Model implements IServerModel {
 	
 	@Override
 	public void confirmAllOrders() {
-		IOrderData[] unconfirmedOrders = this.orderUnconfirmedCollector.getAllOrders();
+		IOrderData[] unconfirmedOrders = this.getOrderCollector().getAllOrdersWithStatus(OrderStatus.UNCONFIRMED);
+//		IOrderData[] unconfirmedOrders = this.orderUnconfirmedCollector.getAllOrders();
 		for (IOrderData uco : unconfirmedOrders) {
 			this.confirmOrder(uco);
 		}
@@ -207,16 +226,6 @@ public class ServerModel extends Model implements IServerModel {
 	@Override
 	public void loadDishMenu(String fileAddress) {
 		this.getFileManager().loadDishMenu(fileAddress);
-	}
-
-	@Override
-	public IOrderData[] getAllWrittenOrders() {
-		return this.writtenOrderCollector.getAllOrders();
-	}
-
-	@Override
-	protected void addWrittenOrder(IOrderData data) {
-		this.writtenOrderCollector.addOrder(data);
 	}
 
 //	@Override

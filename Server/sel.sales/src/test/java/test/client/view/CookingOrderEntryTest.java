@@ -127,9 +127,9 @@ class CookingOrderEntryTest extends ApplicationTest {
 		
 		IOrderData newData = serverModel.getOrderHelper().deserialiseOrderData(entry.serialiseCurrentOrder());
 		
-		GeneralTestUtilityClass.arrayContentEquals(
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(
 				newData.getOrderedItems(),
-				orderData.getOrderedItems());
+				orderData.getOrderedItems()));
 		Assertions.assertEquals(newData.getIsCash(), orderData.getIsCash());
 		Assertions.assertEquals(newData.getIsHere(), orderData.getIsHere());
 		Assertions.assertEquals(newData.getIsDiscounted(), orderData.getIsDiscounted());

@@ -1,37 +1,14 @@
 package client.model;
 
 import model.Model;
-import model.order.IOrderCollector;
 import model.order.IOrderData;
+import model.order.OrderStatus;
 
 public class ClientModel extends Model implements IClientModel {
-	
-	/**
-	 * Orders that have been taken and are cooking at the moment
-	 */
-	private IOrderCollector cookingOrders;
-	/**
-	 * Orders that have been cooked and served
-	 */
-	private IOrderCollector pendingPaymentOrders;
-	/**
-	 * Orders that are to be sent to the server
-	 */
-	private IOrderCollector pendingSendOrders;
-	/**
-	 * Orders that have already been sent to the server
-	 */
-	private IOrderCollector sentOrders;
-	
 	private String editOrderID;
 	
 	public ClientModel() {
 		super();
-		
-		this.cookingOrders = this.getOrderHelper().createOrderCollector();
-		this.pendingPaymentOrders = this.getOrderHelper().createOrderCollector();
-		this.pendingSendOrders = this.getOrderHelper().createOrderCollector();
-		this.sentOrders = this.getOrderHelper().createOrderCollector();
 	}
 	
 	public ClientModel(String resourceFolder) {
@@ -49,37 +26,39 @@ public class ClientModel extends Model implements IClientModel {
 		if (id == null) {
 			return null;
 		}
-		IOrderData data = null;
-		if ((data = this.getCookingOrder(id)) != null) {
-			return data;
-		}
-		if ((data = this.getPendingPaymentOrder(id)) != null) {
-			return data;
-		}
-		if ((data = this.getPendingSendOrder(id)) != null) {
-			return data;
-		}
-		if ((data = this.getSentOrder(id)) != null) {
-			return data;
-		}
-		return data;
+//		IOrderData data = null;
+//		if ((data = this.getCookingOrder(id)) != null) {
+//			return data;
+//		}
+//		if ((data = this.getPendingPaymentOrder(id)) != null) {
+//			return data;
+//		}
+//		if ((data = this.getPendingSendOrder(id)) != null) {
+//			return data;
+//		}
+//		if ((data = this.getSentOrder(id)) != null) {
+//			return data;
+//		}
+		return this.getOrderCollector().getOrder(id);
 	}
 
 	@Override
 	public void removeAllOrders() {
-		this.cookingOrders.clearOrders();
-		this.pendingPaymentOrders.clearOrders();
-		this.pendingSendOrders.clearOrders();
-		this.sentOrders.clearOrders();
+//		this.cookingOrders.clearOrders();
+//		this.pendingPaymentOrders.clearOrders();
+//		this.pendingSendOrders.clearOrders();
+//		this.sentOrders.clearOrders();
+		this.getOrderCollector().clearOrders();
 		this.ordersChanged();
 	}
 
 	@Override
 	public void removeOrder(String id) {
-		this.cookingOrders.removeOrder(id);
-		this.pendingPaymentOrders.removeOrder(id);
-		this.pendingSendOrders.removeOrder(id);
-		this.sentOrders.removeOrder(id);
+//		this.cookingOrders.removeOrder(id);
+//		this.pendingPaymentOrders.removeOrder(id);
+//		this.pendingSendOrders.removeOrder(id);
+//		this.sentOrders.removeOrder(id);
+		this.getOrderCollector().removeOrder(id);
 		this.ordersChanged();
 	}
 
@@ -91,17 +70,20 @@ public class ClientModel extends Model implements IClientModel {
 				this.removeOrder(editOrderID);
 				this.clearEditTarget();
 			}
-			this.cookingOrders.addOrder(data);
+//			this.cookingOrders.addOrder(data);
+			this.getOrderCollector().addOrder(data, OrderStatus.COOKING);
 			this.ordersChanged();
 		}
 	}
 
 	@Override
 	public void makePendingPaymentOrder(String orderID) {
-		IOrderData data;
-		if ((data = this.getCookingOrder(orderID)) != null) {
-			this.pendingPaymentOrders.addOrder(data);
-			this.cookingOrders.removeOrder(orderID);
+//		IOrderData data;
+		if (this.getCookingOrder(orderID) != null) {
+//		if ((data = this.getCookingOrder(orderID)) != null) {
+//			this.pendingPaymentOrders.addOrder(data);
+//			this.cookingOrders.removeOrder(orderID);
+			this.getOrderCollector().editOrderStatus(orderID, OrderStatus.PENDING_PAYMENT);
 			this.ordersChanged();
 		}
 	}
@@ -110,67 +92,76 @@ public class ClientModel extends Model implements IClientModel {
 	public void makePendingSendOrder(String formerID, String serialisedOrderData) {
 		IOrderData data = this.getOrderHelper().deserialiseOrderData(serialisedOrderData);
 		if (data != null && this.getPendingPaymentOrder(formerID) != null) {
-			this.pendingSendOrders.addOrder(data);
+//			this.pendingSendOrders.addOrder(data);
 			if (!formerID.equals(data.getID().toString())) {
 				this.removeOrder(formerID);
 			}
-			this.pendingPaymentOrders.removeOrder(data.getID().toString());
-			if (!this.isOrderWritten(data.getID().toString())) {
-				this.writeOrder(data.getID().toString());
-			}
+//			this.pendingPaymentOrders.removeOrder(data.getID().toString());
+			this.getOrderCollector().addOrder(data, OrderStatus.PENDING_SEND);
+			this.writeOrder(data.getID().toString());
 			this.ordersChanged();
 		}
 	}
 
 	@Override
 	public void makeSentOrder(String orderID) {
-		IOrderData data;
-		if ((data = this.getPendingSendOrder(orderID)) != null) {
+//		IOrderData data;
+//		if ((data = this.getPendingSendOrder(orderID)) != null) {
+		if (this.getPendingSendOrder(orderID) != null) {
 //			this.sentOrders.addOrder(data);
-			this.addWrittenOrder(data);
-			this.pendingSendOrders.removeOrder(orderID);
+//			this.addWrittenOrder(data);
+//			this.pendingSendOrders.removeOrder(orderID);
+			this.getOrderCollector().editOrderStatus(orderID, OrderStatus.SENT);
 			this.ordersChanged();
 		}
 	}
 
 	@Override
 	public IOrderData[] getAllCookingOrders() {
-		return this.cookingOrders.getAllOrders();
+//		return this.cookingOrders.getAllOrders();
+		return this.getOrderCollector().getAllOrdersWithStatus(OrderStatus.COOKING);
 	}
 
 	@Override
 	public IOrderData[] getAllPendingPaymentOrders() {
-		return this.pendingPaymentOrders.getAllOrders();
+//		return this.pendingPaymentOrders.getAllOrders();
+		return this.getOrderCollector().getAllOrdersWithStatus(OrderStatus.PENDING_PAYMENT);
 	}
 
 	@Override
 	public IOrderData[] getAllPendingSendOrders() {
-		return this.pendingSendOrders.getAllOrders();
+//		return this.pendingSendOrders.getAllOrders();
+		return this.getOrderCollector().getAllOrdersWithStatus(OrderStatus.PENDING_SEND);
 	}
 
 	@Override
 	public IOrderData[] getAllSentOrders() {
-		return this.sentOrders.getAllOrders();
+//		return this.sentOrders.getAllOrders();
+		return this.getOrderCollector().getAllOrdersWithStatus(OrderStatus.SENT);
 	}
 
 	@Override
 	public IOrderData getCookingOrder(String orderID) {
-		return this.cookingOrders.getOrder(orderID);
+//		return this.cookingOrders.getOrder(orderID);
+		return this.getOrderCollector().getOrderIfStatusEqual(orderID, OrderStatus.COOKING);
 	}
 
 	@Override
 	public IOrderData getPendingPaymentOrder(String orderID) {
-		return this.pendingPaymentOrders.getOrder(orderID);
+//		return this.pendingPaymentOrders.getOrder(orderID);
+		return this.getOrderCollector().getOrderIfStatusEqual(orderID, OrderStatus.PENDING_PAYMENT);
 	}
 
 	@Override
 	public IOrderData getPendingSendOrder(String orderID) {
-		return this.pendingSendOrders.getOrder(orderID);
+//		return this.pendingSendOrders.getOrder(orderID);
+		return this.getOrderCollector().getOrderIfStatusEqual(orderID, OrderStatus.PENDING_SEND);
 	}
 
 	@Override
 	public IOrderData getSentOrder(String orderID) {
-		return this.sentOrders.getOrder(orderID);
+//		return this.sentOrders.getOrder(orderID);
+		return this.getOrderCollector().getOrderIfStatusEqual(orderID, OrderStatus.SENT);
 	}
 	
 	@Override
@@ -198,15 +189,5 @@ public class ClientModel extends Model implements IClientModel {
 	@Override
 	public void orderSent(String orderID) {
 		this.makeSentOrder(orderID);
-	}
-
-	@Override
-	public IOrderData[] getAllWrittenOrders() {
-		return this.sentOrders.getAllOrders();
-	}
-
-	@Override
-	protected void addWrittenOrder(IOrderData data) {
-		this.sentOrders.addOrder(data);
 	}
 }

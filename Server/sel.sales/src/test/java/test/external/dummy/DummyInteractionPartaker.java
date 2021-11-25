@@ -14,11 +14,8 @@ import model.dish.IDishMenu;
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuItem;
 import model.order.IOrderData;
-import test.GeneralTestUtilityClass;
 
 public abstract class DummyInteractionPartaker implements Closeable {
-
-	private static final long waitTime = 100;
 	private static final String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	private String name;
 	private String address;
@@ -83,18 +80,15 @@ public abstract class DummyInteractionPartaker implements Closeable {
 	public void discoverDevice(IDevice device) {
 		ddds.addDiscoveredDevices(device);
 		this.getModel().requestDeviceRediscovery(()->{});
-		GeneralTestUtilityClass.performWait(waitTime);
 	}
 
 	public void discoverDevices(Collection<IDevice> devicesServer) {
 		ddds.addDiscoveredDevices(devicesServer);
 		this.getModel().requestDeviceRediscovery(()->{});
-		GeneralTestUtilityClass.performWait(waitTime);
 	}
 
 	public void addKnownDevice(String deviceAddress) {
 		this.getModel().addKnownDevice(deviceAddress);
-		GeneralTestUtilityClass.performWait(waitTime);
 	}
 
 	public IConnection getConnection(String deviceAddress) {
@@ -154,5 +148,17 @@ public abstract class DummyInteractionPartaker implements Closeable {
 	
 	public boolean menuDatasEqual(DummyInteractionPartaker dip) {
 		return this.getModel().getMenuData().equals(dip.getModel().getMenuData());
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+	
+	public String getAddress() {
+		return this.address;
+	}
+
+	public void blockDevice(String address2) {
+		this.getModel().blockKnownDevice(address2);
 	}
 }

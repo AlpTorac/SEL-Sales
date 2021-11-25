@@ -101,7 +101,9 @@ class SettingsTest {
 		for (int i = 0; i < ssExpected.length; i++) {
 			ssExpected[i] = new String[] {vals[i].toString(), settings.getPlaceholder()};
 		}
-		GeneralTestUtilityClass.arrayContentEquals(ssExpected, ssActual);
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(ssExpected, ssActual,
+				(ss1,ss2)->{return GeneralTestUtilityClass.arrayContentEquals(ss1, ss2,
+						(s1,s2)->{return s1.equals(s2);});}));
 	}
 	
 	@Test

@@ -20,9 +20,11 @@ import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemFinder;
 import model.filemanager.FileManager;
 import model.filemanager.IFileManager;
+import model.order.IOrderCollector;
 import model.order.IOrderData;
 import model.order.IOrderHelper;
 import model.order.OrderHelper;
+import model.order.OrderStatus;
 import model.settings.HasSettingsField;
 import model.settings.ISettings;
 import model.settings.ISettingsParser;
@@ -56,6 +58,8 @@ public abstract class Model implements IModel {
 
 	private IDateSettings ds;
 	
+	private IOrderCollector orderCollector;
+	
 	protected Model() {
 		this.updatables = new ArrayList<Updatable>();
 		this.part = new ArrayList<HasSettingsField>();
@@ -64,6 +68,8 @@ public abstract class Model implements IModel {
 		
 		this.orderHelper = new OrderHelper();
 		this.menuHelper = new DishMenuHelper();
+		
+		this.orderCollector = this.orderHelper.createOrderCollector();
 		
 		this.deviceDataParser = new FileDeviceDataParser();
 		this.deviceDataSerialiser = new FileDeviceDataSerialiser();
@@ -78,6 +84,10 @@ public abstract class Model implements IModel {
 		
 		this.fileManager = new FileManager(this, "src/main/resources");
 		this.part.add(this.fileManager);
+	}
+	
+	protected IOrderCollector getOrderCollector() {
+		return this.orderCollector;
 	}
 	
 //	protected abstract IOrderCollector getWrittenOrderCollector();
@@ -105,26 +115,26 @@ public abstract class Model implements IModel {
 //		this.updatables.stream().filter(u -> u instanceof MenuUpdatable).forEach(u -> ((MenuUpdatable) u).refreshMenu());
 	}
 
-	private void discoveredDevicesChanged() {
+	protected void discoveredDevicesChanged() {
 		this.notifyUpdatableChange(u -> u instanceof DiscoveredDeviceUpdatable,
 				u -> ((DiscoveredDeviceUpdatable) u).refreshDiscoveredDevices());
 //		this.updatables.stream().filter(u -> u instanceof DiscoveredDeviceUpdatable).forEach(u -> ((DiscoveredDeviceUpdatable) u).refreshDiscoveredDevices());
 	}
 
-	private void knownDevicesChanged() {
+	protected void knownDevicesChanged() {
 		this.notifyUpdatableChange(u -> u instanceof KnownDeviceUpdatable,
 				u -> ((KnownDeviceUpdatable) u).refreshKnownDevices());
 //		this.updatables.stream().filter(u -> u instanceof KnownDeviceUpdatable).forEach(u -> ((KnownDeviceUpdatable) u).refreshKnownDevices());
 		this.getFileManager().writeDeviceDatas(this.deviceDataSerialiser.serialiseDeviceDatas(this.connManager.getAllKnownDeviceData()));
 	}
 
-	private void externalStatusChanged(Runnable afterDiscoveryAction) {
+	protected void externalStatusChanged(Runnable afterDiscoveryAction) {
 		this.notifyUpdatableChange(u -> u instanceof ExternalUpdatable,
 				u -> ((ExternalUpdatable) u).rediscoverDevices(afterDiscoveryAction));
 //		this.updatables.stream().filter(u -> u instanceof ExternalUpdatable).forEach(u -> ((ExternalUpdatable) u).rediscoverDevices(afterDiscoveryAction));
 	}
 
-	private void settingsChanged() {
+	protected void settingsChanged() {
 		this.notifySettingsChange(u -> true,
 				p -> p.refreshValue());
 		this.notifyUpdatableChange(u -> u instanceof SettingsUpdatable,
@@ -363,17 +373,22 @@ public abstract class Model implements IModel {
 
 	@Override
 	public boolean writeOrder(String orderID) {
-		return this.getFileManager().writeOrderData(this.getOrderHelper().serialiseForFile(this.getOrder(orderID)));
+		if (!this.isOrderWritten(orderID)) {
+			boolean isWritten = this.getFileManager().writeOrderData(this.getOrderHelper().serialiseForFile(this.getOrder(orderID)));
+			this.getOrderCollector().editWritten(orderID, isWritten);
+			return isWritten;
+		}
+		return true;
 	}
 	
 	@Override
 	public boolean isOrderWritten(String orderID) {
-		for (IOrderData data : this.getAllWrittenOrders()) {
-			if (data.getID().serialisedIDequals(orderID)) {
-				return true;
-			}
-		}
-		return false;
+//		for (IOrderData data : this.getAllWrittenOrders()) {
+//			if (data.getID().serialisedIDequals(orderID)) {
+//				return true;
+//			}
+//		}
+		return this.getOrderCollector().isWritten(orderID);
 	}
 	
 	@Override
@@ -387,10 +402,20 @@ public abstract class Model implements IModel {
 		}
 	}
 	
-	protected abstract void addWrittenOrder(IOrderData data);
+	protected void addWrittenOrder(IOrderData data) {
+//		this.writtenOrderCollector.addOrder(data);
+		this.getOrderCollector().addOrder(data, OrderStatus.PAST);
+		this.getOrderCollector().editWritten(data.getID().toString(), true);
+	}
 	
 	@Override
 	public IDateSettings getDateSettings() {
 		return this.ds;
+	}
+	
+	@Override
+	public IOrderData[] getAllWrittenOrders() {
+//		return this.writtenOrderCollector.getAllOrders();
+		return this.getOrderCollector().getAllWrittenOrders();
 	}
 }

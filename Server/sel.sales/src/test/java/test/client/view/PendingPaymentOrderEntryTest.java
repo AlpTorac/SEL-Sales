@@ -124,9 +124,9 @@ class PendingPaymentOrderEntryTest extends ApplicationTest {
 		
 		IOrderData newData = serverModel.getOrderHelper().deserialiseOrderData(entry.serialiseCurrentOrder());
 		
-		GeneralTestUtilityClass.arrayContentEquals(
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(
 				newData.getOrderedItems(),
-				orderData.getOrderedItems());
+				orderData.getOrderedItems()));
 		Assertions.assertEquals(newData.getIsCash(), entry.getCashRadioButton().isToggled());
 		Assertions.assertEquals(newData.getIsHere(), entry.getHereRadioButton().isToggled());
 		Assertions.assertEquals(newData.getIsCash(), !entry.getCardRadioButton().isToggled());

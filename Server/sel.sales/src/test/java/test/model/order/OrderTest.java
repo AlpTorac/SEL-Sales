@@ -183,6 +183,8 @@ class OrderTest {
 		Assertions.assertTrue(order1.getOrderItem(i1id).getAmount().compareTo(o1a1) == 0);
 		Assertions.assertTrue(order1.getOrderItem(i2id).getAmount().compareTo(item2Amount) == 0);
 		
-		GeneralTestUtilityClass.arrayContentEquals(order1.getAllOrderItems(), new IOrderItemData[] {addedItem, addedItem2});
+		
+		
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(orderDataFac.orderToData(order1).getOrderedItems(), new IOrderItemData[] {addedItem, addedItem2}));
 	}
 }
