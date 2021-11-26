@@ -5,30 +5,30 @@ import java.math.BigDecimal;
 import model.connectivity.DeviceData;
 
 public enum FieldClass {
-	DEVICE_DATA_ARRAY(DeviceData[].class.getSimpleName()),
-	BOOLEAN(boolean.class.getSimpleName()),
-	INTEGER(int.class.getSimpleName()),
-	DOUBLE(double.class.getSimpleName()),
-	STRING(String.class.getSimpleName()),
-	BIGDECIMAL(BigDecimal.class.getSimpleName())
+	DEVICE_DATA_ARRAY(DeviceData[].class),
+	BOOLEAN(boolean.class),
+	INTEGER(int.class),
+	DOUBLE(double.class),
+	STRING(String.class),
+	BIGDECIMAL(BigDecimal.class)
 	;
 	
-	private final String className;
+	private final Class<?> cls;
 	
-	private FieldClass(String className) {
-		this.className = className;
+	private FieldClass(Class<?> className) {
+		this.cls = className;
 	}
 	
 	public String getClassName() {
-		return this.className;
+		return this.cls.getSimpleName();
 	}
 	
-	public static FieldClass stringToFieldClass(String serialisedFieldClass) {
+	public static FieldClass stringToFieldClass(Class<?> serialisedFieldClass) {
 		if (serialisedFieldClass == null) {
 			return null;
 		}
 		for (FieldClass fc : FieldClass.values()) {
-			if (serialisedFieldClass.equals(fc.getClassName())) {
+			if (serialisedFieldClass.equals(fc.cls)) {
 				return fc;
 			}
 		}

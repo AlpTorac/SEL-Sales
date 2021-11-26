@@ -11,7 +11,13 @@ public abstract class ValueContainer {
 		this.enumToGetter = new ConcurrentHashMap<FieldClass, Callable<?>>();
 	}
 	
-	public Object getField(FieldClass fc) throws Exception {
-		return this.enumToGetter.get(fc).call();
+	public Object getField(FieldClass fc) {
+		Object val = null;
+		try {
+			val = this.enumToGetter.get(fc).call();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return val;
 	}
 }
