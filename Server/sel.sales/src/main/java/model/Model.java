@@ -25,6 +25,10 @@ import model.order.IOrderData;
 import model.order.IOrderHelper;
 import model.order.OrderHelper;
 import model.order.OrderStatus;
+import model.order.OrderStatusSetter;
+import model.order.OrderTableNumberSetter;
+import model.order.serialise.OrderStatusSerialiser;
+import model.order.serialise.OrderTableNumberSerialiser;
 import model.settings.HasSettingsField;
 import model.settings.ISettings;
 import model.settings.ISettingsParser;
@@ -33,6 +37,7 @@ import model.settings.Settings;
 import model.settings.SettingsField;
 import model.settings.StandardSettingsParser;
 import model.settings.StandardSettingsSerialiser;
+import model.settings.TableNumberContainer;
 
 public abstract class Model implements IModel {
 
@@ -60,6 +65,14 @@ public abstract class Model implements IModel {
 	
 	private IOrderCollector orderCollector;
 	
+	private OrderStatusSetter oss = new OrderStatusSetter();
+	private OrderTableNumberSetter otns = new OrderTableNumberSetter();
+	
+	private OrderStatusSerialiser statusSerialiser = new OrderStatusSerialiser();
+	private OrderTableNumberSerialiser tableNumberSerialiser = new OrderTableNumberSerialiser();
+	
+	private TableNumberContainer tnc;
+	
 	protected Model() {
 		this.updatables = new ArrayList<Updatable>();
 		this.part = new ArrayList<HasSettingsField>();
@@ -83,6 +96,9 @@ public abstract class Model implements IModel {
 		this.settingsSerialiser = new StandardSettingsSerialiser();
 		
 		this.fileManager = new FileManager(this, "src/main/resources");
+		this.tnc = new TableNumberContainer(this);
+		
+		this.part.add(this.tnc);
 		this.part.add(this.fileManager);
 	}
 	
@@ -135,7 +151,7 @@ public abstract class Model implements IModel {
 	}
 
 	protected void settingsChanged() {
-		this.notifySettingsChange(u -> true,
+		this.notifySettingsChange(p -> true,
 				p -> p.refreshValue());
 		this.notifyUpdatableChange(u -> u instanceof SettingsUpdatable,
 				u -> ((SettingsUpdatable) u).refreshSettings());
@@ -148,6 +164,18 @@ public abstract class Model implements IModel {
 				u -> ((OrderUpdatable) u).refreshOrders());
 	}
 
+	protected void orderStatusChanged(String orderID) {
+		this.getFileManager().writeOrderStatusData(
+				this.statusSerialiser.serialiseFor(orderCollector, orderID)
+				);
+	}
+	
+	protected void orderTableNumberChanged(String orderID) {
+		this.getFileManager().writeOrderTableNumberData(
+				this.tableNumberSerialiser.serialiseFor(orderCollector, orderID)
+				);
+	}
+	
 	public IDishMenuItemData getMenuItem(String id) {
 			IDishMenuItem item = this.getDishMenu().getItem(id);
 			if (item != null) {
@@ -396,6 +424,7 @@ public abstract class Model implements IModel {
 		if (readFile == null) {
 			return;
 		}
+//		System.out.println(readFile);
 		IOrderData[] orderData = this.getOrderHelper().deserialiseOrderDatas(readFile);
 		for (IOrderData od : orderData) {
 			this.addWrittenOrder(od);
@@ -417,5 +446,41 @@ public abstract class Model implements IModel {
 	public IOrderData[] getAllWrittenOrders() {
 //		return this.writtenOrderCollector.getAllOrders();
 		return this.getOrderCollector().getAllWrittenOrders();
+	}
+	
+	@Override
+	public void setOrderTableNumbersFromFile(String readFile) {
+		this.otns.setOrderAttributes(this.getOrderCollector(), readFile);
+	}
+	@Override
+	public void setOrderStatuses(String readFile) {
+		this.oss.setOrderAttributes(this.getOrderCollector(), readFile);
+	}
+	@Override
+	public Collection<Integer> getTableNumbers() {
+		return this.tnc.getAllTableNumbers();
+	}
+	@Override
+	public boolean tableExists(int number) {
+		return this.tnc.tableExists(number);
+	}
+	
+	@Override
+	public void setOrderTableNumber(String orderID, int tableNumber) {
+		this.getOrderCollector().setTableNumber(orderID, tableNumber);
+		this.orderTableNumberChanged(orderID);
+	}
+	
+	@Override
+	public void removeOrder(String id) {
+		this.getOrderCollector().editOrderStatus(id, OrderStatus.CANCELLED);
+		this.orderStatusChanged(id);
+		this.getOrderCollector().removeOrder(id);
+		this.ordersChanged();
+	}
+	
+	@Override
+	public Integer getOrderTableNumber(String orderID) {
+		return Integer.valueOf(this.getOrderCollector().getTableNumber(orderID));
 	}
 }

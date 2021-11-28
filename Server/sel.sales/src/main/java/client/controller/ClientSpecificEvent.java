@@ -8,6 +8,7 @@ public enum ClientSpecificEvent implements IApplicationEvent {
 	EDIT_ORDER,
 	
 	ORDER_SENT,
-	MENU_RECEIVED
+	MENU_RECEIVED,
+	AVAILABLE_TABLE_NUMBERS_RECEIVED
 	;
 }

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import external.device.IDevice;
 import test.external.dummy.DummyDevice;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class DeviceTest {
 	private String Device1Name;
 	private String Device1Address;

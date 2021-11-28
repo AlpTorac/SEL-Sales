@@ -83,7 +83,7 @@ public class DummyClient extends DummyInteractionPartaker {
 	}
 	
 	public void makePendingSendOrder(String formerID, String serialisedOrder) {
-		this.getModel().makePendingSendOrder(formerID, serialisedOrder);
+		this.getModel().makePendingSendOrder(serialisedOrder);
 	}
 	
 	public void makeSentOrder(String orderID) {

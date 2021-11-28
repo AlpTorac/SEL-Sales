@@ -10,7 +10,7 @@ public class SendOrderHandler extends ClientApplicationEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().getModel().makePendingSendOrder((String) args[0], (String) args[1]);
+		this.getController().getModel().makePendingSendOrder((String) args[1]);
 	}
 
 }

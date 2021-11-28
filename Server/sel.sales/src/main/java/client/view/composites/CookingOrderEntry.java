@@ -1,6 +1,7 @@
 package client.view.composites;
 
 import client.view.composites.listener.AddPendingPaymentOrderListener;
+import client.view.composites.listener.CancelOrderListener;
 import client.view.composites.listener.EditOrderListener;
 import controller.IController;
 import model.order.IOrderData;
@@ -10,6 +11,7 @@ import view.repository.uiwrapper.ClickEventListener;
 import view.repository.uiwrapper.UIComponentFactory;
 
 public class CookingOrderEntry extends OrderEntry {
+	private IButton removeBtn;
 	private IButton nextTabBtn;
 	private IButton editBtn;
 	
@@ -18,10 +20,18 @@ public class CookingOrderEntry extends OrderEntry {
 		super(controller, fac, notifyTarget, data);
 	}
 	
+	protected IButton initRemoveButton() {
+		IButton btn = this.getUIFactory().createButton();
+		btn.setCaption("Remove Order");
+		btn.addClickListener(new CancelOrderListener(this, this.getController()));
+		return btn;
+	}
+	
 	protected IIndexedLayout initBottomPart() {
 		IIndexedLayout bottom = super.initBottomPart();
 		bottom.addUIComponent(this.nextTabBtn = this.initNextTabButton());
 		bottom.addUIComponent(this.editBtn = this.initEditBtn());
+		bottom.addUIComponent(this.removeBtn = this.initRemoveButton());
 		return bottom;
 	}
 	
@@ -51,5 +61,10 @@ public class CookingOrderEntry extends OrderEntry {
 	
 	public IButton getEditButton() {
 		return this.editBtn;
+	}
+	
+	@Override
+	protected void noEntryAction() {
+		this.removeFromParent();
 	}
 }

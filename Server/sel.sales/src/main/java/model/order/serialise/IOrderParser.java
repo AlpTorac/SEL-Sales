@@ -73,7 +73,7 @@ public interface IOrderParser extends IParser {
 	 * @return {orderData, orderedItems}
 	 */
 	default String[] getSerialisedOrderSpecificAndOrderItemData(String s) {
-		return s.split(this.getOrderFormat().getOrderDataFieldEnd());
+		return s.split(this.getOrderFormat().getOrderAttributeFieldEnd());
 	}
 	default String getSerialisedOrderDataField(String[] ss) {
 		return ss[0];
@@ -82,7 +82,7 @@ public interface IOrderParser extends IParser {
 		return ss[1];
 	}
 	default String[] getSerialisedOrderSpecificData(String s) {
-		return s.split(this.getOrderFormat().getOrderDataFieldSeperator());
+		return s.split(this.getOrderFormat().getOrderAttributeFieldSeperator());
 	}
 	default String getSerialisedOrderID(String[] ss) {
 		return ss[0];

@@ -5,6 +5,7 @@ import model.exceptions.NoSuchMessageContextException;
 public enum MessageContext {
 	ORDER("order"),
 	MENU("menu"),
+	AVAILABLE_TABLE_NUMBERS("availableTableNumbers"),
 	PINGPONG("pingpong");
 	
 	private final String message;

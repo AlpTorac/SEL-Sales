@@ -71,6 +71,8 @@ class SettingsAreaTest extends ApplicationTest {
 	private String ppMinimalDelay = "100";
 	private String ppResendLimit = "3";
 	private String sendTimeout = "1000";
+	private String tableNumberRanges = "1-2,4-5,20,30,100-120";
+	
 	
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 //	private Collection<HasSettingsField> part;
@@ -184,6 +186,10 @@ class SettingsAreaTest extends ApplicationTest {
 		runFXAction(()->{
 			opHelper.inputSendTimeout(sendTimeout);
 			s.addSetting(SettingsField.SEND_TIMEOUT, sendTimeout);
+		});
+		runFXAction(()->{
+			opHelper.inputTableNumberRanges(tableNumberRanges);
+			s.addSetting(SettingsField.TABLE_NUMBERS, tableNumberRanges);
 		});
 		runFXAction(()->{
 			opHelper.applySettings();

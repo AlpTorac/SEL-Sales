@@ -22,9 +22,9 @@ public class IntraAppOrderSerialiser implements IOrderSerialiser {
 	public String serialiseOrderDatas(IOrderData[] orderDatas) {
 		String result = "";
 		for (IOrderData data : orderDatas) {
-			result += this.getOrderFormat().getOrderStart();
+//			result += this.getOrderFormat().getOrderStart();
 			result += this.serialiseOrderData(data);
-			result += this.getOrderFormat().getOrderEnd();
+//			result += this.getOrderFormat().getOrderEnd();
 		}
 		return result;
 	}
@@ -32,12 +32,13 @@ public class IntraAppOrderSerialiser implements IOrderSerialiser {
 	@Override
 	public String serialiseOrderData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere, EntityID orderID) {
 		String result = "";
-		result += this.serialiseOrderID(orderID) + this.getOrderDataFieldSeperator();
-		result += this.serialiseOrderDate(date) + this.getOrderDataFieldSeperator();
-		result += this.serialiseIsCash(isCash) + this.getOrderDataFieldSeperator();
-		result += this.serialiseIsHere(isHere) + this.getOrderDataFieldEnd();
+		result += this.getOrderFormat().getOrderStart();
+		result += this.serialiseOrderID(orderID) + this.getOrderFormat().getOrderAttributeFieldSeperator();
+		result += this.serialiseOrderDate(date) + this.getOrderFormat().getOrderAttributeFieldSeperator();
+		result += this.serialiseIsCash(isCash) + this.getOrderFormat().getOrderAttributeFieldSeperator();
+		result += this.serialiseIsHere(isHere) + this.getOrderFormat().getOrderAttributeFieldEnd();
 		result += this.serialiseOrderItemDatas(orderData);
-		
+		result += this.getOrderFormat().getOrderEnd();
 		return result;
 	}
 }

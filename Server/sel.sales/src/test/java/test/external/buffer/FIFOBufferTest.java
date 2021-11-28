@@ -11,7 +11,7 @@ import external.connection.outgoing.FIFOBuffer;
 import external.connection.outgoing.ISendBufferDataContainer;
 import external.message.IMessage;
 import external.message.Message;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class FIFOBufferTest {
 	private ISendBufferDataContainer buffer;
 	

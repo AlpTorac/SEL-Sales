@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -42,7 +43,7 @@ import test.external.dummy.DummyServer;
 import test.external.dummy.DummyConnectivityTestWrapper;
 import test.external.dummy.DummyServerExternal;
 import test.external.dummy.InteractionUtilityClass;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class InteractionTest {
 	private long waitTime = 100;
 	
@@ -104,6 +105,9 @@ class InteractionTest {
 	
 	private DummyServer server;
 	private DummyClient client;
+	
+	private String serialisedTableNumbers = "1-2,4,5,1-10,90,11";
+	private String serialisedTableNumbers2 = "1-5";
 	
 	@BeforeEach
 	void prep() {
@@ -258,5 +262,14 @@ class InteractionTest {
 		interaction.broadcastMenu(menu);
 		Assertions.assertTrue(server.menuEqual(menu));
 		Assertions.assertTrue(client.menuDatasEqual(server));
+	}
+	
+	@Test
+	void tableNumberUpdateTest() {
+		interaction.broadcastTableNumbers(serialisedTableNumbers);
+		Assertions.assertTrue(server.tableNumbersEqual(client));
+		
+		interaction.broadcastTableNumbers(serialisedTableNumbers2);
+		Assertions.assertTrue(server.tableNumbersEqual(client));
 	}
 }

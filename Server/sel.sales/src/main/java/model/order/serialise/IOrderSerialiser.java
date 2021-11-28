@@ -38,28 +38,28 @@ public interface IOrderSerialiser extends ISerialiser {
 		return this.serialiseBoolean(isHere);
 	}
 	
-	default String getOrderDataFieldSeperator() {
-		return this.getOrderFormat().getOrderDataFieldSeperator();
-	}
-	
-	default String getOrderDataFieldEnd() {
-		return this.getOrderFormat().getOrderDataFieldEnd();
-	}
+//	default String getOrderDataFieldSeperator() {
+//		return this.getOrderFormat().getOrderDataFieldSeperator();
+//	}
+//	
+//	default String getOrderDataFieldEnd() {
+//		return this.getOrderFormat().getOrderDataFieldEnd();
+//	}
 	
 	default String serialiseOrderItemData(IOrderItemData orderItemData) {
 		String result = "";
-		result += this.serialiseDishMenuItemID(orderItemData.getItemData()) + this.getOrderItemDataFieldSeperator() 
-				+ this.serialiseOrderItemAmount(orderItemData) + this.getOrderItemDataFieldEnd();
+		result += this.serialiseDishMenuItemID(orderItemData.getItemData()) + this.getOrderFormat().getOrderItemDataFieldSeperator()
+				+ this.serialiseOrderItemAmount(orderItemData) + this.getOrderFormat().getOrderItemDataFieldEnd();
 		return result;
 	}
 	
-	default String getOrderItemDataFieldSeperator() {
-		return this.getOrderFormat().getOrderItemDataFieldSeperator();
-	}
-	
-	default String getOrderItemDataFieldEnd() {
-		return this.getOrderFormat().getOrderItemDataFieldEnd();
-	}
+//	default String getOrderItemDataFieldSeperator() {
+//		return this.getOrderFormat().getOrderItemDataFieldSeperator();
+//	}
+//	
+//	default String getOrderItemDataFieldEnd() {
+//		return this.getOrderFormat().getOrderItemDataFieldEnd();
+//	}
 	
 	default String serialiseDishMenuItemID(IDishMenuItemData menuItemData) {
 		return menuItemData.getID().toString();

@@ -14,4 +14,16 @@ public interface IParser {
 			return true;
 		}
 	}
+	
+	default String parseString(String s) {
+		return s;
+	}
+	
+	default int parseInteger(String s) {
+		return Integer.valueOf(s);
+	}
+	
+	default double parseDouble(String s) {
+		return Double.valueOf(s);
+	}
 }

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import model.order.IOrderData;
 import server.model.IServerModel;
 import server.model.ServerModel;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class OrderNoDiscountCalculatedDataTest {
 	private static IServerModel model;
 	

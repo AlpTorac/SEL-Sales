@@ -6,7 +6,7 @@ import model.order.IOrderData;
 public interface IClientModel extends IModel {
 	void addCookingOrder(String serialisedOrderData);
 	void makePendingPaymentOrder(String orderID);
-	void makePendingSendOrder(String formerID, String serialisedOrderData);
+	void makePendingSendOrder(String serialisedOrderData);
 	void makeSentOrder(String orderID);
 	IOrderData getCookingOrder(String orderID);
 	IOrderData getPendingPaymentOrder(String orderID);

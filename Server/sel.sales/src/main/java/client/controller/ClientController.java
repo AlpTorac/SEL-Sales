@@ -1,6 +1,7 @@
 package client.controller;
 
 import client.controller.handler.AddPendingPaymentOrderHandler;
+import client.controller.handler.AvailableTableNumbersReceivedHandler;
 import client.controller.handler.EditOrderHandler;
 import client.controller.handler.MenuReceivedHandler;
 import client.controller.handler.OrderSentHandler;
@@ -29,6 +30,7 @@ public abstract class ClientController extends Controller implements IClientCont
 		
 		bem.addApplicationEventToHandlerMapping(ClientSpecificEvent.ORDER_SENT, new OrderSentHandler(this));
 		bem.addApplicationEventToHandlerMapping(ClientSpecificEvent.MENU_RECEIVED, new MenuReceivedHandler(this));
+		bem.addApplicationEventToHandlerMapping(ClientSpecificEvent.AVAILABLE_TABLE_NUMBERS_RECEIVED, new AvailableTableNumbersReceivedHandler(this));
 		return bem;
 	}
 }

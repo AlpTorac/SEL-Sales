@@ -17,7 +17,7 @@ import external.message.MessageFormat;
 import external.message.StandardMessageFormat;
 import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyConnection;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class BasicMessageSenderTest {
 	private DummyConnection senderConn;
 	private DummyConnection receiverConn;

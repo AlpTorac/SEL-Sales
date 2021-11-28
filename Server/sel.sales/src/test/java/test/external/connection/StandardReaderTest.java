@@ -24,7 +24,7 @@ import external.message.StandardMessageFormat;
 import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyConnection;
 import test.external.message.MessageTestUtilityClass;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class StandardReaderTest {
 	private volatile boolean continueCycle = true;
 	private ExecutorService es;

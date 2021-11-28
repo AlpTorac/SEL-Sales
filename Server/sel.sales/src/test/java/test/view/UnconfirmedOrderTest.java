@@ -29,7 +29,7 @@ import view.IView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class UnconfirmedOrderTest extends ApplicationTest {
 	private static IServerModel model;
 	

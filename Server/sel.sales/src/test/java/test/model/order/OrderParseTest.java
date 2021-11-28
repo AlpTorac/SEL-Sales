@@ -16,7 +16,7 @@ import model.order.IOrderItemData;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class OrderParseTest {
 	private static IServerModel model;
 	

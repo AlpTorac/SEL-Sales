@@ -15,7 +15,7 @@ import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
 
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class OrderFileAccessTest {
 	private IServerModel model;
 	

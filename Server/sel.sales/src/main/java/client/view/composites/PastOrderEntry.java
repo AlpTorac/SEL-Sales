@@ -9,4 +9,9 @@ public class PastOrderEntry extends OrderEntry {
 			IOrderData data) {
 		super(controller, fac, notifyTarget, data);
 	}
+	
+	@Override
+	protected void noEntryAction() {
+		this.removeFromParent();
+	}
 }

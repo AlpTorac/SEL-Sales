@@ -7,8 +7,8 @@ public class IntraAppOrderFormat implements IOrderFormat {
 	private String orderEnd = System.lineSeparator();
 	private String orderItemDataFieldSeperator = ",";
 	private String orderItemDataEnd = ";";
-	private String orderDataFieldSeperator = "#";
-	private String orderDataFieldEnd = ":";
+	private String orderAttributeFieldSeperator = "#";
+	private String orderAttributeFieldEnd = ":";
 	
 	private String dateFormat = "yyyyMMddHHmmssSSS";
 	
@@ -28,13 +28,13 @@ public class IntraAppOrderFormat implements IOrderFormat {
 	}
 
 	@Override
-	public String getOrderDataFieldSeperator() {
-		return this.orderDataFieldSeperator;
+	public String getOrderAttributeFieldSeperator() {
+		return this.orderAttributeFieldSeperator;
 	}
 
 	@Override
-	public String getOrderDataFieldEnd() {
-		return this.orderDataFieldEnd;
+	public String getOrderAttributeFieldEnd() {
+		return this.orderAttributeFieldEnd;
 	}
 	
 	@Override

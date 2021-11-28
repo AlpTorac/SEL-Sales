@@ -112,7 +112,8 @@ public class OrderHelper implements IOrderHelper {
 
 	@Override
 	public String serialiseForFile(IOrderData[] data) {
-		return this.fileOrderSerialiser.serialiseOrderDatas(data);
+//		return this.fileOrderSerialiser.serialiseOrderDatas(data);
+		return this.appOrderSerialiser.serialiseOrderDatas(data);
 	}
 
 	@Override
@@ -134,7 +135,8 @@ public class OrderHelper implements IOrderHelper {
 
 	@Override
 	public String serialiseForFile(IOrderData data) {
-		return this.fileOrderSerialiser.serialiseOrderData(data);
+//		return this.fileOrderSerialiser.serialiseOrderData(data);
+		return this.appOrderSerialiser.serialiseOrderData(data);
 	}
 
 	@Override
@@ -144,9 +146,14 @@ public class OrderHelper implements IOrderHelper {
 
 	@Override
 	public String serialiseForApp(IOrderItemData[] orderData, LocalDateTime date, boolean isCash, boolean isHere) {
-		return this.serialiseForApp(orderData, date, isCash, isHere, this.appOrderFormat.formatDate(date));
+		return this.serialiseForApp(orderData, date, isCash, isHere, this.formatDate(date));
 	}
 
+	@Override
+	public String formatDate(LocalDateTime ldt) {
+		return this.appOrderFormat.formatDate(ldt);
+	}
+	
 	@Override
 	public String serialiseForApp(IOrderData data) {
 		return this.appOrderSerialiser.serialiseOrderData(data);

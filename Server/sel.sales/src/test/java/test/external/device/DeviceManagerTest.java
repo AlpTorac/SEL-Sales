@@ -19,7 +19,7 @@ import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyDevice;
 import test.external.dummy.DummyDeviceDiscoveryStrategy;
 import test.external.dummy.DummyDeviceManager;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class DeviceManagerTest {
 	private String Device1Name;
 	private String Device1Address;

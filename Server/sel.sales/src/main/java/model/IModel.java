@@ -1,6 +1,7 @@
 package model;
 
 import java.io.Closeable;
+import java.util.Collection;
 
 import model.connectivity.IDeviceData;
 import model.dish.IDishMenuData;
@@ -56,4 +57,10 @@ public interface IModel extends Closeable {
 	IDishMenuItemFinder getActiveDishMenuItemFinder();
 	boolean isOrderWritten(String orderID);
 	IDateSettings getDateSettings();
+	void setOrderTableNumbersFromFile(String readFile);
+	void setOrderStatuses(String readFile);
+	Collection<Integer> getTableNumbers();
+	boolean tableExists(int tableNumber);
+	void setOrderTableNumber(String orderID, int tableNumber);
+	Integer getOrderTableNumber(String orderID);
 }

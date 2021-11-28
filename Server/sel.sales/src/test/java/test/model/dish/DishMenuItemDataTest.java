@@ -14,7 +14,7 @@ import model.dish.IDishMenuItem;
 import model.dish.IDishMenuItemData;
 import server.model.IServerModel;
 import server.model.ServerModel;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class DishMenuItemDataTest {
 	private static IServerModel model;
 	

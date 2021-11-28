@@ -23,7 +23,7 @@ import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyServerController;
 import test.external.dummy.DummyConnectivityTestWrapper;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class ConnectivityTest {
 	private ExecutorService esServer;
 	private ExecutorService esDevice;

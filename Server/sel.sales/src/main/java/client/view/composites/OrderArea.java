@@ -1,5 +1,7 @@
 package client.view.composites;
 
+import java.util.Collection;
+
 import controller.IController;
 import model.IModel;
 import model.dish.IDishMenuData;
@@ -106,5 +108,21 @@ public class OrderArea extends UIVBoxLayout {
 	
 	public void displayOrder(IOrderData data) {
 		this.ota.displayOrder(data);
+	}
+
+	public void refreshEditTarget(IOrderData editTarget) {
+		if (editTarget != null) {
+			this.displayOrder(editTarget);
+		}
+		this.setEditAvailability(editTarget == null);
+	}
+	
+	protected void setEditAvailability(boolean editEnabled) {
+		this.coa.getOrderAccordion().setEditAvailability(editEnabled);
+		this.uoa.getOrderAccordion().setEditAvailability(editEnabled);
+	}
+
+	public void refreshTableNumbers(Collection<Integer> tableNumbers) {
+		this.ota.refreshTableNumbers(tableNumbers);
 	}
 }

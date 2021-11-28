@@ -28,7 +28,7 @@ import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
 import view.repository.uifx.FXUIComponentFactory;
 
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class PastOrderEntryTest extends ApplicationTest {
 	private IClientModel clientModel;
 	private IServerModel serverModel;
@@ -86,7 +86,7 @@ class PastOrderEntryTest extends ApplicationTest {
 		clientModel.setDishMenu(serverModel.getMenuData());
 		clientModel.addCookingOrder(serialisedOrder);
 		clientModel.makePendingPaymentOrder(orderData.getID().toString());
-		clientModel.makePendingSendOrder(orderData.getID().toString(), serialisedOrder);
+		clientModel.makePendingSendOrder(serialisedOrder);
 		
 		item1 = serverModel.getMenuItem(i1id);
 		item2 = serverModel.getMenuItem(i2id);

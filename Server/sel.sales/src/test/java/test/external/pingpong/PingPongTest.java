@@ -24,7 +24,7 @@ import test.external.dummy.DummyDevice;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyServerController;
 import test.external.dummy.DummyPingPong;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class PingPongTest {
 	private volatile boolean continueCycle = true;
 	private ExecutorService es;

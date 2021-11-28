@@ -40,7 +40,7 @@ import test.external.dummy.DummyConnectionManager;
 import test.external.dummy.DummyServerController;
 import test.external.dummy.DummyServiceConnectionManager;
 import test.external.message.MessageTestUtilityClass;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class DishMenuBroadcasterTest {
 	private IBroadcaster broadcaster;
 	

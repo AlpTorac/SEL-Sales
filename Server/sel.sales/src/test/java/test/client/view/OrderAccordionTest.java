@@ -31,7 +31,7 @@ import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
 import view.repository.uifx.FXUIComponentFactory;
 import view.repository.uiwrapper.UIComponentFactory;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class OrderAccordionTest extends ApplicationTest {
 	private IClientModel clientModel;
 	private IServerModel serverModel;

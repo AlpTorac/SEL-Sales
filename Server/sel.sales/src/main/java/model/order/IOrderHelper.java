@@ -38,4 +38,5 @@ public interface IOrderHelper {
 	IOrderData[] deserialiseOrderDatas(String serialisedOrders);
 	IOrderData deserialiseOrderData(String serialisedOrder);
 	IOrderItemData createOrderItemData(IDishMenuItemData menuItem, BigDecimal amount);
+	String formatDate(LocalDateTime ldt);
 }

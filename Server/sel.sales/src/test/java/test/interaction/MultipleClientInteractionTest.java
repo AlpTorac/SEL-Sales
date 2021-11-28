@@ -25,8 +25,8 @@ import test.external.dummy.DummyClient;
 import test.external.dummy.DummyInteraction;
 import test.external.dummy.DummyServer;
 
-@Disabled
-@Execution(value = ExecutionMode.SAME_THREAD)
+@Disabled("Takes too long to finish")
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class MultipleClientInteractionTest {
 	private long waitTime = 100;
 	
@@ -134,7 +134,6 @@ class MultipleClientInteractionTest {
 	@AfterEach
 	void cleanUp() {
 		interaction.close();
-		
 		GeneralTestUtilityClass.deletePathContent(this.testFolderAddress);
 		GeneralTestUtilityClass.performWait(waitTime);
 	}

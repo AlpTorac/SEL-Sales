@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 
+import client.external.connection.incoming.AvailableTableNumbersHandler;
 import client.external.connection.incoming.MenuHandler;
 import client.external.connection.incoming.OrderAcknowledgementHandler;
 import controller.IController;
@@ -72,6 +73,7 @@ public class MessageReceptionist implements IMessageReceptionist {
 		col.add(new OrderHandler(this.getMessageParser(), this.getController()));
 		col.add(new MenuHandler(this.getMessageParser(), this.getController()));
 		col.add(new OrderAcknowledgementHandler(this.getMessageParser(), this.getController()));
+		col.add(new AvailableTableNumbersHandler(this.getMessageParser(), this.getController()));
 		return col;
 	}
 

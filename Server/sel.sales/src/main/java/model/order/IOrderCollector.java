@@ -1,10 +1,13 @@
 package model.order;
 
 public interface IOrderCollector {
+	static final int TABLE_NUMBER_PLACEHOLDER = -1;
+	
 	default void addOrder(IOrderData item, OrderStatus os) {
 		this.addOrder(item);
 		this.editOrderStatus(item.getID().toString(), os);
 	}
+	OrderStatus getOrderStatus(String id);
 	void addOrder(IOrderData item);
 	void editOrderStatus(String id, OrderStatus os);
 	void editWritten(String id, boolean isWritten);
@@ -30,4 +33,10 @@ public interface IOrderCollector {
 	boolean isWritten(String id);
 	void removeOrdersWithStatus(OrderStatus os);
 	void clearOrders();
+	int getTableNumber(String orderID);
+	void setTableNumber(String orderID, int tableNumber);
+	default int getPlaceholderTableNumber() {
+		return TABLE_NUMBER_PLACEHOLDER;
+	}
+	boolean contains(String orderID);
 }

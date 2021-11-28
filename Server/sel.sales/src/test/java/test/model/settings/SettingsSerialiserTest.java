@@ -10,7 +10,7 @@ import model.settings.ISettingsSerialiser;
 import model.settings.Settings;
 import model.settings.SettingsField;
 import model.settings.StandardSettingsSerialiser;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class SettingsSerialiserTest {
 
 	private ISettingsSerialiser serialiser = new StandardSettingsSerialiser();

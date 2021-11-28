@@ -11,7 +11,7 @@ public class FileOrderFormat implements IOrderFormat {
 	private String orderItemDataEnd = ";";
 	private String orderDataFieldSeperator = "#";
 	private String orderDataFieldEnd = ":";
-	// private String dateFormat = "yyyyMMdd"+this.getOrderDataFieldSeperator()+"HHmmss";
+	// private String dateFormat = "yyyyMMdd"+this.getOrderFormat().getOrderDataFieldSeperator()+"HHmmss";
 	private String dateFormat = "yyyyMMddHHmmssSSS";
 	
 	@Override
@@ -30,12 +30,12 @@ public class FileOrderFormat implements IOrderFormat {
 	}
 
 	@Override
-	public String getOrderDataFieldSeperator() {
+	public String getOrderAttributeFieldSeperator() {
 		return this.orderDataFieldSeperator;
 	}
 
 	@Override
-	public String getOrderDataFieldEnd() {
+	public String getOrderAttributeFieldEnd() {
 		return this.orderDataFieldEnd;
 	}
 

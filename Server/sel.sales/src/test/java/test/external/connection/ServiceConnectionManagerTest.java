@@ -35,7 +35,7 @@ import test.external.dummy.DummyDeviceManager;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyServerController;
 import test.external.dummy.DummyServiceConnectionManager;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class ServiceConnectionManagerTest {
 	private long waitTime = 100;
 	private DummyServiceConnectionManager serviceConnectionManager;

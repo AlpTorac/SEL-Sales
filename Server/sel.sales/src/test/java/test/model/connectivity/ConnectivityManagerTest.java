@@ -19,7 +19,7 @@ import server.model.ServerModel;
 import model.connectivity.IConnectivityManager;
 import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyServerExternal;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class ConnectivityManagerTest {
 
 	private IConnectivityManager connManager;

@@ -33,7 +33,7 @@ import test.external.dummy.DummyClientExternal;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class OrderTakingAreaTest extends ApplicationTest {
 	private IDishMenuItemData item1;
 	private String i1Name = "aaa";

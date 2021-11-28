@@ -62,13 +62,6 @@ public class ServerModel extends Model implements IServerModel {
 	}
 	
 	@Override
-	public void removeOrder(String id) {
-		this.removeConfirmedOrder(id);
-		this.removeUnconfirmedOrder(id);
-		this.ordersChanged();
-	}
-	
-	@Override
 	public boolean writeOrders() {
 		IOrderData[] orders = this.getAllConfirmedOrders();
 		

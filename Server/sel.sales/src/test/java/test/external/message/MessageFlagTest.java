@@ -7,7 +7,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import external.message.MessageFlag;
 import model.exceptions.NoSuchMessageFlagException;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class MessageFlagTest {
 	@Test
 	void stringToMessageFlagTest() {

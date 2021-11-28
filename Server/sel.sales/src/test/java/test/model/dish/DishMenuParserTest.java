@@ -20,7 +20,7 @@ import model.dish.serialise.IDishMenuItemSerialiser;
 import model.dish.serialise.IDishMenuParser;
 import model.dish.serialise.IntraAppDishMenuFormat;
 import model.id.FixIDFactory;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class DishMenuParserTest {
 
 	private IDishMenuFormat format = new IntraAppDishMenuFormat();

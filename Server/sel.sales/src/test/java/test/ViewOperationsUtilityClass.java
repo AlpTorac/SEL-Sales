@@ -183,4 +183,6 @@ public abstract class ViewOperationsUtilityClass {
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 
+	public abstract void inputTableNumberRanges(String tableNumberRanges);
+
 }

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import external.message.MessageContext;
 import model.exceptions.NoSuchMessageContextException;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class MessageContextTest {
 	@Test
 	void stringToMessageContext() {

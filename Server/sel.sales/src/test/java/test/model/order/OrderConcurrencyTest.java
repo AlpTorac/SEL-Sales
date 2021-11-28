@@ -14,7 +14,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import server.model.IServerModel;
 import server.model.ServerModel;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class OrderConcurrencyTest {
 	private static IServerModel model;
 	private static ExecutorService pool = Executors.newFixedThreadPool(10);

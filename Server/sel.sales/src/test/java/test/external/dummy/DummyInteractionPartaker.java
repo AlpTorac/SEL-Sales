@@ -14,6 +14,8 @@ import model.dish.IDishMenu;
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuItem;
 import model.order.IOrderData;
+import model.settings.SettingsField;
+import test.GeneralTestUtilityClass;
 import view.IView;
 import view.repository.IUILibraryHelper;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
@@ -166,5 +168,20 @@ public abstract class DummyInteractionPartaker implements Closeable {
 
 	public void blockDevice(String address2) {
 		this.getModel().blockKnownDevice(address2);
+	}
+	
+	public Collection<Integer> getTableNumbers() {
+		return this.getModel().getTableNumbers();
+	}
+	
+	public void setTableNumbers(String serialisedRanges) {
+		this.getModel().addSetting(SettingsField.TABLE_NUMBERS, serialisedRanges);
+	}
+	
+	public boolean tableNumbersEqual(DummyInteractionPartaker dip) {
+		return this.getTableNumbers().size() == dip.getTableNumbers().size() &&
+				GeneralTestUtilityClass.arrayContentEquals(this.getTableNumbers().toArray(Integer[]::new),
+						dip.getTableNumbers().toArray(Integer[]::new),
+						(tn1,tn2)->{return tn1.intValue() == tn2.intValue();});
 	}
 }

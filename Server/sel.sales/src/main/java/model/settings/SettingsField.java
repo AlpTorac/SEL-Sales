@@ -6,7 +6,9 @@ public enum SettingsField {
 	PING_PONG_TIMEOUT("pingPongTimeout"),
 	PING_PONG_MINIMAL_DELAY("pingPongMinimalDelay"),
 	PING_PONG_RESEND_LIMIT("pingPongResendLimit"),
-	SEND_TIMEOUT("sendTimeout")
+	SEND_TIMEOUT("sendTimeout"),
+	
+	TABLE_NUMBERS("tableNumbers")
 	;
 	
 	private String fieldName;

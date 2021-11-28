@@ -1,5 +1,6 @@
 package client.view.composites;
 
+import client.view.composites.listener.CancelOrderListener;
 import client.view.composites.listener.EditOrderListener;
 import client.view.composites.listener.SendOrderListener;
 import controller.IController;
@@ -9,11 +10,15 @@ import view.repository.IHBoxLayout;
 import view.repository.IIndexedLayout;
 import view.repository.IRadioButton;
 import view.repository.IToggleGroup;
+import view.repository.IUIComponent;
+import view.repository.IVBoxLayout;
 import view.repository.Toggleable;
 import view.repository.uiwrapper.ClickEventListener;
 import view.repository.uiwrapper.UIComponentFactory;
 
 public class PendingPaymentOrderEntry extends OrderEntry {
+	private IVBoxLayout optionsArea;
+	
 	private IHBoxLayout paymentOptionLayout;
 	private IToggleGroup isHere;
 	private IRadioButton here;
@@ -24,6 +29,7 @@ public class PendingPaymentOrderEntry extends OrderEntry {
 	private IRadioButton cash;
 	private IRadioButton card;
 	
+	private IButton removeBtn;
 	private IButton nextTabBtn;
 	private IButton editBtn;
 
@@ -31,36 +37,56 @@ public class PendingPaymentOrderEntry extends OrderEntry {
 			IOrderData data) {
 		super(controller, fac, notifyTarget, data);
 		
-		this.isHere = fac.createToggleGroup();
-		this.here = fac.createRadioButton();
+		this.optionsArea = this.getUIFactory().createVBoxLayout();
+		this.optionsArea.addUIComponents(new IUIComponent[] {
+				this.placeOptionLayout = this.initPlaceOptionsArea(),
+				this.paymentOptionLayout = this.initPaymentOptionsArea()
+		});
+		
+		this.addUIComponent(this.optionsArea);
+	}
+	
+	protected IHBoxLayout initPlaceOptionsArea() {
+		IHBoxLayout placeOptionsArea = this.getUIFactory().createHBoxLayout();
+		this.isHere = this.getUIFactory().createToggleGroup();
+		this.here = this.getUIFactory().createRadioButton();
 		this.here.setCaption("Here");
 		this.here.setToggled(true);
-		this.toGo = fac.createRadioButton();
+		this.toGo = this.getUIFactory().createRadioButton();
 		this.toGo.setCaption("ToGo");
 		this.isHere.addAllToToggleGroup(new Toggleable[] {this.here, this.toGo});
-		this.paymentOptionLayout = fac.createHBoxLayout();
-		this.paymentOptionLayout.addUIComponent(this.here);
-		this.paymentOptionLayout.addUIComponent(this.toGo);
-		this.addUIComponent(this.paymentOptionLayout);
-		
-		this.isCash = fac.createToggleGroup();
-		this.cash = fac.createRadioButton();
+		placeOptionsArea.addUIComponent(this.here);
+		placeOptionsArea.addUIComponent(this.toGo);
+		return placeOptionsArea;
+	}
+	
+	protected IHBoxLayout initPaymentOptionsArea() {
+		IHBoxLayout paymentOptionsArea = this.getUIFactory().createHBoxLayout();
+		this.isCash = this.getUIFactory().createToggleGroup();
+		this.cash = this.getUIFactory().createRadioButton();
 		this.cash.setCaption("Cash");
 		this.cash.setToggled(true);
-		this.card = fac.createRadioButton();
+		this.card = this.getUIFactory().createRadioButton();
 		this.card.setCaption("Card");
 		this.isCash.addAllToToggleGroup(new Toggleable[] {this.cash, this.card});
-		this.placeOptionLayout = fac.createHBoxLayout();
-		this.placeOptionLayout.addUIComponent(this.cash);
-		this.placeOptionLayout.addUIComponent(this.card);
-		this.addUIComponent(this.placeOptionLayout);
+		paymentOptionsArea.addUIComponent(this.cash);
+		paymentOptionsArea.addUIComponent(this.card);
+		return paymentOptionsArea;
 	}
 	
 	protected IIndexedLayout initBottomPart() {
 		IIndexedLayout bottom = super.initBottomPart();
 		bottom.addUIComponent(this.nextTabBtn = this.initNextTabButton());
 		bottom.addUIComponent(this.editBtn = this.initEditBtn());
+		bottom.addUIComponent(this.removeBtn = this.initRemoveButton());
 		return bottom;
+	}
+	
+	protected IButton initRemoveButton() {
+		IButton btn = this.getUIFactory().createButton();
+		btn.setCaption("Remove Order");
+		btn.addClickListener(new CancelOrderListener(this, this.getController()));
+		return btn;
 	}
 	
 	protected IButton initNextTabButton() {
@@ -113,5 +139,10 @@ public class PendingPaymentOrderEntry extends OrderEntry {
 
 	public IButton getEditButton() {
 		return editBtn;
+	}
+	
+	@Override
+	protected void noEntryAction() {
+		this.removeFromParent();
 	}
 }

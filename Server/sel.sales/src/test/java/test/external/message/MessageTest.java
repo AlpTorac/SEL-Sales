@@ -10,7 +10,7 @@ import external.message.IMessage;
 import external.message.Message;
 import external.message.MessageContext;
 import external.message.MessageFlag;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class MessageTest {
 	private int sequenceNumber;
 	private MessageContext context;

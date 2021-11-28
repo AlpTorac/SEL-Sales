@@ -42,6 +42,8 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 	
 	private IButton menuSaveButton;
 	
+	private HasText tableNumberInput;
+	
 	public StandardServerViewOperationsUtilityClass(StandardServerView view, IServerController controller, IServerModel model) {
 		super(view, controller, model);
 		this.ma = GeneralTestUtilityClass.getPrivateFieldValue(view, "mainArea");
@@ -64,6 +66,8 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		removeButton = mda.getRemoveButton();
 		editButton = mda.getEditButton();
 		menuSaveButton = mda.getSaveButton();
+		
+		tableNumberInput = GeneralTestUtilityClass.getPrivateFieldValue(sa, "tableNumberInput");
 	}
 	
 	protected IServerModel getModel() {
@@ -302,5 +306,13 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 	
 	private void setMenuOrderTabActive() {
 		this.tabPane.selectTab(this.menuOrderAreaTabName);
+	}
+
+	@Override
+	public void inputTableNumberRanges(String text) {
+		this.setSettingsAreaTabActive();
+		GeneralTestUtilityClass.performWait(waitTime);
+		this.tableNumberInput.setCaption(text);
+		GeneralTestUtilityClass.performWait(waitTime);
 	}
 }

@@ -17,6 +17,9 @@ public class PendingPaymentOrderAccordion extends OrderAccordion {
 	public PendingPaymentOrderEntry getEntry(String orderID) {
 		return (PendingPaymentOrderEntry) super.getEntry(orderID);
 	}
-	
-	
+	public void setEditAvailability(boolean editEnabled) {
+		this.getEntriesFromMap().forEach(e -> {
+			((PendingPaymentOrderEntry) e).getEditButton().setEnabled(editEnabled);
+		});
+	}
 }

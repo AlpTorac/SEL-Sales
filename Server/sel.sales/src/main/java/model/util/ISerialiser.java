@@ -14,4 +14,16 @@ public interface ISerialiser {
 			return "0";
 		}
 	}
+	
+	default String serialiseInteger(int integer) {
+		return String.valueOf(integer);
+	}
+	
+	default String serialiseString(String string) {
+		return string;
+	}
+	
+	default String serialiseDouble(double dbl) {
+		return String.valueOf(dbl);
+	}
 }

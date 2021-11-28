@@ -9,7 +9,7 @@ import model.settings.ISettings;
 import model.settings.ISettingsParser;
 import model.settings.SettingsField;
 import model.settings.StandardSettingsParser;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class SettingsParserTest {
 
 	private ISettingsParser parser = new StandardSettingsParser();

@@ -20,7 +20,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import model.filewriter.FileAccess;
 import test.GeneralTestUtilityClass;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class FileAccessTest {	
 	private FileAccess fa;
 	

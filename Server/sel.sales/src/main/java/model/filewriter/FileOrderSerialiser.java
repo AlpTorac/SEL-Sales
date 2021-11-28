@@ -33,14 +33,14 @@ public class FileOrderSerialiser implements IOrderSerialiser {
 		}
 		for (IOrderItemData d : orderData) {
 			result += this.getOrderFormat().getOrderStart();
-			result += this.serialiseOrderID(orderID) + this.getOrderDataFieldSeperator();
-			result += this.serialiseOrderDate(date) + this.getOrderDataFieldSeperator();
-			result += this.serialiseIsCash(isCash) + this.getOrderDataFieldSeperator();
-			result += this.serialiseIsHere(isHere) + this.getOrderDataFieldSeperator();
+			result += this.serialiseOrderID(orderID) + this.getOrderFormat().getOrderAttributeFieldSeperator();
+			result += this.serialiseOrderDate(date) + this.getOrderFormat().getOrderAttributeFieldSeperator();
+			result += this.serialiseIsCash(isCash) + this.getOrderFormat().getOrderAttributeFieldSeperator();
+			result += this.serialiseIsHere(isHere) + this.getOrderFormat().getOrderAttributeFieldSeperator();
 //			result += this.serialiseIsDiscounted(orderDiscount) + this.getOrderDataFieldEnd();
-			result += this.serialiseBoolean(isDiscounted) + this.getOrderDataFieldEnd();
-			result += this.serialiseDishMenuItemID(d.getItemData()) + this.getOrderItemDataFieldSeperator();
-			result += this.serialiseOrderItemAmount(d) + this.getOrderItemDataFieldEnd();
+			result += this.serialiseBoolean(isDiscounted) + this.getOrderFormat().getOrderAttributeFieldEnd();
+			result += this.serialiseDishMenuItemID(d.getItemData()) + this.getOrderFormat().getOrderItemDataFieldSeperator();
+			result += this.serialiseOrderItemAmount(d) + this.getOrderFormat().getOrderItemDataFieldEnd();
 			result += this.getOrderFormat().getOrderEnd();
 		}
 		return result;

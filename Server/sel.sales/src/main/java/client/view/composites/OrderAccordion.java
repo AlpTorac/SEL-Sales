@@ -81,4 +81,8 @@ public abstract class OrderAccordion extends UIAccordion implements PriceUpdateT
 		}
 		return null;
 	}
+	
+	protected Collection<OrderEntry> getEntriesFromMap() {
+		return this.orderEntries.values();
+	}
 }

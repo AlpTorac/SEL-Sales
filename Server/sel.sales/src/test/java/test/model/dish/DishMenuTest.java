@@ -12,7 +12,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import model.dish.IDishMenuItemData;
 import server.model.IServerModel;
 import server.model.ServerModel;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class DishMenuTest {
 	private static IServerModel model;
 	

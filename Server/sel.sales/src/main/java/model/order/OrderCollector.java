@@ -127,15 +127,44 @@ public class OrderCollector implements IOrderCollector {
 				.toArray(IOrderData[]::new);
 	}
 	
+	@Override
+	public int getTableNumber(String orderID) {
+		OrderCollectorEntry e = this.getEntry(orderID);
+		if (e != null) {
+			return this.getEntry(orderID).getTableNumber();
+		}
+		return this.getPlaceholderTableNumber();
+	}
+
+	@Override
+	public void setTableNumber(String orderID, int tableNumber) {
+		OrderCollectorEntry e = this.getEntry(orderID);
+		if (e != null) {
+			e.setTableNumber(tableNumber);
+		}
+	}
+	
+	@Override
+	public OrderStatus getOrderStatus(String id) {
+		return this.getEntry(id).getOrderStatus();
+	}
+	
+	@Override
+	public boolean contains(String orderID) {
+		return this.getEntry(orderID) != null;
+	}
+	
 	protected class OrderCollectorEntry {
 		private IOrder order;
 		private OrderStatus os;
 		private boolean isWritten;
+		private int tableNumber;
 		
 		protected OrderCollectorEntry(IOrder order) {
 			this.order = order;
 			this.os = OrderStatus.UNDEFINED;
 			this.isWritten = false;
+			this.tableNumber = getPlaceholderTableNumber();
 		}
 		
 		public IOrder getOrder() {
@@ -156,6 +185,14 @@ public class OrderCollector implements IOrderCollector {
 		
 		public void setWritten(boolean isWritten) {
 			this.isWritten = isWritten;
+		}
+		
+		public int getTableNumber() {
+			return this.tableNumber;
+		}
+		
+		public void setTableNumber(int tableNumber) {
+			this.tableNumber = tableNumber;
 		}
 	}
 }

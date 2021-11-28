@@ -18,7 +18,7 @@ import model.order.IOrderData;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class ClientModelTest {
 
 	private IClientModel clientModel;
@@ -110,7 +110,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
 		
-		clientModel.makePendingSendOrder(o1id, serialisedOrderData);
+		clientModel.makePendingSendOrder(serialisedOrderData);
 		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(data));
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
@@ -159,12 +159,11 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
 		
-		String newSerialisedOrderData = o2id+"#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";";
+		String newSerialisedOrderData = o1id+"#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";";
 		IOrderData newData = this.clientModel.getOrderHelper().deserialiseOrderData(newSerialisedOrderData);
 		
-		clientModel.makePendingSendOrder(o1id, newSerialisedOrderData);
-		Assertions.assertNull(this.clientModel.getOrder(o1id));
-		Assertions.assertTrue(this.clientModel.getOrder(o2id).equals(newData));
+		clientModel.makePendingSendOrder(newSerialisedOrderData);
+		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(newData));
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
@@ -172,8 +171,8 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
 		
-		clientModel.orderSent(o2id);
-		Assertions.assertTrue(this.clientModel.getOrder(o2id).equals(newData));
+		clientModel.orderSent(o1id);
+		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(newData));
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
@@ -192,23 +191,23 @@ class ClientModelTest {
 	void noDuplicateWrittenOrderTest() {
 		String serialisedOrderData = o1id+"#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";";
 		
-		this.clientModel.makePendingSendOrder(o1id, serialisedOrderData);
+		this.clientModel.makePendingSendOrder(serialisedOrderData);
 		this.clientModel.addOrder(serialisedOrderData);
-		this.clientModel.makePendingSendOrder(o1id, serialisedOrderData);
+		this.clientModel.makePendingSendOrder(serialisedOrderData);
 		this.clientModel.makePendingPaymentOrder(o1id);
-		this.clientModel.makePendingSendOrder(o1id, serialisedOrderData);
-		this.clientModel.makePendingSendOrder(o1id, serialisedOrderData);
+		this.clientModel.makePendingSendOrder(serialisedOrderData);
+		this.clientModel.makePendingSendOrder(serialisedOrderData);
 		this.clientModel.makeSentOrder(o1id);
-		this.clientModel.makePendingSendOrder(o1id, serialisedOrderData);
+		this.clientModel.makePendingSendOrder(serialisedOrderData);
 		
-		this.clientModel.makePendingSendOrder(o1id, serialisedOrderData);
+		this.clientModel.makePendingSendOrder(serialisedOrderData);
 		this.clientModel.addOrder(serialisedOrderData);
-		this.clientModel.makePendingSendOrder(o1id, serialisedOrderData);
+		this.clientModel.makePendingSendOrder(serialisedOrderData);
 		this.clientModel.makePendingPaymentOrder(o1id);
-		this.clientModel.makePendingSendOrder(o1id, serialisedOrderData);
-		this.clientModel.makePendingSendOrder(o1id, serialisedOrderData);
+		this.clientModel.makePendingSendOrder(serialisedOrderData);
+		this.clientModel.makePendingSendOrder(serialisedOrderData);
 		this.clientModel.makeSentOrder(o1id);
-		this.clientModel.makePendingSendOrder(o1id, serialisedOrderData);
+		this.clientModel.makePendingSendOrder(serialisedOrderData);
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
@@ -219,10 +218,10 @@ class ClientModelTest {
 	
 	@Test
 	void editOrderTest() {
-		String serialisedOrderData = o1id+"#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";";
+		String serialisedOrderData = o1id+"#20200809112233343#0#0:item1,5;item2,3";
 		IOrderData data = this.clientModel.getOrderHelper().deserialiseOrderData(serialisedOrderData);
 		
-		String newSerialisedOrderData = o2id+"#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";";
+		String newSerialisedOrderData = o2id+"#20200809112233343#0#0:item1,2;item3,6;item2,2;";
 		IOrderData newData = this.clientModel.getOrderHelper().deserialiseOrderData(newSerialisedOrderData);
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
@@ -278,10 +277,10 @@ class ClientModelTest {
 		clientModel.makePendingPaymentOrder(id2);
 		
 		clientModel.makePendingPaymentOrder(id3);
-		clientModel.makePendingSendOrder(id3, so3);
+		clientModel.makePendingSendOrder(so3);
 		
 		clientModel.makePendingPaymentOrder(id4);
-		clientModel.makePendingSendOrder(id4, so4);
+		clientModel.makePendingSendOrder(so4);
 		clientModel.makeSentOrder(id4);
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 1);

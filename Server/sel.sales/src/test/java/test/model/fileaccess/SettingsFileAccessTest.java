@@ -20,7 +20,7 @@ import model.settings.SettingsField;
 import model.settings.StandardSettingsParser;
 import model.settings.StandardSettingsSerialiser;
 import test.GeneralTestUtilityClass;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class SettingsFileAccessTest {
 	private SettingsFile sf;
 	private ISettings settings;

@@ -23,7 +23,7 @@ import external.message.StandardMessageFormat;
 import external.message.StandardMessageParser;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyServerController;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class OrderHandlerTest extends MessageHandlerSuperClass {
 	private MessageFormat format = new StandardMessageFormat();
 	private String fieldSeparator = format.getDataFieldSeparatorForString();

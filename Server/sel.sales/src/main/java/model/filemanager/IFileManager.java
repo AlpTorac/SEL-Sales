@@ -3,6 +3,8 @@ package model.filemanager;
 import model.settings.HasSettingsField;
 
 public interface IFileManager extends HasSettingsField {
+	boolean writeOrderStatusData(String data);
+	boolean writeOrderTableNumberData(String data);
 	boolean writeOrderData(String data);
 	boolean writeDishMenuData(String data);
 	boolean writeSettings(String settings);

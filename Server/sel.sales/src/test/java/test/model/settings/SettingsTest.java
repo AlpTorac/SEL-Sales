@@ -11,7 +11,7 @@ import model.settings.ISettings;
 import model.settings.Settings;
 import model.settings.SettingsField;
 import test.GeneralTestUtilityClass;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class SettingsTest {
 
 	private ISettings settings;

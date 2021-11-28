@@ -1,7 +1,6 @@
 package client.view.composites.listener;
 
 import client.view.composites.OrderEntry;
-import client.view.composites.OrderTakingArea;
 import controller.GeneralEvent;
 import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
@@ -21,8 +20,10 @@ public class AddCookingOrderListener extends ClickEventListener implements IAppl
 	
 	@Override
 	public void clickAction() {
-		this.fireApplicationEvent(this.controller);
-		this.oe.resetUserInput();
+		if (this.oe.getCurrentOrder().length > 0) {
+			this.fireApplicationEvent(this.controller);
+		}
+		this.oe.orderSentToNextTab();
 	}
 	
 	@Override

@@ -1,5 +1,7 @@
 package client.view.composites;
 
+import java.util.Collection;
+
 import controller.IController;
 import model.dish.IDishMenuData;
 import model.order.IOrderData;
@@ -134,5 +136,9 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<O
 	@Override
 	public void remove(OrderEntry referenceOfCaller) {
 		
+	}
+
+	public void refreshTableNumbers(Collection<Integer> tableNumbers) {
+		this.orderEntry.refreshTableNumbers(tableNumbers);
 	}
 }

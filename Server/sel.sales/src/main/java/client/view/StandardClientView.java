@@ -129,23 +129,17 @@ public class StandardClientView extends ClientView {
 	@Override
 	public void refreshSettings() {
 		this.helper.queueAsynchroneRunnable(()->{this.csa.refreshSettings(this.getModel().getSettings());});
+		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshTableNumbers(this.getModel().getTableNumbers());});
 	}
 
 	@Override
 	public void refreshOrders() {
-		this.checkEditOrder();
 		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshCookingOrders(this.getModel().getAllCookingOrders());});
 		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshPendingPaymentOrders(this.getModel().getAllPendingPaymentOrders());});
 		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshPastOrdersTab(this.getModel().getAllPendingSendOrders(), this.getModel().getAllSentOrders());});
+		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshEditTarget(this.getModel().getEditTarget());});
 //		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshPendingSendOrders(this.getModel().getAllPendingSendOrders());});
 //		this.helper.queueAsynchroneRunnable(()->{this.oa.refreshSentOrders(this.getModel().getAllSentOrders());});
-	}
-	
-	public void checkEditOrder() {
-		IOrderData data;
-		if ((data = this.getModel().getEditTarget()) != null) {
-			this.helper.queueAsynchroneRunnable(()->{this.oa.displayOrder(data);});
-		}
 	}
 	
 }

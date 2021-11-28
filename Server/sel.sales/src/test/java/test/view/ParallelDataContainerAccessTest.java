@@ -23,7 +23,7 @@ import view.IView;
 import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class ParallelDataContainerAccessTest extends ApplicationTest {
 	private static IServerModel model;
 	private static IServerController controller;

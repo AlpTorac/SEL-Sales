@@ -213,4 +213,9 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 		this.setOrderAreaTabActive();
 		this.oaTabPane.selectTab(this.poaTabName);
 	}
+
+	@Override
+	public void inputTableNumberRanges(String tableNumberRanges) {
+		
+	}
 }

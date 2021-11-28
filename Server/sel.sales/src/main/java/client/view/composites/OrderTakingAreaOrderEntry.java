@@ -1,6 +1,9 @@
 package client.view.composites;
 
+import java.time.LocalDateTime;
+
 import client.view.composites.listener.AddCookingOrderListener;
+import client.view.composites.listener.CancelOrderListener;
 import controller.IController;
 import model.order.IOrderData;
 import view.repository.IButton;
@@ -11,6 +14,12 @@ import view.repository.uiwrapper.UIComponentFactory;
 public class OrderTakingAreaOrderEntry extends OrderEntry {
 	private IButton addMenuItemBtn;
 	private IButton nextTabBtn;
+	private IButton clearBtn;
+	
+	/**
+	 * Contains the most recently passed orderID
+	 */
+	private String mostRecentOrderID;
 	
 	public OrderTakingAreaOrderEntry(IController controller, UIComponentFactory fac,
 			PriceUpdateTarget<OrderEntry> notifyTarget) {
@@ -19,6 +28,29 @@ public class OrderTakingAreaOrderEntry extends OrderEntry {
 	public OrderTakingAreaOrderEntry(IController controller, UIComponentFactory fac,
 			PriceUpdateTarget<OrderEntry> notifyTarget, IOrderData data) {
 		super(controller, fac, notifyTarget, data);
+	}
+	
+	@Override
+	protected void tableNumberChoiceBoxSetup() {
+
+	}
+	
+	@Override
+	public void orderSentToNextTab() {
+		this.getController().getModel().setOrderTableNumber(this.mostRecentOrderID, this.getTableNumberSelection());
+		this.resetUserInput();
+	}
+	
+	@Override
+	public String getSerialisedOrderID() {
+		String orderID;
+		if (this.getActiveData() == null) {
+			orderID = this.getController().getModel().getOrderHelper().formatDate(LocalDateTime.now());
+		} else {
+			orderID = super.getSerialisedOrderID();
+		}
+		this.mostRecentOrderID = orderID;
+		return orderID;
 	}
 	
 	@Override
@@ -32,16 +64,24 @@ public class OrderTakingAreaOrderEntry extends OrderEntry {
 	}
 	
 	@Override
-	protected void initComponent() {
-		this.addUIComponent(this.addMenuItemBtn = this.initAddMenuItemButton());
-		super.initComponent();
+	protected void addBottomPart() {
+		this.addComponentsVertically(this.addMenuItemBtn = this.initAddMenuItemButton());
+		super.addBottomPart();
 	}
 	
 	@Override
 	protected IIndexedLayout initBottomPart() {
 		IIndexedLayout bottom = super.initBottomPart();
 		bottom.addUIComponent(this.nextTabBtn = this.initNextTabButton());
+		bottom.addUIComponent(this.clearBtn = this.initClearButton());
 		return bottom;
+	}
+	
+	protected IButton initClearButton() {
+		IButton btn = this.getUIFactory().createButton();
+		btn.setCaption("Clear");
+		btn.addClickListener(new CancelOrderListener(this, this.getController()));
+		return btn;
 	}
 	
 	protected IButton initAddMenuItemButton() {
@@ -69,7 +109,7 @@ public class OrderTakingAreaOrderEntry extends OrderEntry {
 	
 	@Override
 	protected void addMenuItemEntryToUI(MenuItemEntry entry) {
-		this.addUIComponentBefore(entry, this.addMenuItemBtn);
+		this.getVBoxLayout().addUIComponentBefore(entry, this.addMenuItemBtn);
 	}
 	
 	public IButton getAddMenuItemButton() {

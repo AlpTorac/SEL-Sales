@@ -30,7 +30,7 @@ import test.external.buffer.BufferUtilityClass;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyServerController;
 import test.external.dummy.DummyPingPong;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class MessageReceptionistTest {
 	private long waitTime = 300;
 	

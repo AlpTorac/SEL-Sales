@@ -28,7 +28,7 @@ import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyDevice;
 import test.external.dummy.DummyConnection;
 import test.external.dummy.DummyServerController;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class StandardConnectionManagerTest {
 	private ExecutorService es;
 	private long waitTime = 110;

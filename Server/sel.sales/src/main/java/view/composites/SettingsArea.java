@@ -1,6 +1,7 @@
 package view.composites;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -9,13 +10,17 @@ import controller.GeneralEvent;
 import model.settings.ISettings;
 import model.settings.SettingsField;
 import view.repository.IButton;
+import view.repository.IHBoxLayout;
 import view.repository.ILabel;
+import view.repository.ILayout;
 import view.repository.IRootComponent;
 import view.repository.ITextBox;
 import view.repository.IUIComponent;
+import view.repository.IVBoxLayout;
 import view.repository.uiwrapper.ClickEventListener;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIHBoxLayout;
+import view.repository.uiwrapper.UILayout;
 import view.repository.uiwrapper.UIVBoxLayout;
 
 public class SettingsArea extends UIVBoxLayout {
@@ -29,6 +34,9 @@ public class SettingsArea extends UIVBoxLayout {
 	private Collection<ISettingsInputArea> settingAreas;
 	
 	// the following attributes are there for future access, if necessary
+	
+	private FileAddressArea faa;
+	private ConnectivityArea ca;
 	
 //	@SuppressWarnings("unused")
 	private FileAddressUI menuFolderAddress;
@@ -50,11 +58,27 @@ public class SettingsArea extends UIVBoxLayout {
 		this.fac = fac;
 		this.mainWindow = mainWindow;
 		this.setSpacing(20);
+		this.initComponents();
+		this.addApplyButtonToLayout();
+	}
+	
+	protected void initComponents() {
 		this.addUIComponents(new IUIComponent[] {
-				new FileAddressArea(),
-				new ConnectivityArea(),
-				this.applyButton = this.initButton()
+				this.faa = this.initFAA(),
+				this.ca = this.initCA(),
 		});
+	}
+	
+	protected void addApplyButtonToLayout() {
+		this.addUIComponent(this.applyButton = this.initApplyButton());
+	}
+	
+	protected FileAddressArea initFAA() {
+		return new FileAddressArea();
+	}
+	
+	protected ConnectivityArea initCA() {
+		return new ConnectivityArea();
 	}
 	
 	protected String[][] getAllSettings() {
@@ -63,7 +87,7 @@ public class SettingsArea extends UIVBoxLayout {
 				.toArray(String[][]::new);
 	}
 	
-	protected IButton initButton() {
+	protected IButton initApplyButton() {
 		IButton button = fac.createButton();
 		button.setCaption("Apply");
 		button.addClickListener(new ClickEventListener() {
@@ -96,22 +120,60 @@ public class SettingsArea extends UIVBoxLayout {
 		}
 	}
 	
-	protected class FileAddressArea extends UIVBoxLayout {
-		FileAddressArea() {
-			super(fac.createVBoxLayout().getComponent());
-			this.setSpacing(5);
-			this.addUIComponents(new IUIComponent[] {
+	protected abstract class SettingsGroupArea extends UILayout {
+		protected SettingsGroupArea(UILayout layout) {
+			super(layout.getComponent());
+			this.initialSetup();
+			this.initComponents();
+		}
+		
+		protected abstract void initialSetup();
+		protected abstract void initComponents();
+	}
+	
+	protected class FileAddressArea extends SettingsGroupArea {
+		protected FileAddressArea() {
+			super(fac.createVBoxLayout());
+		}
+		
+		
+		@Override
+		protected void initComponents() {
+			this.getComponent().addUIComponents(new IUIComponent[] {
 					menuFolderAddress = new FileAddressUI("Menu folder address", SettingsField.DISH_MENU_FOLDER),
 					orderFolderAddress = new FileAddressUI("Order folder address", SettingsField.ORDER_FOLDER)
 			});
 		}
+		
+		@Override
+		public IVBoxLayout getComponent() {
+			return (IVBoxLayout) super.getComponent();
+		}
+
+		@Override
+		protected void initialSetup() {
+			this.getComponent().setSpacing(5);
+		}
 	}
 	
-	protected class ConnectivityArea extends UIVBoxLayout {
-		ConnectivityArea() {
-			super(fac.createVBoxLayout().getComponent());
-			this.setSpacing(5);
-			this.addUIComponents(new IUIComponent[] {
+	protected class ConnectivityArea extends SettingsGroupArea {
+		protected ConnectivityArea() {
+			super(fac.createVBoxLayout());
+		}
+		
+		@Override
+		protected void initialSetup() {
+			this.getComponent().setSpacing(5);
+		}
+		
+		@Override
+		public IVBoxLayout getComponent() {
+			return (IVBoxLayout) super.getComponent();
+		}
+		
+		@Override
+		protected void initComponents() {
+			this.getComponent().addUIComponents(new IUIComponent[] {
 					ppTimeout = new ConnectivityUI("Ping-Pong timeout", SettingsField.PING_PONG_TIMEOUT),
 					ppMinimalDelay = new ConnectivityUI("Ping-Pong minimal delay", SettingsField.PING_PONG_MINIMAL_DELAY),
 					ppResendLimit = new ConnectivityUI("Ping-Pong resend limit", SettingsField.PING_PONG_RESEND_LIMIT),
@@ -120,50 +182,36 @@ public class SettingsArea extends UIVBoxLayout {
 		}
 	}
 	
-	protected class FileAddressUI extends UIHBoxLayout implements ISettingsInputArea {
-		private ILabel descriptionLabel;
-		private ITextBox addressBox;
+	protected class ConnectivityUI extends BasicSettingsInputArea {
+		protected ConnectivityUI(String labelCaption, SettingsField sf) {
+			super(labelCaption, sf);
+		}
+	}
+	
+	protected class FileAddressUI extends BasicSettingsInputArea {
 		private IButton fileChooserButton;
 		
 		private ClickEventListener cel = new ClickEventListener() {
 			@Override
 			public void clickAction() {
 				File f = fac.createDirectoryChooser().showDialog(mainWindow);
-				addressBox.setCaption(f.getPath());
+				getAddressBox().setCaption(f.getPath());
 			}
 		};
 		
-		private String labelCaption;
-		private SettingsField sf;
-		
-		private FileAddressUI(String labelCaption, SettingsField sf) {
-			super(fac.createHBoxLayout().getComponent());
-			this.labelCaption = labelCaption + descriptionEnd;
-			this.sf = sf;
-			this.init();
+		protected FileAddressUI(String labelCaption, SettingsField sf) {
+			super(labelCaption, sf);
+//			this.labelCaption = labelCaption + descriptionEnd;
+//			this.sf = sf;
+//			this.init();
 		}
 		
 		@Override
 		public void initComponents() {
-			this.descriptionLabel = this.initLabel();
-			this.addressBox = this.initAddressBox();
-			this.fileChooserButton = this.initFileChooseButton();
+			super.initComponents();
 			
-			this.addUIComponents(new IUIComponent[] {
-				this.descriptionLabel,
-				this.addressBox,
-				this.fileChooserButton
-			});
-		}
-		
-		private ILabel initLabel() {
-			ILabel label = fac.createLabel();
-			label.setCaption(labelCaption);
-			return label;
-		}
-		
-		private ITextBox initAddressBox() {
-			return fac.createTextBox();
+			this.fileChooserButton = this.initFileChooseButton();
+			this.addUIComponent(this.fileChooserButton);
 		}
 		
 		private IButton initFileChooseButton() {
@@ -171,40 +219,32 @@ public class SettingsArea extends UIVBoxLayout {
 			button.addClickListener(cel);
 			return button;
 		}
-		
-		@Override
-		public String getSetting() {
-			return this.addressBox.getText();
-		}
-		
-		@Override
-		public void setSetting(String newText) {
-			this.addressBox.setCaption(newText);
-		}
-
-		@Override
-		public SettingsField getSettingsField() {
-			return this.sf;
-		}
-
-		@Override
-		public void addToSettingAreas() {
-			settingAreas.add(this);
-		}
 	}
 
-	protected class ConnectivityUI extends UIHBoxLayout implements ISettingsInputArea {
+	protected abstract class BasicSettingsInputArea extends UIHBoxLayout implements ISettingsInputArea {
 		private ILabel descriptionLabel;
 		private ITextBox addressBox;
 		
 		private String labelCaption;
 		private SettingsField sf;
 		
-		private ConnectivityUI(String labelCaption, SettingsField sf) {
+		protected BasicSettingsInputArea(String labelCaption, SettingsField sf) {
 			super(fac.createHBoxLayout().getComponent());
 			this.labelCaption = labelCaption + descriptionEnd;
 			this.sf = sf;
 			this.init();
+		}
+		
+		public String getLabelCaption() {
+			return this.labelCaption;
+		}
+		
+		public ILabel getDescriptionLabel() {
+			return this.descriptionLabel;
+		}
+		
+		public ITextBox getAddressBox() {
+			return this.addressBox;
 		}
 		
 		@Override
@@ -220,7 +260,7 @@ public class SettingsArea extends UIVBoxLayout {
 		
 		private ILabel initLabel() {
 			ILabel label = fac.createLabel();
-			label.setCaption(labelCaption);
+			label.setCaption(this.getLabelCaption());
 			return label;
 		}
 		
@@ -258,26 +298,26 @@ public class SettingsArea extends UIVBoxLayout {
 	}
 
 	public ITextBox getMenuFolderAddress() {
-		return menuFolderAddress.addressBox;
+		return menuFolderAddress.getAddressBox();
 	}
 
 	public ITextBox getOrderFolderAddress() {
-		return orderFolderAddress.addressBox;
+		return orderFolderAddress.getAddressBox();
 	}
 
 	public ITextBox getPpTimeout() {
-		return ppTimeout.addressBox;
+		return ppTimeout.getAddressBox();
 	}
 
 	public ITextBox getPpMinimalDelay() {
-		return ppMinimalDelay.addressBox;
+		return ppMinimalDelay.getAddressBox();
 	}
 
 	public ITextBox getPpResendLimit() {
-		return ppResendLimit.addressBox;
+		return ppResendLimit.getAddressBox();
 	}
 
 	public ITextBox getSendTimeout() {
-		return sendTimeout.addressBox;
+		return sendTimeout.getAddressBox();
 	}
 }

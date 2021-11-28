@@ -15,8 +15,8 @@ public interface IOrderFormat {
 	
 	String getOrderItemDataFieldSeperator();
 	String getOrderItemDataFieldEnd();
-	String getOrderDataFieldSeperator();
-	String getOrderDataFieldEnd();
+	String getOrderAttributeFieldSeperator();
+	String getOrderAttributeFieldEnd();
 	String getOrderStart();
 	String getOrderEnd();
 }

@@ -21,7 +21,7 @@ import external.message.MessageSerialiser;
 import external.message.StandardMessageFormat;
 import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyConnection;
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class StandardSendBufferTest {
 	private long timeout = 200;
 	private ISendBuffer sb;

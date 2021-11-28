@@ -64,14 +64,18 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 		return btn;
 	}
 	
+	protected void removeAction() {
+		this.removeFromParent();
+		this.notifyPriceDisplayingTarget();
+	}
+	
 	protected IButton initRemoveBtn() {
 		IButton btn = this.getUIFactory().createButton();
 		btn.setCaption("Remove");
 		btn.addClickListener(new ClickEventListener() {
 			@Override
 			public void clickAction() {
-				removeFromParent();
-				notifyPriceDisplayingTarget();
+				removeAction();
 			}
 		});
 		return btn;

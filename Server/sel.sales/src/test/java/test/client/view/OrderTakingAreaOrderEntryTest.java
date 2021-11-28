@@ -29,7 +29,7 @@ import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
 import view.repository.uifx.FXUIComponentFactory;
 
-@Execution(value = ExecutionMode.SAME_THREAD)
+//@Execution(value = ExecutionMode.SAME_THREAD)
 class OrderTakingAreaOrderEntryTest extends ApplicationTest {
 	private IClientModel clientModel;
 	private IServerModel serverModel;

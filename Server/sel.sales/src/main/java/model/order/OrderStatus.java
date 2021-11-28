@@ -1,6 +1,8 @@
 package model.order;
 
 public enum OrderStatus {
+	CANCELLED("cancelled"),
+	EDITING("editing"),
 	COOKING("cooking"),
 	PENDING_PAYMENT("pendingPayment"),
 	PENDING_SEND("pendingSend"),
