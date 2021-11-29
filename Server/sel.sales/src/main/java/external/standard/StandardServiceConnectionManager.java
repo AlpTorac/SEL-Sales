@@ -45,11 +45,14 @@ public class StandardServiceConnectionManager extends ServiceConnectionManager {
 	@Override
 	protected Object getConnectionObject() {
 		IConnectionObject connObject = connNotifier.acceptAndOpen();
-		System.out.println("Incoming connection detected --------------------------------------------");
+		while (connObject == null) {
+			connObject = connNotifier.acceptAndOpen();
+		}
+		System.out.println("Incoming connection detected: " + connObject.getTargetAddress());
 		try {
-			if (!this.isConnectionAllowed(connObject.getTargetAddress())) {
+			if (connObject != null && !this.isConnectionAllowed(connObject.getTargetAddress())) {
 				connObject.close();
-				connObject = connNotifier.acceptAndOpen();
+//				connObject = connNotifier.acceptAndOpen();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

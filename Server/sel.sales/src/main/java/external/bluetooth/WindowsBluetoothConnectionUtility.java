@@ -16,6 +16,7 @@ import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.UUID;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
+import javax.microedition.io.StreamConnectionNotifier;
 
 import external.IConnectionUtility;
 import external.IServiceInfo;
@@ -75,11 +76,12 @@ public class WindowsBluetoothConnectionUtility implements IConnectionUtility {
 	@Override
 	public IConnectionObject acceptAndOpenAlgorithm(IConnectionNotifier notifier) {
 		Object o = null;
-		System.out.println("Detecting connection for: " + notifier.getService().getURL());
+//		System.out.println("Detecting connection for: " + notifier.getService().getURL());
 		try {
 			o = Connector.open(notifier.getService().getURL());
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
+			return null;
 		}
 		System.out.println("Opened connection for: " + notifier.getService().getURL());
 		return new ConnectionObject(this, o);
@@ -233,11 +235,12 @@ public class WindowsBluetoothConnectionUtility implements IConnectionUtility {
 	@Override
 	public String getConnectionTargetAddress(IConnectionObject connObject) {
 		String result = null;
-		try {
-			result = RemoteDevice.getRemoteDevice((StreamConnection) connObject.getConnectionObject()).getBluetoothAddress();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			result = RemoteDevice.getRemoteDevice((StreamConnectionNotifier) connObject.getConnectionObject()).getBluetoothAddress();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+		result = connObject.getTargetAddress();
 		return result;
 	}
 
