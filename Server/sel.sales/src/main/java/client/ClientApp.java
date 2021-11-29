@@ -40,8 +40,8 @@ public class ClientApp extends Application {
 		model = new ClientModel();
 		controller = new StandardClientController(model);
 		view = new StandardClientView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
-		external = new BluetoothClientExternal(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
-//		external = new StandardClientExternal(controller, model, new WindowsBluetoothConnectionUtility(), pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
+//		external = new BluetoothClientExternal(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
+		external = new StandardClientExternal(controller, model, new WindowsBluetoothConnectionUtility(), pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		view.startUp();
 		view.show();
 		model.loadSaved();

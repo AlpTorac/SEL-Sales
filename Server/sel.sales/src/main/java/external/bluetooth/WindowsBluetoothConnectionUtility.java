@@ -272,7 +272,7 @@ public class WindowsBluetoothConnectionUtility implements IConnectionUtility {
 
 	@Override
 	public String getServiceURL(IService service) {
-		return "btspp://localhost:" + service.getID() + ";name=" + service.getName();
+		return "btspp://localhost:" + ((UUID) service.getID()) + ";name=" + service.getName();
 	}
 
 	@Override

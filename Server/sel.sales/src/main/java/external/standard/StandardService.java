@@ -31,5 +31,6 @@ public class StandardService extends Service {
 		this.scm = new StandardServiceConnectionManager(this, this.getDeviceManager(), this.getController(), es, this.connUtil,
 				this.getPingPongTimeout(), this.getMinimalPingPongDelay(), this.getSendTimeout(), this.getResendLimit());
 		this.scm.makeNewConnectionThread();
+		System.out.println("Service published");
 	}
 }

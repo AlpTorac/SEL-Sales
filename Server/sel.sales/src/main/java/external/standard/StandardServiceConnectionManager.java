@@ -31,6 +31,7 @@ public class StandardServiceConnectionManager extends ServiceConnectionManager {
 		super(manager, controller, es, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		this.connUtil = connUtil;
 		this.connNotifier = this.connUtil.publishService(service);
+		System.out.println("Service connection manager for: " + this.connNotifier.getService().getName());
 //		this.setPingPongTimeout(pingPongTimeout);
 //		this.setSendTimeout(sendTimeout);
 //		this.setResendLimit(resendLimit);
@@ -45,6 +46,7 @@ public class StandardServiceConnectionManager extends ServiceConnectionManager {
 	protected Object getConnectionObject() {
 		try {
 			IConnectionObject connObject = connNotifier.acceptAndOpen();
+			System.out.println("Incoming connection detected");
 			if (!this.isConnectionAllowed(connObject.getTargetAddress())) {
 				connObject.close();
 				connObject = connNotifier.acceptAndOpen();
