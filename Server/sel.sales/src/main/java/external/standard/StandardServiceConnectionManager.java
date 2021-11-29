@@ -44,23 +44,37 @@ public class StandardServiceConnectionManager extends ServiceConnectionManager {
 
 	@Override
 	protected Object getConnectionObject() {
-		IConnectionObject connObject = connNotifier.acceptAndOpen();
-		while (connObject == null) {
-			connObject = connNotifier.acceptAndOpen();
-		}
-		System.out.println("Incoming connection detected: " + connObject.getTargetAddress());
-		if (connObject != null && !this.isConnectionAllowed(connObject.getTargetAddress())) {
-			try {
+//		IConnectionObject connObject = connNotifier.acceptAndOpen();
+//		while (connObject == null) {
+//			connObject = connNotifier.acceptAndOpen();
+//		}
+//		System.out.println("Incoming connection detected: " + connObject.getTargetAddress());
+//		if (connObject != null && !this.isConnectionAllowed(connObject.getTargetAddress())) {
+//			try {
+//				connObject.close();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				return null;
+//			}
+//		}
+//		System.out.println("Connection established");
+//		this.makeNewConnectionThread();
+//		System.out.println("New connection thread created");
+//		return connObject;
+		try {
+			IConnectionObject connObject = connNotifier.acceptAndOpen();
+			if (connObject != null && !this.isConnectionAllowed(connObject.getTargetAddress())) {
 				connObject.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
+				connObject = connNotifier.acceptAndOpen();
 			}
+			System.out.println("Connection established");
+			this.makeNewConnectionThread();
+			System.out.println("New connection thread created");
+			return connObject;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
 		}
-		System.out.println("Connection established");
-		this.makeNewConnectionThread();
-		System.out.println("New connection thread created");
-		return connObject;
 	}
 
 	@Override

@@ -75,16 +75,14 @@ public class WindowsBluetoothConnectionUtility implements IConnectionUtility {
 
 	@Override
 	public IConnectionObject acceptAndOpenAlgorithm(IConnectionNotifier notifier) {
-		Object o = null;
-//		System.out.println("Detecting connection for: " + notifier.getService().getURL());
 		try {
-			o = Connector.open(notifier.getService().getURL());
+			Object o = Connector.open(notifier.getService().getURL());
+			System.out.println("Opened connection for: " + notifier.getService().getURL());
+			return new ConnectionObject(this, o);
 		} catch (IOException e) {
-//			e.printStackTrace();
+			e.printStackTrace();
 			return null;
 		}
-		System.out.println("Opened connection for: " + notifier.getService().getURL());
-		return new ConnectionObject(this, o);
 	}
 
 	@Override
