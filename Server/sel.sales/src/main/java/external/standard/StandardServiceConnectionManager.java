@@ -67,7 +67,9 @@ public class StandardServiceConnectionManager extends ServiceConnectionManager {
 				connObject.close();
 				connObject = connNotifier.acceptAndOpen();
 			}
-			System.out.println("Connection established");
+			if (connObject != null) {
+				System.out.println("Connection established");
+			}
 			this.makeNewConnectionThread();
 			System.out.println("New connection thread created");
 			return connObject;

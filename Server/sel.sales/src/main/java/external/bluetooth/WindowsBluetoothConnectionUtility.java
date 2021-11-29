@@ -33,8 +33,8 @@ public class WindowsBluetoothConnectionUtility implements IConnectionUtility {
 	private final UUID serviceID = new UUID(0x1111);
 	private final String serviceName = "SEL_Service";
 	
-	private final int serviceIDEntryID = 0x0003;
-	
+//	private final int serviceIDEntryID = 0x0003;
+//	
 //	@Override
 //	public UUID getServiceID(Object serviceObject) {
 //		return (UUID) ((ServiceRecord) serviceObject).getAttributeValue(serviceIDEntryID).getValue();
@@ -64,13 +64,13 @@ public class WindowsBluetoothConnectionUtility implements IConnectionUtility {
 
 	@Override
 	public IConnectionObject openConnection(String address) {
-		Object o = null;
 		try {
-			o = Connector.open(address);
+			Object o = Connector.open(address);
+			return new ConnectionObject(this, o);
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
 		}
-		return new ConnectionObject(this, o);
 	}
 
 	@Override
@@ -233,12 +233,11 @@ public class WindowsBluetoothConnectionUtility implements IConnectionUtility {
 	@Override
 	public String getConnectionTargetAddress(IConnectionObject connObject) {
 		String result = null;
-//		try {
-//			result = RemoteDevice.getRemoteDevice((StreamConnectionNotifier) connObject.getConnectionObject()).getBluetoothAddress();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		result = connObject.getTargetAddress();
+		try {
+			result = RemoteDevice.getRemoteDevice((StreamConnection) connObject.getConnectionObject()).getBluetoothAddress();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return result;
 	}
 

@@ -158,7 +158,7 @@ public abstract class ExternalConnector implements IExternalConnector {
 	}
 	
 	protected boolean addConnection(IConnection conn) {
-		System.out.println("Connection added");
+		System.out.println("Connection added: " + conn.getTargetDeviceAddress());
 //		IConnectionManager connManager = this.createConnectionManager(conn, this.getPingPongTimeout(), this.getSendTimeout(), this.getResendLimit(), this.getMinimalPingPongDelay());
 		IConnectionManager connManager = this.createConnectionManager(conn, this.getPingPongTimeoutInMillis(), this.getSendTimeoutInMillis(), this.getPingPongResendLimit(), this.getMinimalPingPongDelay());
 //		this.connListener.connectionEstablished(conn.getTargetDeviceAddress());
