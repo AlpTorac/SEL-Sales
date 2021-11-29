@@ -10,7 +10,6 @@ public abstract class ServerExternal extends External implements IServerExternal
 	protected ServerExternal(IServerController controller, IServerModel model,
 			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		super(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
-		this.setService(this.initService());
 	}
 	
 //	protected abstract IDeviceManager initDeviceManager();

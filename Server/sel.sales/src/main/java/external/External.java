@@ -32,6 +32,10 @@ public abstract class External implements IExternal {
 		this.subscribe();
 	}
 	
+	protected void setupService() {
+		this.setService(this.initService());
+	}
+	
 	protected abstract IDeviceManager initDeviceManager();
 	
 	protected IServiceConnectionManager getServiceConnectionManager() {
@@ -58,6 +62,9 @@ public abstract class External implements IExternal {
 	}
 
 	protected IService getService() {
+		if (this.service == null) {
+			this.setupService();
+		}
 		return this.service;
 	}
 	

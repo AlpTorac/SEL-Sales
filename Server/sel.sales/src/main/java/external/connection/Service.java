@@ -14,7 +14,6 @@ public abstract class Service implements IService {
 	private IDeviceManager deviceManager;
 	
 	private Object id;
-	private String url;
 	private String name;
 	
 	private IController controller;
@@ -31,7 +30,6 @@ public abstract class Service implements IService {
 		this.es = es;
 		this.deviceManager = deviceManager;
 		this.controller = controller;
-		this.url = this.generateURL();
 		this.pingPongTimeout = pingPongTimeout;
 		this.minimalPingPongDelay = minimalPingPongDelay;
 		this.sendTimeout = sendTimeout;
@@ -55,7 +53,7 @@ public abstract class Service implements IService {
 
 	@Override
 	public String getURL() {
-		return this.url;
+		return this.generateURL();
 	}
 
 	@Override

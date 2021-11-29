@@ -22,14 +22,14 @@ public abstract class DeviceManager implements IDeviceManager {
 		this.discoveredDevices = new ConcurrentHashMap<String, IDevice>();
 		this.knownDevices = new ConcurrentHashMap<String, DeviceManagerEntry>();
 		this.es = es;
-		this.cds = this.initDiscoveryStrategy();
 	}
 	
 	public DeviceManager(ExecutorService es, IController controller) {
-		this.discoveredDevices = new ConcurrentHashMap<String, IDevice>();
-		this.knownDevices = new ConcurrentHashMap<String, DeviceManagerEntry>();
-		this.es = es;
-		this.cds = this.initDiscoveryStrategy();
+//		this.discoveredDevices = new ConcurrentHashMap<String, IDevice>();
+//		this.knownDevices = new ConcurrentHashMap<String, DeviceManagerEntry>();
+//		this.es = es;
+//		this.cds = this.initDiscoveryStrategy();
+		this(es);
 		this.cdl = new DeviceDiscoveryListener(controller);
 	}
 	
@@ -100,7 +100,11 @@ public abstract class DeviceManager implements IDeviceManager {
 	}
 	
 	protected void discoverDevicesAlgorithm() {
-		Collection<IDevice> dcs = cds.discoverDevices();
+		if (this.cds == null) {
+			this.cds = this.initDiscoveryStrategy();
+		}
+		
+		Collection<IDevice> dcs = this.cds.discoverDevices();
 		
 		if (this.discoveredDevices != null) {
 			for (IDevice c : dcs) {

@@ -2,12 +2,14 @@ package server;
 
 import java.math.BigDecimal;
 
+import external.bluetooth.WindowsBluetoothConnectionUtility;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.external.BluetoothServerExternal;
 import server.external.IServerExternal;
+import server.external.StandardServerExternal;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import server.view.IServerView;
@@ -40,7 +42,7 @@ public class ServerApp extends Application {
 		model = new ServerModel();
 		controller = new StandardServerController(model);
 		view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
-		external = new BluetoothServerExternal(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
+		external = new StandardServerExternal(controller, model, new WindowsBluetoothConnectionUtility(), pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		view.startUp();
 		view.show();
 		model.loadSaved();

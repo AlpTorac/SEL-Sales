@@ -1,26 +1,20 @@
 package external;
 
-import javax.bluetooth.UUID;
-
-public class ServiceInfo {
-	private static ServiceInfo instance;
+public class ServiceInfo implements IServiceInfo {
+	private final Object serviceID;
+	private final String serviceName;
 	
-	private final UUID serviceID = new UUID(0x1111);
-	private final String serviceName = "SEL_Service";
-	
-	private ServiceInfo() {}
-	
-	public static ServiceInfo getInstance() {
-		if (instance == null) {
-			instance = new ServiceInfo();
-		}
-		return instance;
+	public ServiceInfo(Object serviceID, String serviceName) {
+		this.serviceID = serviceID;
+		this.serviceName = serviceName;
 	}
 	
-	public UUID getServiceID() {
+	@Override
+	public Object getServiceID() {
 		return this.serviceID;
 	}
 	
+	@Override
 	public String getServiceName() {
 		return this.serviceName;
 	}

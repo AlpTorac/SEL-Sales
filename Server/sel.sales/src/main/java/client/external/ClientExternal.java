@@ -5,8 +5,6 @@ import client.external.broadcaster.OrderBroadcaster;
 import client.model.IClientModel;
 import external.External;
 import external.connection.outgoing.IExternalConnector;
-import external.message.Message;
-import external.message.MessageContext;
 import model.order.IOrderData;
 
 public abstract class ClientExternal extends External implements IClientExternal {
@@ -16,11 +14,16 @@ public abstract class ClientExternal extends External implements IClientExternal
 	protected ClientExternal(IClientController controller, IClientModel model, long pingPongTimeout, long minimalPingPongDelay,
 			long sendTimeout, int resendLimit) {
 		super(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
-		this.setService(this.initService());
+	}
+	
+	protected void setupConnector() {
 		this.connector = this.initConnector();
 	}
 	
 	protected IExternalConnector getConnector() {
+		if (this.connector == null) {
+			this.setupConnector();
+		}
 		return this.connector;
 	}
 	
@@ -39,14 +42,14 @@ public abstract class ClientExternal extends External implements IClientExternal
 	@Override
 	public void refreshKnownDevices() {
 		super.refreshKnownDevices();
-		if (this.connector != null) {
-			this.connector.receiveKnownDeviceData(this.getModel().getAllKnownDeviceData());
+		if (this.getConnector() != null) {
+			this.getConnector().receiveKnownDeviceData(this.getModel().getAllKnownDeviceData());
 		}
 	}
 	
 	@Override
 	public void refreshOrders() {
-		if (this.connector != null) {
+		if (this.getConnector() != null) {
 			IOrderData[] orders = this.getModel().getAllPendingSendOrders();
 			if (orders != null) {
 				for (IOrderData order : orders) {

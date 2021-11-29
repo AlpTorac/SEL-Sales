@@ -8,10 +8,12 @@ import client.controller.IClientController;
 import client.controller.StandardClientController;
 import client.external.BluetoothClientExternal;
 import client.external.IClientExternal;
+import client.external.StandardClientExternal;
 import client.model.ClientModel;
 import client.model.IClientModel;
 import client.view.IClientView;
 import client.view.StandardClientView;
+import external.bluetooth.WindowsBluetoothConnectionUtility;
 
 public class ClientApp extends Application {
 	private static IClientModel model;
@@ -38,7 +40,7 @@ public class ClientApp extends Application {
 		model = new ClientModel();
 		controller = new StandardClientController(model);
 		view = new StandardClientView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
-		external = new BluetoothClientExternal(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
+		external = new StandardClientExternal(controller, model, new WindowsBluetoothConnectionUtility(), pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		view.startUp();
 		view.show();
 		model.loadSaved();
