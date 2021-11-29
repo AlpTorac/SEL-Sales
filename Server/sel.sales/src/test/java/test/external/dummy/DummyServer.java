@@ -17,7 +17,7 @@ import server.view.IServerView;
 import server.view.StandardServerView;
 import view.IView;
 
-public class DummyServer extends DummyInteractionPartaker implements Closeable {
+public class DummyServer extends DummyInteractionPartaker {
 	public DummyServer(String serviceID, String serviceName, String serverName, String serverAddress) {
 		super(serviceID, serviceName, serverName, serverAddress);
 	}
@@ -49,8 +49,8 @@ public class DummyServer extends DummyInteractionPartaker implements Closeable {
 	}
 	
 	@Override
-	public DummyServerExternal getExternal() {
-		return (DummyServerExternal) super.getExternal();
+	public IDummyExternal getExternal() {
+		return (IDummyExternal) super.getExternal();
 	}
 	
 	public IOrderData[] getAllUnconfirmedOrders() {

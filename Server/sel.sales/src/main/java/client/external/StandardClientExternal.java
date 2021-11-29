@@ -36,4 +36,7 @@ public class StandardClientExternal extends ClientExternal {
 				this.getPingPongTimeout(), this.getMinimalPingPongDelay(), this.getSendTimeout(), this.getResendLimit());
 	}
 
+	protected IConnectionUtility getConnectionUtility() {
+		return this.connUtil;
+	}
 }

@@ -2,6 +2,7 @@ package test.external.dummy;
 
 import client.controller.IClientController;
 import client.controller.StandardClientController;
+import client.external.ClientExternal;
 import client.model.ClientModel;
 import client.model.IClientModel;
 import client.view.IClientView;
@@ -46,12 +47,12 @@ public class DummyClient extends DummyInteractionPartaker {
 	}
 	
 	@Override
-	public DummyClientExternal getExternal() {
-		return (DummyClientExternal) super.getExternal();
+	public IDummyExternal getExternal() {
+		return (IDummyExternal) super.getExternal();
 	}
 	
 	public void refreshOrders() {
-		this.getExternal().refreshOrders();
+		((ClientExternal) this.getExternal()).refreshOrders();
 	}
 	
 	public IOrderData[] getAllSentOrders() {

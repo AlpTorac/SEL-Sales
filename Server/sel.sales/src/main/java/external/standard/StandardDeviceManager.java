@@ -15,10 +15,10 @@ public class StandardDeviceManager extends DeviceManager {
 		this.connUtil = connUtil;
 	}
 	
-	@Override
-	public StandardDevice getDevice(String deviceAddress) {
-		return (StandardDevice) super.getDevice(deviceAddress);
-	}
+//	@Override
+//	public IDevice getDevice(String deviceAddress) {
+//		return (IDevice) super.getDevice(deviceAddress);
+//	}
 	
 	@Override
 	public DeviceDiscoveryStrategy initDiscoveryStrategy() {

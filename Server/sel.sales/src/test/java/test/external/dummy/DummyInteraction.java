@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 import external.device.IDevice;
 import model.dish.IDishMenu;
@@ -25,8 +26,15 @@ public class DummyInteraction implements Closeable {
 		this.connPairs = new CopyOnWriteArrayList<ConnectionPair>();
 		this.server = server;
 		
+		this.initialStart();
+		
 		this.initialDiscovery();
 		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	protected void initialStart() {
+		this.server.start();
+		this.clients.forEach(c -> c.start());
 	}
 	
 	public void setServerTableNumbers(String serialisedRanges) {
@@ -127,8 +135,12 @@ public class DummyInteraction implements Closeable {
 		DummyConnection conn2 = (DummyConnection) dip2.getConnection(dip1.getAddress());
 		
 		while (conn1 == null || conn2 == null) {
+			System.out.println("waiting for connections");
+			GeneralTestUtilityClass.performWait(100);
 			conn1 = (DummyConnection) dip1.getConnection(dip2.getAddress());
+			System.out.println("Conn1: " + conn1);
 			conn2 = (DummyConnection) dip2.getConnection(dip1.getAddress());
+			System.out.println("Conn2: " + conn2);
 		}
 		InteractionUtilityClass.bindConnectionStreams(conn1, conn2);
 		return this.createConnectionPair(conn1, conn2);
@@ -171,6 +183,10 @@ public class DummyInteraction implements Closeable {
 				.findFirst();
 		
 		return o.isPresent() ? o.get() : null;
+	}
+	
+	protected void forEachClient(Consumer<DummyClient> consumer) {
+		this.clients.forEach(c -> consumer.accept(c));
 	}
 	
 	public void close() {

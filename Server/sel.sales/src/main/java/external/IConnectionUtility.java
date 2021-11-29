@@ -10,9 +10,9 @@ import external.connection.incoming.IConnectionNotifier;
 import external.device.IDevice;
 
 public interface IConnectionUtility {
-	Object getServiceID(Object serviceObject);
-	String getDeviceName(Object deviceObject);
-	String getDeviceAddress(Object deviceObject);
+//	Object getServiceID(Object serviceObject);
+//	String getDeviceName(Object deviceObject);
+//	String getDeviceAddress(Object deviceObject);
 	
 	String getServiceURL(IService service);
 	String getConnectionTargetAddress(IConnectionObject connObject);

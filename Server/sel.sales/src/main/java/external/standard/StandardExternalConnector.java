@@ -30,7 +30,7 @@ public class StandardExternalConnector extends ExternalConnector {
 	@Override
 	protected Object getConnectionObject(Object serviceID, IDevice serviceHost) {
 		String address = this.getConnectionAddress(serviceID, serviceHost);
-		System.out.println("Connecting to service: " + address);
+		System.out.println("Connecting to service: " + address + "\n with ID: " + serviceID.toString());
 		IConnectionObject conn = this.connUtil.openConnection(address);
 		System.out.println("Connected to service");
 		return conn;

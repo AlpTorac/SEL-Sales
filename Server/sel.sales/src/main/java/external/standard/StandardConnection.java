@@ -19,7 +19,6 @@ public class StandardConnection implements IConnection {
 		this.address = this.connectionObject.getTargetAddress();
 		this.is = this.connectionObject.getInputStream();
 		this.os = this.connectionObject.getOutputStream();
-		
 	}
 	
 	@Override

@@ -43,7 +43,9 @@ public abstract class DummyInteractionPartaker implements Closeable {
 		
 		this.name = name;
 		this.address = address;
-		
+	}
+	
+	public void start() {
 		this.device = new DummyDevice(this.name, this.address);
 		this.model = this.initModel();
 		this.controller = this.initController();

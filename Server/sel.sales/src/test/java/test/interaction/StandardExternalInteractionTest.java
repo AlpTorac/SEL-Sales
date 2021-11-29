@@ -4,62 +4,31 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import client.controller.IClientController;
-import client.controller.StandardClientController;
-import client.external.IClientExternal;
-import client.model.ClientModel;
-import client.model.IClientModel;
-import external.device.IDevice;
-import model.connectivity.IDeviceData;
+import external.IConnectionUtility;
 import model.dish.IDishMenu;
 import model.dish.IDishMenuData;
 import server.controller.IServerController;
+import server.controller.ServerController;
 import server.controller.StandardServerController;
 import server.external.IServerExternal;
+import server.external.StandardServerExternal;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
-import test.external.dummy.DummyClient;
-import test.external.dummy.DummyClientExternal;
-import test.external.dummy.DummyConnection;
-import test.external.dummy.DummyDevice;
-import test.external.dummy.DummyDeviceDiscoveryStrategy;
-import test.external.dummy.DummyInteraction;
-import test.external.dummy.DummyServer;
-import test.external.dummy.DummyConnectivityTestWrapper;
-import test.external.dummy.DummyServerExternal;
-import test.external.dummy.InteractionUtilityClass;
-//@Execution(value = ExecutionMode.SAME_THREAD)
-class InteractionTest {
+import test.external.dummy.DummyConnectionUtility;
+import test.external.dummy.DummyStandardClient;
+import test.external.dummy.DummyStandardInteraction;
+import test.external.dummy.DummyStandardServer;
+
+class StandardExternalInteractionTest {
 	private long waitTime = 100;
-	
-//	private DummyDevice client;
-	private String clientAddress = "clientAddress";
-	private String clientName = "clientName";
-//	private IClientModel clientModel;
-//	private IClientController clientController;
-//	private DummyClientExternal clientExternal;
-	
-//	private DummyDevice server;
-	private String serverAddress = "serverAddress";
-	private String serverName = "serverName";
-//	private IServerModel serverModel;
-//	private IServerController serverController;
-//	private DummyServerExternal serverExternal;
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -94,27 +63,37 @@ class InteractionTest {
 	private String so1;
 	private String so2;
 	
-	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
-	
 	private String serviceID = "serviceID";
 	private String serviceName = "serviceName";
 	
 	private IDishMenu menu;
 	
-	private DummyInteraction interaction;
+	private DummyStandardServer server;
+	private String serverName = "serverName";
+	private String serverAddress = "serverAddress";
+	private DummyConnectionUtility connUtilServer;
 	
-	private DummyServer server;
-	private DummyClient client;
+	private DummyStandardClient client;
+	private String clientName = "clientName";
+	private String clientAddress = "clientAddress";
+	private DummyConnectionUtility connUtilClient;
+	
+	private DummyStandardInteraction interaction;
 	
 	private String serialisedTableNumbers = "1-2,4,5,1-10,90,11";
 	private String serialisedTableNumbers2 = "1-5";
 	
+	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
+	
 	@BeforeEach
 	void prep() {
-		server = new DummyServer(serviceID, serviceName, serverName, serverAddress);
-		client = new DummyClient(serviceID, serviceName, clientName, clientAddress);
+		this.connUtilServer = new DummyConnectionUtility(this.serverAddress);
+		this.connUtilClient = new DummyConnectionUtility(this.clientAddress);
 		
-		interaction = new DummyInteraction(server, client);
+		server = new DummyStandardServer(serverName, serverAddress, connUtilServer);
+		client = new DummyStandardClient(clientName, clientAddress, connUtilClient);
+		
+		interaction = new DummyStandardInteraction(server, client);
 		interaction.connectPartakers(server, client);
 		
 		menu = server.createDishMenu();
@@ -136,23 +115,6 @@ class InteractionTest {
 
 	@Test
 	void deviceFamiliarisingTest() {
-//		Assertions.assertEquals(serverModel.getAllDiscoveredDeviceData().length, 1);
-//		Assertions.assertEquals(serverModel.getAllDiscoveredDeviceData()[0].getDeviceName(), clientName);
-//		Assertions.assertEquals(serverModel.getAllDiscoveredDeviceData()[0].getDeviceAddress(), clientAddress);
-//		
-//		Assertions.assertEquals(clientModel.getAllDiscoveredDeviceData().length, 1);
-//		Assertions.assertEquals(clientModel.getAllDiscoveredDeviceData()[0].getDeviceName(), serverName);
-//		Assertions.assertEquals(clientModel.getAllDiscoveredDeviceData()[0].getDeviceAddress(), serverAddress);
-//		
-//		Assertions.assertEquals(serverModel.getAllKnownDeviceData().length, 1);
-//		Assertions.assertEquals(serverModel.getAllKnownDeviceData()[0].getDeviceName(), clientName);
-//		Assertions.assertEquals(serverModel.getAllKnownDeviceData()[0].getDeviceAddress(), clientAddress);
-//		Assertions.assertEquals(serverModel.getAllKnownDeviceData()[0].getIsAllowedToConnect(), true);
-//		
-//		Assertions.assertEquals(clientModel.getAllKnownDeviceData().length, 1);
-//		Assertions.assertEquals(clientModel.getAllKnownDeviceData()[0].getDeviceName(), serverName);
-//		Assertions.assertEquals(clientModel.getAllKnownDeviceData()[0].getDeviceAddress(), serverAddress);
-//		Assertions.assertEquals(clientModel.getAllKnownDeviceData()[0].getIsAllowedToConnect(), true);
 		Assertions.assertEquals(server.getAllDiscoveredDeviceData().length, 1);
 		Assertions.assertEquals(server.getAllDiscoveredDeviceData()[0].getDeviceName(), clientName);
 		Assertions.assertEquals(server.getAllDiscoveredDeviceData()[0].getDeviceAddress(), clientAddress);
@@ -174,11 +136,6 @@ class InteractionTest {
 	
 	@Test
 	void connectionTest() {
-//		clientExternal.refreshKnownDevices();
-//		GeneralTestUtilityClass.performWait(100);
-//		serverExternal.refreshKnownDevices();
-//		GeneralTestUtilityClass.performWait(100);
-		
 		Assertions.assertEquals(client.getAllKnownDeviceData().length, 1);
 		Assertions.assertEquals(client.getAllKnownDeviceData()[0].getIsConnected(), true);
 		
@@ -189,8 +146,6 @@ class InteractionTest {
 	@Test
 	void menuExchangeTest() {
 		interaction.setServerMenu(menu);
-//		GeneralTestUtilityClass.performWait(100);
-//		menuData = clientModel.getMenuData();
 		
 		IDishMenuData menuData = client.getMenuData();
 		while (menuData.getAllDishMenuItems().length == 0) {

@@ -34,27 +34,27 @@ public class WindowsBluetoothConnectionUtility implements IConnectionUtility {
 	
 	private final int serviceIDEntryID = 0x0003;
 	
-	@Override
-	public UUID getServiceID(Object serviceObject) {
-		return (UUID) ((ServiceRecord) serviceObject).getAttributeValue(serviceIDEntryID).getValue();
-	}
-
-	@Override
-	public String getDeviceName(Object deviceObject) {
-		String result = null;
-		RemoteDevice dev = (RemoteDevice) deviceObject;
-		try {
-			result = dev.getFriendlyName(false);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
-
-	@Override
-	public String getDeviceAddress(Object deviceObject) {
-		return ((RemoteDevice) deviceObject).getBluetoothAddress();
-	}
+//	@Override
+//	public UUID getServiceID(Object serviceObject) {
+//		return (UUID) ((ServiceRecord) serviceObject).getAttributeValue(serviceIDEntryID).getValue();
+//	}
+//
+//	@Override
+//	public String getDeviceName(Object deviceObject) {
+//		String result = null;
+//		RemoteDevice dev = (RemoteDevice) deviceObject;
+//		try {
+//			result = dev.getFriendlyName(false);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return result;
+//	}
+//
+//	@Override
+//	public String getDeviceAddress(Object deviceObject) {
+//		return ((RemoteDevice) deviceObject).getBluetoothAddress();
+//	}
 
 	@Override
 	public IConnectionNotifier publishService(IService service) {
@@ -75,11 +75,13 @@ public class WindowsBluetoothConnectionUtility implements IConnectionUtility {
 	@Override
 	public IConnectionObject acceptAndOpenAlgorithm(IConnectionNotifier notifier) {
 		Object o = null;
+		System.out.println("Detecting connection for: " + notifier.getService().getURL());
 		try {
 			o = Connector.open(notifier.getService().getURL());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Opened connection for: " + notifier.getService().getURL());
 		return new ConnectionObject(this, o);
 	}
 
@@ -272,6 +274,8 @@ public class WindowsBluetoothConnectionUtility implements IConnectionUtility {
 
 	@Override
 	public String getServiceURL(IService service) {
+//		System.out.println("without UUID cast: " + "btspp://localhost:" + this.serviceID + ";name=" + service.getName());
+//		System.out.println("with UUID cast: btspp://localhost:" + ((UUID) service.getID()) + ";name=" + service.getName());
 		return "btspp://localhost:" + ((UUID) service.getID()) + ";name=" + service.getName();
 	}
 

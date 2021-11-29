@@ -177,6 +177,7 @@ public abstract class ExternalConnector implements IExternalConnector {
 				}
 				hasRunningRunnable = true;
 				IConnection conn = initConnection(getConnectionObject(serviceID, serviceHost));
+				System.out.println("Adding connection: " + conn.getTargetDeviceAddress());
 				if (!addConnection(conn)) {
 					return;
 				}

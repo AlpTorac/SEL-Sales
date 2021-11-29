@@ -35,7 +35,7 @@ public class DummyServerExternal extends ServerExternal implements IDummyExterna
 		this(id, name, controller, model, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
 		this.attemptToReconnect = attemptToReconnect;
 		this.setService(this.initService());
-		this.getService().publish();
+//		this.getService().publish();
 	}
 	
 	public ExecutorService getES() {

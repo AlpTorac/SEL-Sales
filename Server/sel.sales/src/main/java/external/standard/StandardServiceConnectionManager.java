@@ -31,7 +31,7 @@ public class StandardServiceConnectionManager extends ServiceConnectionManager {
 		super(manager, controller, es, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		this.connUtil = connUtil;
 		this.connNotifier = this.connUtil.publishService(service);
-		System.out.println("Service connection manager for: " + this.connNotifier.getService().getName());
+		System.out.println("Service connection manager for: " + service.getName() + "\n with URL: " + this.connUtil.getServiceURL(service));
 //		this.setPingPongTimeout(pingPongTimeout);
 //		this.setSendTimeout(sendTimeout);
 //		this.setResendLimit(resendLimit);
@@ -44,21 +44,20 @@ public class StandardServiceConnectionManager extends ServiceConnectionManager {
 
 	@Override
 	protected Object getConnectionObject() {
+		IConnectionObject connObject = connNotifier.acceptAndOpen();
+		System.out.println("Incoming connection detected --------------------------------------------");
 		try {
-			IConnectionObject connObject = connNotifier.acceptAndOpen();
-			System.out.println("Incoming connection detected");
 			if (!this.isConnectionAllowed(connObject.getTargetAddress())) {
 				connObject.close();
 				connObject = connNotifier.acceptAndOpen();
 			}
-			System.out.println("Connection established");
-			this.makeNewConnectionThread();
-			System.out.println("New connection thread created");
-			return connObject;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
 		}
+		System.out.println("Connection established");
+		this.makeNewConnectionThread();
+		System.out.println("New connection thread created");
+		return connObject;
 	}
 
 	@Override
