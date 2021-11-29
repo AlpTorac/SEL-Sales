@@ -49,13 +49,13 @@ public class StandardServiceConnectionManager extends ServiceConnectionManager {
 			connObject = connNotifier.acceptAndOpen();
 		}
 		System.out.println("Incoming connection detected: " + connObject.getTargetAddress());
-		try {
-			if (connObject != null && !this.isConnectionAllowed(connObject.getTargetAddress())) {
+		if (connObject != null && !this.isConnectionAllowed(connObject.getTargetAddress())) {
+			try {
 				connObject.close();
-//				connObject = connNotifier.acceptAndOpen();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		System.out.println("Connection established");
 		this.makeNewConnectionThread();
