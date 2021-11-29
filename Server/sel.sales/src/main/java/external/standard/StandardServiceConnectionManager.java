@@ -54,7 +54,7 @@ public class StandardServiceConnectionManager extends ServiceConnectionManager {
 			System.out.println("New connection thread created");
 			return connObject;
 		} catch (IOException e) {
-//			e.printStackTrace();
+			e.printStackTrace();
 			return null;
 		}
 	}
