@@ -12,8 +12,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import model.connectivity.DeviceData;
 import model.connectivity.IDeviceData;
@@ -22,12 +20,15 @@ import model.dish.IDishMenuData;
 import model.order.IOrderData;
 import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyClient;
+import test.external.dummy.DummyConnectionUtility;
 import test.external.dummy.DummyInteraction;
 import test.external.dummy.DummyServer;
+import test.external.dummy.DummyStandardClient;
+import test.external.dummy.DummyStandardInteraction;
+import test.external.dummy.DummyStandardServer;
 
 @Disabled("Takes too long to finish")
-//@Execution(value = ExecutionMode.SAME_THREAD)
-class MultipleClientInteractionTest {
+class MultipleStandardExternalInteractionTest {
 	private long waitTime = 100;
 	
 	private String client1Address = "client1Address";
@@ -93,24 +94,34 @@ class MultipleClientInteractionTest {
 	
 	private IDishMenu menu;
 	
-	private DummyInteraction interaction;
+	private DummyStandardInteraction interaction;
 	
-	private DummyServer server;
-	private DummyClient[] clients;
+	private DummyStandardServer server;
+	private DummyStandardClient[] clients;
 	
-	private DummyClient client1;
-	private DummyClient client2;
-	private DummyClient client3;
+	private DummyStandardClient client1;
+	private DummyStandardClient client2;
+	private DummyStandardClient client3;
 	
+	private DummyConnectionUtility connUtilServer;
+	private DummyConnectionUtility connUtilClient1;
+	private DummyConnectionUtility connUtilClient2;
+	private DummyConnectionUtility connUtilClient3;
+		
 	@BeforeEach
 	void prep() {
-		server = new DummyServer(serviceID, serviceName, serverName, serverAddress);
-		client1 = new DummyClient(serviceID, serviceName, client1Name, client1Address);
-		client2 = new DummyClient(serviceID, serviceName, client2Name, client2Address);
-		client3 = new DummyClient(serviceID, serviceName, client3Name, client3Address);
-		clients = new DummyClient[] {client1, client2, client3};
+		connUtilServer = new DummyConnectionUtility(serverAddress);
+		connUtilClient1 = new DummyConnectionUtility(client1Address);
+		connUtilClient2 = new DummyConnectionUtility(client2Address);
+		connUtilClient3 = new DummyConnectionUtility(client3Address);
 		
-		interaction = new DummyInteraction(server, clients);
+		server = new DummyStandardServer(serverName, serverAddress, connUtilServer);
+		client1 = new DummyStandardClient(client1Name, client1Address, connUtilClient1);
+		client2 = new DummyStandardClient(client2Name, client2Address, connUtilClient2);
+		client3 = new DummyStandardClient(client3Name, client3Address, connUtilClient3);
+		clients = new DummyStandardClient[] {client1, client2, client3};
+		
+		interaction = new DummyStandardInteraction(server, clients);
 		for (DummyClient dc : clients) {
 			interaction.connectPartakers(server, dc);
 		}
