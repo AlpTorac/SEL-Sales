@@ -181,7 +181,8 @@ public abstract class DummyInteractionPartaker implements Closeable {
 	}
 	
 	public boolean tableNumbersEqual(DummyInteractionPartaker dip) {
-		return this.getTableNumbers().size() == dip.getTableNumbers().size() &&
+		return this.getTableNumbers() != null && dip.getTableNumbers() != null &&
+				this.getTableNumbers().size() == dip.getTableNumbers().size() &&
 				GeneralTestUtilityClass.arrayContentEquals(this.getTableNumbers().toArray(Integer[]::new),
 						dip.getTableNumbers().toArray(Integer[]::new),
 						(tn1,tn2)->{return tn1.intValue() == tn2.intValue();});
