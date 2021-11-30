@@ -77,7 +77,7 @@ public class DummyConnectionUtility implements IConnectionUtility {
 
 	@Override
 	public IConnectionNotifier publishService(IService service) {
-		return new StandardConnectionNotifier(service, this);
+		return new StandardConnectionNotifier(service, this, null);
 	}
 
 	@Override

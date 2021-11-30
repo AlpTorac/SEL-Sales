@@ -6,13 +6,15 @@ import external.connection.IService;
 import external.connection.incoming.IConnectionNotifier;
 
 public class StandardConnectionNotifier implements IConnectionNotifier {
-
 	private IConnectionUtility connUtil;
 	private IService service;
 	
-	public StandardConnectionNotifier(IService service, IConnectionUtility connUtil) {
+	private Object connectionNotifierObject;
+	
+	public StandardConnectionNotifier(IService service, IConnectionUtility connUtil, Object connectionNotifierObject) {
 		this.service = service;
 		this.connUtil = connUtil;
+		this.connectionNotifierObject = connectionNotifierObject;
 	}
 	
 	@Override
@@ -24,5 +26,9 @@ public class StandardConnectionNotifier implements IConnectionNotifier {
 	public IService getService() {
 		return this.service;
 	}
-	
+
+	@Override
+	public Object getConnectionNotifierObject() {
+		return this.connectionNotifierObject;
+	}
 }
