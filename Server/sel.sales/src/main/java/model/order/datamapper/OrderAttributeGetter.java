@@ -1,11 +1,11 @@
-package model.order.serialise;
+package model.order.datamapper;
 
 import model.order.IOrderCollector;
 import model.order.IOrderData;
-import model.order.OrderAttributeFormat;
+import model.order.serialise.OrderAttributeFormat;
 import model.util.ISerialiser;
 
-public abstract class OrderAttributeSerialiser implements ISerialiser {
+public abstract class OrderAttributeGetter implements ISerialiser {
 	private OrderAttributeFormat format = new OrderAttributeFormat();
 	
 	public String serialiseAll(IOrderCollector orderCollector) {
@@ -36,7 +36,12 @@ public abstract class OrderAttributeSerialiser implements ISerialiser {
 		return result;
 	}
 	
-	protected abstract String serialiseOrderAttribute(IOrderCollector orderCollector, String orderID);
+	protected String serialiseOrderAttribute(IOrderCollector orderCollector, String orderID) {
+		return this.serialiseValue(orderCollector.getOrderAttribute(orderID, this.getAssociatedOrderAttribute()));
+	}
+	
+	protected abstract String serialiseValue(Object attributeValue);
+	protected abstract OrderAttribute getAssociatedOrderAttribute();
 	
 	protected OrderAttributeFormat getFormat() {
 		return this.format;

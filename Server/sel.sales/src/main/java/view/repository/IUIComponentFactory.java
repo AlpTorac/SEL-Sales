@@ -60,6 +60,7 @@ public interface IUIComponentFactory {
 //	}
 	public IRootComponent createRootComponent();
 	public IButton createButton();
+	public ISingleRowTextBox createSingleRowTextBox();
 	public ITextBox createTextBox();
 	public IInnerFrame createInnerFrame(IUIComponent parent);
 	public <T> ITable<T> createTable();

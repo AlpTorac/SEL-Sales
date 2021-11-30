@@ -4,11 +4,13 @@ import model.IModel;
 import model.filewriter.DeviceDataFile;
 import model.filewriter.DishMenuFile;
 import model.filewriter.OrderFile;
+import model.filewriter.OrderNoteFile;
 import model.filewriter.OrderStatusFile;
 import model.filewriter.OrderTableNumberFile;
 import model.filewriter.StandardDeviceDataFile;
 import model.filewriter.StandardDishMenuFile;
 import model.filewriter.StandardOrderFile;
+import model.filewriter.StandardOrderNoteFile;
 import model.filewriter.StandardOrderStatusFile;
 import model.filewriter.StandardOrderTableNumberFile;
 import model.settings.SettingsField;
@@ -17,6 +19,7 @@ public class FileManager implements IFileManager {
 	private OrderFile orderMasterFile;
 	private OrderStatusFile orderStatusFile;
 	private OrderTableNumberFile orderTableNumberFile;
+	private OrderNoteFile orderNoteFile;
 	
 	private DishMenuFile dishMenuWriter;
 	
@@ -152,6 +155,11 @@ public class FileManager implements IFileManager {
 	}
 	
 	@Override
+	public boolean writeOrderNote(String data) {
+		return this.orderNoteFile.writeToFile(data);
+	}
+	
+	@Override
 	public void setResourcesFolderAddress(String folderAddress) {
 		this.settingsFolderAddress = folderAddress;
 		if (this.deviceDataFile != null) {
@@ -166,10 +174,14 @@ public class FileManager implements IFileManager {
 		if (this.orderTableNumberFile != null) {
 			this.orderTableNumberFile.close();
 		}
+		if (this.orderNoteFile != null) {
+			this.orderNoteFile.close();
+		}
 		this.deviceDataFile = new StandardDeviceDataFile(this.settingsFolderAddress);
 		this.settingsFile = new StandardSettingsFile(this.settingsFolderAddress);
 		this.orderStatusFile = new StandardOrderStatusFile(this.settingsFolderAddress);
 		this.orderTableNumberFile = new StandardOrderTableNumberFile(this.settingsFolderAddress);
+		this.orderNoteFile = new StandardOrderNoteFile(this.settingsFolderAddress);
 	}
 
 	@Override
@@ -191,10 +203,13 @@ public class FileManager implements IFileManager {
 	public void loadSavedOrders() {
 		this.initOrders();
 		if (this.orderStatusFile != null) {
-			this.model.setOrderStatuses(this.orderStatusFile.readFile());
+			this.model.setOrderStatusesFromFile(this.orderStatusFile.readFile());
 		}
 		if (this.orderTableNumberFile != null) {
 			this.model.setOrderTableNumbersFromFile(this.orderTableNumberFile.readFile());
+		}
+		if (this.orderNoteFile != null) {
+			this.model.setOrderNotesFromFile(this.orderNoteFile.readFile());
 		}
 	}
 }

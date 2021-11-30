@@ -9,6 +9,7 @@ public interface IFileManager extends HasSettingsField {
 	boolean writeDishMenuData(String data);
 	boolean writeSettings(String settings);
 	boolean writeDeviceDatas(String deviceDatas);
+	boolean writeOrderNote(String serialiseFor);
 	default void loadSaved() {
 		this.loadSavedSettings();
 		this.loadSavedDishMenu();

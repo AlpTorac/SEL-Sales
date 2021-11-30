@@ -2,10 +2,12 @@ package model.order;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import model.id.EntityID;
 import model.id.FixIDFactory;
+import model.order.datamapper.OrderAttribute;
 
 public class OrderCollector implements IOrderCollector {
 	private Map<EntityID, OrderCollectorEntry> orders = new ConcurrentSkipListMap<EntityID, OrderCollectorEntry>();
@@ -15,6 +17,10 @@ public class OrderCollector implements IOrderCollector {
 	
 	public OrderCollector() {
 		
+	}
+	
+	protected IOrderData constructOrderData(IOrder order) {
+		return this.orderDataFac.orderToData(order);
 	}
 	
 	private OrderCollectorEntry getEntry(String id) {
@@ -33,20 +39,11 @@ public class OrderCollector implements IOrderCollector {
 	
 	@Override
 	public void addOrder(IOrderData item) {
-//		EntityID id = this.orderIDFac.createOrderID(item.getID());
-//		IOrder order = this.orderFac.createOrder(item);
-//		
-//		if (!this.orders.containsKey(item.getID())) {
-//			return this.orders.put(item.getID(), new OrderCollectorEntry(order)) == null;
-//		} else {
-//			return false;
-//		}
 		OrderCollectorEntry oldEntry = this.getEntry(item.getID().toString());
 		OrderCollectorEntry newEntry = new OrderCollectorEntry(this.orderFac.createOrder(item));
 		
 		if (oldEntry != null) {
-			newEntry.setOrderStatus(oldEntry.getOrderStatus());
-			newEntry.setWritten(oldEntry.isWritten());
+			newEntry.setAllAttributesSameAs(oldEntry);
 		}
 		
 		this.orders.put(item.getID(), newEntry);
@@ -61,7 +58,7 @@ public class OrderCollector implements IOrderCollector {
 	public IOrderData getOrder(String id) {
 		IOrder order = this.getOrderFromMap(id);
 		if (order != null) {
-			return this.orderDataFac.orderToData(order);	
+			return this.constructOrderData(order);
 		}
 		return null;
 	}
@@ -69,7 +66,7 @@ public class OrderCollector implements IOrderCollector {
 	@Override
 	public IOrderData[] getAllOrders() {
 		return this.orders.values().stream()
-				.map(i -> this.orderDataFac.orderToData(i.getOrder()))
+				.map(i -> this.constructOrderData(i.getOrder()))
 				.toArray(IOrderData[]::new);
 	}
 
@@ -79,74 +76,32 @@ public class OrderCollector implements IOrderCollector {
 	}
 	
 	@Override
-	public IOrderData[] getAllOrdersWithStatus(OrderStatus os) {
-		return this.orders.values().stream()
-				.filter(e -> e.getOrderStatus().equals(os))
-				.map(i -> this.orderDataFac.orderToData(i.getOrder()))
-				.toArray(IOrderData[]::new);
-	}
-
-	@Override
-	public void editOrderStatus(String id, OrderStatus os) {
-		this.orders.values().stream()
-		.filter(e -> e.getOrder().getID().serialisedIDequals(id))
-		.forEach(e -> e.setOrderStatus(os));
+	public IOrderData getOrderIfAttributeEquals(String orderID, OrderAttribute oa, Object attributeValue) {
+		OrderCollectorEntry entry = this.getEntry(orderID);
+		if (entry != null) {
+			return entry.getAttribute(oa).equals(attributeValue) ? this.constructOrderData(entry.getOrder()) : null;
+		}
+		return null;
 	}
 	
 	@Override
-	public void removeOrdersWithStatus(OrderStatus os) {
-		this.orders.values().removeIf(e -> e.getOrderStatus().equals(os));
-	}
-	
-	@Override
-	public boolean orderStatusEquals(String id, OrderStatus os) {
-		return this.orders.values().stream()
-				.filter(e -> e.getOrder().getID().toString().equals(id))
-				.map(e -> e.getOrderStatus().equals(os))
-				.reduce(false, (e1,e2) -> Boolean.logicalOr(e1, e2));
-	}
-	
-	@Override
-	public void editWritten(String id, boolean isWritten) {
-		this.orders.values().stream()
-		.filter(e -> e.getOrder().getID().toString().equals(id))
-		.forEach(e -> e.setWritten(isWritten));
-	}
-	
-	@Override
-	public boolean isWritten(String id) {
-		OrderCollectorEntry entry = this.getEntry(id);
-		return entry != null ? entry.isWritten() : false;
-	}
-	
-	@Override
-	public IOrderData[] getAllWrittenOrders() {
-		return this.orders.values().stream()
-				.filter(e -> e.isWritten())
-				.map(e -> this.orderDataFac.orderToData(e.getOrder()))
+	public IOrderData[] getAllOrdersWithAttribute(OrderAttribute oa, Object attrValue) {
+		return this.orders.values().stream().filter(oce -> oce.getAttribute(oa).equals(attrValue))
+				.map(oce -> constructOrderData(oce.getOrder()))
 				.toArray(IOrderData[]::new);
 	}
 	
 	@Override
-	public int getTableNumber(String orderID) {
-		OrderCollectorEntry e = this.getEntry(orderID);
-		if (e != null) {
-			return this.getEntry(orderID).getTableNumber();
-		}
-		return this.getPlaceholderTableNumber();
-	}
-
-	@Override
-	public void setTableNumber(String orderID, int tableNumber) {
-		OrderCollectorEntry e = this.getEntry(orderID);
-		if (e != null) {
-			e.setTableNumber(tableNumber);
-		}
+	public void removeAllOrdersWithAttribute(OrderAttribute oa, Object attrValue) {
+		this.orders.values().removeIf(oce -> oce.getAttribute(oa).equals(attrValue));
 	}
 	
 	@Override
-	public OrderStatus getOrderStatus(String id) {
-		return this.getEntry(id).getOrderStatus();
+	public void setOrderAttribute(String orderID, OrderAttribute oa, Object attrValue) {
+		OrderCollectorEntry e = this.getEntry(orderID);
+		if (e != null) {
+			e.setAttribute(oa, attrValue);
+		}
 	}
 	
 	@Override
@@ -154,45 +109,71 @@ public class OrderCollector implements IOrderCollector {
 		return this.getEntry(orderID) != null;
 	}
 	
+	@Override
+	public Object getOrderAttribute(String orderID, OrderAttribute oa) {
+		OrderCollectorEntry e = this.getEntry(orderID);
+		if (e != null) {
+			return e.getAttribute(oa);
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean orderAttributeEquals(String orderID, OrderAttribute oa, Object attributeValue) {
+		OrderCollectorEntry e = this.getEntry(orderID);
+		if (e != null) {
+			return e.getAttribute(oa).equals(attributeValue);
+		}
+		return false;
+	}
+	
+	@Override
+	public void removeOrderIfAttributeEquals(String orderID, OrderAttribute oa, Object attributeValue) {
+		OrderCollectorEntry e = this.getEntry(orderID);
+		if (e != null && e.getAttribute(oa).equals(attributeValue)) {
+			this.orders.values().remove(e);
+		}
+	}
+	
 	protected class OrderCollectorEntry {
 		private IOrder order;
-		private OrderStatus os;
-		private boolean isWritten;
-		private int tableNumber;
+		
+		private Map<OrderAttribute, Object> attributes;
 		
 		protected OrderCollectorEntry(IOrder order) {
 			this.order = order;
-			this.os = OrderStatus.UNDEFINED;
-			this.isWritten = false;
-			this.tableNumber = getPlaceholderTableNumber();
+			this.initMap();
+		}
+		
+		public void initMap() {
+			this.attributes = new ConcurrentHashMap<OrderAttribute, Object>();
+			
+			this.attributes.put(OrderAttribute.STATUS, OrderStatus.UNDEFINED);
+			this.attributes.put(OrderAttribute.IS_WRITTEN, false);
+			this.attributes.put(OrderAttribute.TABLE_NUMBER, getPlaceholderTableNumber());
+			this.attributes.put(OrderAttribute.NOTE, "");
 		}
 		
 		public IOrder getOrder() {
 			return this.order;
 		}
 		
-		public OrderStatus getOrderStatus() {
-			return this.os;
+		public Object getAttribute(OrderAttribute oa) {
+			return this.attributes.get(oa);
 		}
 		
-		public void setOrderStatus(OrderStatus os) {
-			this.os = os;
+		public void setAttribute(OrderAttribute oa, Object value) {
+			if (value != null) {
+				this.attributes.put(oa, value);
+			}
 		}
 		
-		public boolean isWritten() {
-			return this.isWritten;
+		public void setAllAttributesSameAs(OrderCollectorEntry oce) {
+			this.attributes.putAll(oce.getAttributeCollector());
 		}
 		
-		public void setWritten(boolean isWritten) {
-			this.isWritten = isWritten;
-		}
-		
-		public int getTableNumber() {
-			return this.tableNumber;
-		}
-		
-		public void setTableNumber(int tableNumber) {
-			this.tableNumber = tableNumber;
+		private Map<OrderAttribute, Object> getAttributeCollector() {
+			return this.attributes;
 		}
 	}
 }

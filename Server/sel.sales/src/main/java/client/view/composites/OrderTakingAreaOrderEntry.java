@@ -36,8 +36,14 @@ public class OrderTakingAreaOrderEntry extends OrderEntry {
 	}
 	
 	@Override
+	protected void noteBoxSetupExtras() {
+		
+	}
+	
+	@Override
 	public void orderSentToNextTab() {
 		this.getController().getModel().setOrderTableNumber(this.mostRecentOrderID, this.getTableNumberSelection());
+		this.getController().getModel().setOrderNote(this.mostRecentOrderID, this.getCurrentOrderNote());
 		this.resetUserInput();
 	}
 	

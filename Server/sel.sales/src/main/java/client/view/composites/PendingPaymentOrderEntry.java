@@ -37,13 +37,25 @@ public class PendingPaymentOrderEntry extends OrderEntry {
 			IOrderData data) {
 		super(controller, fac, notifyTarget, data);
 		
+//		this.optionsArea = this.getUIFactory().createVBoxLayout();
+//		this.optionsArea.addUIComponents(new IUIComponent[] {
+//				this.placeOptionLayout = this.initPlaceOptionsArea(),
+//				this.paymentOptionLayout = this.initPaymentOptionsArea()
+//		});
+		
+//		this.addUIComponent(this.optionsArea);
+	}
+	
+	protected void addBottomPart() {
+		super.addBottomPart();
+		
 		this.optionsArea = this.getUIFactory().createVBoxLayout();
 		this.optionsArea.addUIComponents(new IUIComponent[] {
 				this.placeOptionLayout = this.initPlaceOptionsArea(),
 				this.paymentOptionLayout = this.initPaymentOptionsArea()
 		});
 		
-		this.addUIComponent(this.optionsArea);
+		this.addComponentsVertically(this.optionsArea);
 	}
 	
 	protected IHBoxLayout initPlaceOptionsArea() {

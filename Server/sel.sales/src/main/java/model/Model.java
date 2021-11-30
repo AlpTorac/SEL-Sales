@@ -2,6 +2,8 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -25,10 +27,17 @@ import model.order.IOrderData;
 import model.order.IOrderHelper;
 import model.order.OrderHelper;
 import model.order.OrderStatus;
-import model.order.OrderStatusSetter;
-import model.order.OrderTableNumberSetter;
-import model.order.serialise.OrderStatusSerialiser;
-import model.order.serialise.OrderTableNumberSerialiser;
+import model.order.datamapper.OrderAttribute;
+import model.order.datamapper.OrderAttributeGetter;
+import model.order.datamapper.OrderAttributeSetter;
+import model.order.datamapper.OrderNoteGetter;
+import model.order.datamapper.OrderNoteSetter;
+import model.order.datamapper.OrderStatusGetter;
+import model.order.datamapper.OrderStatusSetter;
+import model.order.datamapper.OrderTableNumberGetter;
+import model.order.datamapper.OrderTableNumberSetter;
+import model.order.datamapper.OrderWrittenGetter;
+import model.order.datamapper.OrderWrittenSetter;
 import model.settings.HasSettingsField;
 import model.settings.ISettings;
 import model.settings.ISettingsParser;
@@ -65,17 +74,17 @@ public abstract class Model implements IModel {
 	
 	private IOrderCollector orderCollector;
 	
-	private OrderStatusSetter oss = new OrderStatusSetter();
-	private OrderTableNumberSetter otns = new OrderTableNumberSetter();
-	
-	private OrderStatusSerialiser statusSerialiser = new OrderStatusSerialiser();
-	private OrderTableNumberSerialiser tableNumberSerialiser = new OrderTableNumberSerialiser();
+	private Map<OrderAttribute, OrderAttributeGetter> orderGetters;
+	private Map<OrderAttribute, OrderAttributeSetter> orderSetters;
 	
 	private TableNumberContainer tnc;
 	
 	protected Model() {
 		this.updatables = new ArrayList<Updatable>();
 		this.part = new ArrayList<HasSettingsField>();
+		
+		this.orderGetters = this.initGetters();
+		this.orderSetters = this.initSetters();
 		
 		this.ds = new DateSettings();
 		
@@ -100,6 +109,24 @@ public abstract class Model implements IModel {
 		
 		this.part.add(this.tnc);
 		this.part.add(this.fileManager);
+	}
+	
+	protected Map<OrderAttribute, OrderAttributeGetter> initGetters() {
+		Map<OrderAttribute, OrderAttributeGetter> map = new ConcurrentHashMap<OrderAttribute, OrderAttributeGetter>();
+		map.put(OrderAttribute.IS_WRITTEN, new OrderWrittenGetter());
+		map.put(OrderAttribute.NOTE, new OrderNoteGetter());
+		map.put(OrderAttribute.TABLE_NUMBER, new OrderTableNumberGetter());
+		map.put(OrderAttribute.STATUS, new OrderStatusGetter());
+		return map;
+	}
+	
+	protected Map<OrderAttribute, OrderAttributeSetter> initSetters() {
+		Map<OrderAttribute, OrderAttributeSetter> map = new ConcurrentHashMap<OrderAttribute, OrderAttributeSetter>();
+		map.put(OrderAttribute.IS_WRITTEN, new OrderWrittenSetter());
+		map.put(OrderAttribute.NOTE, new OrderNoteSetter());
+		map.put(OrderAttribute.TABLE_NUMBER, new OrderTableNumberSetter());
+		map.put(OrderAttribute.STATUS, new OrderStatusSetter());
+		return map;
 	}
 	
 	protected IOrderCollector getOrderCollector() {
@@ -166,13 +193,19 @@ public abstract class Model implements IModel {
 
 	protected void orderStatusChanged(String orderID) {
 		this.getFileManager().writeOrderStatusData(
-				this.statusSerialiser.serialiseFor(orderCollector, orderID)
+				this.orderGetters.get(OrderAttribute.STATUS).serialiseFor(orderCollector, orderID)
 				);
 	}
 	
 	protected void orderTableNumberChanged(String orderID) {
 		this.getFileManager().writeOrderTableNumberData(
-				this.tableNumberSerialiser.serialiseFor(orderCollector, orderID)
+				this.orderGetters.get(OrderAttribute.TABLE_NUMBER).serialiseFor(orderCollector, orderID)
+				);
+	}
+	
+	protected void orderNoteChanged(String orderID) {
+		this.getFileManager().writeOrderNote(
+				this.orderGetters.get(OrderAttribute.NOTE).serialiseFor(orderCollector, orderID)
 				);
 	}
 	
@@ -403,7 +436,8 @@ public abstract class Model implements IModel {
 	public boolean writeOrder(String orderID) {
 		if (!this.isOrderWritten(orderID)) {
 			boolean isWritten = this.getFileManager().writeOrderData(this.getOrderHelper().serialiseForFile(this.getOrder(orderID)));
-			this.getOrderCollector().editWritten(orderID, isWritten);
+//			this.getOrderCollector().editWritten(orderID, isWritten);
+			this.getOrderCollector().setOrderAttribute(orderID, OrderAttribute.IS_WRITTEN, isWritten);
 			return isWritten;
 		}
 		return true;
@@ -416,7 +450,8 @@ public abstract class Model implements IModel {
 //				return true;
 //			}
 //		}
-		return this.getOrderCollector().isWritten(orderID);
+//		return this.getOrderCollector().isWritten(orderID);
+		return (boolean) this.getOrderCollector().getOrderAttribute(orderID, OrderAttribute.IS_WRITTEN);
 	}
 	
 	@Override
@@ -433,8 +468,11 @@ public abstract class Model implements IModel {
 	
 	protected void addWrittenOrder(IOrderData data) {
 //		this.writtenOrderCollector.addOrder(data);
-		this.getOrderCollector().addOrder(data, OrderStatus.PAST);
-		this.getOrderCollector().editWritten(data.getID().toString(), true);
+//		this.getOrderCollector().addOrder(data, OrderStatus.PAST);
+		this.getOrderCollector().addOrder(data);
+		this.getOrderCollector().setOrderAttribute(data.getID().toString(), OrderAttribute.STATUS, OrderStatus.PAST);
+		this.getOrderCollector().setOrderAttribute(data.getID().toString(), OrderAttribute.IS_WRITTEN, true);
+//		this.getOrderCollector().editWritten(data.getID().toString(), true);
 	}
 	
 	@Override
@@ -445,16 +483,24 @@ public abstract class Model implements IModel {
 	@Override
 	public IOrderData[] getAllWrittenOrders() {
 //		return this.writtenOrderCollector.getAllOrders();
-		return this.getOrderCollector().getAllWrittenOrders();
+//		return this.getOrderCollector().getAllWrittenOrders();
+		return this.getOrderCollector().getAllOrdersWithAttribute(OrderAttribute.IS_WRITTEN, true);
 	}
 	
 	@Override
 	public void setOrderTableNumbersFromFile(String readFile) {
-		this.otns.setOrderAttributes(this.getOrderCollector(), readFile);
+//		this.otns.setOrderAttributes(this.getOrderCollector(), readFile);
+		this.orderSetters.get(OrderAttribute.TABLE_NUMBER).setOrderAttributes(this.getOrderCollector(), readFile);
+	}
+	
+	@Override
+	public void setOrderNotesFromFile(String readFile) {
+		this.orderSetters.get(OrderAttribute.NOTE).setOrderAttributes(this.getOrderCollector(), readFile);
 	}
 	@Override
-	public void setOrderStatuses(String readFile) {
-		this.oss.setOrderAttributes(this.getOrderCollector(), readFile);
+	public void setOrderStatusesFromFile(String readFile) {
+//		this.oss.setOrderAttributes(this.getOrderCollector(), readFile);
+		this.orderSetters.get(OrderAttribute.STATUS).setOrderAttributes(this.getOrderCollector(), readFile);
 	}
 	@Override
 	public Collection<Integer> getTableNumbers() {
@@ -467,13 +513,15 @@ public abstract class Model implements IModel {
 	
 	@Override
 	public void setOrderTableNumber(String orderID, int tableNumber) {
-		this.getOrderCollector().setTableNumber(orderID, tableNumber);
+//		this.getOrderCollector().setTableNumber(orderID, tableNumber);
+		this.getOrderCollector().setOrderAttribute(orderID, OrderAttribute.TABLE_NUMBER, tableNumber);
 		this.orderTableNumberChanged(orderID);
 	}
 	
 	@Override
 	public void removeOrder(String id) {
-		this.getOrderCollector().editOrderStatus(id, OrderStatus.CANCELLED);
+//		this.getOrderCollector().editOrderStatus(id, OrderStatus.CANCELLED);
+		this.getOrderCollector().setOrderAttribute(id, OrderAttribute.STATUS, OrderStatus.CANCELLED);
 		this.orderStatusChanged(id);
 		this.getOrderCollector().removeOrder(id);
 		this.ordersChanged();
@@ -481,6 +529,27 @@ public abstract class Model implements IModel {
 	
 	@Override
 	public Integer getOrderTableNumber(String orderID) {
-		return Integer.valueOf(this.getOrderCollector().getTableNumber(orderID));
+		Number n = (Number) this.getOrderCollector().getOrderAttribute(orderID, OrderAttribute.TABLE_NUMBER);
+		if (n != null) {
+			return n.intValue();
+		} else {
+			return this.getOrderCollector().getPlaceholderTableNumber();
+		}
+	}
+	
+	@Override
+	public void setOrderNote(String orderID, String note) {
+		this.getOrderCollector().setOrderAttribute(orderID, OrderAttribute.NOTE, note);
+		this.orderNoteChanged(orderID);
+	}
+	
+	@Override
+	public String getOrderNote(String orderID) {
+		return (String) this.getOrderCollector().getOrderAttribute(orderID, OrderAttribute.NOTE);
+	}
+	
+	@Override
+	public Integer getPlaceholderTableNumber() {
+		return this.getOrderCollector().getPlaceholderTableNumber();
 	}
 }

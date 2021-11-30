@@ -1,4 +1,4 @@
-package model.order;
+package model.order.serialise;
 
 public class OrderAttributeFormat {
 	private String fileStart = "";

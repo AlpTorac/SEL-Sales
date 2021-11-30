@@ -1,9 +1,18 @@
-package model.order;
+package model.order.datamapper;
 
-public abstract class OrderAttributeSetter {
+import model.order.IOrderCollector;
+import model.order.serialise.OrderAttributeFormat;
+import model.util.IParser;
+
+public abstract class OrderAttributeSetter implements IParser {
 	private OrderAttributeFormat format = new OrderAttributeFormat();
 	
-	protected abstract void setOrderAttributeAlgorithm(IOrderCollector orderCollector, String orderID, String serialisedValue);
+	protected void setOrderAttributeAlgorithm(IOrderCollector orderCollector, String orderID, String serialisedValue) {
+		orderCollector.setOrderAttribute(orderID, this.getAssociatedOrderAttribute(), this.parseSerialisedValue(serialisedValue));
+	}
+	
+	protected abstract Object parseSerialisedValue(String serialisedValue);
+	protected abstract OrderAttribute getAssociatedOrderAttribute();
 	
 	public void setOrderAttributes(IOrderCollector orderCollector, String data) {
 		if (data == null) {

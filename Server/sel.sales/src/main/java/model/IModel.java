@@ -58,9 +58,13 @@ public interface IModel extends Closeable {
 	boolean isOrderWritten(String orderID);
 	IDateSettings getDateSettings();
 	void setOrderTableNumbersFromFile(String readFile);
-	void setOrderStatuses(String readFile);
+	void setOrderStatusesFromFile(String readFile);
 	Collection<Integer> getTableNumbers();
 	boolean tableExists(int tableNumber);
 	void setOrderTableNumber(String orderID, int tableNumber);
 	Integer getOrderTableNumber(String orderID);
+	Integer getPlaceholderTableNumber();
+	void setOrderNote(String orderID, String note);
+	String getOrderNote(String orderID);
+	void setOrderNotesFromFile(String readFile);
 }

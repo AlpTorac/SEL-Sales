@@ -14,7 +14,7 @@ import view.repository.IHBoxLayout;
 import view.repository.ILabel;
 import view.repository.ILayout;
 import view.repository.IRootComponent;
-import view.repository.ITextBox;
+import view.repository.ISingleRowTextBox;
 import view.repository.IUIComponent;
 import view.repository.IVBoxLayout;
 import view.repository.uiwrapper.ClickEventListener;
@@ -223,27 +223,31 @@ public class SettingsArea extends UIVBoxLayout {
 
 	protected abstract class BasicSettingsInputArea extends UIHBoxLayout implements ISettingsInputArea {
 		private ILabel descriptionLabel;
-		private ITextBox addressBox;
+		private ISingleRowTextBox addressBox;
 		
-		private String labelCaption;
+		private String placeholderCaption;
 		private SettingsField sf;
 		
-		protected BasicSettingsInputArea(String labelCaption, SettingsField sf) {
+		protected BasicSettingsInputArea(String placeholderCaption, SettingsField sf) {
 			super(fac.createHBoxLayout().getComponent());
-			this.labelCaption = labelCaption + descriptionEnd;
+			this.placeholderCaption = placeholderCaption;
 			this.sf = sf;
 			this.init();
 		}
 		
+		public String getPlaceholderCaption() {
+			return this.placeholderCaption;
+		}
+		
 		public String getLabelCaption() {
-			return this.labelCaption;
+			return this.placeholderCaption + descriptionEnd;
 		}
 		
 		public ILabel getDescriptionLabel() {
 			return this.descriptionLabel;
 		}
 		
-		public ITextBox getAddressBox() {
+		public ISingleRowTextBox getAddressBox() {
 			return this.addressBox;
 		}
 		
@@ -264,8 +268,10 @@ public class SettingsArea extends UIVBoxLayout {
 			return label;
 		}
 		
-		private ITextBox initAddressBox() {
-			return fac.createTextBox();
+		private ISingleRowTextBox initAddressBox() {
+			ISingleRowTextBox tb = fac.createSingleRowTextBox();
+			tb.setPlaceholderText(this.getPlaceholderCaption());
+			return tb;
 		}
 
 		@Override
@@ -297,27 +303,27 @@ public class SettingsArea extends UIVBoxLayout {
 		});
 	}
 
-	public ITextBox getMenuFolderAddress() {
+	public ISingleRowTextBox getMenuFolderAddress() {
 		return menuFolderAddress.getAddressBox();
 	}
 
-	public ITextBox getOrderFolderAddress() {
+	public ISingleRowTextBox getOrderFolderAddress() {
 		return orderFolderAddress.getAddressBox();
 	}
 
-	public ITextBox getPpTimeout() {
+	public ISingleRowTextBox getPpTimeout() {
 		return ppTimeout.getAddressBox();
 	}
 
-	public ITextBox getPpMinimalDelay() {
+	public ISingleRowTextBox getPpMinimalDelay() {
 		return ppMinimalDelay.getAddressBox();
 	}
 
-	public ITextBox getPpResendLimit() {
+	public ISingleRowTextBox getPpResendLimit() {
 		return ppResendLimit.getAddressBox();
 	}
 
-	public ITextBox getSendTimeout() {
+	public ISingleRowTextBox getSendTimeout() {
 		return sendTimeout.getAddressBox();
 	}
 }

@@ -1,14 +1,15 @@
 package view.repository.uifx;
 
 import javafx.event.EventHandler;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import view.repository.ITextBox;
+import view.repository.ISingleRowTextBox;
 import view.repository.uiwrapper.ClickEventListener;
 
-public class FXTextBox extends TextArea implements ITextBox, FXHasPlaceholderText, FXEventShooterOnClickUI {
+public class FXSingleRowTextBox extends TextField implements ISingleRowTextBox, FXHasPlaceholderText, FXEventShooterOnClickUI {
+	
 	public void addClickListener(ClickEventListener l) {
-		TextArea ref = this;
+		TextField ref = this;
 		EventHandler<MouseEvent> event = new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {

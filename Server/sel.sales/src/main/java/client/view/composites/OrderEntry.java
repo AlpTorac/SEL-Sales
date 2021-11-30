@@ -14,6 +14,8 @@ import view.repository.IChoiceBox;
 import view.repository.IHBoxLayout;
 import view.repository.IIndexedLayout;
 import view.repository.ILabel;
+import view.repository.ISingleRowTextBox;
+import view.repository.ITextBox;
 import view.repository.IUIComponent;
 import view.repository.uiwrapper.ItemChangeListener;
 import view.repository.uiwrapper.UIComponentFactory;
@@ -45,6 +47,8 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 	private IChoiceBox<Integer> tableNumberCB;
 	private ILabel tableNumberLabel;
 	
+	private ITextBox noteBox;
+	
 	public OrderEntry(IController controller, UIComponentFactory fac, PriceUpdateTarget<OrderEntry> notifyTarget) {
 		super(fac.createHBoxLayout().getComponent());
 		this.menuItemEntries = new CopyOnWriteArrayList<MenuItemEntry>();
@@ -52,11 +56,27 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		this.fac = fac;
 		this.notifyTarget = notifyTarget;
 		this.orderItemArea = this.fac.createVBoxLayout().getComponent();
+		this.orderItemArea.setSpacing(10);
+		this.setMarigins(10, 0, 0, 10);
+		this.setSpacing(10);
 		this.addUIComponent(this.orderItemArea);
 		this.addTableNumberArea();
 		this.addBottomPart();
+		this.addUIComponent(this.noteBox = this.initNoteBox());
+		this.noteBoxSetupExtras();
 	}
 	
+	protected void noteBoxSetupExtras() {
+		this.noteBox.setEnabled(false);
+	}
+	
+	protected ITextBox initNoteBox() {
+		ITextBox tb = this.getUIFactory().createTextBox();
+		tb.setWrapText(true);
+		tb.setPlaceholderText("Order Note");
+		return tb;
+	}
+
 	public OrderEntry(IController controller, UIComponentFactory fac, PriceUpdateTarget<OrderEntry> notifyTarget, IOrderData data) {
 		this(controller, fac, notifyTarget);
 		this.activeData = data;
@@ -146,6 +166,8 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 	public void displayData(IOrderData data) {
 		if (data != null) {
 			this.resetUserInput();
+			this.noteBox.setCaption(this.getController().getModel()
+					.getOrderNote(data.getID().toString()));
 			this.tableNumberCB.artificiallySelectItem(
 					this.getController().getModel().getOrderTableNumber(data.getID().toString()));
 			this.setActiveData(data);
@@ -280,6 +302,7 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 			mie.removeFromParent();
 		}
 		this.refreshPrice();
+		this.noteBox.clearText();
 		this.activeData = null;
 	}
 	
@@ -313,6 +336,14 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 	}
 	
 	public int getTableNumberSelection() {
-		return this.tableNumberCB.getSelectedElement();
+		Integer element = this.tableNumberCB.getSelectedElement();
+		if (element != null) {
+			return element;
+		}
+		return this.getController().getModel().getPlaceholderTableNumber();
+	}
+	
+	public String getCurrentOrderNote() {
+		return this.noteBox.getText();
 	}
 }

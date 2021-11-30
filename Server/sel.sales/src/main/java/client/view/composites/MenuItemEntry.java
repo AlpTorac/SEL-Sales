@@ -7,7 +7,7 @@ import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderItemData;
 import view.repository.IChoiceBox;
-import view.repository.ITextBox;
+import view.repository.ISingleRowTextBox;
 import view.repository.IUIComponent;
 import view.repository.uiwrapper.ItemChangeListener;
 import view.repository.uiwrapper.UIComponentFactory;
@@ -17,7 +17,7 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 	private UIComponentFactory fac;
 	
 	private IChoiceBox<IDishMenuItemData> cb;
-	private ITextBox amount;
+	private ISingleRowTextBox amount;
 	
 	private PriceUpdateTarget<MenuItemEntry> notifyTarget;
 	
@@ -77,8 +77,8 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 		return choiceBox;
 	}
 	
-	protected ITextBox initAmount() {
-		ITextBox tb = this.fac.createTextBox();
+	protected ISingleRowTextBox initAmount() {
+		ISingleRowTextBox tb = this.fac.createSingleRowTextBox();
 		tb.setCaption("1");
 		tb.setEnabled(false);
 		tb.setOpacity(1);
@@ -93,7 +93,7 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 		return this.cb;
 	}
 	
-	public ITextBox getAmountTextBox() {
+	public ISingleRowTextBox getAmountTextBox() {
 		return this.amount;
 	}
 	

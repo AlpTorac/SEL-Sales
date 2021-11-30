@@ -4,13 +4,13 @@ import controller.IController;
 import model.settings.SettingsField;
 import view.composites.SettingsArea;
 import view.repository.IRootComponent;
-import view.repository.ITextBox;
+import view.repository.ISingleRowTextBox;
 import view.repository.uiwrapper.UIComponentFactory;
 
 public class ServerSettingsArea extends SettingsArea {
 	private final String tableNumberLabelCaption = "Table Numbers";
 	
-	private ITextBox tableNumberInput;
+	private ISingleRowTextBox tableNumberInput;
 	private TableNumberUI tnui;
 	
 	public ServerSettingsArea(IController controller, UIComponentFactory fac, IRootComponent mainWindow) {
@@ -30,7 +30,7 @@ public class ServerSettingsArea extends SettingsArea {
 		}
 	}
 	
-	public ITextBox getTableNumberRanges() {
+	public ISingleRowTextBox getTableNumberRanges() {
 		return tableNumberInput;
 	}
 }

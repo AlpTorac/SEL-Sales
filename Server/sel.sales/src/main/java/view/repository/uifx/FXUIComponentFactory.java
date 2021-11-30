@@ -21,6 +21,7 @@ import view.repository.uiwrapper.UIRootComponent;
 import view.repository.uiwrapper.UITabPane;
 import view.repository.uiwrapper.UITable;
 import view.repository.uiwrapper.UITextBox;
+import view.repository.uiwrapper.UISingleRowTextBox;
 import view.repository.uiwrapper.UIVBoxLayout;
 
 public class FXUIComponentFactory extends UIComponentFactory {
@@ -54,9 +55,9 @@ public class FXUIComponentFactory extends UIComponentFactory {
 		return button;
 	}
 	
-	public UITextBox createTextBox() {
-		FXTextBox wrapee = new FXTextBox();
-		UITextBox textBox = new UITextBox(wrapee);
+	public UISingleRowTextBox createSingleRowTextBox() {
+		FXSingleRowTextBox wrapee = new FXSingleRowTextBox();
+		UISingleRowTextBox textBox = new UISingleRowTextBox(wrapee);
 		return textBox;
 	}
 	
@@ -145,6 +146,13 @@ public class FXUIComponentFactory extends UIComponentFactory {
 	public UIAccordion createAccordion() {
 		FXAccordion wrapee = new FXAccordion();
 		UIAccordion wrapper = new UIAccordion(wrapee);
+		return wrapper;
+	}
+
+	@Override
+	public UITextBox createTextBox() {
+		FXTextBox wrapee = new FXTextBox();
+		UITextBox wrapper = new UITextBox(wrapee);
 		return wrapper;
 	}
 }

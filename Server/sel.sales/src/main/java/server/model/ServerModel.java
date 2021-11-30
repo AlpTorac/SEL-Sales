@@ -1,12 +1,10 @@
 package server.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import model.Model;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
 import model.order.OrderStatus;
+import model.order.datamapper.OrderAttribute;
 
 public class ServerModel extends Model implements IServerModel {
 	
@@ -120,7 +118,9 @@ public class ServerModel extends Model implements IServerModel {
 			this.confirmOrder(order);
 		} else {
 //			this.makeUnconfirmedOrder(order.getID().toString());
-			this.getOrderCollector().addOrder(order, OrderStatus.UNCONFIRMED);
+//			this.getOrderCollector().addOrder(order, OrderStatus.UNCONFIRMED);
+			this.getOrderCollector().addOrder(order);
+			this.getOrderCollector().setOrderAttribute(order.getID().toString(), OrderAttribute.STATUS, OrderStatus.UNCONFIRMED);
 			this.unconfirmedOrdersChanged();
 		}
 	}
@@ -128,12 +128,12 @@ public class ServerModel extends Model implements IServerModel {
 	@Override
 	public IOrderData[] getAllUnconfirmedOrders() {
 //		return this.orderUnconfirmedCollector.getAllOrders();
-		return this.getOrderCollector().getAllOrdersWithStatus(OrderStatus.UNCONFIRMED);
+		return this.getOrderCollector().getAllOrdersWithAttribute(OrderAttribute.STATUS, OrderStatus.UNCONFIRMED);
 	}
 
 	@Override
 	public void removeAllUnconfirmedOrders() {
-		this.getOrderCollector().removeOrdersWithStatus(OrderStatus.UNCONFIRMED);
+		this.getOrderCollector().removeAllOrdersWithAttribute(OrderAttribute.STATUS, OrderStatus.UNCONFIRMED);
 //		this.orderUnconfirmedCollector.clearOrders();
 		this.unconfirmedOrdersChanged();
 	}
@@ -148,7 +148,9 @@ public class ServerModel extends Model implements IServerModel {
 	protected void confirmOrder(IOrderData orderData) {
 //		this.orderUnconfirmedCollector.removeOrder(orderData.getID().toString());
 //		this.orderConfirmedCollector.addOrder(orderData);
-		this.getOrderCollector().addOrder(orderData, OrderStatus.CONFIRMED);
+//		this.getOrderCollector().addOrder(orderData, OrderStatus.CONFIRMED);
+		this.getOrderCollector().addOrder(orderData);
+		this.getOrderCollector().setOrderAttribute(orderData.getID().toString(), OrderAttribute.STATUS, OrderStatus.CONFIRMED);
 		this.writeOrder(orderData.getID().toString());
 		this.ordersChanged();
 	}
@@ -161,28 +163,28 @@ public class ServerModel extends Model implements IServerModel {
 
 	@Override
 	public IOrderData[] getAllConfirmedOrders() {
-		return this.getOrderCollector().getAllOrdersWithStatus(OrderStatus.CONFIRMED);
+		return this.getOrderCollector().getAllOrdersWithAttribute(OrderAttribute.STATUS, OrderStatus.CONFIRMED);
 //		return this.orderConfirmedCollector.getAllOrders();
 	}
 
 	@Override
 	public void removeUnconfirmedOrder(String id) {
 //		this.orderUnconfirmedCollector.removeOrder(id);
-		this.getOrderCollector().removeOrderIfStatusEqual(id, OrderStatus.UNCONFIRMED);
+		this.getOrderCollector().removeOrderIfAttributeEquals(id, OrderAttribute.STATUS, OrderStatus.UNCONFIRMED);
 		this.unconfirmedOrdersChanged();
 	}
 
 	@Override
 	public void removeConfirmedOrder(String id) {
 //		this.orderConfirmedCollector.removeOrder(id);
-		this.getOrderCollector().removeOrderIfStatusEqual(id, OrderStatus.CONFIRMED);
+		this.getOrderCollector().removeOrderIfAttributeEquals(id, OrderAttribute.STATUS, OrderStatus.CONFIRMED);
 		this.confirmedOrdersChanged();
 	}
 
 	@Override
 	public void removeAllConfirmedOrders() {
 //		this.orderConfirmedCollector.clearOrders();
-		this.getOrderCollector().removeOrdersWithStatus(OrderStatus.CONFIRMED);
+		this.getOrderCollector().removeAllOrdersWithAttribute(OrderAttribute.STATUS, OrderStatus.CONFIRMED);
 		this.confirmedOrdersChanged();
 	}
 
@@ -193,7 +195,7 @@ public class ServerModel extends Model implements IServerModel {
 	
 	@Override
 	public void confirmAllOrders() {
-		IOrderData[] unconfirmedOrders = this.getOrderCollector().getAllOrdersWithStatus(OrderStatus.UNCONFIRMED);
+		IOrderData[] unconfirmedOrders = this.getOrderCollector().getAllOrdersWithAttribute(OrderAttribute.STATUS, OrderStatus.UNCONFIRMED);
 //		IOrderData[] unconfirmedOrders = this.orderUnconfirmedCollector.getAllOrders();
 		for (IOrderData uco : unconfirmedOrders) {
 			this.confirmOrder(uco);

@@ -12,8 +12,11 @@ public abstract class UIComponentFactory implements IUIComponentFactory {
 	public abstract UIButton createButton();
 
 	@Override
-	public abstract UITextBox createTextBox();
+	public abstract UISingleRowTextBox createSingleRowTextBox();
 
+	@Override
+	public abstract UITextBox createTextBox();
+	
 	@Override
 	public abstract UIInnerFrame createInnerFrame(IUIComponent parent);
 

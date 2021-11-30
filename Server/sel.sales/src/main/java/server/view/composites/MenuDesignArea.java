@@ -5,18 +5,18 @@ import model.dish.IDishMenuItemData;
 import view.repository.IButton;
 import view.repository.IHBoxLayout;
 import view.repository.ITable;
-import view.repository.ITextBox;
+import view.repository.ISingleRowTextBox;
 import view.repository.IUIComponent;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIVBoxLayout;
 
 public class MenuDesignArea extends UIVBoxLayout {
 	
-	private ITextBox dishNameBox;
-	private ITextBox menuItemIDBox;
-	private ITextBox portionBox;
-	private ITextBox productionCostBox;
-	private ITextBox priceBox;
+	private ISingleRowTextBox dishNameBox;
+	private ISingleRowTextBox menuItemIDBox;
+	private ISingleRowTextBox portionBox;
+	private ISingleRowTextBox productionCostBox;
+	private ISingleRowTextBox priceBox;
 	private IButton addButton;
 	private IButton editButton;
 	private IButton removeButton;
@@ -127,33 +127,33 @@ public class MenuDesignArea extends UIVBoxLayout {
 		return table;
 	}
 	
-	protected ITextBox initDishNameBox() {
-		ITextBox dishNameBox = this.fac.createTextBox();
-		dishNameBox.setCaption("Dish Name");
+	protected ISingleRowTextBox initDishNameBox() {
+		ISingleRowTextBox dishNameBox = this.fac.createSingleRowTextBox();
+		dishNameBox.setPlaceholderText("Dish Name");
 		return dishNameBox;
 	}
 	
-	protected ITextBox initMenuItemIDBox() {
-		ITextBox menuItemIDBox = this.fac.createTextBox();
-		menuItemIDBox.setCaption("ID");
+	protected ISingleRowTextBox initMenuItemIDBox() {
+		ISingleRowTextBox menuItemIDBox = this.fac.createSingleRowTextBox();
+		menuItemIDBox.setPlaceholderText("ID");
 		return menuItemIDBox;
 	}
 	
-	protected ITextBox initPortionBox() {
-		ITextBox portionBox = this.fac.createTextBox();
-		portionBox.setCaption("Portion");
+	protected ISingleRowTextBox initPortionBox() {
+		ISingleRowTextBox portionBox = this.fac.createSingleRowTextBox();
+		portionBox.setPlaceholderText("Portion");
 		return portionBox;
 	}
 	
-	protected ITextBox initProductionCostBox() {
-		ITextBox productionCostBox = this.fac.createTextBox();
-		productionCostBox.setCaption("ProductionCost");
+	protected ISingleRowTextBox initProductionCostBox() {
+		ISingleRowTextBox productionCostBox = this.fac.createSingleRowTextBox();
+		productionCostBox.setPlaceholderText("ProductionCost");
 		return productionCostBox;
 	}
 	
-	protected ITextBox initPriceBox() {
-		ITextBox priceBox = this.fac.createTextBox();
-		priceBox.setCaption("Price");
+	protected ISingleRowTextBox initPriceBox() {
+		ISingleRowTextBox priceBox = this.fac.createSingleRowTextBox();
+		priceBox.setPlaceholderText("Price");
 		return priceBox;
 	}
 	
@@ -175,23 +175,23 @@ public class MenuDesignArea extends UIVBoxLayout {
 		return removeButton;
 	}
 
-	public ITextBox getDishNameBox() {
+	public ISingleRowTextBox getDishNameBox() {
 		return this.dishNameBox;
 	}
 
-	public ITextBox getMenuItemIDBox() {
+	public ISingleRowTextBox getMenuItemIDBox() {
 		return this.menuItemIDBox;
 	}
 
-	public ITextBox getPortionBox() {
+	public ISingleRowTextBox getPortionBox() {
 		return this.portionBox;
 	}
 
-	public ITextBox getProductionCostBox() {
+	public ISingleRowTextBox getProductionCostBox() {
 		return this.productionCostBox;
 	}
 
-	public ITextBox getPriceBox() {
+	public ISingleRowTextBox getPriceBox() {
 		return this.priceBox;
 	}
 
