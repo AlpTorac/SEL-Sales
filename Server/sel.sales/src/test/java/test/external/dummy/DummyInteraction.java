@@ -162,6 +162,11 @@ public class DummyInteraction implements Closeable {
 				));
 	}
 	
+	public void resetConnection(DummyInteractionPartaker dip1, DummyInteractionPartaker dip2) {
+		this.disconnectByBlocking(dip1, dip2);
+		this.connectPartakers(dip1, dip2);
+	}
+	
 	public void connectPartakers(DummyInteractionPartaker dip1, DummyInteractionPartaker dip2) {
 		this.allowConnection(dip1, dip2);
 		this.addConnectionPair(this.bindConnections(dip1, dip2));

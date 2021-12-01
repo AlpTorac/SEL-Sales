@@ -73,6 +73,7 @@ class CookingOrderEntryTest extends ApplicationTest {
 	
 	@BeforeEach
 	void prep() {
+		GeneralTestUtilityClass.deletePathContent(this.testFolderAddress);
 		clientModel = new ClientModel(this.testFolderAddress);
 		serverModel = new ServerModel(this.testFolderAddress);
 		controller = new StandardClientController(clientModel);
@@ -115,6 +116,7 @@ class CookingOrderEntryTest extends ApplicationTest {
 		serverModel.close();
 		entry = null;
 		u = null;
+		GeneralTestUtilityClass.deletePathContent(this.testFolderAddress);
 	}
 	
 	@Test
@@ -142,7 +144,7 @@ class CookingOrderEntryTest extends ApplicationTest {
 		Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 1);
 		Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 0);
 		Assertions.assertEquals(clientModel.getAllSentOrders().length, 0);
-		Assertions.assertEquals(clientModel.getAllWrittenOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllWrittenOrders().length, 1);
 	}
 	
 	@Test

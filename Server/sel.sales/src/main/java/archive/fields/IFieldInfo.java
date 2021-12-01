@@ -1,4 +1,4 @@
-package archive;
+package archive.fields;
 
 public interface IFieldInfo {
 	void addField(IFieldNameEnum fieldName, FieldClass className);

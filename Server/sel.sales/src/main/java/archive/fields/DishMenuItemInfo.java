@@ -1,4 +1,4 @@
-package archive;
+package archive.fields;
 
 public class DishMenuItemInfo extends FieldInfo {
 	DishMenuItemInfo() {

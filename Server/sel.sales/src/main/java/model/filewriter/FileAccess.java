@@ -155,7 +155,9 @@ public abstract class FileAccess implements IFileAccess {
 				w.writeBytes(stringToWrite);
 				w.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+//				e.printStackTrace();
+				System.out.println("Reattempting to write to file");
+//				return this.writeToFile(stringToWrite);
 				return false;
 			}
 			return true;

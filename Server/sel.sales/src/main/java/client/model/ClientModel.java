@@ -27,6 +27,7 @@ public class ClientModel extends Model implements IClientModel {
 		if (id == null) {
 			return null;
 		}
+//		System.out.println("Getting order " + id + " with status " + ((OrderStatus) this.getOrderCollector().getOrderAttribute(id, OrderAttribute.STATUS)).getSerialisedVersion());
 		return this.getOrderCollector().getOrder(id);
 	}
 
@@ -74,6 +75,7 @@ public class ClientModel extends Model implements IClientModel {
 	@Override
 	public void makePendingSendOrder(String serialisedOrderData) {
 		IOrderData data = this.getOrderHelper().deserialiseOrderData(serialisedOrderData);
+		System.out.println("pending send order isCash: " + data.getIsCash() + " , isHere: " + data.getIsHere());
 		String orderID = data.getID().toString();
 		if (data != null && this.getPendingPaymentOrder(orderID) != null) {
 //			this.pendingSendOrders.addOrder(data);

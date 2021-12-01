@@ -1,4 +1,4 @@
-package archive;
+package archive.fields;
 
 public interface IFieldNameEnum {
 	default IFieldNameEnum stringToFieldClass(String serialisedFieldClass) {

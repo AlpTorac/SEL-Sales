@@ -99,7 +99,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingSendOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 0);
-		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
 		clientModel.makePendingPaymentOrder(o1id);
 		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(data));
@@ -108,7 +108,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 1);
 		Assertions.assertEquals(this.clientModel.getAllPendingSendOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 0);
-		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
 		clientModel.makePendingSendOrder(serialisedOrderData);
 		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(data));
@@ -117,7 +117,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingSendOrders().length, 1);
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 0);
-		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
 		clientModel.orderSent(o1id);
 		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(data));
@@ -126,7 +126,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingSendOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 1);
-		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 	}
 	
 	@Test
@@ -148,7 +148,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingSendOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 0);
-		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
 		clientModel.makePendingPaymentOrder(o1id);
 		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(data));
@@ -157,7 +157,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 1);
 		Assertions.assertEquals(this.clientModel.getAllPendingSendOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 0);
-		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
 		String newSerialisedOrderData = o1id+"#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";";
 		IOrderData newData = this.clientModel.getOrderHelper().deserialiseOrderData(newSerialisedOrderData);
@@ -169,7 +169,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingSendOrders().length, 1);
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 0);
-		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
 		clientModel.orderSent(o1id);
 		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(newData));
@@ -178,7 +178,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingSendOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 1);
-		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 	}
 	
 	@Test
@@ -213,7 +213,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingSendOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 1);
-		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 	}
 	
 	@Test
@@ -242,7 +242,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingSendOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 0);
-		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
 		this.clientModel.addOrder(serialisedOrderData);
 		this.clientModel.makePendingPaymentOrder(data.getID().toString());
@@ -254,7 +254,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingSendOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 0);
-		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 	}
 	
 	@Test
@@ -287,7 +287,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 1);
 		Assertions.assertEquals(this.clientModel.getAllPendingSendOrders().length, 1);
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 1);
-		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 4);
 		
 		clientModel.removeAllOrders();
 		

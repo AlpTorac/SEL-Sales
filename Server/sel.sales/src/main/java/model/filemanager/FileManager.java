@@ -108,6 +108,7 @@ public class FileManager implements IFileManager {
 		this.deviceDataFile.close();
 		this.orderStatusFile.close();
 		this.orderTableNumberFile.close();
+		this.orderNoteFile.close();
 	}
 
 	@Override

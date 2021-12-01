@@ -297,7 +297,7 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 	}
 	
 	public void writeDishMenu() {
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
 		this.menuSaveButton.performArtificialClick();

@@ -71,7 +71,7 @@ public abstract class OrderAccordion extends UIAccordion implements PriceUpdateT
 		return col;
 	}
 	
-	protected OrderEntry getEntry(String orderID) {
+	public OrderEntry getEntry(String orderID) {
 		if (orderID != null) {
 			Optional<OrderEntry> o = this.orderEntries.values().stream()
 					.filter(e -> e.getSerialisedOrderID().equals(orderID))

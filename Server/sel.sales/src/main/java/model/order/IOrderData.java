@@ -23,14 +23,17 @@ public interface IOrderData {
 	default BigDecimal getNetSum() {
 		return this.getGrossSum().subtract(this.getOrderDiscount());
 	}
+	void flatten();
 	default Collection<IOrderItemData> flatten(Collection<IOrderItemData> orderItems) {
 		Map<String, IOrderItemData> newOrderItems = new HashMap<String, IOrderItemData>();
 		orderItems.forEach(oid -> {
-			String id;
-			if (newOrderItems.containsKey(id = oid.getItemData().getID().toString())) {
-				newOrderItems.put(id, newOrderItems.get(id).combine(oid));
-			} else {
-				newOrderItems.put(id, oid);
+			if (oid.getAmount().compareTo(BigDecimal.ZERO) != 0) {
+				String id;
+				if (newOrderItems.containsKey(id = oid.getItemData().getID().toString())) {
+					newOrderItems.put(id, newOrderItems.get(id).combine(oid));
+				} else {
+					newOrderItems.put(id, oid);
+				}
 			}
 		});
 		return newOrderItems.values();

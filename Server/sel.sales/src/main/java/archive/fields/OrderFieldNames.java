@@ -1,4 +1,4 @@
-package archive;
+package archive.fields;
 
 public enum OrderFieldNames implements IFieldNameEnum {
 	ORDER_ID("orderID"),

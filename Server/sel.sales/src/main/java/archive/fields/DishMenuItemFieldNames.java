@@ -1,4 +1,4 @@
-package archive;
+package archive.fields;
 
 public enum DishMenuItemFieldNames implements IFieldNameEnum {
 	DISH_NAME("dishName"),

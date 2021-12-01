@@ -125,4 +125,16 @@ public class OrderTakingAreaOrderEntry extends OrderEntry {
 	public IButton getNextTabButton() {
 		return this.nextTabBtn;
 	}
+	
+	public IButton getClearButton() {
+		return this.clearBtn;
+	}
+	
+	public void setTableNumber(Integer i) {
+		this.getTableNumberChoiceBox().artificiallySelectItem(i);
+	}
+	
+	public void setOrderNode(String orderNode) {
+		this.getOrderNoteBox().setCaption(orderNode);
+	}
 }

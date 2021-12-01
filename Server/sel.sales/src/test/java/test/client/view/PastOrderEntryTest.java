@@ -78,7 +78,7 @@ class PastOrderEntryTest extends ApplicationTest {
 		serverModel.addMenuItem(serverModel.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
 		serverModel.addMenuItem(serverModel.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 		
-		serialisedOrder = "order1#20200809112233000#0#0:item1,2;";
+		serialisedOrder = "order1#20200809112233000#0#1:item1,2;";
 		orderData = this.serverModel.getOrderHelper().deserialiseOrderData(serialisedOrder);
 		
 		serverModel.addOrder(serialisedOrder);

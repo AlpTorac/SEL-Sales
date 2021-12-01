@@ -15,17 +15,18 @@ public class OrderData implements IOrderData {
 	private EntityID id;
 	
 	OrderData(Collection<IOrderItemData> orderItems, LocalDateTime date, boolean isCash, boolean isHere, EntityID id) {
-		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>();
-		this.orderItems.addAll(this.flatten(orderItems));
-		this.date = date;
-		this.isCash = isCash;
-		this.isHere = isHere;
-		this.id = id;
+//		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>(orderItems);
+//		this.flatten();
+//		this.date = date;
+//		this.isCash = isCash;
+//		this.isHere = isHere;
+//		this.id = id;
+		this(orderItems.toArray(IOrderItemData[]::new),date,isCash,isHere,id);
 	}
 	
 	OrderData(IOrderItemData[] orderItems, LocalDateTime date, boolean isCash, boolean isHere, EntityID id) {
 		this.orderItems = new CopyOnWriteArrayList<IOrderItemData>(orderItems);
-		this.orderItems = this.flatten(this.orderItems);
+		this.flatten();
 		this.date = date;
 		this.isCash = isCash;
 		this.isHere = isHere;
@@ -114,5 +115,10 @@ public class OrderData implements IOrderData {
 	@Override
 	public IOrderData combine(IOrderData data) {
 		return new OrderData(this.combineData(data), this.getDate(), this.getIsCash(), this.getIsHere(), this.getID());
+	}
+
+	@Override
+	public void flatten() {
+		this.orderItems = this.flatten(this.orderItems);
 	}
 }

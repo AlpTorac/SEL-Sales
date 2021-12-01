@@ -1,4 +1,4 @@
-package archive;
+package archive.fields;
 
 public enum DeviceDataFileFieldNames implements IFieldNameEnum {
 	DEVICE_DATA_ARRAY("deviceDataArray")

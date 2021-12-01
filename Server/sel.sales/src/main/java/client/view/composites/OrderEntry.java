@@ -289,6 +289,7 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 	}
 	
 	public String serialiseCurrentOrder() {
+		System.out.println("isCash: " + this.isCash() + " , isHere: " + this.isHere());
 		return this.controller.getModel().getOrderHelper().serialiseForApp(
 				this.getCurrentOrder(),
 				LocalDateTime.now(),
@@ -345,5 +346,13 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 	
 	public String getCurrentOrderNote() {
 		return this.noteBox.getText();
+	}
+	
+	protected IChoiceBox<Integer> getTableNumberChoiceBox() {
+		return this.tableNumberCB;
+	}
+	
+	protected ITextBox getOrderNoteBox() {
+		return this.noteBox;
 	}
 }

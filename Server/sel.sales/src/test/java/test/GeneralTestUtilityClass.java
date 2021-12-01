@@ -86,6 +86,14 @@ public final class GeneralTestUtilityClass {
 		}
 		return (byte) Math.round(Math.random() * intervalLength);
 	}
+	public static boolean generateRandomBoolean() {
+		int b = generateRandomNumber(0, 1);
+		if (b == 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 	public static String generateRandomWord(int length) {
 		if (length <= 0) {
 			return "";

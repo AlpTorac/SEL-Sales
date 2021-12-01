@@ -34,6 +34,10 @@ public interface IModel extends Closeable {
 	IDeviceData[] getAllKnownDeviceData();
 	IDeviceData[] getAllDiscoveredDeviceData();
 	void removeAllOrders();
+	/**
+	 * Removes all orders without changing their attributes
+	 */
+	void clearAllOrders();
 	void removeOrder(String id);
 	/**
 	 * @return True, if the order is written (now or in the past)
@@ -67,4 +71,8 @@ public interface IModel extends Closeable {
 	void setOrderNote(String orderID, String note);
 	String getOrderNote(String orderID);
 	void setOrderNotesFromFile(String readFile);
+	/**
+	 * Checks if the order exists and has not been cancelled
+	 */
+	boolean isOrderValid(String orderID);
 }

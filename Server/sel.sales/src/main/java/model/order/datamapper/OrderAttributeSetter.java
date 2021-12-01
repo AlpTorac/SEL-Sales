@@ -26,8 +26,12 @@ public abstract class OrderAttributeSetter implements IParser {
 		for (String e : entries) {
 			if (e != null) {
 				idNAttr = e.split(format.getFieldSeparator());
-				if (orderCollector.contains(orderID = idNAttr[0])) {
+//				System.out.println("Setting attribute, entry: " + e);
+//				System.out.println("Setting fields: " + idNAttr[0] + ", " + idNAttr[1]);
+				if (orderCollector.contains(orderID = idNAttr[0]) && idNAttr.length > 1) {
 					serialisedAttribute = idNAttr[1];
+//					System.out.println("Setting attribute, entry: " + e);
+//					System.out.println("Setting fields: " + idNAttr[0] + ", " + idNAttr[1]);
 					this.setOrderAttributeAlgorithm(orderCollector, orderID, serialisedAttribute);
 				}
 			}

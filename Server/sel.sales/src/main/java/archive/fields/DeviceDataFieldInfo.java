@@ -1,4 +1,4 @@
-package archive;
+package archive.fields;
 
 public class DeviceDataFieldInfo extends FieldInfo {
 	DeviceDataFieldInfo() {

@@ -141,7 +141,7 @@ class PendingPaymentOrderEntryTest extends ApplicationTest {
 		Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 0);
 		Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 1);
 		Assertions.assertEquals(clientModel.getAllSentOrders().length, 0);
-		Assertions.assertEquals(clientModel.getAllWrittenOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllWrittenOrders().length, 1);
 	}
 	
 	@Test

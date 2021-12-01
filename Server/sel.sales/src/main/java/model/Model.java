@@ -437,7 +437,7 @@ public abstract class Model implements IModel {
 		if (!this.isOrderWritten(orderID)) {
 			boolean isWritten = this.getFileManager().writeOrderData(this.getOrderHelper().serialiseForFile(this.getOrder(orderID)));
 //			this.getOrderCollector().editWritten(orderID, isWritten);
-			this.getOrderCollector().setOrderAttribute(orderID, OrderAttribute.IS_WRITTEN, isWritten);
+			this.getOrderCollector().setOrderAttribute(orderID, OrderAttribute.IS_WRITTEN, true);
 			return isWritten;
 		}
 		return true;
@@ -451,7 +451,11 @@ public abstract class Model implements IModel {
 //			}
 //		}
 //		return this.getOrderCollector().isWritten(orderID);
-		return (boolean) this.getOrderCollector().getOrderAttribute(orderID, OrderAttribute.IS_WRITTEN);
+		Object o = this.getOrderCollector().getOrderAttribute(orderID, OrderAttribute.IS_WRITTEN);
+		if (o == null) {
+			return false;
+		}
+		return (boolean) o;
 	}
 	
 	@Override
@@ -551,5 +555,15 @@ public abstract class Model implements IModel {
 	@Override
 	public Integer getPlaceholderTableNumber() {
 		return this.getOrderCollector().getPlaceholderTableNumber();
+	}
+	
+	@Override
+	public void clearAllOrders() {
+		this.getOrderCollector().clearOrders();
+	}
+	
+	@Override
+	public boolean isOrderValid(String orderID) {
+		return this.getOrder(orderID) != null && !this.getOrderCollector().getOrderAttribute(orderID, OrderAttribute.STATUS).equals(OrderStatus.CANCELLED);
 	}
 }

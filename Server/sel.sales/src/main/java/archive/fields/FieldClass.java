@@ -1,4 +1,4 @@
-package archive;
+package archive.fields;
 
 import java.math.BigDecimal;
 

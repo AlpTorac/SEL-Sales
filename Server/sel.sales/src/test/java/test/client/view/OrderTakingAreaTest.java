@@ -172,7 +172,7 @@ class OrderTakingAreaTest extends ApplicationTest {
 		IOrderItemData d2 = clientModel.getOrderHelper().createOrderItemData(item1, BigDecimal.valueOf(1));
 		IOrderItemData d3 = clientModel.getOrderHelper().createOrderItemData(item3, BigDecimal.valueOf(1));
 		
-		GeneralTestUtilityClass.arrayContentEquals(opHelper.getOrderTakingAreaCurrentOrder(),
+		GeneralTestUtilityClass.arrayContentEquals(opHelper.getOrderTakingAreaCurrentOrderItems(),
 				new IOrderItemData[] {d1,d2,d3});
 		
 		GeneralTestUtilityClass.arrayContentEquals(clientModel.getOrderHelper().deserialiseOrderData(opHelper.getOrderTakingAreaSerialisedOrder()).getOrderedItems(),
@@ -181,9 +181,9 @@ class OrderTakingAreaTest extends ApplicationTest {
 	
 	@Test
 	void displayOrderTest() {
-		runFXAction(()->{opHelper.getOrderTakingAreaDisplayOrder(data);});
+		runFXAction(()->{opHelper.orderTakingAreaDisplayOrder(data);});
 		
-		GeneralTestUtilityClass.arrayContentEquals(opHelper.getOrderTakingAreaCurrentOrder(),
+		GeneralTestUtilityClass.arrayContentEquals(opHelper.getOrderTakingAreaCurrentOrderItems(),
 				data.getOrderedItems());
 		
 		GeneralTestUtilityClass.arrayContentEquals(clientModel.getOrderHelper().deserialiseOrderData(opHelper.getOrderTakingAreaSerialisedOrder()).getOrderedItems(),

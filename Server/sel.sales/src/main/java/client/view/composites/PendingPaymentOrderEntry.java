@@ -62,13 +62,13 @@ public class PendingPaymentOrderEntry extends OrderEntry {
 		IHBoxLayout placeOptionsArea = this.getUIFactory().createHBoxLayout();
 		this.isHere = this.getUIFactory().createToggleGroup();
 		this.here = this.getUIFactory().createRadioButton();
-		this.here.setCaption("Here");
-		this.here.setToggled(true);
+		this.getHereRadioButton().setCaption("Here");
+		this.getHereRadioButton().setToggled(true);
 		this.toGo = this.getUIFactory().createRadioButton();
-		this.toGo.setCaption("ToGo");
-		this.isHere.addAllToToggleGroup(new Toggleable[] {this.here, this.toGo});
-		placeOptionsArea.addUIComponent(this.here);
-		placeOptionsArea.addUIComponent(this.toGo);
+		this.getToGoRadioButton().setCaption("ToGo");
+		this.isHere.addAllToToggleGroup(new Toggleable[] {this.getHereRadioButton(), this.getToGoRadioButton()});
+		placeOptionsArea.addUIComponent(this.getHereRadioButton());
+		placeOptionsArea.addUIComponent(this.getToGoRadioButton());
 		return placeOptionsArea;
 	}
 	
@@ -76,13 +76,13 @@ public class PendingPaymentOrderEntry extends OrderEntry {
 		IHBoxLayout paymentOptionsArea = this.getUIFactory().createHBoxLayout();
 		this.isCash = this.getUIFactory().createToggleGroup();
 		this.cash = this.getUIFactory().createRadioButton();
-		this.cash.setCaption("Cash");
-		this.cash.setToggled(true);
+		this.getCashRadioButton().setCaption("Cash");
+		this.getCashRadioButton().setToggled(true);
 		this.card = this.getUIFactory().createRadioButton();
-		this.card.setCaption("Card");
-		this.isCash.addAllToToggleGroup(new Toggleable[] {this.cash, this.card});
-		paymentOptionsArea.addUIComponent(this.cash);
-		paymentOptionsArea.addUIComponent(this.card);
+		this.getCardRadioButton().setCaption("Card");
+		this.isCash.addAllToToggleGroup(new Toggleable[] {this.getCashRadioButton(), this.getCardRadioButton()});
+		paymentOptionsArea.addUIComponent(this.getCashRadioButton());
+		paymentOptionsArea.addUIComponent(this.getCardRadioButton());
 		return paymentOptionsArea;
 	}
 	
@@ -121,12 +121,25 @@ public class PendingPaymentOrderEntry extends OrderEntry {
 		return btn;
 	}
 	
-	protected boolean isCash() {
-		return this.cash.isToggled();
+	@Override
+	public void displayData(IOrderData data) {
+		super.displayData(data);
+		if (data != null) {
+			this.getCashRadioButton().setToggled(data.getIsCash());
+			this.getCardRadioButton().setToggled(!data.getIsCash());
+			this.getHereRadioButton().setToggled(data.getIsHere());
+			this.getToGoRadioButton().setToggled(!data.getIsHere());
+		}
 	}
 	
+	@Override
+	protected boolean isCash() {
+		return this.getCashRadioButton().isToggled();
+	}
+	
+	@Override
 	protected boolean isHere() {
-		return this.here.isToggled();
+		return this.getHereRadioButton().isToggled();
 	}
 	
 	public IRadioButton getHereRadioButton() {
@@ -151,6 +164,10 @@ public class PendingPaymentOrderEntry extends OrderEntry {
 
 	public IButton getEditButton() {
 		return editBtn;
+	}
+	
+	public IButton getRemoveButton() {
+		return this.removeBtn;
 	}
 	
 	@Override

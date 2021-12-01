@@ -63,6 +63,10 @@ public class CookingOrderEntry extends OrderEntry {
 		return this.editBtn;
 	}
 	
+	public IButton getRemoveButton() {
+		return this.removeBtn;
+	}
+	
 	@Override
 	protected void noEntryAction() {
 		this.removeFromParent();
