@@ -13,9 +13,9 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
-import model.order.IOrderItemData;
-import model.order.IOrderItemDataFactory;
-import model.order.OrderItemDataFactory;
+import model.order.AccumulatingOrderItemAggregate;
+import model.order.AccumulatingOrderItemAggregate;
+import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
@@ -111,9 +111,9 @@ class OrderDataTest {
 			o1 = o1.combine(orders[i]);
 		}
 		
-		Collection<IOrderItemData> dataCol = o1.getOrderItems();
+		Collection<AccumulatingOrderItemAggregate> dataCol = o1.getOrderItems();
 		
-		IOrderItemDataFactory orderItemDataFac = new OrderItemDataFactory();
+		OrderItemFactory orderItemDataFac = new OrderItemFactory();
 		Assertions.assertTrue(dataCol.size() == 3
 				&& dataCol.contains(orderItemDataFac.constructData(item1, BigDecimal.valueOf(4)))
 				&& dataCol.contains(orderItemDataFac.constructData(item2, BigDecimal.valueOf(3)))

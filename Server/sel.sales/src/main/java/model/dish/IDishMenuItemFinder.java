@@ -1,8 +1,8 @@
 package model.dish;
 
-import model.id.EntityID;
+import model.entity.id.EntityID;
 
 public interface IDishMenuItemFinder {
-	IDishMenuItem getDish(EntityID id);
-	IDishMenuItem getDish(String id);
+	DishMenuItem getDish(EntityID id);
+	DishMenuItem getDish(String id);
 }

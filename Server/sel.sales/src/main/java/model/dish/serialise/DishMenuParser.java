@@ -2,7 +2,7 @@ package model.dish.serialise;
 
 import model.dish.IDishMenuDataFactory;
 import model.dish.IDishMenuItemDataFactory;
-import model.id.EntityIDFactory;
+import model.entity.id.EntityIDFactory;
 
 public class DishMenuParser implements IDishMenuParser {
 	private IDishMenuFormat format;

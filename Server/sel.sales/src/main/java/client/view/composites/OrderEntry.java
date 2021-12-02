@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import controller.IController;
 import model.dish.IDishMenuData;
 import model.order.IOrderData;
-import model.order.IOrderItemData;
+import model.order.AccumulatingOrderItemAggregate;
 import view.repository.IChoiceBox;
 import view.repository.IHBoxLayout;
 import view.repository.IIndexedLayout;
@@ -194,12 +194,12 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 	}
 
 	protected void initMenuItemEntries(IOrderData data) {
-		for (IOrderItemData itemData : data.getOrderedItems()) {
+		for (AccumulatingOrderItemAggregate itemData : data.getOrderedItems()) {
 			this.addMenuItemEntry(itemData);
 		}
 	}
 	
-	protected void addMenuItemEntry(IOrderItemData data) {
+	protected void addMenuItemEntry(AccumulatingOrderItemAggregate data) {
 		if (data.getAmount().doubleValue() > 0) {
 			this.addMenuItemEntry(this.createItemEntry(data));
 		};
@@ -220,7 +220,7 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		return new MenuItemEntry(fac, this);
 	}
 	
-	protected MenuItemEntry createItemEntry(IOrderItemData data) {
+	protected MenuItemEntry createItemEntry(AccumulatingOrderItemAggregate data) {
 		MenuItemEntry e  = this.createItemEntry();
 		e.displayData(data);
 		return e;
@@ -273,11 +273,11 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		return this.getActiveData().getID().toString();
 	}
 	
-	public IOrderItemData[] getCurrentOrder() {
+	public AccumulatingOrderItemAggregate[] getCurrentOrder() {
 		return this.getEntries().stream()
 		.filter(mie -> mie.getSelectedMenuItem() != null && mie.getAmount().compareTo(BigDecimal.ZERO) != 0)
-		.map(mie -> this.controller.getModel().getOrderHelper().createOrderItemData(mie.getSelectedMenuItem(), mie.getAmount()))
-		.toArray(IOrderItemData[]::new);
+		.map(mie -> this.controller.getModel().getOrderHelper().createOrderItem(mie.getSelectedMenuItem(), mie.getAmount()))
+		.toArray(AccumulatingOrderItemAggregate[]::new);
 	}
 	
 	protected boolean isCash() {

@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
-import model.order.IOrderItemData;
+import model.order.AccumulatingOrderItemAggregate;
 import server.controller.IServerController;
 import server.controller.ServerSpecificEvent;
 import server.view.composites.OrderInspectionArea;
@@ -20,7 +20,7 @@ public class ConfirmOrderListener extends ClickEventListener implements IApplica
 	
 	private IServerController controller;
 	private HasText orderID;
-	private ITable<IOrderItemData> orderItems;
+	private ITable<AccumulatingOrderItemAggregate> orderItems;
 	private IRadioButton isCash;
 	private IRadioButton isHere;
 	private HasText totalOrderDiscount;
@@ -43,7 +43,7 @@ public class ConfirmOrderListener extends ClickEventListener implements IApplica
 	
 	@Override
 	public Object[] getArgs() {
-		Collection<IOrderItemData> orderItemDataCollection = this.getOrderItems().getAllItems();		
+		Collection<AccumulatingOrderItemAggregate> orderItemDataCollection = this.getOrderItems().getAllItems();		
 		
 		boolean isCash = this.getIsCash().isToggled();
 		boolean isHere = this.getIsHere().isToggled();
@@ -55,8 +55,8 @@ public class ConfirmOrderListener extends ClickEventListener implements IApplica
 		
 		LocalDateTime date = this.oia.getDisplayedDate();
 		
-//		String data = this.controller.getModel().getOrderHelper().serialiseForApp(orderItemDataCollection.toArray(IOrderItemData[]::new), date, isCash, isHere, orderDiscount, orderID);
-		String data = this.controller.getModel().getOrderHelper().serialiseForApp(orderItemDataCollection.toArray(IOrderItemData[]::new), date, isCash, isHere, orderID);
+//		String data = this.controller.getModel().getOrderHelper().serialiseForApp(orderItemDataCollection.toArray(OrderItem[]::new), date, isCash, isHere, orderDiscount, orderID);
+		String data = this.controller.getModel().getOrderHelper().serialiseForApp(orderItemDataCollection.toArray(AccumulatingOrderItemAggregate[]::new), date, isCash, isHere, orderID);
 		
 		this.oia.clearOrderDisplay();
 		
@@ -72,7 +72,7 @@ public class ConfirmOrderListener extends ClickEventListener implements IApplica
 		return orderID;
 	}
 
-	private ITable<IOrderItemData> getOrderItems() {
+	private ITable<AccumulatingOrderItemAggregate> getOrderItems() {
 		return orderItems;
 	}
 

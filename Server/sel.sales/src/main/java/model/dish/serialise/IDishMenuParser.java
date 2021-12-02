@@ -8,7 +8,7 @@ import model.dish.IDishMenuData;
 import model.dish.IDishMenuDataFactory;
 import model.dish.IDishMenuItemData;
 import model.dish.IDishMenuItemDataFactory;
-import model.id.EntityIDFactory;
+import model.entity.id.EntityIDFactory;
 import model.util.IParser;
 
 public interface IDishMenuParser extends IParser {

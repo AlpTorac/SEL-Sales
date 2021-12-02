@@ -12,7 +12,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
-import model.order.IOrderItemData;
+import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
@@ -96,13 +96,13 @@ class OrderParseTest {
 		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(orderData.length, 3);
 		
-		IOrderItemData i1d = model.getOrderHelper().createOrderItemData(item1, BigDecimal.valueOf(2));
-		IOrderItemData i2d = model.getOrderHelper().createOrderItemData(item2, BigDecimal.valueOf(3));
-		IOrderItemData i3d = model.getOrderHelper().createOrderItemData(item3, BigDecimal.valueOf(5));
+		AccumulatingOrderItemAggregate i1d = model.getOrderHelper().createOrderItem(item1, BigDecimal.valueOf(2));
+		AccumulatingOrderItemAggregate i2d = model.getOrderHelper().createOrderItem(item2, BigDecimal.valueOf(3));
+		AccumulatingOrderItemAggregate i3d = model.getOrderHelper().createOrderItem(item3, BigDecimal.valueOf(5));
 		
-		IOrderItemData[] o1 = new IOrderItemData[] {i1d};
-		IOrderItemData[] o2 = new IOrderItemData[] {i1d,i2d};
-		IOrderItemData[] o3 = new IOrderItemData[] {i3d};
+		AccumulatingOrderItemAggregate[] o1 = new AccumulatingOrderItemAggregate[] {i1d};
+		AccumulatingOrderItemAggregate[] o2 = new AccumulatingOrderItemAggregate[] {i1d,i2d};
+		AccumulatingOrderItemAggregate[] o3 = new AccumulatingOrderItemAggregate[] {i3d};
 		
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(model.getOrder("order1").getOrderedItems(), o1));
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(model.getOrder("order2").getOrderedItems(), o2));

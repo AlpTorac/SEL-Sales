@@ -49,7 +49,7 @@ class DishMenuTest {
 	
 	@Test
 	void addMenuItemTest() {
-		IDishMenuItemData[] data = model.getMenuData().getAllDishMenuItems();
+		IDishMenuItemData[] data = model.getMenuData().getAllItems();
 		
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i1Name, i1id, i1PorSize, i1Price, i1ProCost);
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i2Name, i2id, i2PorSize, i2Price, i2ProCost);
@@ -58,7 +58,7 @@ class DishMenuTest {
 
 	@Test
 	void removeMenuItemTest() {
-		IDishMenuItemData[] data = model.getMenuData().getAllDishMenuItems();
+		IDishMenuItemData[] data = model.getMenuData().getAllItems();
 		
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i1Name, i1id, i1PorSize, i1Price, i1ProCost);
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i2Name, i2id, i2PorSize, i2Price, i2ProCost);
@@ -68,7 +68,7 @@ class DishMenuTest {
 		
 		model.removeMenuItem("item1");
 		
-		data = model.getMenuData().getAllDishMenuItems();
+		data = model.getMenuData().getAllItems();
 		
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i2Name, i2id, i2PorSize, i2Price, i2ProCost);
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i3Name, i3id, i3PorSize, i3Price, i3ProCost);
@@ -77,7 +77,7 @@ class DishMenuTest {
 		
 		model.removeMenuItem("item2");
 		
-		data = model.getMenuData().getAllDishMenuItems();
+		data = model.getMenuData().getAllItems();
 		
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i3Name, i3id, i3PorSize, i3Price, i3ProCost);
 		
@@ -85,7 +85,7 @@ class DishMenuTest {
 		
 		model.removeMenuItem("item3");
 		
-		data = model.getMenuData().getAllDishMenuItems();
+		data = model.getMenuData().getAllItems();
 		
 		Assertions.assertEquals(0, data.length);
 	}
@@ -94,7 +94,7 @@ class DishMenuTest {
 	void duplicateAddTest() {
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 		
-		IDishMenuItemData[] data = model.getMenuData().getAllDishMenuItems();
+		IDishMenuItemData[] data = model.getMenuData().getAllItems();
 		
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i1Name, i1id, i1PorSize, i1Price, i1ProCost);
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i2Name, i2id, i2PorSize, i2Price, i2ProCost);

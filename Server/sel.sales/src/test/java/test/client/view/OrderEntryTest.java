@@ -20,7 +20,7 @@ import client.view.composites.PriceUpdateTarget;
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
-import model.order.IOrderItemData;
+import model.order.AccumulatingOrderItemAggregate;
 import server.controller.IServerController;
 import server.controller.ServerController;
 import server.controller.StandardServerController;

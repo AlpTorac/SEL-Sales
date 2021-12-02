@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import model.dish.IDishMenuItemData;
-import model.order.IOrderItem;
+import model.order.OrderItem;
 import model.order.OrderItem;
 import server.model.IServerModel;
 import server.model.ServerModel;
@@ -43,9 +43,9 @@ class OrderItemTest {
 	private BigDecimal orderItem2a = BigDecimal.valueOf(2);
 	private BigDecimal orderItem3a = BigDecimal.valueOf(5);
 	
-	private IOrderItem orderItem1;
-	private IOrderItem orderItem2;
-	private IOrderItem orderItem3;
+	private OrderItem orderItem1;
+	private OrderItem orderItem2;
+	private OrderItem orderItem3;
 	
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	
@@ -72,40 +72,40 @@ class OrderItemTest {
 
 	@Test
 	void compareToTest() {
-		Assertions.assertEquals(orderItem1.compareTo(orderItem1), orderItem1.getMenuItemData().compareTo(orderItem1.getMenuItemData()));
-		Assertions.assertEquals(orderItem1.compareTo(orderItem2), orderItem1.getMenuItemData().compareTo(orderItem2.getMenuItemData()));
-		Assertions.assertEquals(orderItem1.compareTo(orderItem3), orderItem1.getMenuItemData().compareTo(orderItem3.getMenuItemData()));
+		Assertions.assertEquals(orderItem1.compareTo(orderItem1), orderItem1.getMenuItem().compareTo(orderItem1.getMenuItem()));
+		Assertions.assertEquals(orderItem1.compareTo(orderItem2), orderItem1.getMenuItem().compareTo(orderItem2.getMenuItem()));
+		Assertions.assertEquals(orderItem1.compareTo(orderItem3), orderItem1.getMenuItem().compareTo(orderItem3.getMenuItem()));
 		
-		Assertions.assertEquals(orderItem2.compareTo(orderItem1), orderItem2.getMenuItemData().compareTo(orderItem1.getMenuItemData()));
-		Assertions.assertEquals(orderItem2.compareTo(orderItem2), orderItem2.getMenuItemData().compareTo(orderItem2.getMenuItemData()));
-		Assertions.assertEquals(orderItem2.compareTo(orderItem3), orderItem2.getMenuItemData().compareTo(orderItem3.getMenuItemData()));
+		Assertions.assertEquals(orderItem2.compareTo(orderItem1), orderItem2.getMenuItem().compareTo(orderItem1.getMenuItem()));
+		Assertions.assertEquals(orderItem2.compareTo(orderItem2), orderItem2.getMenuItem().compareTo(orderItem2.getMenuItem()));
+		Assertions.assertEquals(orderItem2.compareTo(orderItem3), orderItem2.getMenuItem().compareTo(orderItem3.getMenuItem()));
 		
-		Assertions.assertEquals(orderItem3.compareTo(orderItem1), orderItem3.getMenuItemData().compareTo(orderItem1.getMenuItemData()));
-		Assertions.assertEquals(orderItem3.compareTo(orderItem2), orderItem3.getMenuItemData().compareTo(orderItem2.getMenuItemData()));
-		Assertions.assertEquals(orderItem3.compareTo(orderItem3), orderItem3.getMenuItemData().compareTo(orderItem3.getMenuItemData()));
+		Assertions.assertEquals(orderItem3.compareTo(orderItem1), orderItem3.getMenuItem().compareTo(orderItem1.getMenuItem()));
+		Assertions.assertEquals(orderItem3.compareTo(orderItem2), orderItem3.getMenuItem().compareTo(orderItem2.getMenuItem()));
+		Assertions.assertEquals(orderItem3.compareTo(orderItem3), orderItem3.getMenuItem().compareTo(orderItem3.getMenuItem()));
 	}
 
 	@Test
 	void totalPortionsTest() {
-		IDishMenuItemData oi1 = orderItem1.getMenuItemData();
+		IDishMenuItemData oi1 = orderItem1.getMenuItem();
 		Assertions.assertEquals(orderItem1.getTotalPortions().compareTo(oi1.getPortionSize().multiply(orderItem1.getAmount())), 0);
 		
-		IDishMenuItemData oi2 = orderItem2.getMenuItemData();
+		IDishMenuItemData oi2 = orderItem2.getMenuItem();
 		Assertions.assertEquals(orderItem2.getTotalPortions().compareTo(oi2.getPortionSize().multiply(orderItem2.getAmount())), 0);
 		
-		IDishMenuItemData oi3 = orderItem3.getMenuItemData();
+		IDishMenuItemData oi3 = orderItem3.getMenuItem();
 		Assertions.assertEquals(orderItem3.getTotalPortions().compareTo(oi3.getPortionSize().multiply(orderItem3.getAmount())), 0);
 	}
 	
 	@Test
 	void orderItemPriceTest() {
-		IDishMenuItemData oi1 = orderItem1.getMenuItemData();
+		IDishMenuItemData oi1 = orderItem1.getMenuItem();
 		Assertions.assertEquals(orderItem1.getOrderItemPrice().compareTo(oi1.getGrossPrice().multiply(orderItem1.getAmount())), 0);
 		
-		IDishMenuItemData oi2 = orderItem2.getMenuItemData();
+		IDishMenuItemData oi2 = orderItem2.getMenuItem();
 		Assertions.assertEquals(orderItem2.getOrderItemPrice().compareTo(oi2.getGrossPrice().multiply(orderItem2.getAmount())), 0);
 		
-		IDishMenuItemData oi3 = orderItem3.getMenuItemData();
+		IDishMenuItemData oi3 = orderItem3.getMenuItem();
 		Assertions.assertEquals(orderItem3.getOrderItemPrice().compareTo(oi3.getGrossPrice().multiply(orderItem3.getAmount())), 0);
 	}
 	
@@ -118,7 +118,7 @@ class OrderItemTest {
 		orderItem1.setAmount(newAmount);
 		Assertions.assertEquals(orderItem1.getAmount().compareTo(newAmount), 0);
 		
-		IDishMenuItemData oi1 = orderItem1.getMenuItemData();
+		IDishMenuItemData oi1 = orderItem1.getMenuItem();
 		Assertions.assertEquals(orderItem1.getTotalPortions().compareTo(oi1.getPortionSize().multiply(newAmount)), 0);
 		Assertions.assertEquals(orderItem1.getOrderItemPrice().compareTo(oi1.getGrossPrice().multiply(newAmount)), 0);
 	}

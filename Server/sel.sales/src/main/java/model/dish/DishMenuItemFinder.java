@@ -1,22 +1,25 @@
 package model.dish;
 
-import model.id.EntityID;
+import model.entity.id.EntityID;
+import model.entity.id.MinimalIDFactory;
 
 public class DishMenuItemFinder implements IDishMenuItemFinder {
-	private IDishMenu menu;
+	private DishMenu menu;
+	private MinimalIDFactory fac;
 	
-	public DishMenuItemFinder(IDishMenu menu) {
+	public DishMenuItemFinder(DishMenu menu) {
 		this.menu = menu;
+		this.fac = new MinimalIDFactory();
 	}
 	
 	@Override
-	public IDishMenuItem getDish(EntityID id) {
-		return this.menu.getItem(id);
+	public DishMenuItem getDish(EntityID id) {
+		return this.menu.getElement(id);
 	}
 
 	@Override
-	public IDishMenuItem getDish(String id) {
-		return this.menu.getItem(id);
+	public DishMenuItem getDish(String id) {
+		return this.menu.getElement(this.fac.createID(id));
 	}
 
 }

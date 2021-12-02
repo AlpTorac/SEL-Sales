@@ -18,7 +18,7 @@ import client.view.composites.MenuItemEntry;
 import client.view.composites.PriceUpdateTarget;
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
-import model.order.IOrderItemData;
+import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import view.repository.uifx.FXUIComponentFactory;
@@ -100,7 +100,7 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 		
 		BigDecimal amount =  BigDecimal.valueOf(2);
 		
-		IOrderItemData itemData = model.getOrderHelper().createOrderItemData(item1, amount);
+		AccumulatingOrderItemAggregate itemData = model.getOrderHelper().createOrderItem(item1, amount);
 		entry.displayData(itemData);
 		
 		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, item1, amount);
@@ -215,7 +215,7 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 		
 		BigDecimal amount =  BigDecimal.valueOf(2);
 		
-		IOrderItemData itemData = model.getOrderHelper().createOrderItemData(item1, amount);
+		AccumulatingOrderItemAggregate itemData = model.getOrderHelper().createOrderItem(item1, amount);
 		entry.displayData(itemData);
 		
 		EditableMenuItemEntry clone = entry.clone();

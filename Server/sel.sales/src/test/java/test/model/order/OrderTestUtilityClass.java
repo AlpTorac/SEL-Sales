@@ -6,23 +6,23 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.Assertions;
 
 import model.order.IOrderData;
-import model.order.IOrderItemData;
+import model.order.AccumulatingOrderItemAggregate;
 
 public final class OrderTestUtilityClass {
 	public static void assertOrderDataEqual(IOrderData data, BigDecimal[] amounts, String[] ids) {
-		IOrderItemData[] itemData = data.getOrderedItems();
+		AccumulatingOrderItemAggregate[] itemData = data.getOrderedItems();
 		for (int i = 0; i < itemData.length; i++) {
 			Assertions.assertEquals(itemData[i].getAmount().compareTo(amounts[i]), 0);
-			assertOrderItemDataIDEqual(itemData[i], ids[i]);
+			assertOrderItemIDEqual(itemData[i], ids[i]);
 		}
 	}
 	
-	public static void assertOrderItemDataIDEqual(IOrderItemData data, String id) {
+	public static void assertOrderItemIDEqual(AccumulatingOrderItemAggregate data, String id) {
 		data.getItemData().getID().serialisedIDequals(id);
 	}
 	
-	public static void assertOrderItemDataEqual(IOrderItemData data, String id, BigDecimal amount) {
-		assertOrderItemDataIDEqual(data, id);
+	public static void assertOrderItemEqual(AccumulatingOrderItemAggregate data, String id, BigDecimal amount) {
+		assertOrderItemIDEqual(data, id);
 		Assertions.assertEquals(data.getAmount().compareTo(amount), 0);
 	}
 	

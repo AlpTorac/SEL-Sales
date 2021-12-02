@@ -4,17 +4,17 @@ import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemFinder;
 import model.order.IOrderData;
 import model.order.IOrderDataFactory;
-import model.order.IOrderItemDataFactory;
-import model.order.IOrderItemFactory;
+import model.order.OrderItemFactory;
+import model.order.OrderItemFactory;
 
 public abstract class OrderDeserialiser implements IOrderDeserialiser {
 	protected IOrderParser orderParser;
 	
 	protected IDishMenuItemFinder finder;
 	protected IOrderDataFactory orderDataFac;
-	protected IOrderItemFactory itemFac;
+	protected OrderItemFactory itemFac;
 	protected IDishMenuItemDataFactory dishMenuItemDataFac;
-	protected IOrderItemDataFactory orderItemDataFac;
+	protected OrderItemFactory orderItemDataFac;
 	
 	protected IOrderFormat orderFormat;
 

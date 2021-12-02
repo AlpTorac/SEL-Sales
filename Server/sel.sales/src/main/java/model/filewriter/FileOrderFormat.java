@@ -20,12 +20,12 @@ public class FileOrderFormat implements IOrderFormat {
 	}
 
 	@Override
-	public String getOrderItemDataFieldSeperator() {
+	public String getOrderItemFieldSeperator() {
 		return this.orderItemDataFieldSeperator;
 	}
 
 	@Override
-	public String getOrderItemDataFieldEnd() {
+	public String getOrderItemFieldEnd() {
 		return this.orderItemDataEnd;
 	}
 

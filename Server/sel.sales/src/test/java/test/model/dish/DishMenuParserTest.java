@@ -19,7 +19,7 @@ import model.dish.serialise.IDishMenuFormat;
 import model.dish.serialise.IDishMenuItemSerialiser;
 import model.dish.serialise.IDishMenuParser;
 import model.dish.serialise.IntraAppDishMenuFormat;
-import model.id.FixIDFactory;
+import model.entity.id.MinimalIDFactory;
 //@Execution(value = ExecutionMode.SAME_THREAD)
 class DishMenuParserTest {
 
@@ -27,7 +27,7 @@ class DishMenuParserTest {
 	private IDishMenuItemDataFactory itemDataFac = new DishMenuItemDataFactory();
 	private IDishMenuDataFactory dataFac = new DishMenuDataFactory(itemDataFac);
 	
-	private IDishMenuParser parser = new DishMenuParser(format, dataFac, new FixIDFactory());
+	private IDishMenuParser parser = new DishMenuParser(format, dataFac, new MinimalIDFactory());
 	private IDishMenuItemSerialiser serialiser = new ExternalDishMenuItemSerialiser();
 	
 	private String i1Name = "aaa";
@@ -61,7 +61,7 @@ class DishMenuParserTest {
 				+ format.getDishMenuItemDataFieldEnd();
 		IDishMenuData data = parser.parseDishMenuData(serialisedMenu);
 		
-		IDishMenuItemData[] itemData = data.getAllDishMenuItems();
+		IDishMenuItemData[] itemData = data.getAllItems();
 		
 		Assertions.assertEquals(3, itemData.length);
 		

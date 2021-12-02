@@ -234,7 +234,7 @@ class MultipleClientInteractionTest {
 		
 		for (DummyClient client : clients) {
 			IDishMenuData menuData = client.getMenuData();
-			while (menuData.getAllDishMenuItems().length == 0) {
+			while (menuData.getAllItems().length == 0) {
 				interaction.reSetServerMenu();
 				GeneralTestUtilityClass.performWait(waitTime);
 				menuData = client.getMenuData();

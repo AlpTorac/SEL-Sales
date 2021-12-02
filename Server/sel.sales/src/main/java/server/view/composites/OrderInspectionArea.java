@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import model.IDateSettings;
 import model.order.IOrderData;
-import model.order.IOrderItemData;
+import model.order.AccumulatingOrderItemAggregate;
 import view.repository.IButton;
 import view.repository.IGridLayout;
 import view.repository.IHBoxLayout;
@@ -24,7 +24,7 @@ public class OrderInspectionArea extends UIVBoxLayout {
 	private ILabel orderTimeInDayLabel;
 	private ILabel orderDateLabel;
 	
-	private ITable<IOrderItemData> orderDetailsDisplay;
+	private ITable<AccumulatingOrderItemAggregate> orderDetailsDisplay;
 	
 	private IRadioButton cashRadioButton;
 	private IRadioButton cardRadioButton;
@@ -195,8 +195,8 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		return label;
 	}
 	
-	protected ITable<IOrderItemData> initOrderDetailsTable() {
-		ITable<IOrderItemData> table = this.fac.createTable();
+	protected ITable<AccumulatingOrderItemAggregate> initOrderDetailsTable() {
+		ITable<AccumulatingOrderItemAggregate> table = this.fac.createTable();
 		table.addColumn("Menu Item", "ItemData");
 		table.addColumn("Amount", "Amount");
 		table.addColumn("Gross Price", "GrossPrice");
@@ -375,7 +375,7 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		return orderDateLabel;
 	}
 
-	public ITable<IOrderItemData> getOrderDetailsDisplay() {
+	public ITable<AccumulatingOrderItemAggregate> getOrderDetailsDisplay() {
 		return orderDetailsDisplay;
 	}
 

@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import controller.IController;
-import model.id.EntityID;
+import model.entity.id.EntityID;
 import model.order.IOrderData;
 import view.repository.uiwrapper.UIAccordion;
 import view.repository.uiwrapper.UIComponentFactory;

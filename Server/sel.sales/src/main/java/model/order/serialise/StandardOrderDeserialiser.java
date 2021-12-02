@@ -2,18 +2,18 @@ package model.order.serialise;
 
 import model.dish.DishMenuItemDataFactory;
 import model.dish.IDishMenuItemDataFactory;
-import model.id.FixIDFactory;
+import model.entity.id.MinimalIDFactory;
 import model.order.IOrderDataFactory;
-import model.order.IOrderItemDataFactory;
+import model.order.OrderItemFactory;
 import model.order.OrderDataFactory;
-import model.order.OrderItemDataFactory;
+import model.order.OrderItemFactory;
 
 public class StandardOrderDeserialiser extends OrderDeserialiser {
 	public StandardOrderDeserialiser() {
 		super();
 		
-		IOrderItemDataFactory orderItemDataFac = new OrderItemDataFactory();
-		IOrderDataFactory orderDataFac = new OrderDataFactory(orderItemDataFac, new FixIDFactory());
+		OrderItemFactory orderItemDataFac = new OrderItemFactory();
+		IOrderDataFactory orderDataFac = new OrderDataFactory(orderItemDataFac, new MinimalIDFactory());
 		IOrderFormat orderDateParser = new IntraAppOrderFormat();
 		IDishMenuItemDataFactory menuItemDataFac = new DishMenuItemDataFactory();
 		

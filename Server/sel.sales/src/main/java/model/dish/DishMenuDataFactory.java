@@ -1,20 +1,33 @@
 package model.dish;
 
-public class DishMenuDataFactory implements IDishMenuDataFactory {
-	private IDishMenuItemDataFactory itemDataFac;
+public class DishMenuDataFactory {
+	private DishMenuItemFactory itemFac;
 	
-	public DishMenuDataFactory(IDishMenuItemDataFactory itemDataFac) {
-		this.itemDataFac = itemDataFac;
+	public DishMenuDataFactory(DishMenuItemFactory itemFac) {
+		this.itemFac = itemFac;
 	}
 	
-	@Override
-	public DishMenuData constructData(IDishMenuItemData[] dishMenuItemDatas) {
-		return new DishMenuData(dishMenuItemDatas);
+	public DishMenuData constructData(DishMenuItemData[] dishMenuItemDatas) {
+		DishMenuData dmd = new DishMenuData();
+		for (DishMenuItemData data : dishMenuItemDatas) {
+			dmd.addElement(data);
+		}
+		return dmd;
 	}
 
-	@Override
-	public IDishMenuItemDataFactory getItemDataFac() {
-		return this.itemDataFac;
+	public DishMenuItemFactory getItemDataFac() {
+		return this.itemFac;
 	}
 
+	public DishMenuData constructData(DishMenuItem[] dishMenuItems) {
+		DishMenuItemData[] datas = new DishMenuItemData[dishMenuItems.length];
+		for (int i = 0; i < datas.length; i++) {
+			datas[i] = this.getItemDataFac().entityToValue(dishMenuItems[i]);
+		}
+		return this.constructData(datas);
+	}
+	
+	public  DishMenuData dishMenuToData(DishMenu dishMenu) {
+		return this.constructData(dishMenu.getAllElements());
+	}
 }

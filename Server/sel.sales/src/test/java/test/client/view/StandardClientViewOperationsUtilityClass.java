@@ -18,7 +18,7 @@ import controller.IController;
 import model.IModel;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
-import model.order.IOrderItemData;
+import model.order.AccumulatingOrderItemAggregate;
 import test.GeneralTestUtilityClass;
 import test.ViewOperationsUtilityClass;
 import view.IView;
@@ -158,7 +158,7 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 		return this.ota.getEntry().getEntries().size();
 	}
 	
-	public IOrderItemData[] getOrderTakingAreaCurrentOrderItems() {
+	public AccumulatingOrderItemAggregate[] getOrderTakingAreaCurrentOrderItems() {
 		return this.ota.getEntry().getCurrentOrder();
 	}
 	

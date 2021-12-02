@@ -84,7 +84,7 @@ class MenuItemOperationsTest extends ApplicationTest {
 		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
 		
-		IDishMenuItemData[] datas = model.getMenuData().getAllDishMenuItems();
+		IDishMenuItemData[] datas = model.getMenuData().getAllItems();
 		Assertions.assertEquals(datas.length, 1);
 		
 		Assertions.assertTrue(addedItem.equals(datas[0]));
@@ -94,13 +94,13 @@ class MenuItemOperationsTest extends ApplicationTest {
 	void removeMenuItemTest() {
 		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1ProCost, i1PorSize, i1Disc);
-		IDishMenuItemData[] datas = model.getMenuData().getAllDishMenuItems();
+		IDishMenuItemData[] datas = model.getMenuData().getAllItems();
 		Assertions.assertEquals(datas.length, 1);
 		
 		Assertions.assertTrue(addedItem.equals(datas[0]));
 		
 		IDishMenuItemData removedItem = opHelper.removeMenuItem(i1id);
-		datas = model.getMenuData().getAllDishMenuItems();
+		datas = model.getMenuData().getAllItems();
 		
 		Assertions.assertTrue(addedItem.equals(removedItem));
 		Assertions.assertEquals(datas.length, 0);
@@ -111,7 +111,7 @@ class MenuItemOperationsTest extends ApplicationTest {
 		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
 		
-		IDishMenuItemData[] datas = model.getMenuData().getAllDishMenuItems();
+		IDishMenuItemData[] datas = model.getMenuData().getAllItems();
 		Assertions.assertEquals(datas.length, 1);
 		
 		Assertions.assertTrue(addedItem.equals(datas[0]));
@@ -123,7 +123,7 @@ class MenuItemOperationsTest extends ApplicationTest {
 
 	@Test
 	void writeMenuTest() {
-		Assertions.assertEquals(model.getMenuData().getAllDishMenuItems().length, 0);
+		Assertions.assertEquals(model.getMenuData().getAllItems().length, 0);
 		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		IDishMenuItemData addedItem1 = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
 		IDishMenuItemData addedItem2 = opHelper.addMenuItem(i2Name, i2id, i2Price, i2Price, i2PorSize, i2Disc);

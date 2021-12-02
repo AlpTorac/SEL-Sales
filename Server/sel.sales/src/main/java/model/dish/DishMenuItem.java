@@ -2,77 +2,44 @@ package model.dish;
 
 import java.math.BigDecimal;
 
-import model.id.EntityID;
+import model.datamapper.DishMenuItemAttribute;
+import model.entity.Entity;
+import model.entity.id.EntityID;
 
-public class DishMenuItem implements IDishMenuItem {
-	private IDish dish;
-	private BigDecimal portionSize;
-	private BigDecimal price;
-	private EntityID id;
-	private BigDecimal productionCost;
-	
-	DishMenuItem(IDish dish, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost, EntityID id) {
-		this.dish = dish;
-		this.portionSize = portionSize;
-		this.price = price;
-		this.productionCost = productionCost;
-		this.id = id;
+public class DishMenuItem extends Entity<DishMenuItemAttribute> {
+	DishMenuItem(EntityID id) {
+		super(id);
 	}
 	
-	@Override
-	public IDish getDish() {
-		return dish;
+	public String getDishName() {
+		return (String) this.getAttributeValue(DishMenuItemAttribute.DISH_NAME);
 	}
-
-	@Override
-	public BigDecimal getPortionSize() {
-		return portionSize;
-	}
-
-	@Override
-	public void setPortionSize(BigDecimal portionSize) {
-		this.portionSize = portionSize;
-	}
-
-	@Override
-	public BigDecimal getPrice() {
-		return price;
-	}
-
-	@Override
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
-
-	@Override
-	public EntityID getID() {
-		return this.id;
-	}
-
-	@Override
+	
 	public BigDecimal getProductionCost() {
-		return productionCost;
+		return (BigDecimal) this.getAttributeValue(DishMenuItemAttribute.PRODUCTION_COST);
 	}
-
-	@Override
-	public void setProductionCost(BigDecimal productionCost) {
-		this.productionCost = productionCost;
+	
+	public BigDecimal getGrossPrice() {
+		return (BigDecimal) this.getAttributeValue(DishMenuItemAttribute.GROSS_PRICE);
 	}
-	@Override
+	
+	public BigDecimal getPortionSize() {
+		return (BigDecimal) this.getAttributeValue(DishMenuItemAttribute.PORTION_SIZE);
+	}
+	
+	public BigDecimal getGrossPricePerPortion() {
+		return this.getGrossPrice().divide(this.getPortionSize());
+	}
+	
 	public boolean equals(Object o) {
-		if (o == null || !(o instanceof IDishMenuItem)) {
+		if (o == null || !(o instanceof DishMenuItem)) {
 			return false;
 		}
-		
-		IDishMenuItem castedO = (IDishMenuItem) o;
-//		boolean result = this.getID().equals(otherItem.getID());
-//		return result;
-		
-//		return this.compareTo((IDishMenuItem) o) == 0 ? true : false;
-		return this.getDish().equals(castedO.getDish()) &&
+		DishMenuItem castedO = (DishMenuItem) o;
+		return this.getDishName().equals(castedO.getDishName()) &&
 				this.getID().equals(castedO.getID()) &&
 				this.getPortionSize().compareTo(castedO.getPortionSize()) == 0 &&
-				this.getPrice().compareTo(castedO.getPrice()) == 0 &&
+				this.getGrossPrice().compareTo(castedO.getGrossPrice()) == 0 &&
 				this.getProductionCost().compareTo(castedO.getProductionCost()) == 0;
 	}
 }

@@ -24,7 +24,7 @@ import client.view.StandardClientView;
 import javafx.application.Platform;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
-import model.order.IOrderItemData;
+import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
@@ -168,15 +168,15 @@ class OrderTakingAreaTest extends ApplicationTest {
 		});
 		runFXAction(()->{opHelper.orderTakingAreaRemoveEntry(3);});
 		
-		IOrderItemData d1 = clientModel.getOrderHelper().createOrderItemData(item1, BigDecimal.valueOf(2));
-		IOrderItemData d2 = clientModel.getOrderHelper().createOrderItemData(item1, BigDecimal.valueOf(1));
-		IOrderItemData d3 = clientModel.getOrderHelper().createOrderItemData(item3, BigDecimal.valueOf(1));
+		AccumulatingOrderItemAggregate d1 = clientModel.getOrderHelper().createOrderItem(item1, BigDecimal.valueOf(2));
+		AccumulatingOrderItemAggregate d2 = clientModel.getOrderHelper().createOrderItem(item1, BigDecimal.valueOf(1));
+		AccumulatingOrderItemAggregate d3 = clientModel.getOrderHelper().createOrderItem(item3, BigDecimal.valueOf(1));
 		
 		GeneralTestUtilityClass.arrayContentEquals(opHelper.getOrderTakingAreaCurrentOrderItems(),
-				new IOrderItemData[] {d1,d2,d3});
+				new AccumulatingOrderItemAggregate[] {d1,d2,d3});
 		
 		GeneralTestUtilityClass.arrayContentEquals(clientModel.getOrderHelper().deserialiseOrderData(opHelper.getOrderTakingAreaSerialisedOrder()).getOrderedItems(),
-				new IOrderItemData[] {d1,d2,d3});
+				new AccumulatingOrderItemAggregate[] {d1,d2,d3});
 	}
 	
 	@Test

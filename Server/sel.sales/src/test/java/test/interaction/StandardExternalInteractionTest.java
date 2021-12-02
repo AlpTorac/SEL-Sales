@@ -148,7 +148,7 @@ class StandardExternalInteractionTest {
 		interaction.setServerMenu(menu);
 		
 		IDishMenuData menuData = client.getMenuData();
-		while (menuData.getAllDishMenuItems().length == 0) {
+		while (menuData.getAllItems().length == 0) {
 			interaction.reSetServerMenu();
 			GeneralTestUtilityClass.performWait(waitTime);
 			menuData = client.getMenuData();

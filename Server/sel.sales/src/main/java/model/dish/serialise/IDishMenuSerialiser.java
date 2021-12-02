@@ -7,7 +7,7 @@ import model.util.ISerialiser;
 public interface IDishMenuSerialiser extends ISerialiser {
 	default String serialise(IDishMenuData data) {
 		String result = "";
-		IDishMenuItemData[] itemData = data.getAllDishMenuItems();
+		IDishMenuItemData[] itemData = data.getAllItems();
 		for (int i = 0; i < itemData.length - 1; i++) {
 			result += this.serialiseItem(itemData[i]);
 		}

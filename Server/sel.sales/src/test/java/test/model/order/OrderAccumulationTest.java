@@ -11,7 +11,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
-import model.order.IOrderItemData;
+import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
@@ -64,10 +64,10 @@ class OrderAccumulationTest {
 		IOrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		Assertions.assertEquals(orderData.length, 1);
-		IOrderItemData i1d = model.getOrderHelper().createOrderItemData(item1, BigDecimal.valueOf(9));
-		IOrderItemData i2d = model.getOrderHelper().createOrderItemData(item2, BigDecimal.valueOf(3));
-		IOrderItemData i3d = model.getOrderHelper().createOrderItemData(item3, BigDecimal.valueOf(6));
-		IOrderItemData[] itemDatas = new IOrderItemData[] {i1d, i2d, i3d};
+		AccumulatingOrderItemAggregate i1d = model.getOrderHelper().createOrderItem(item1, BigDecimal.valueOf(9));
+		AccumulatingOrderItemAggregate i2d = model.getOrderHelper().createOrderItem(item2, BigDecimal.valueOf(3));
+		AccumulatingOrderItemAggregate i3d = model.getOrderHelper().createOrderItem(item3, BigDecimal.valueOf(6));
+		AccumulatingOrderItemAggregate[] itemDatas = new AccumulatingOrderItemAggregate[] {i1d, i2d, i3d};
 		
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(orderData[0].getOrderedItems(),
 				itemDatas));

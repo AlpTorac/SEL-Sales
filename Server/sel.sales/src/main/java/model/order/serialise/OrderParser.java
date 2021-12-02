@@ -3,19 +3,19 @@ package model.order.serialise;
 import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemFinder;
 import model.order.IOrderDataFactory;
-import model.order.IOrderItemDataFactory;
+import model.order.OrderItemFactory;
 
 public class OrderParser implements IOrderParser {
 	private IDishMenuItemFinder finder;
 	private IDishMenuItemDataFactory menuItemDataFac;
 	private IOrderDataFactory orderDataFac;
-	private IOrderItemDataFactory orderItemDataFac;
+	private OrderItemFactory orderItemDataFac;
 	private IOrderFormat orderFormat;
 	
 	public OrderParser(
 			IDishMenuItemFinder finder,
 			IOrderDataFactory orderDataFac,
-			IOrderItemDataFactory orderItemDataFac,
+			OrderItemFactory orderItemDataFac,
 			IOrderFormat orderFormat,
 			IDishMenuItemDataFactory menuItemDataFac) {
 		
@@ -35,7 +35,7 @@ public class OrderParser implements IOrderParser {
 		return this.orderDataFac;
 	}
 	@Override
-	public IOrderItemDataFactory getOrderItemDataFactory() {
+	public OrderItemFactory getOrderItemFactory() {
 		return this.orderItemDataFac;
 	}
 	@Override

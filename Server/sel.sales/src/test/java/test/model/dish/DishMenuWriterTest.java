@@ -80,7 +80,7 @@ class DishMenuWriterTest {
 	@Test
 	void fileDishMenuItemSerialiserTest() {
 		FileDishMenuItemSerialiser fdmis = new FileDishMenuItemSerialiser();
-		IDishMenuItemData[] ds = model.getMenuData().getAllDishMenuItems();
+		IDishMenuItemData[] ds = model.getMenuData().getAllItems();
 		IDishMenuItemData d1 = ds[0];
 		String s1 = fdmis.serialise(d1);
 		Assertions.assertEquals(s1, i1Name+","+i1id+","+i1PorSize.toPlainString()+","+i1ProCost.toPlainString()+".0"+","+i1Price.toPlainString()+".0");
@@ -106,7 +106,7 @@ class DishMenuWriterTest {
 	@Test
 	void writeTest() {
 		IDishMenuData menuData = model.getMenuData();
-		IDishMenuItemData[] ds = menuData.getAllDishMenuItems();
+		IDishMenuItemData[] ds = menuData.getAllItems();
 		Assertions.assertEquals(ds.length, 3);
 		Assertions.assertTrue(model.writeDishMenu());
 		File f = new File(testFolder+File.separator+DishMenuFile.getDefaultFileNameForClass()+DishMenuFile.getExtensionForClass());
@@ -144,20 +144,20 @@ class DishMenuWriterTest {
 	
 	@Test
 	void noDuplicateWriteTest() {
-		Assertions.assertEquals(model.getMenuData().getAllDishMenuItems().length, 3);
+		Assertions.assertEquals(model.getMenuData().getAllItems().length, 3);
 		Assertions.assertTrue(model.writeDishMenu());
 		model.close();
 		this.initModel();
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-		Assertions.assertEquals(model.getMenuData().getAllDishMenuItems().length, 2);
+		Assertions.assertEquals(model.getMenuData().getAllItems().length, 2);
 		Assertions.assertTrue(model.writeDishMenu());
 		model.close();
 		this.initModel();
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
-		Assertions.assertEquals(model.getMenuData().getAllDishMenuItems().length, 3);
+		Assertions.assertEquals(model.getMenuData().getAllItems().length, 3);
 		Assertions.assertTrue(model.writeDishMenu());
 		
 		File f = new File(testFolder+File.separator+DishMenuFile.getDefaultFileNameForClass()+DishMenuFile.getExtensionForClass());

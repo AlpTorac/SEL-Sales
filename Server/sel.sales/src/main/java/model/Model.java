@@ -12,6 +12,17 @@ import model.connectivity.FileDeviceDataParser;
 import model.connectivity.FileDeviceDataSerialiser;
 import model.connectivity.IConnectivityManager;
 import model.connectivity.IDeviceData;
+import model.datamapper.OrderAttribute;
+import model.datamapper.OrderAttributeGetter;
+import model.datamapper.OrderAttributeSetter;
+import model.datamapper.OrderNoteGetter;
+import model.datamapper.OrderNoteSetter;
+import model.datamapper.OrderStatusGetter;
+import model.datamapper.OrderStatusSetter;
+import model.datamapper.OrderTableNumberGetter;
+import model.datamapper.OrderTableNumberSetter;
+import model.datamapper.OrderWrittenGetter;
+import model.datamapper.OrderWrittenSetter;
 import model.dish.DishMenuHelper;
 import model.dish.DishMenuItemFinder;
 import model.dish.IDishMenu;
@@ -27,17 +38,6 @@ import model.order.IOrderData;
 import model.order.IOrderHelper;
 import model.order.OrderHelper;
 import model.order.OrderStatus;
-import model.order.datamapper.OrderAttribute;
-import model.order.datamapper.OrderAttributeGetter;
-import model.order.datamapper.OrderAttributeSetter;
-import model.order.datamapper.OrderNoteGetter;
-import model.order.datamapper.OrderNoteSetter;
-import model.order.datamapper.OrderStatusGetter;
-import model.order.datamapper.OrderStatusSetter;
-import model.order.datamapper.OrderTableNumberGetter;
-import model.order.datamapper.OrderTableNumberSetter;
-import model.order.datamapper.OrderWrittenGetter;
-import model.order.datamapper.OrderWrittenSetter;
 import model.settings.HasSettingsField;
 import model.settings.ISettings;
 import model.settings.ISettingsParser;
@@ -368,7 +368,7 @@ public abstract class Model implements IModel {
 	@Override
 	public void setDishMenu(IDishMenuData menu) {
 		IDishMenu dishMenu = this.getDishMenuHelper().createDishMenu();
-		for (IDishMenuItemData data : menu.getAllDishMenuItems()) {
+		for (IDishMenuItemData data : menu.getAllItems()) {
 			dishMenu.addMenuItem(this.menuHelper.dishMenuItemDataToItem(data));
 		}
 //		System.out.println(this+" Menu with items: " + this.getDishMenuHelper().serialiseForExternal(
@@ -437,7 +437,7 @@ public abstract class Model implements IModel {
 		if (!this.isOrderWritten(orderID)) {
 			boolean isWritten = this.getFileManager().writeOrderData(this.getOrderHelper().serialiseForFile(this.getOrder(orderID)));
 //			this.getOrderCollector().editWritten(orderID, isWritten);
-			this.getOrderCollector().setOrderAttribute(orderID, OrderAttribute.IS_WRITTEN, true);
+			this.getOrderCollector().setAttributeValue(OrderAttribute.IS_WRITTEN, orderID, true);
 			return isWritten;
 		}
 		return true;
@@ -451,7 +451,7 @@ public abstract class Model implements IModel {
 //			}
 //		}
 //		return this.getOrderCollector().isWritten(orderID);
-		Object o = this.getOrderCollector().getOrderAttribute(orderID, OrderAttribute.IS_WRITTEN);
+		Object o = this.getOrderCollector().getAttributeValue(OrderAttribute.IS_WRITTEN, orderID);
 		if (o == null) {
 			return false;
 		}
@@ -473,9 +473,9 @@ public abstract class Model implements IModel {
 	protected void addWrittenOrder(IOrderData data) {
 //		this.writtenOrderCollector.addOrder(data);
 //		this.getOrderCollector().addOrder(data, OrderStatus.PAST);
-		this.getOrderCollector().addOrder(data);
-		this.getOrderCollector().setOrderAttribute(data.getID().toString(), OrderAttribute.STATUS, OrderStatus.PAST);
-		this.getOrderCollector().setOrderAttribute(data.getID().toString(), OrderAttribute.IS_WRITTEN, true);
+		this.getOrderCollector().addElement(data);
+		this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, data.getID().toString(), OrderStatus.PAST);
+		this.getOrderCollector().setAttributeValue(OrderAttribute.IS_WRITTEN, data.getID().toString(), true);
 //		this.getOrderCollector().editWritten(data.getID().toString(), true);
 	}
 	
@@ -488,7 +488,7 @@ public abstract class Model implements IModel {
 	public IOrderData[] getAllWrittenOrders() {
 //		return this.writtenOrderCollector.getAllOrders();
 //		return this.getOrderCollector().getAllWrittenOrders();
-		return this.getOrderCollector().getAllOrdersWithAttribute(OrderAttribute.IS_WRITTEN, true);
+		return this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.IS_WRITTEN, true);
 	}
 	
 	@Override
@@ -518,52 +518,52 @@ public abstract class Model implements IModel {
 	@Override
 	public void setOrderTableNumber(String orderID, int tableNumber) {
 //		this.getOrderCollector().setTableNumber(orderID, tableNumber);
-		this.getOrderCollector().setOrderAttribute(orderID, OrderAttribute.TABLE_NUMBER, tableNumber);
+		this.getOrderCollector().setAttributeValue(OrderAttribute.TABLE_NUMBER, orderID, tableNumber);
 		this.orderTableNumberChanged(orderID);
 	}
 	
 	@Override
 	public void removeOrder(String id) {
 //		this.getOrderCollector().editOrderStatus(id, OrderStatus.CANCELLED);
-		this.getOrderCollector().setOrderAttribute(id, OrderAttribute.STATUS, OrderStatus.CANCELLED);
+		this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, id, OrderStatus.CANCELLED);
 		this.orderStatusChanged(id);
-		this.getOrderCollector().removeOrder(id);
+		this.getOrderCollector().removeElementCompletely(id);
 		this.ordersChanged();
 	}
 	
 	@Override
 	public Integer getOrderTableNumber(String orderID) {
-		Number n = (Number) this.getOrderCollector().getOrderAttribute(orderID, OrderAttribute.TABLE_NUMBER);
+		Number n = (Number) this.getOrderCollector().getAttributeValue(OrderAttribute.TABLE_NUMBER, orderID);
 		if (n != null) {
 			return n.intValue();
 		} else {
-			return this.getOrderCollector().getPlaceholderTableNumber();
+			return this.getPlaceholderTableNumber();
 		}
 	}
 	
 	@Override
 	public void setOrderNote(String orderID, String note) {
-		this.getOrderCollector().setOrderAttribute(orderID, OrderAttribute.NOTE, note);
+		this.getOrderCollector().setAttributeValue(OrderAttribute.NOTE, orderID, note);
 		this.orderNoteChanged(orderID);
 	}
 	
 	@Override
 	public String getOrderNote(String orderID) {
-		return (String) this.getOrderCollector().getOrderAttribute(orderID, OrderAttribute.NOTE);
+		return (String) this.getOrderCollector().getAttributeValue(OrderAttribute.NOTE, orderID);
 	}
 	
 	@Override
 	public Integer getPlaceholderTableNumber() {
-		return this.getOrderCollector().getPlaceholderTableNumber();
+		return (Integer) OrderAttribute.TABLE_NUMBER.getDefaultValue();
 	}
 	
 	@Override
 	public void clearAllOrders() {
-		this.getOrderCollector().clearOrders();
+		this.getOrderCollector().clearAllElements();
 	}
 	
 	@Override
 	public boolean isOrderValid(String orderID) {
-		return this.getOrder(orderID) != null && !this.getOrderCollector().getOrderAttribute(orderID, OrderAttribute.STATUS).equals(OrderStatus.CANCELLED);
+		return this.getOrder(orderID) != null && !this.getOrderCollector().getAttributeValue(OrderAttribute.STATUS, orderID).equals(OrderStatus.CANCELLED);
 	}
 }

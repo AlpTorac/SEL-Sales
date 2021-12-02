@@ -11,15 +11,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import model.dish.IDishMenuItemData;
-import model.id.EntityIDFactory;
-import model.id.FixIDFactory;
+import model.entity.id.EntityIDFactory;
+import model.entity.id.MinimalIDFactory;
 import model.order.IOrder;
 import model.order.IOrderDataFactory;
-import model.order.IOrderItemData;
-import model.order.IOrderItemDataFactory;
+import model.order.AccumulatingOrderItemAggregate;
+import model.order.AccumulatingOrderItemAggregate;
 import model.order.Order;
 import model.order.OrderDataFactory;
-import model.order.OrderItemDataFactory;
+import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
@@ -60,9 +60,9 @@ class OrderTest {
 	private BigDecimal o2a2 = BigDecimal.valueOf(3);
 	private BigDecimal o3a3 = BigDecimal.valueOf(5);
 	
-	private EntityIDFactory idFac = new FixIDFactory();
+	private EntityIDFactory idFac = new MinimalIDFactory();
 	
-	private IOrderItemDataFactory orderItemDataFac = new OrderItemDataFactory();
+	private OrderItemFactory orderItemDataFac = new OrderItemFactory();
 	private IOrderDataFactory orderDataFac = new OrderDataFactory(orderItemDataFac, idFac);
 	
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
@@ -98,19 +98,19 @@ class OrderTest {
 
 	@Test
 	void addOrderItemTest() {
-		IOrderItemData addedItem = orderItemDataFac.constructData(item1, o1a1);
-		order1.addOrderItem(addedItem);
+		AccumulatingOrderItemAggregate addedItem = orderItemDataFac.constructData(item1, o1a1);
+		order1.addOrderItem(null, null);
 		
-		Collection<IOrderItemData> orderItems = orderDataFac.orderToData(order1).getOrderItems();
+		Collection<AccumulatingOrderItemAggregate> orderItems = orderDataFac.orderToData(order1).getOrderItems();
 		Assertions.assertTrue(orderItems.size() == 1 && orderItems.contains(addedItem));
 		
-		order1.addOrderItem(addedItem);
+		order1.addOrderItem(null, null);
 		orderItems = orderDataFac.orderToData(order1).getOrderItems();
 		Assertions.assertTrue(orderItems.size() == 1 && orderItems.contains(orderItemDataFac.constructData(item1, o1a1.multiply(BigDecimal.valueOf(2)))));
 		
-		IOrderItemData addedItem2 = orderItemDataFac.constructData(item2, BigDecimal.valueOf(2));
+		AccumulatingOrderItemAggregate addedItem2 = orderItemDataFac.constructData(item2, BigDecimal.valueOf(2));
 		
-		order1.addOrderItem(addedItem2);
+		order1.addOrderItem(null, null);
 		orderItems = orderDataFac.orderToData(order1).getOrderItems();
 		Assertions.assertTrue(orderItems.size() == 2
 				&& orderItems.contains(orderItemDataFac.constructData(item1, o1a1.multiply(BigDecimal.valueOf(2))))
@@ -119,11 +119,11 @@ class OrderTest {
 	
 	@Test
 	void setOrderItemAmountTest() {
-		IOrderItemDataFactory orderItemDataFac = new OrderItemDataFactory();
-		IOrderItemData addedItem = orderItemDataFac.constructData(item1, o1a1);
-		order1.addOrderItem(addedItem);
+		OrderItemFactory orderItemDataFac = new OrderItemFactory();
+		AccumulatingOrderItemAggregate addedItem = orderItemDataFac.constructData(item1, o1a1);
+		order1.addOrderItem(null, null);
 		
-		Collection<IOrderItemData> orderItems = orderDataFac.orderToData(order1).getOrderItems();
+		Collection<AccumulatingOrderItemAggregate> orderItems = orderDataFac.orderToData(order1).getOrderItems();
 		Assertions.assertTrue(orderItems.size() == 1 && orderItems.contains(addedItem));
 		
 		BigDecimal newAmount = BigDecimal.valueOf(5);
@@ -137,16 +137,16 @@ class OrderTest {
 	
 	@Test
 	void removeOrderItemTest() {
-		IOrderItemDataFactory orderItemDataFac = new OrderItemDataFactory();
-		IOrderItemData addedItem = orderItemDataFac.constructData(item1, o1a1);
-		order1.addOrderItem(addedItem);
+		OrderItemFactory orderItemDataFac = new OrderItemFactory();
+		AccumulatingOrderItemAggregate addedItem = orderItemDataFac.constructData(item1, o1a1);
+		order1.addOrderItem(null, null);
 		
-		Collection<IOrderItemData> orderItems = orderDataFac.orderToData(order1).getOrderItems();
+		Collection<AccumulatingOrderItemAggregate> orderItems = orderDataFac.orderToData(order1).getOrderItems();
 		Assertions.assertTrue(orderItems.size() == 1 && orderItems.contains(addedItem));
 		
-		IOrderItemData addedItem2 = orderItemDataFac.constructData(item2, BigDecimal.valueOf(2));
+		AccumulatingOrderItemAggregate addedItem2 = orderItemDataFac.constructData(item2, BigDecimal.valueOf(2));
 		
-		order1.addOrderItem(addedItem2);
+		order1.addOrderItem(null, null);
 		orderItems = orderDataFac.orderToData(order1).getOrderItems();
 		Assertions.assertTrue(orderItems.size() == 2
 				&& orderItems.contains(addedItem)
@@ -164,17 +164,17 @@ class OrderTest {
 	
 	@Test
 	void getOrderItemTest() {
-		IOrderItemDataFactory orderItemDataFac = new OrderItemDataFactory();
-		IOrderItemData addedItem = orderItemDataFac.constructData(item1, o1a1);
-		order1.addOrderItem(addedItem);
+		OrderItemFactory orderItemDataFac = new OrderItemFactory();
+		AccumulatingOrderItemAggregate addedItem = orderItemDataFac.constructData(item1, o1a1);
+		order1.addOrderItem(null, null);
 		
-		Collection<IOrderItemData> orderItems = orderDataFac.orderToData(order1).getOrderItems();
+		Collection<AccumulatingOrderItemAggregate> orderItems = orderDataFac.orderToData(order1).getOrderItems();
 		Assertions.assertTrue(orderItems.size() == 1 && orderItems.contains(addedItem));
 		
 		BigDecimal item2Amount = BigDecimal.valueOf(2);
-		IOrderItemData addedItem2 = orderItemDataFac.constructData(item2, item2Amount);
+		AccumulatingOrderItemAggregate addedItem2 = orderItemDataFac.constructData(item2, item2Amount);
 		
-		order1.addOrderItem(addedItem2);
+		order1.addOrderItem(null, null);
 		orderItems = orderDataFac.orderToData(order1).getOrderItems();
 		Assertions.assertTrue(orderItems.size() == 2
 				&& orderItems.contains(addedItem)
@@ -185,6 +185,6 @@ class OrderTest {
 		
 		
 		
-		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(orderDataFac.orderToData(order1).getOrderedItems(), new IOrderItemData[] {addedItem, addedItem2}));
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(orderDataFac.orderToData(order1).getOrderedItems(), new AccumulatingOrderItemAggregate[] {addedItem, addedItem2}));
 	}
 }

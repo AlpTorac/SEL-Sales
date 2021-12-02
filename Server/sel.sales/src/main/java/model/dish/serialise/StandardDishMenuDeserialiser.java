@@ -2,7 +2,7 @@ package model.dish.serialise;
 
 import model.dish.DishMenuDataFactory;
 import model.dish.DishMenuItemDataFactory;
-import model.id.FixIDFactory;
+import model.entity.id.MinimalIDFactory;
 
 public class StandardDishMenuDeserialiser extends DishMenuDeserialiser {
 	public StandardDishMenuDeserialiser() {
@@ -15,6 +15,6 @@ public class StandardDishMenuDeserialiser extends DishMenuDeserialiser {
 		this.menuParser = new DishMenuParser(
 				this.format,
 				this.menuDataFac,
-				new FixIDFactory());
+				new MinimalIDFactory());
 	}
 }

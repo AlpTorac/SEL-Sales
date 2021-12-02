@@ -3,9 +3,9 @@ package model.filewriter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import model.id.EntityID;
+import model.entity.id.EntityID;
 import model.order.IOrderData;
-import model.order.IOrderItemData;
+import model.order.AccumulatingOrderItemAggregate;
 import model.order.serialise.IOrderFormat;
 import model.order.serialise.IOrderSerialiser;
 
@@ -21,7 +21,7 @@ public class FileOrderSerialiser implements IOrderSerialiser {
 	}
 	
 	@Override
-	public String serialiseOrderData(IOrderItemData[] orderData, LocalDateTime date, boolean isCash,
+	public String serialiseOrderData(AccumulatingOrderItemAggregate[] orderData, LocalDateTime date, boolean isCash,
 			boolean isHere, EntityID orderID) {
 		String result = "";
 		boolean isDiscounted = false;
@@ -31,7 +31,7 @@ public class FileOrderSerialiser implements IOrderSerialiser {
 				break;
 			}
 		}
-		for (IOrderItemData d : orderData) {
+		for (AccumulatingOrderItemAggregate d : orderData) {
 			result += this.getOrderFormat().getOrderStart();
 			result += this.serialiseOrderID(orderID) + this.getOrderFormat().getOrderAttributeFieldSeperator();
 			result += this.serialiseOrderDate(date) + this.getOrderFormat().getOrderAttributeFieldSeperator();
@@ -39,8 +39,8 @@ public class FileOrderSerialiser implements IOrderSerialiser {
 			result += this.serialiseIsHere(isHere) + this.getOrderFormat().getOrderAttributeFieldSeperator();
 //			result += this.serialiseIsDiscounted(orderDiscount) + this.getOrderDataFieldEnd();
 			result += this.serialiseBoolean(isDiscounted) + this.getOrderFormat().getOrderAttributeFieldEnd();
-			result += this.serialiseDishMenuItemID(d.getItemData()) + this.getOrderFormat().getOrderItemDataFieldSeperator();
-			result += this.serialiseOrderItemAmount(d) + this.getOrderFormat().getOrderItemDataFieldEnd();
+			result += this.serialiseDishMenuItemID(d.getItemData()) + this.getOrderFormat().getOrderItemFieldSeperator();
+			result += this.serialiseOrderItemAmount(d) + this.getOrderFormat().getOrderItemFieldEnd();
 			result += this.getOrderFormat().getOrderEnd();
 		}
 		return result;

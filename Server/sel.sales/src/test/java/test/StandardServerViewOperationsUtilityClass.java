@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions;
 
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
-import model.order.IOrderItemData;
+import model.order.AccumulatingOrderItemAggregate;
 import server.controller.IServerController;
 import server.model.IServerModel;
 import server.view.StandardServerView;
@@ -288,10 +288,10 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		Assertions.assertEquals(orderData.getGrossSum().compareTo(grossSum), 0);
 		Assertions.assertEquals(orderData.getOrderDiscount().compareTo(totalOrderDiscount), 0);
 		Assertions.assertEquals(orderData.getNetSum().compareTo(netSum), 0);
-		IOrderItemData[] idatas = orderData.getOrderedItems();
+		AccumulatingOrderItemAggregate[] idatas = orderData.getOrderedItems();
 		int orderItemLen = idatas.length;
 		for (int i = 0; i < orderItemLen; i++) {
-			OrderTestUtilityClass.assertOrderItemDataEqual(idatas[i], itemIDs[i], itemAmounts[i]);
+			OrderTestUtilityClass.assertOrderItemEqual(idatas[i], itemIDs[i], itemAmounts[i]);
 			Assertions.assertEquals(idatas[i].getGrossPrice().compareTo(itemGrossPrices[i]), 0);
 		}
 	}

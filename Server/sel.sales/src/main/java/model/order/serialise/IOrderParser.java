@@ -12,8 +12,8 @@ import model.dish.IDishMenuItemDataFactory;
 import model.dish.IDishMenuItemFinder;
 import model.order.IOrderData;
 import model.order.IOrderDataFactory;
-import model.order.IOrderItemData;
-import model.order.IOrderItemDataFactory;
+import model.order.AccumulatingOrderItemAggregate;
+import model.order.AccumulatingOrderItemAggregate;
 import model.util.IParser;
 
 public interface IOrderParser extends IParser {
@@ -37,9 +37,9 @@ public interface IOrderParser extends IParser {
 	}
 	default IOrderData parseOrderData(String s) {
 		String serialisedOrderBody = this.removeStartAndEnd(s);
-		String[] serialisedOrderSpecificAndOrderItemData = this.getSerialisedOrderSpecificAndOrderItemData(serialisedOrderBody);
+		String[] serialisedOrderSpecificAndOrderItem = this.getSerialisedOrderSpecificAndOrderItem(serialisedOrderBody);
 		String[] serialisedOrderDataFields = this.getSerialisedOrderSpecificData(
-				this.getSerialisedOrderDataField(serialisedOrderSpecificAndOrderItemData));
+				this.getSerialisedOrderDataField(serialisedOrderSpecificAndOrderItem));
 		
 		String serialisedOrderID = this.getSerialisedOrderID(serialisedOrderDataFields);
 		String serialisedDate = this.getSerialisedDate(serialisedOrderDataFields);
@@ -50,9 +50,9 @@ public interface IOrderParser extends IParser {
 		boolean IsCash = this.parseBoolean(serialisedIsCash);
 		boolean IsHere = this.parseBoolean(serialisedIsHere);
 		
-		String serialisedOrderItemData = this.getSerialisedOrderItemData(serialisedOrderSpecificAndOrderItemData);
+		String serialisedOrderItem = this.getSerialisedOrderItem(serialisedOrderSpecificAndOrderItem);
 		
-		IOrderItemData[] orderItemData = this.parseOrderItems(serialisedOrderItemData);
+		AccumulatingOrderItemAggregate[] orderItemData = this.parseOrderItems(serialisedOrderItem);
 		
 		return this.getOrderDataFactory().constructData(orderItemData, date, IsCash, IsHere, serialisedOrderID);
 	}
@@ -72,13 +72,13 @@ public interface IOrderParser extends IParser {
 	/**
 	 * @return {orderData, orderedItems}
 	 */
-	default String[] getSerialisedOrderSpecificAndOrderItemData(String s) {
+	default String[] getSerialisedOrderSpecificAndOrderItem(String s) {
 		return s.split(this.getOrderFormat().getOrderAttributeFieldEnd());
 	}
 	default String getSerialisedOrderDataField(String[] ss) {
 		return ss[0];
 	}
-	default String getSerialisedOrderItemData(String[] ss) {
+	default String getSerialisedOrderItem(String[] ss) {
 		return ss[1];
 	}
 	default String[] getSerialisedOrderSpecificData(String s) {
@@ -96,27 +96,27 @@ public interface IOrderParser extends IParser {
 	default String getSerialisedIsHere(String[] ss) {
 		return ss[3];
 	}
-	default IOrderItemData[] parseOrderItems(String s) {
-		Collection<IOrderItemData> orderItemData = new ArrayList<IOrderItemData>();
+	default AccumulatingOrderItemAggregate[] parseOrderItems(String s) {
+		Collection<AccumulatingOrderItemAggregate> orderItemData = new ArrayList<AccumulatingOrderItemAggregate>();
 		
 //		this.removeLastNewLine(s);
-		String[] orderItems = s.split(this.getOrderFormat().getOrderItemDataFieldEnd());
+		String[] orderItems = s.split(this.getOrderFormat().getOrderItemFieldEnd());
 		
 		for (String item : orderItems) {
-			orderItemData.add(this.parseOrderItemData(item));
+			orderItemData.add(this.parseOrderItem(item));
 		}
 		
-		return orderItemData.toArray(IOrderItemData[]::new);
+		return orderItemData.toArray(AccumulatingOrderItemAggregate[]::new);
 	}
-	default IOrderItemData parseOrderItemData(String s) {
-		String[] orderItemDataParts = s.split(this.getOrderFormat().getOrderItemDataFieldSeperator());
+	default AccumulatingOrderItemAggregate parseOrderItem(String s) {
+		String[] orderItemDataParts = s.split(this.getOrderFormat().getOrderItemFieldSeperator());
 		
 		String menuItemID = orderItemDataParts[0];
 		BigDecimal amount = this.parseAmount(orderItemDataParts[1]);
 		
 		IDishMenuItemData menuItemData = this.getDishMenuItemDataFactory().menuItemToData(this.getFinder().getDish(menuItemID));
 		
-		return this.getOrderItemDataFactory().constructData(menuItemData, amount);
+		return this.getOrderItemFactory().constructData(menuItemData, amount);
 	}
 	default LocalDateTime parseOrderDate(String s) {
 		LocalDateTime date = this.getOrderFormat().parseDate(s);
@@ -130,7 +130,7 @@ public interface IOrderParser extends IParser {
 	IDishMenuItemDataFactory getDishMenuItemDataFactory();
 	IDishMenuItemFinder getFinder();
 	IOrderDataFactory getOrderDataFactory();
-	IOrderItemDataFactory getOrderItemDataFactory();
+	OrderItemFactory getOrderItemFactory();
 	IOrderFormat getOrderFormat();
 	
 	void setFinder(IDishMenuItemFinder finder);

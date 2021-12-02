@@ -9,15 +9,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import model.dish.IDishMenuItemData;
-import model.order.IOrderItem;
-import model.order.IOrderItemData;
-import model.order.IOrderItemDataFactory;
-import model.order.OrderItem;
-import model.order.OrderItemDataFactory;
+import model.order.AccumulatingOrderItemAggregate;
+import model.order.AccumulatingOrderItemAggregate;
+import model.order.AccumulatingOrderItemAggregate;
+import model.order.AccumulatingOrderItemAggregate;
+import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
 import server.model.ServerModel;
 
-class OrderItemDataTest {
+class OrderItemTest {
 
 	private static IServerModel model;
 	
@@ -46,15 +46,15 @@ class OrderItemDataTest {
 	private BigDecimal orderItem2a = BigDecimal.valueOf(3);
 	private BigDecimal orderItem3a = BigDecimal.valueOf(5);
 	
-	private IOrderItem orderItem1;
-	private IOrderItem orderItem2;
-	private IOrderItem orderItem3;
+	private AccumulatingOrderItemAggregate orderItem1;
+	private AccumulatingOrderItemAggregate orderItem2;
+	private AccumulatingOrderItemAggregate orderItem3;
 	
-	private IOrderItemData orderItemData1;
-	private IOrderItemData orderItemData2;
-	private IOrderItemData orderItemData3;
+	private AccumulatingOrderItemAggregate orderItemData1;
+	private AccumulatingOrderItemAggregate orderItemData2;
+	private AccumulatingOrderItemAggregate orderItemData3;
 	
-	private IOrderItemDataFactory fac = new OrderItemDataFactory();
+	private OrderItemFactory fac = new OrderItemFactory();
 	
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	
@@ -69,9 +69,9 @@ class OrderItemDataTest {
 		item2 = model.getMenuItem(i2id);
 		item3 = model.getMenuItem(i3id);
 		
-		orderItem1 = new OrderItem(item1, orderItem1a);
-		orderItem2 = new OrderItem(item1, orderItem2a);
-		orderItem3 = new OrderItem(item2, orderItem3a);
+		orderItem1 = new AccumulatingOrderItemAggregate(item1, orderItem1a);
+		orderItem2 = new AccumulatingOrderItemAggregate(item1, orderItem2a);
+		orderItem3 = new AccumulatingOrderItemAggregate(item2, orderItem3a);
 		
 		orderItemData1 = fac.orderItemToData(orderItem1);
 		orderItemData2 = fac.orderItemToData(orderItem2);
@@ -160,11 +160,11 @@ class OrderItemDataTest {
 	
 	@Test
 	void combineTest() {
-		IOrderItemData sameCombinedOrderItems = orderItemData1.combine(orderItemData1);
+		AccumulatingOrderItemAggregate sameCombinedOrderItems = orderItemData1.combine(orderItemData1);
 		Assertions.assertTrue(sameCombinedOrderItems.getItemData().equals(orderItemData1.getItemData()));
 		Assertions.assertEquals(sameCombinedOrderItems.getAmount().compareTo(orderItemData1.getAmount().add(orderItemData1.getAmount())), 0);
 		
-		IOrderItemData differentCombinedOrderItems = orderItemData1.combine(orderItemData2);
+		AccumulatingOrderItemAggregate differentCombinedOrderItems = orderItemData1.combine(orderItemData2);
 		Assertions.assertTrue(differentCombinedOrderItems.getItemData().equals(orderItemData1.getItemData()));
 		Assertions.assertEquals(differentCombinedOrderItems.getAmount().compareTo(orderItemData1.getAmount().add(orderItemData2.getAmount())), 0);
 		

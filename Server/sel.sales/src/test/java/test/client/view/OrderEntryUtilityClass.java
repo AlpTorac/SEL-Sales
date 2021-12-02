@@ -9,13 +9,13 @@ import client.view.composites.MenuItemEntry;
 import client.view.composites.OrderEntry;
 import model.dish.IDishMenuItemData;
 import model.order.IOrderData;
-import model.order.IOrderItemData;
+import model.order.AccumulatingOrderItemAggregate;
 
 public class OrderEntryUtilityClass {
 	public static void assertOrderEntryDisplayEquals(OrderEntry entry, IOrderData orderData) {
 		Collection<MenuItemEntry> col = entry.cloneMenuItemEntries();
 		
-		for (IOrderItemData oid : orderData.getOrderedItems()) {
+		for (AccumulatingOrderItemAggregate oid : orderData.getOrderedItems()) {
 			IDishMenuItemData item = oid.getItemData();
 			BigDecimal amount = oid.getAmount();
 			Assertions.assertEquals(col.stream().filter(mie -> mie.getSelectedMenuItem().equals(item)).count(), 1);

@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import model.dish.IDishMenuData;
 import model.dish.IDishMenuItemData;
-import model.order.IOrderItemData;
+import model.order.AccumulatingOrderItemAggregate;
 import view.repository.IChoiceBox;
 import view.repository.ISingleRowTextBox;
 import view.repository.IUIComponent;
@@ -40,7 +40,7 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 		});
 	}
 	
-	public void displayData(IOrderItemData data) {
+	public void displayData(AccumulatingOrderItemAggregate data) {
 		if (data != null) {
 			this.selectMenuItem(data.getItemData());
 			this.setAmount(data.getAmount().intValue());
@@ -115,7 +115,7 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 		if (menuData != null) {
 			this.setActiveMenu(menuData);
 			this.cb.clear();
-			for (IDishMenuItemData data : this.getActiveMenu().getAllDishMenuItems()) {
+			for (IDishMenuItemData data : this.getActiveMenu().getAllItems()) {
 				this.addMenuItem(data);
 			}
 		}
