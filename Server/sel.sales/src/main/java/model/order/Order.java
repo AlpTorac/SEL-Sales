@@ -1,25 +1,27 @@
 package model.order;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
-import model.datamapper.OrderAttribute;
-import model.dish.DishMenuItem;
+import model.datamapper.order.OrderAttribute;
+import model.dish.DishMenuItemData;
+import model.entity.AccumulatingAggregateEntry;
 import model.entity.Entity;
 import model.entity.id.EntityID;
 
 public class Order extends Entity<OrderAttribute> {
-	private AccumulatingOrderItemAggregate orderItems;
+//	private AccumulatingOrderItemAggregate orderItems;
 	
 	public Order(EntityID id) {
 		super(id);
-		this.orderItems = this.initOrderItemAggregate();
+//		this.orderItems = this.initOrderItemAggregate();
 	}
 	
-	protected AccumulatingOrderItemAggregate initOrderItemAggregate() {
-		return new AccumulatingOrderItemAggregate();
-	}
+//	protected AccumulatingOrderItemAggregate initOrderItemAggregate() {
+//		return new AccumulatingOrderItemAggregate();
+//	}
 	
-	public void addOrderItem(DishMenuItem menuItem, BigDecimal amount) {
+	public void addOrderItem(DishMenuItemData menuItem, BigDecimal amount) {
 		this.getOrderItemAggregate().addElement(menuItem, amount);
 	}
 	
@@ -31,7 +33,23 @@ public class Order extends Entity<OrderAttribute> {
 		this.getOrderItemAggregate().removeElementCompletely(menuItemID);
 	}
 	
+	public void addAllOrderItems(AccumulatingAggregateEntry<DishMenuItemData>[] es) {
+		this.getOrderItemAggregate().addAll(es);
+	}
+	
 	protected AccumulatingOrderItemAggregate getOrderItemAggregate() {
-		return this.orderItems;
+		return (AccumulatingOrderItemAggregate) this.getAttributeValue(OrderAttribute.ORDER_ITEMS);
+	}
+	
+	public Boolean getIsCash() {
+		return (Boolean) this.getAttributeValue(OrderAttribute.IS_CASH);
+	}
+	
+	public Boolean getIsHere() {
+		return (Boolean) this.getAttributeValue(OrderAttribute.IS_HERE);
+	}
+	
+	public LocalDateTime getDate() {
+		return (LocalDateTime) this.getAttributeValue(OrderAttribute.DATE);
 	}
 }

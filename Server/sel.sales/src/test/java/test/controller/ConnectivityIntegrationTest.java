@@ -12,7 +12,7 @@ import controller.GeneralEvent;
 import model.connectivity.DeviceData;
 import model.connectivity.IDeviceData;
 import model.connectivity.IConnectivityManager;
-import model.order.IOrderData;
+import model.order.OrderData;
 import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.model.IServerModel;
@@ -267,13 +267,13 @@ class ConnectivityIntegrationTest {
 		Assertions.assertEquals(3, model.getAllUnconfirmedOrders().length);
 		Assertions.assertEquals(0, model.getAllConfirmedOrders().length);
 		
-//		IOrderData[] orders = model.getOrderHelper().deserialiseOrderDatas(
+//		OrderData[] orders = model.getOrderHelper().deserialiseOrderDatas(
 //				serialisedOrder1 + System.lineSeparator() + 
 //				serialisedOrder2 + System.lineSeparator() +
 //				serialisedOrder3 + System.lineSeparator()
 //				);
 		
-		IOrderData[] orders = new IOrderData[3];
+		OrderData[] orders = new OrderData[3];
 		
 		orders[0] = model.getOrderHelper().deserialiseOrderData(serialisedOrder1);
 		orders[1] = model.getOrderHelper().deserialiseOrderData(serialisedOrder2);

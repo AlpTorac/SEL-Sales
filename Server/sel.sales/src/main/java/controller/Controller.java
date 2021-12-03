@@ -16,7 +16,6 @@ import controller.handler.SettingsChangedHandler;
 import controller.manager.ApplicationEventManager;
 import controller.manager.IApplicationEventManager;
 import model.IModel;
-import server.controller.handler.WriteOrdersHandler;
 
 public abstract class Controller implements IController {
 

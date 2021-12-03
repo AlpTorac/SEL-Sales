@@ -1,9 +1,10 @@
 package server.model;
 
 import model.Model;
-import model.datamapper.OrderAttribute;
-import model.dish.IDishMenuItemData;
-import model.order.IOrderData;
+import model.datamapper.order.OrderAttribute;
+import model.dish.DishMenuItemData;
+import model.entity.id.EntityID;
+import model.order.OrderData;
 import model.order.OrderStatus;
 
 public class ServerModel extends Model implements IServerModel {
@@ -61,24 +62,24 @@ public class ServerModel extends Model implements IServerModel {
 	
 	@Override
 	public boolean writeOrders() {
-		IOrderData[] orders = this.getAllConfirmedOrders();
+		OrderData[] orders = this.getAllConfirmedOrders();
 		
-//		Collection<IOrderData> ordersToBeWritten = new ArrayList<IOrderData>();
-//		for (IOrderData od : orders) {
+//		Collection<OrderData> ordersToBeWritten = new ArrayList<OrderData>();
+//		for (OrderData od : orders) {
 //			if (!this.isOrderWritten(od.getID().toString())) {
 //				ordersToBeWritten.add(od);
 //			}
 //		}
 		boolean allWritten = true;
 //		boolean current = false;
-		for (IOrderData od : orders) {
+		for (OrderData od : orders) {
 			allWritten = allWritten && this.writeOrder(od.getID().toString());
 		}
 		
-//		IOrderData[] array = ordersToBeWritten.toArray(IOrderData[]::new);
+//		OrderData[] array = ordersToBeWritten.toArray(OrderData[]::new);
 //		boolean allWritten = this.getFileManager().writeOrderData(this.getOrderHelper().serialiseForFile(array));
 //		if (allWritten) {
-//			for (IOrderData od : array) {
+//			for (OrderData od : array) {
 //				this.getOrderCollector().editWritten(od.getID().toString(), true);
 ////				this.writtenOrderCollector.addOrder(od);
 //			}
@@ -87,48 +88,36 @@ public class ServerModel extends Model implements IServerModel {
 		return allWritten;
 	}
 	
-	@Override
-	public IOrderData getOrder(String id) {
-//		IOrderData order = this.orderUnconfirmedCollector.getOrder(id);
-//		
-//		if (order == null) {
-//			order = this.orderConfirmedCollector.getOrder(id);
-//		}
-		return this.getOrderCollector().getElement(id);
+	public void addMenuItem(String serialisedItemData) {
+		DishMenuItemData data = this.dishMenuItemDeserialiser.deserialise(serialisedItemData);
+		this.addMenuItem(data);
 	}
 	
-	public void addMenuItem(String serialisedItemData) {
-//		IDishMenuItemData data = this.dishMenuItemDeserialiser.deserialise(serialisedItemData);
-		if (this.getDishMenu().addMenuItem(this.getDishMenuHelper().createDishMenuItem(serialisedItemData))) {
+	public void removeMenuItem(EntityID id) {
+		if (this.getDishMenu().removeElement(id) != null) {
 			this.menuChanged();
 		}
 	}
 
 	public void removeMenuItem(String id) {
-		if (this.getDishMenu().removeMenuItem(id)) {
-			this.menuChanged();
-		}
+		this.removeMenuItem(this.createMinimalID(id));
 	}
 
 	@Override
-	public void addUnconfirmedOrder(String orderData) {
-		IOrderData order = this.getOrderHelper().deserialiseOrderData(orderData);
-//		this.orderUnconfirmedCollector.addOrder(order);
+	public void addUnconfirmedOrder(OrderData orderData) {
 		if (this.autoConfirmOrders) {
-			this.confirmOrder(order);
+			this.confirmOrder(orderData);
 		} else {
-//			this.makeUnconfirmedOrder(order.getID().toString());
-//			this.getOrderCollector().addOrder(order, OrderStatus.UNCONFIRMED);
-			this.getOrderCollector().addElement(order);
-			this.getOrderCollector().setAttributeValue(order.getID().toString(), OrderAttribute.STATUS, OrderStatus.UNCONFIRMED);
+			this.getOrderCollector().addElement(orderData);
+			this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, orderData.getID(), OrderStatus.UNCONFIRMED);
 			this.unconfirmedOrdersChanged();
 		}
 	}
 
 	@Override
-	public IOrderData[] getAllUnconfirmedOrders() {
+	public OrderData[] getAllUnconfirmedOrders() {
 //		return this.orderUnconfirmedCollector.getAllOrders();
-		return this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.UNCONFIRMED);
+		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.UNCONFIRMED));
 	}
 
 	@Override
@@ -139,46 +128,45 @@ public class ServerModel extends Model implements IServerModel {
 	}
 
 	@Override
-	public void editMenuItem(String serialisedNewItemData) {
-		IDishMenuItemData data = this.getDishMenuHelper().deserialiseDishMenuItem(serialisedNewItemData);
-		this.getDishMenu().editMenuItem(data);
+	public void editMenuItem(DishMenuItemData data) {
+		this.getDishMenu().addElement(data);
 		this.menuChanged();
 	}
 	
-	protected void confirmOrder(IOrderData orderData) {
-//		this.orderUnconfirmedCollector.removeOrder(orderData.getID().toString());
-//		this.orderConfirmedCollector.addOrder(orderData);
-//		this.getOrderCollector().addOrder(orderData, OrderStatus.CONFIRMED);
-		this.getOrderCollector().addElement(orderData);
-		this.getOrderCollector().setAttributeValue(orderData.getID().toString(), OrderAttribute.STATUS, OrderStatus.CONFIRMED);
-		this.writeOrder(orderData.getID().toString());
+	@Override
+	public void confirmOrder(OrderData data) {
+		this.getOrderCollector().addElement(data);
+		this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, data.getID(), OrderStatus.CONFIRMED);
+		this.writeOrder(data.getID().toString());
 		this.ordersChanged();
 	}
-	
-	@Override
-	public void confirmOrder(String serialisedConfirmedOrderData) {
-		IOrderData orderData = this.getOrderHelper().deserialiseOrderData(serialisedConfirmedOrderData);
-		this.confirmOrder(orderData);
-	}
 
 	@Override
-	public IOrderData[] getAllConfirmedOrders() {
-		return this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.CONFIRMED);
+	public OrderData[] getAllConfirmedOrders() {
+		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.CONFIRMED));
 //		return this.orderConfirmedCollector.getAllOrders();
 	}
-
-	@Override
-	public void removeUnconfirmedOrder(String id) {
+	
+	public void removeUnconfirmedOrder(EntityID id) {
 //		this.orderUnconfirmedCollector.removeOrder(id);
-		this.getOrderCollector().removeElementIfAttributeValueEquals(id, OrderAttribute.STATUS, OrderStatus.UNCONFIRMED);
+		this.getOrderCollector().removeElementIfAttributeValueEquals(OrderAttribute.STATUS, id, OrderStatus.UNCONFIRMED);
 		this.unconfirmedOrdersChanged();
 	}
 
 	@Override
-	public void removeConfirmedOrder(String id) {
+	public void removeUnconfirmedOrder(String id) {
+		this.removeUnconfirmedOrder(this.createMinimalID(id));
+	}
+	
+	public void removeConfirmedOrder(EntityID id) {
 //		this.orderConfirmedCollector.removeOrder(id);
-		this.getOrderCollector().removeElementIfAttributeValueEquals(id, OrderAttribute.STATUS, OrderStatus.CONFIRMED);
+		this.getOrderCollector().removeElementIfAttributeValueEquals(OrderAttribute.STATUS, id, OrderStatus.CONFIRMED);
 		this.confirmedOrdersChanged();
+	}
+
+	@Override
+	public void removeConfirmedOrder(String id) {
+		this.removeConfirmedOrder(this.createMinimalID(id));
 	}
 
 	@Override
@@ -190,14 +178,14 @@ public class ServerModel extends Model implements IServerModel {
 
 	@Override
 	public boolean writeDishMenu() {
-		return this.getFileManager().writeDishMenuData(this.getDishMenuHelper().serialiseMenuForFile(this.getDishMenuHelper().dishMenuToData(this.getDishMenu())));
+		return this.getFileManager().writeDishMenuData(this.getDishMenuHelper().serialiseMenuForFile(this.getDishMenu().toData()));
 	}
 	
 	@Override
 	public void confirmAllOrders() {
-		IOrderData[] unconfirmedOrders = this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.UNCONFIRMED);
-//		IOrderData[] unconfirmedOrders = this.orderUnconfirmedCollector.getAllOrders();
-		for (IOrderData uco : unconfirmedOrders) {
+		OrderData[] unconfirmedOrders = this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.UNCONFIRMED));
+//		OrderData[] unconfirmedOrders = this.orderUnconfirmedCollector.getAllOrders();
+		for (OrderData uco : unconfirmedOrders) {
 			this.confirmOrder(uco);
 		}
 //		this.orderUnconfirmedCollector.clearOrders();
@@ -223,8 +211,15 @@ public class ServerModel extends Model implements IServerModel {
 		this.getFileManager().loadDishMenu(fileAddress);
 	}
 
-//	@Override
-//	protected IOrderCollector getWrittenOrderCollector() {
-//		return this.writtenOrderCollector;
-//	}
+	@Override
+	public void addMenuItem(DishMenuItemData data) {
+		this.getDishMenu().addElement(data);
+		this.menuChanged();
+	}
+
+	@Override
+	public void addOrder(String serialisedOrderData) {
+		OrderData data = serialisedOrderData;
+		this.addOrder(data);
+	}
 }

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import model.order.IOrderData;
+import model.order.OrderData;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
@@ -63,9 +63,9 @@ class GetOrderTest {
 	
 	@Test
 	void getUnconfirmedOrderTest() {
-		IOrderData[] data = model.getAllUnconfirmedOrders();
+		OrderData[] data = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(data.length, 3);
-		IOrderData[] gottenOrders = {model.getOrder(o1id), model.getOrder(o2id), model.getOrder(o3id)};
+		OrderData[] gottenOrders = {model.getOrder(o1id), model.getOrder(o2id), model.getOrder(o3id)};
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(data, gottenOrders));
 //		Assertions.assertTrue(model.getOrder(o1id).equals(data[0]));
 //		Assertions.assertTrue(model.getOrder(o2id).equals(data[1]));
@@ -74,9 +74,9 @@ class GetOrderTest {
 	@Test
 	void getConfirmedOrderTest() {
 		model.confirmAllOrders();
-		IOrderData[] data = model.getAllConfirmedOrders();
+		OrderData[] data = model.getAllConfirmedOrders();
 		Assertions.assertEquals(data.length, 3);
-		IOrderData[] gottenOrders = {model.getOrder(o1id), model.getOrder(o2id), model.getOrder(o3id)};
+		OrderData[] gottenOrders = {model.getOrder(o1id), model.getOrder(o2id), model.getOrder(o3id)};
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(data, gottenOrders));
 //		Assertions.assertTrue(model.getOrder(o1id).equals(data[0]));
 //		Assertions.assertTrue(model.getOrder(o2id).equals(data[1]));
@@ -85,12 +85,12 @@ class GetOrderTest {
 	@Test
 	void getMixedOrderTest1() {
 		model.confirmOrder(o1id+"#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";");
-		IOrderData[] dataC = model.getAllConfirmedOrders();
-		IOrderData[] dataU = model.getAllUnconfirmedOrders();
+		OrderData[] dataC = model.getAllConfirmedOrders();
+		OrderData[] dataU = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(dataC.length, 1);
 		Assertions.assertEquals(dataU.length, 2);
-		IOrderData[] gottenCOrders = new IOrderData[] {model.getOrder(o1id)};
-		IOrderData[] gottenUOrders = new IOrderData[] {model.getOrder(o2id), model.getOrder(o3id)};
+		OrderData[] gottenCOrders = new OrderData[] {model.getOrder(o1id)};
+		OrderData[] gottenUOrders = new OrderData[] {model.getOrder(o2id), model.getOrder(o3id)};
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(dataC, gottenCOrders));
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(dataU, gottenUOrders));
 //		Assertions.assertTrue(model.getOrder(o1id).equals(dataC[0]));
@@ -101,12 +101,12 @@ class GetOrderTest {
 	void getMixedOrderTest2() {
 		model.confirmOrder(o1id+"#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";");
 		model.confirmOrder(o2id+"#20200809235959111#1#0:item1,"+o2a1.toPlainString()+";item2,"+o2a2.toPlainString()+";");
-		IOrderData[] dataC = model.getAllConfirmedOrders();
-		IOrderData[] dataU = model.getAllUnconfirmedOrders();
+		OrderData[] dataC = model.getAllConfirmedOrders();
+		OrderData[] dataU = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(dataC.length, 2);
 		Assertions.assertEquals(dataU.length, 1);
-		IOrderData[] gottenCOrders = new IOrderData[] {model.getOrder(o1id), model.getOrder(o2id)};
-		IOrderData[] gottenUOrders = new IOrderData[] {model.getOrder(o3id)};
+		OrderData[] gottenCOrders = new OrderData[] {model.getOrder(o1id), model.getOrder(o2id)};
+		OrderData[] gottenUOrders = new OrderData[] {model.getOrder(o3id)};
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(dataC, gottenCOrders));
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(dataU, gottenUOrders));
 //		Assertions.assertTrue(model.getOrder(o1id).equals(dataC[0]));

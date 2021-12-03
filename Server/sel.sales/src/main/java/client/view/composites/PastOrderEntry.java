@@ -1,7 +1,7 @@
 package client.view.composites;
 
 import controller.IController;
-import model.order.IOrderData;
+import model.order.OrderData;
 import view.repository.IHBoxLayout;
 import view.repository.IRadioButton;
 import view.repository.IToggleGroup;
@@ -24,7 +24,7 @@ public class PastOrderEntry extends OrderEntry {
 	private IRadioButton card;
 	
 	public PastOrderEntry(IController controller, UIComponentFactory fac, PriceUpdateTarget<OrderEntry> notifyTarget,
-			IOrderData data) {
+			OrderData data) {
 		super(controller, fac, notifyTarget, data);
 	}
 	

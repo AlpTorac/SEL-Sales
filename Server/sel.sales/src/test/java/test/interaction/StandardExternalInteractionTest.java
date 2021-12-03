@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 
 import external.IConnectionUtility;
-import model.dish.IDishMenu;
-import model.dish.IDishMenuData;
+import model.dish.DishMenu;
+import model.dish.DishMenuData;
 import server.controller.IServerController;
 import server.controller.ServerController;
 import server.controller.StandardServerController;
@@ -66,7 +66,7 @@ class StandardExternalInteractionTest {
 	private String serviceID = "serviceID";
 	private String serviceName = "serviceName";
 	
-	private IDishMenu menu;
+	private DishMenu menu;
 	
 	private DummyStandardServer server;
 	private String serverName = "serverName";
@@ -147,7 +147,7 @@ class StandardExternalInteractionTest {
 	void menuExchangeTest() {
 		interaction.setServerMenu(menu);
 		
-		IDishMenuData menuData = client.getMenuData();
+		DishMenuData menuData = client.getMenuData();
 		while (menuData.getAllItems().length == 0) {
 			interaction.reSetServerMenu();
 			GeneralTestUtilityClass.performWait(waitTime);

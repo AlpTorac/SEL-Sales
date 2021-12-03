@@ -1,6 +1,6 @@
 package client.view.composites;
 
-import model.dish.IDishMenuItemData;
+import model.dish.DishMenuItemData;
 import view.repository.IButton;
 import view.repository.IChoiceBox;
 import view.repository.IUIComponent;
@@ -30,7 +30,7 @@ public class EditableMenuItemEntry extends MenuItemEntry {
 		});
 	}
 	
-	protected void choiceBoxInitExtra(IChoiceBox<IDishMenuItemData> choiceBox) {
+	protected void choiceBoxInitExtra(IChoiceBox<DishMenuItemData> choiceBox) {
 		
 	}
 	

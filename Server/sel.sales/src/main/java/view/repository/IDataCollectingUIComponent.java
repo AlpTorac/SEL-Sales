@@ -11,7 +11,14 @@ public interface IDataCollectingUIComponent<T> extends ISizable {
 		this.refresh();
 	}
 	
-	default public void addItems(T[] item) {
+	default public void addItems(Iterable<T> item) {
+		for (T o : item) {
+			this.addItem(o);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	default public void addItems(T... item) {
 		for (T o : item) {
 			this.addItem(o);
 		}
@@ -23,7 +30,14 @@ public interface IDataCollectingUIComponent<T> extends ISizable {
 		}
 	}
 	
-	default public void addItemsIfNotPresent(T[] item) {
+	default public void addItemsIfNotPresent(Iterable<T> item) {
+		for (T o : item) {
+			this.addItemIfNotPresent(o);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	default public void addItemsIfNotPresent(T... item) {
 		for (T o : item) {
 			this.addItemIfNotPresent(o);
 		}

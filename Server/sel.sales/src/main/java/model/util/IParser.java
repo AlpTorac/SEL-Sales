@@ -26,4 +26,19 @@ public interface IParser {
 	default double parseDouble(String s) {
 		return Double.valueOf(s);
 	}
+	
+	default String getDataBody(String data, String startToRemove, String endToRemove) {
+		int begin = 0;
+		int end = 0;
+		
+		if (data.startsWith(startToRemove)) {
+			begin = startToRemove.length();
+		}
+		
+		if (data.endsWith(endToRemove)) {
+			end = data.length() - endToRemove.length();
+		}
+		
+		return data.substring(begin, end);
+	}
 }

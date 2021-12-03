@@ -15,13 +15,13 @@ public interface IToggleGroup {
 		((IToggleGroup) this.getToggleGroup()).clearSelections();
 	}
 	
-	default public void addAllToToggleGroup(Toggleable[] ts) {
+	default public void addAllToToggleGroup(Iterable<Toggleable> ts) {
 		for (Toggleable t : ts) {
 			this.addToToggleGroup(t);
 		}
 	}
 	
-	default public void addAllToToggleGroup(Collection<Toggleable> ts) {
+	default public void addAllToToggleGroup(Toggleable... ts) {
 		for (Toggleable t : ts) {
 			this.addToToggleGroup(t);
 		}

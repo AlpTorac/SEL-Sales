@@ -2,9 +2,6 @@ package test.external.acknowledgement;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-
 import external.acknowledgement.IAcknowledgementStrategy;
 import external.acknowledgement.MinimalAcknowledgementStrategy;
 import external.message.IMessage;

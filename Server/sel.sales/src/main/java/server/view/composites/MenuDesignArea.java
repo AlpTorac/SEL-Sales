@@ -1,7 +1,7 @@
 package server.view.composites;
 
-import model.dish.IDishMenuData;
-import model.dish.IDishMenuItemData;
+import model.dish.DishMenuData;
+import model.dish.DishMenuItemData;
 import view.repository.IButton;
 import view.repository.IHBoxLayout;
 import view.repository.ITable;
@@ -22,7 +22,7 @@ public class MenuDesignArea extends UIVBoxLayout {
 	private IButton removeButton;
 	private IButton saveButton;
 	private IButton loadButton;
-	private ITable<IDishMenuItemData> menuItemTable;
+	private ITable<DishMenuItemData> menuItemTable;
 	
 	private UIComponentFactory fac;
 	
@@ -109,8 +109,8 @@ public class MenuDesignArea extends UIVBoxLayout {
 		return button;
 	}
 
-	protected ITable<IDishMenuItemData> initMenuItemTable() {
-		ITable<IDishMenuItemData> table = this.fac.createTable();
+	protected ITable<DishMenuItemData> initMenuItemTable() {
+		ITable<DishMenuItemData> table = this.fac.createTable();
 		
 		table.addColumn("Dish Name", "DishName");
 		table.addColumn("ID", "ID");
@@ -207,11 +207,11 @@ public class MenuDesignArea extends UIVBoxLayout {
 		return this.removeButton;
 	}
 
-	public ITable<IDishMenuItemData> getMenuItemTable() {
+	public ITable<DishMenuItemData> getMenuItemTable() {
 		return this.menuItemTable;
 	}
 	
-	public void refreshMenuDisplay(IDishMenuData data) {
+	public void refreshMenuDisplay(DishMenuData data) {
 		this.getMenuItemTable().clear();
 		
 //		String[][] transformedData = new String[data.length][];

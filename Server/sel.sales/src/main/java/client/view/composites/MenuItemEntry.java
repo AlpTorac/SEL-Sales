@@ -3,9 +3,9 @@ package client.view.composites;
 import java.math.BigDecimal;
 import java.util.Collection;
 
-import model.dish.IDishMenuData;
-import model.dish.IDishMenuItemData;
-import model.order.AccumulatingOrderItemAggregate;
+import model.dish.DishMenuData;
+import model.dish.DishMenuItemData;
+import model.entity.AccumulatingAggregateEntry;
 import view.repository.IChoiceBox;
 import view.repository.ISingleRowTextBox;
 import view.repository.IUIComponent;
@@ -16,12 +16,12 @@ import view.repository.uiwrapper.UIHBoxLayout;
 public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 	private UIComponentFactory fac;
 	
-	private IChoiceBox<IDishMenuItemData> cb;
+	private IChoiceBox<DishMenuItemData> cb;
 	private ISingleRowTextBox amount;
 	
 	private PriceUpdateTarget<MenuItemEntry> notifyTarget;
 	
-	private IDishMenuData activeMenu;
+	private DishMenuData activeMenu;
 	
 	public MenuItemEntry(UIComponentFactory fac, PriceUpdateTarget<MenuItemEntry> notifyTarget) {
 		super(fac.createHBoxLayout().getComponent());
@@ -40,22 +40,22 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 		});
 	}
 	
-	public void displayData(AccumulatingOrderItemAggregate data) {
+	public void displayData(AccumulatingAggregateEntry<DishMenuItemData> data) {
 		if (data != null) {
-			this.selectMenuItem(data.getItemData());
+			this.selectMenuItem(data.getItem());
 			this.setAmount(data.getAmount().intValue());
 		}
 //		this.cb.artificiallySelectItem(data.getItemData());
 //		this.amount.setCaption(data.getAmount().toPlainString());
 	}
 	
-	protected void choiceBoxInitExtra(IChoiceBox<IDishMenuItemData> choiceBox) {
+	protected void choiceBoxInitExtra(IChoiceBox<DishMenuItemData> choiceBox) {
 		choiceBox.setEnabled(false);
 		choiceBox.setOpacity(1);
 	}
 	
-	protected IChoiceBox<IDishMenuItemData> initChoiceBox() {
-		IChoiceBox<IDishMenuItemData> choiceBox = this.fac.createChoiceBox();
+	protected IChoiceBox<DishMenuItemData> initChoiceBox() {
+		IChoiceBox<DishMenuItemData> choiceBox = this.fac.createChoiceBox();
 		choiceBox.addItemChangeListener(new ItemChangeListener() {
 			public void selectedItemChanged(Object item) {
 				notifyPriceDisplayingTarget();
@@ -89,7 +89,7 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 		return this.fac;
 	}
 	
-	public IChoiceBox<IDishMenuItemData> getMenuItemChoiceBox() {
+	public IChoiceBox<DishMenuItemData> getMenuItemChoiceBox() {
 		return this.cb;
 	}
 	
@@ -102,20 +102,20 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 		this.dettach();
 	}
 	
-	protected void setActiveMenu(IDishMenuData menuData) {
+	protected void setActiveMenu(DishMenuData menuData) {
 		this.activeMenu = menuData;
 	}
 	
-	public IDishMenuData getActiveMenu() {
+	public DishMenuData getActiveMenu() {
 		return this.activeMenu;
 	}
 	
-	public void refreshMenu(IDishMenuData menuData) {
-		IDishMenuItemData selection = this.getSelectedMenuItem();
+	public void refreshMenu(DishMenuData menuData) {
+		DishMenuItemData selection = this.getSelectedMenuItem();
 		if (menuData != null) {
 			this.setActiveMenu(menuData);
 			this.cb.clear();
-			for (IDishMenuItemData data : this.getActiveMenu().getAllItems()) {
+			for (DishMenuItemData data : this.getActiveMenu().getAllItems()) {
 				this.addMenuItem(data);
 			}
 		}
@@ -123,7 +123,7 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 		this.getNotifyTarget().refreshPrice();
 	}
 	
-	protected void selectMenuItem(IDishMenuItemData selection) {
+	protected void selectMenuItem(DishMenuItemData selection) {
 		if (selection != null) {
 			this.cb.artificiallySelectItem(selection);
 		}
@@ -133,7 +133,7 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 		this.amount.setCaption(String.valueOf(amount));
 	}
 	
-	protected void addMenuItem(IDishMenuItemData data) {
+	protected void addMenuItem(DishMenuItemData data) {
 		this.cb.addItem(data);
 	}
 	
@@ -142,7 +142,7 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 	}
 	
 	public BigDecimal getPrice() {
-		IDishMenuItemData data = null;
+		DishMenuItemData data = null;
 		if ((data = this.getSelectedMenuItem()) != null) {
 			return data.getGrossPrice().multiply(this.getAmount());
 		}
@@ -153,7 +153,7 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 		this.getNotifyTarget().refreshPrice();
 	}
 	
-	public IDishMenuItemData getSelectedMenuItem() {
+	public DishMenuItemData getSelectedMenuItem() {
 		return this.cb.getSelectedElement();
 	}
 	

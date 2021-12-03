@@ -1,11 +1,9 @@
 package client.view.composites;
 
-import java.time.LocalDateTime;
-
 import client.view.composites.listener.AddCookingOrderListener;
 import client.view.composites.listener.CancelOrderListener;
 import controller.IController;
-import model.order.IOrderData;
+import model.order.OrderData;
 import view.repository.IButton;
 import view.repository.IIndexedLayout;
 import view.repository.uiwrapper.ClickEventListener;
@@ -26,7 +24,7 @@ public class OrderTakingAreaOrderEntry extends OrderEntry {
 		super(controller, fac, notifyTarget);
 	}
 	public OrderTakingAreaOrderEntry(IController controller, UIComponentFactory fac,
-			PriceUpdateTarget<OrderEntry> notifyTarget, IOrderData data) {
+			PriceUpdateTarget<OrderEntry> notifyTarget, OrderData data) {
 		super(controller, fac, notifyTarget, data);
 	}
 	
@@ -51,7 +49,7 @@ public class OrderTakingAreaOrderEntry extends OrderEntry {
 	public String getSerialisedOrderID() {
 		String orderID;
 		if (this.getActiveData() == null) {
-			orderID = this.getController().getModel().getOrderHelper().formatDate(LocalDateTime.now());
+			orderID = this.getController().getModel().getDateSettings().serialiseDateFromNow();
 		} else {
 			orderID = super.getSerialisedOrderID();
 		}

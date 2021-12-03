@@ -14,7 +14,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import client.model.ClientModel;
 import client.model.IClientModel;
-import model.order.IOrderData;
+import model.order.OrderData;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
@@ -83,7 +83,7 @@ class ClientModelTest {
 	@Test
 	void orderCycleTest() {
 		String serialisedOrderData = o1id+"#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";";
-		IOrderData data = this.clientModel.getOrderHelper().deserialiseOrderData(serialisedOrderData);
+		OrderData data = this.clientModel.getOrderHelper().deserialiseOrderData(serialisedOrderData);
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
@@ -132,7 +132,7 @@ class ClientModelTest {
 	@Test
 	void orderCycleDifferentDataTest() {
 		String serialisedOrderData = o1id+"#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";";
-		IOrderData data = this.clientModel.getOrderHelper().deserialiseOrderData(serialisedOrderData);
+		OrderData data = this.clientModel.getOrderHelper().deserialiseOrderData(serialisedOrderData);
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
@@ -160,7 +160,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
 		String newSerialisedOrderData = o1id+"#20200809112233343#0#0:item1,"+o1a1.toPlainString()+";";
-		IOrderData newData = this.clientModel.getOrderHelper().deserialiseOrderData(newSerialisedOrderData);
+		OrderData newData = this.clientModel.getOrderHelper().deserialiseOrderData(newSerialisedOrderData);
 		
 		clientModel.makePendingSendOrder(newSerialisedOrderData);
 		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(newData));
@@ -219,10 +219,10 @@ class ClientModelTest {
 	@Test
 	void editOrderTest() {
 		String serialisedOrderData = o1id+"#20200809112233343#0#0:item1,5;item2,3";
-		IOrderData data = this.clientModel.getOrderHelper().deserialiseOrderData(serialisedOrderData);
+		OrderData data = this.clientModel.getOrderHelper().deserialiseOrderData(serialisedOrderData);
 		
 		String newSerialisedOrderData = o2id+"#20200809112233343#0#0:item1,2;item3,6;item2,2;";
-		IOrderData newData = this.clientModel.getOrderHelper().deserialiseOrderData(newSerialisedOrderData);
+		OrderData newData = this.clientModel.getOrderHelper().deserialiseOrderData(newSerialisedOrderData);
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);

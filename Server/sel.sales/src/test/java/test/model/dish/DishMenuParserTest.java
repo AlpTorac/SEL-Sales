@@ -8,27 +8,23 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import model.dish.DishMenuDataFactory;
-import model.dish.DishMenuItemDataFactory;
-import model.dish.IDishMenuData;
-import model.dish.IDishMenuDataFactory;
-import model.dish.IDishMenuItemData;
-import model.dish.IDishMenuItemDataFactory;
+import model.dish.DishMenuData;
+import model.dish.DishMenuItemData;
 import model.dish.serialise.DishMenuParser;
 import model.dish.serialise.ExternalDishMenuItemSerialiser;
-import model.dish.serialise.IDishMenuFormat;
-import model.dish.serialise.IDishMenuItemSerialiser;
-import model.dish.serialise.IDishMenuParser;
+import model.dish.serialise.DishMenuFormat;
+import model.dish.serialise.DishMenuItemSerialiser;
 import model.dish.serialise.IntraAppDishMenuFormat;
 import model.entity.id.MinimalIDFactory;
 //@Execution(value = ExecutionMode.SAME_THREAD)
 class DishMenuParserTest {
 
-	private IDishMenuFormat format = new IntraAppDishMenuFormat();
-	private IDishMenuItemDataFactory itemDataFac = new DishMenuItemDataFactory();
-	private IDishMenuDataFactory dataFac = new DishMenuDataFactory(itemDataFac);
+	private DishMenuFormat format = new IntraAppDishMenuFormat();
+	private DishMenuItemDataFactory itemDataFac = new DishMenuItemDataFactory();
+	private DishMenuDataFactory dataFac = new DishMenuDataFactory(itemDataFac);
 	
-	private IDishMenuParser parser = new DishMenuParser(format, dataFac, new MinimalIDFactory());
-	private IDishMenuItemSerialiser serialiser = new ExternalDishMenuItemSerialiser();
+	private DishMenuParser parser = new DishMenuParser(format, dataFac, new MinimalIDFactory());
+	private DishMenuItemSerialiser serialiser = new ExternalDishMenuItemSerialiser();
 	
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
@@ -59,9 +55,9 @@ class DishMenuParserTest {
 				+ format.getDishMenuItemDataFieldEnd()
 				+ serialiser.serialise(i3Name, i3id, i3PorSize, i3ProCost, i3Price)
 				+ format.getDishMenuItemDataFieldEnd();
-		IDishMenuData data = parser.parseDishMenuData(serialisedMenu);
+		DishMenuData data = parser.parseDishMenuData(serialisedMenu);
 		
-		IDishMenuItemData[] itemData = data.getAllItems();
+		DishMenuItemData[] itemData = data.getAllItems();
 		
 		Assertions.assertEquals(3, itemData.length);
 		

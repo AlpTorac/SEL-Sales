@@ -5,14 +5,9 @@ import client.controller.StandardClientController;
 import client.external.ClientExternal;
 import client.model.ClientModel;
 import client.model.IClientModel;
-import client.view.IClientView;
-import client.view.StandardClientView;
 import controller.IController;
 import model.IModel;
-import model.order.IOrderData;
-import view.IView;
-import view.repository.uifx.FXUIComponentFactory;
-import view.repository.uiwrapper.UIComponentFactory;
+import model.order.OrderData;
 
 public class DummyClient extends DummyInteractionPartaker {
 
@@ -55,23 +50,23 @@ public class DummyClient extends DummyInteractionPartaker {
 		((ClientExternal) this.getExternal()).refreshOrders();
 	}
 	
-	public IOrderData[] getAllSentOrders() {
+	public OrderData[] getAllSentOrders() {
 		return this.getModel().getAllSentOrders();
 	}
 	
-	public IOrderData[] getAllCookingOrders() {
+	public OrderData[] getAllCookingOrders() {
 		return this.getModel().getAllCookingOrders();
 	}
 	
-	public IOrderData[] getAllPendingPaymentOrders() {
+	public OrderData[] getAllPendingPaymentOrders() {
 		return this.getModel().getAllPendingPaymentOrders();
 	}
 	
-	public IOrderData[] getAllPendingSendOrders() {
+	public OrderData[] getAllPendingSendOrders() {
 		return this.getModel().getAllPendingSendOrders();
 	}
 	
-	public IOrderData[] getAllWrittenOrders() {
+	public OrderData[] getAllWrittenOrders() {
 		return this.getModel().getAllWrittenOrders();
 	}
 	

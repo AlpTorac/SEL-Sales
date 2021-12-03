@@ -17,9 +17,9 @@ import org.testfx.framework.junit5.ApplicationTest;
 import client.view.composites.MenuItemEntry;
 import client.view.composites.OrderEntry;
 import client.view.composites.PriceUpdateTarget;
-import model.dish.IDishMenuData;
-import model.dish.IDishMenuItemData;
-import model.order.IOrderData;
+import model.dish.DishMenuData;
+import model.dish.DishMenuItemData;
+import model.order.OrderData;
 import model.order.AccumulatingOrderItemAggregate;
 import server.controller.IServerController;
 import server.controller.ServerController;
@@ -34,7 +34,7 @@ class OrderEntryTest extends ApplicationTest {
 	private IServerModel model;
 	private IServerController controller;
 	
-	private IDishMenuItemData item1;
+	private DishMenuItemData item1;
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
 	private BigDecimal i1Price = BigDecimal.valueOf(5);
@@ -42,7 +42,7 @@ class OrderEntryTest extends ApplicationTest {
 	private BigDecimal i1Disc = BigDecimal.valueOf(0);
 	private String i1id = "item1";
 	
-	private IDishMenuItemData item2;
+	private DishMenuItemData item2;
 	private String i2Name = "bbb";
 	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
 	private BigDecimal i2Price = BigDecimal.valueOf(1);
@@ -50,7 +50,7 @@ class OrderEntryTest extends ApplicationTest {
 	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
 	private String i2id = "item2";
 	
-	private IDishMenuItemData item3;
+	private DishMenuItemData item3;
 	private String i3Name = "ccc";
 	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
 	private BigDecimal i3Price = BigDecimal.valueOf(4);
@@ -67,7 +67,7 @@ class OrderEntryTest extends ApplicationTest {
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	
 	private String serialisedOrder;
-	private IOrderData orderData;
+	private OrderData orderData;
 	
 	@BeforeEach
 	void prep() {
@@ -122,7 +122,7 @@ class OrderEntryTest extends ApplicationTest {
 		Assertions.assertEquals(entry.getActiveData(), orderData);
 		Assertions.assertEquals(entry.getSerialisedOrderID(), orderData.getID().toString());
 		
-		IOrderData newData = model.getOrderHelper().deserialiseOrderData(entry.serialiseCurrentOrder());
+		OrderData newData = model.getOrderHelper().deserialiseOrderData(entry.getCurrentOrder());
 		
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(
 				newData.getOrderedItems(),
@@ -145,7 +145,7 @@ class OrderEntryTest extends ApplicationTest {
 	@Test
 	void refreshMenuTest() {
 		Assertions.assertNull(entry.getActiveMenu());
-		IDishMenuData menu = model.getMenuData();
+		DishMenuData menu = model.getMenuData();
 		isPriceRefreshed = false;
 		entry.refreshMenu(menu);
 		Assertions.assertTrue(isPriceRefreshed);
@@ -201,7 +201,7 @@ class OrderEntryTest extends ApplicationTest {
 		Assertions.assertEquals(entry.getActiveData(), orderData);
 		Assertions.assertEquals(entry.getSerialisedOrderID(), orderData.getID().toString());
 		
-		IOrderData newData = model.getOrderHelper().deserialiseOrderData(entry.serialiseCurrentOrder());
+		OrderData newData = model.getOrderHelper().deserialiseOrderData(entry.getCurrentOrder());
 		
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(
 				newData.getOrderedItems(),

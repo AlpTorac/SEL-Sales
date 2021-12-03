@@ -3,7 +3,7 @@ package model;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class DateSettings implements IDateSettings {
+public class DateSettings {
 	private String dateInYearSeperator = "/";
 	private String timeInDaySeperator = ":";
 	private String dateInYearPattern = "dd"+dateInYearSeperator+"MM"+dateInYearSeperator+"yyyy";
@@ -15,6 +15,10 @@ public class DateSettings implements IDateSettings {
 	
 	public DateSettings() {
 		
+	}
+	
+	public String serialiseDateFromNow() {
+		return this.serialiseDate(LocalDateTime.now());
 	}
 	
 	public LocalDateTime parseDate(String date) {
@@ -29,7 +33,6 @@ public class DateSettings implements IDateSettings {
 		return dateInYearFormat.format(date);
 	}
 
-	@Override
 	public String serialiseDate(LocalDateTime date) {
 		return this.fullFormatter.format(date);
 	}

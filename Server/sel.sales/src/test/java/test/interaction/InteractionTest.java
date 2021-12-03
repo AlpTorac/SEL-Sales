@@ -25,8 +25,8 @@ import client.model.ClientModel;
 import client.model.IClientModel;
 import external.device.IDevice;
 import model.connectivity.IDeviceData;
-import model.dish.IDishMenu;
-import model.dish.IDishMenuData;
+import model.dish.DishMenu;
+import model.dish.DishMenuData;
 import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.external.IServerExternal;
@@ -99,7 +99,7 @@ class InteractionTest {
 	private String serviceID = "serviceID";
 	private String serviceName = "serviceName";
 	
-	private IDishMenu menu;
+	private DishMenu menu;
 	
 	private DummyInteraction interaction;
 	
@@ -192,7 +192,7 @@ class InteractionTest {
 //		GeneralTestUtilityClass.performWait(100);
 //		menuData = clientModel.getMenuData();
 		
-		IDishMenuData menuData = client.getMenuData();
+		DishMenuData menuData = client.getMenuData();
 		while (menuData.getAllItems().length == 0) {
 			interaction.reSetServerMenu();
 			GeneralTestUtilityClass.performWait(waitTime);

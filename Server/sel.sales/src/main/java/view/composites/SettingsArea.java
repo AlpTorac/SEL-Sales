@@ -1,7 +1,6 @@
 package view.composites;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -10,9 +9,7 @@ import controller.GeneralEvent;
 import model.settings.ISettings;
 import model.settings.SettingsField;
 import view.repository.IButton;
-import view.repository.IHBoxLayout;
 import view.repository.ILabel;
-import view.repository.ILayout;
 import view.repository.IRootComponent;
 import view.repository.ISingleRowTextBox;
 import view.repository.IUIComponent;

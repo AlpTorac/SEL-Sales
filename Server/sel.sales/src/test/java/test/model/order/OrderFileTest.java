@@ -18,8 +18,7 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import model.filewriter.FileOrderSerialiser;
-import model.filewriter.OrderFile;
-import model.order.IOrderData;
+import model.order.OrderData;
 import model.settings.SettingsField;
 import server.model.IServerModel;
 import server.model.ServerModel;
@@ -84,15 +83,15 @@ class OrderFileTest {
 	@Test
 	void fileOrderSerialiserTest() {
 		FileOrderSerialiser fos = new FileOrderSerialiser();
-		IOrderData[] ds = model.getAllUnconfirmedOrders();
-		IOrderData d1 = ds[0];
+		OrderData[] ds = model.getAllUnconfirmedOrders();
+		OrderData d1 = ds[0];
 		String s1 = fos.serialiseOrderData(d1);
 		Assertions.assertEquals(s1, "order1#20200809112233343#0#0#0:item1,2.0;"+System.lineSeparator());
-		IOrderData d2 = ds[1];
+		OrderData d2 = ds[1];
 		String s2 = fos.serialiseOrderData(d2);
 		Assertions.assertEquals(s2, "order2#20200809235959111#1#0#0:item2,3.0;"+System.lineSeparator() +
 				"order2#20200809235959111#1#0#0:item1,2.0;" + System.lineSeparator());
-		IOrderData d3 = ds[2];
+		OrderData d3 = ds[2];
 		String s3 = fos.serialiseOrderData(d3);
 		Assertions.assertEquals(s3, "order3#20200809000000222#1#1#0:item3,5.0;"+System.lineSeparator());
 	}

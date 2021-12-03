@@ -10,10 +10,10 @@ import external.connection.IConnection;
 import external.device.IDevice;
 import model.IModel;
 import model.connectivity.IDeviceData;
-import model.dish.IDishMenu;
-import model.dish.IDishMenuData;
-import model.dish.IDishMenuItem;
-import model.order.IOrderData;
+import model.dish.DishMenu;
+import model.dish.DishMenuData;
+import model.dish.DishMenuItem;
+import model.order.OrderData;
 import model.settings.SettingsField;
 import test.GeneralTestUtilityClass;
 import view.IView;
@@ -119,40 +119,40 @@ public abstract class DummyInteractionPartaker implements Closeable {
 		return this.getModel().getAllKnownDeviceData();
 	}
 	
-	public IOrderData getOrder(String orderID) {
+	public OrderData getOrder(String orderID) {
 		return this.getModel().getOrder(orderID);
 	}
 	
-	public boolean menuEqual(IDishMenu menu) {
+	public boolean menuEqual(DishMenu menu) {
 		return this.getModel().getMenuData().equals(this.getModel().getDishMenuHelper().dishMenuToData(menu));
 	}
 	
-	public void setMenu(IDishMenu menu) {
+	public void setMenu(DishMenu menu) {
 		this.setMenu(this.getModel().getDishMenuHelper().dishMenuToData(menu));
 	}
 	
-	public void setMenu(IDishMenuData menuData) {
+	public void setMenu(DishMenuData menuData) {
 		this.getModel().setDishMenu(menuData);
 	}
 	
-	public IDishMenuData getMenuData() {
+	public DishMenuData getMenuData() {
 		return this.getModel().getMenuData();
 	}
 	
 	public void reSetMenu() {
-		IDishMenuData data = this.getMenuData();
+		DishMenuData data = this.getMenuData();
 		this.getModel().setDishMenu(data);
 	}
 	
-	public IOrderData deserialiseOrderData(String serialisedOrder) {
+	public OrderData deserialiseOrderData(String serialisedOrder) {
 		return this.getModel().getOrderHelper().deserialiseOrderData(serialisedOrder);
 	}
 	
-	public IDishMenu createDishMenu() {
+	public DishMenu createDishMenu() {
 		return this.getModel().getDishMenuHelper().createDishMenu();
 	}
 	
-	public IDishMenuItem createDishMenuItem(String name, BigDecimal porSize, BigDecimal proCost, BigDecimal price, String id) {
+	public DishMenuItem createDishMenuItem(String name, BigDecimal porSize, BigDecimal proCost, BigDecimal price, String id) {
 		return this.getModel().getDishMenuHelper().createDishMenuItem(name, porSize, proCost, price, id);
 	}
 	

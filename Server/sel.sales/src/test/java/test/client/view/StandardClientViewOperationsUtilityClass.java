@@ -16,8 +16,8 @@ import client.view.composites.PendingPaymentOrderEntry;
 import client.view.composites.PendingPaymentOrdersArea;
 import controller.IController;
 import model.IModel;
-import model.dish.IDishMenuItemData;
-import model.order.IOrderData;
+import model.dish.DishMenuItemData;
+import model.order.OrderData;
 import model.order.AccumulatingOrderItemAggregate;
 import test.GeneralTestUtilityClass;
 import test.ViewOperationsUtilityClass;
@@ -108,13 +108,13 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 		GeneralTestUtilityClass.performWait(this.waitTime);
 	}
 	
-	public void orderTakingAreaSetEntryItem(IDishMenuItemData item, int pos) {
+	public void orderTakingAreaSetEntryItem(DishMenuItemData item, int pos) {
 		this.setOrderTakingAreaTabActive();
 		GeneralTestUtilityClass.performWait(this.waitTime);
 		EditableMenuItemEntry e = this.ota.getEntry().getEntry(pos);
 		GeneralTestUtilityClass.performWait(this.waitTime);
 		e.getMenuItemChoiceBox().artificiallySelectItem(item);
-//		for (IDishMenuItemData d : e.getActiveMenu().getAllDishMenuItems()) {
+//		for (DishMenuItemData d : e.getActiveMenu().getAllDishMenuItems()) {
 //			if (d.equals(item)) {
 //				e.getMenuItemChoiceBox().artificiallySelectItem(d);
 //				break;
@@ -159,34 +159,34 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	}
 	
 	public AccumulatingOrderItemAggregate[] getOrderTakingAreaCurrentOrderItems() {
-		return this.ota.getEntry().getCurrentOrder();
+		return this.ota.getEntry().getCurrentOrderItems();
 	}
 	
-	public IOrderData getOrderTakingAreaCurrentOrder() {
-		return this.getModel().getOrderHelper().deserialiseOrderData(this.ota.getEntry().serialiseCurrentOrder());
+	public OrderData getOrderTakingAreaCurrentOrder() {
+		return this.getModel().getOrderHelper().deserialiseOrderData(this.ota.getEntry().getCurrentOrder());
 	}
 	
 	public String getOrderTakingAreaSerialisedOrder() {
-		return this.ota.getEntry().serialiseCurrentOrder();
+		return this.ota.getEntry().getCurrentOrder();
 	}
 	
-	public void orderTakingAreaDisplayOrder(IOrderData data) {
+	public void orderTakingAreaDisplayOrder(OrderData data) {
 		this.oa.displayOrder(data);
 	}
 	
-	public Collection<IOrderData> getCookingOrders() {
+	public Collection<OrderData> getCookingOrders() {
 		return this.coa.getOrderAccordion().getDisplayedOrders();
 	}
 	
-	public Collection<IOrderData> getPendingPaymentOrders() {
+	public Collection<OrderData> getPendingPaymentOrders() {
 		return this.uoa.getOrderAccordion().getDisplayedOrders();
 	}
 	
-	public Collection<IOrderData> getPendingSendOrders() {
+	public Collection<OrderData> getPendingSendOrders() {
 		return this.poa.getPendingSendOrderAccordion().getDisplayedOrders();
 	}
 	
-	public Collection<IOrderData> getSentOrders() {
+	public Collection<OrderData> getSentOrders() {
 		return this.poa.getSentOrderAccordion().getDisplayedOrders();
 	}
 	
@@ -217,7 +217,7 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	}
 	
 	public String ppoaGetSerialisedOrder(String formerID) {
-		return this.uoa.getOrderAccordion().getEntry(formerID).serialiseCurrentOrder();
+		return this.uoa.getOrderAccordion().getEntry(formerID).getCurrentOrder();
 	}
 	
 	protected void setOrderAreaTabActive() {

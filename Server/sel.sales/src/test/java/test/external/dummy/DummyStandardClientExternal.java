@@ -7,10 +7,7 @@ import client.external.StandardClientExternal;
 import client.model.IClientModel;
 import external.IConnectionUtility;
 import external.connection.IConnection;
-import external.connection.IService;
-import external.connection.outgoing.IExternalConnector;
 import external.device.DeviceDiscoveryStrategy;
-import external.device.IDeviceManager;
 
 public class DummyStandardClientExternal extends StandardClientExternal implements IDummyExternal {
 	protected DummyStandardClientExternal(IClientController controller, IClientModel model, IConnectionUtility connUtil, long pingPongTimeout,

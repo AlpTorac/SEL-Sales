@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import model.dish.IDishMenuItemData;
-import model.order.IOrderData;
+import model.dish.DishMenuItemData;
+import model.order.OrderData;
 import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
 import server.model.ServerModel;
@@ -20,7 +20,7 @@ import test.GeneralTestUtilityClass;
 class OrderParseTest {
 	private static IServerModel model;
 	
-	private IDishMenuItemData item1;
+	private DishMenuItemData item1;
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
 	private BigDecimal i1Price = BigDecimal.valueOf(5);
@@ -28,7 +28,7 @@ class OrderParseTest {
 	private BigDecimal i1Disc = BigDecimal.valueOf(0);
 	private String i1id = "item1";
 	
-	private IDishMenuItemData item2;
+	private DishMenuItemData item2;
 	private String i2Name = "bbb";
 	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
 	private BigDecimal i2Price = BigDecimal.valueOf(1);
@@ -36,7 +36,7 @@ class OrderParseTest {
 	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
 	private String i2id = "item2";
 	
-	private IDishMenuItemData item3;
+	private DishMenuItemData item3;
 	private String i3Name = "ccc";
 	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
 	private BigDecimal i3Price = BigDecimal.valueOf(4);
@@ -44,7 +44,7 @@ class OrderParseTest {
 	private BigDecimal i3Disc = BigDecimal.valueOf(1);
 	private String i3id = "item3";
 	
-	private IDishMenuItemData disc;
+	private DishMenuItemData disc;
 	private String discName = "disc";
 	private BigDecimal discPorSize = BigDecimal.ONE;
 	private BigDecimal discPrice = BigDecimal.valueOf(-1);
@@ -73,7 +73,7 @@ class OrderParseTest {
 		model.addUnconfirmedOrder("order2#20200809235959532#1#0:item1,2;item2,3;");
 		model.addUnconfirmedOrder("order3#20200809000000999#1#1:item3,5;");
 		
-		IOrderData[] orderData = model.getAllUnconfirmedOrders();
+		OrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		LocalDateTime date1 = LocalDateTime.of(2020, 8, 9, 11, 22, 33);
 		date1.plusNanos(0);
@@ -93,7 +93,7 @@ class OrderParseTest {
 		model.addUnconfirmedOrder("order2#20200809235959532#1#0:item1,2;item2,3;");
 		model.addUnconfirmedOrder("order3#20200809000000999#1#1:item3,5;");
 		
-		IOrderData[] orderData = model.getAllUnconfirmedOrders();
+		OrderData[] orderData = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(orderData.length, 3);
 		
 		AccumulatingOrderItemAggregate i1d = model.getOrderHelper().createOrderItem(item1, BigDecimal.valueOf(2));
@@ -117,7 +117,7 @@ class OrderParseTest {
 	void discountedOrderTest() {
 		model.addUnconfirmedOrder("order4#20200809112233000#0#1#12:item1,2;discID,12;");
 		
-		IOrderData[] orderData = model.getAllUnconfirmedOrders();
+		OrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		LocalDateTime date1 = LocalDateTime.of(2020, 8, 9, 11, 22, 33);
 		date1.plusNanos(0);

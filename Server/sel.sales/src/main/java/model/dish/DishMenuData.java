@@ -10,4 +10,11 @@ public class DishMenuData extends Aggregate<DishMenuItemAttribute, DishMenuItemD
 		return new DishMenuData();
 	}
 	
+	public DishMenu toDishMenu() {
+		DishMenu menu = new DishMenu();
+		for (DishMenuItemData data : this.getAllItems()) {
+			menu.addElement(data);
+		}
+		return menu;
+	}
 }

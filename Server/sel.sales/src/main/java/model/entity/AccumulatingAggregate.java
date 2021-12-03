@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import model.datamapper.IAttribute;
 import model.entity.id.EntityID;
 
-public abstract class AccumulatingAggregate<A extends IAttribute, I extends Entity<A>> implements IAggregate<A, I> {
+public abstract class AccumulatingAggregate<A extends IAttribute, I extends IDOwner<A>> implements IAggregate<A, I> {
 	private Map<I, BigDecimal> map;
 	
 	public AccumulatingAggregate() {
@@ -137,6 +137,19 @@ public abstract class AccumulatingAggregate<A extends IAttribute, I extends Enti
 		return this.getElementToAmountMap().keySet().stream().anyMatch(i -> i.getID().equals(id));
 	}
 	
+	public void addAll(Iterable<AccumulatingAggregateEntry<I>> es) {
+		for (AccumulatingAggregateEntry<I> e : es) {
+			this.addElement(e.getItem(), e.getAmount());
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void addAll(AccumulatingAggregateEntry<I>... es) {
+		for (AccumulatingAggregateEntry<I> e : es) {
+			this.addElement(e.getItem(), e.getAmount());
+		}
+	}
+	
 	public void addAll(AccumulatingAggregate<A, I> aggr) {
 		for (Entry<I, BigDecimal> e : aggr.getElementToAmountMap().entrySet()) {
 			this.getElementToAmountMap().merge(e.getKey(), e.getValue(),
@@ -144,5 +157,16 @@ public abstract class AccumulatingAggregate<A extends IAttribute, I extends Enti
 						return v1.add(v2);
 					});
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public AccumulatingAggregateEntry<I>[] getAllEntries() {
+		int size = this.getElementToAmountMap().size();
+		AccumulatingAggregateEntry<?>[] arr = new AccumulatingAggregateEntry<?>[size];
+		int i = 0;
+		for (Entry<I, BigDecimal> e : this.getElementToAmountMap().entrySet()) {
+			arr[i] = new AccumulatingAggregateEntry<I>(e.getKey(), e.getValue());
+		}
+		return (AccumulatingAggregateEntry<I>[]) arr;
 	}
 }

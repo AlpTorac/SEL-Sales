@@ -4,7 +4,7 @@ import client.view.composites.listener.CancelOrderListener;
 import client.view.composites.listener.EditOrderListener;
 import client.view.composites.listener.SendOrderListener;
 import controller.IController;
-import model.order.IOrderData;
+import model.order.OrderData;
 import view.repository.IButton;
 import view.repository.IHBoxLayout;
 import view.repository.IIndexedLayout;
@@ -34,7 +34,7 @@ public class PendingPaymentOrderEntry extends OrderEntry {
 	private IButton editBtn;
 
 	public PendingPaymentOrderEntry(IController controller, UIComponentFactory fac, PriceUpdateTarget<OrderEntry> notifyTarget,
-			IOrderData data) {
+			OrderData data) {
 		super(controller, fac, notifyTarget, data);
 		
 //		this.optionsArea = this.getUIFactory().createVBoxLayout();
@@ -122,7 +122,7 @@ public class PendingPaymentOrderEntry extends OrderEntry {
 	}
 	
 	@Override
-	public void displayData(IOrderData data) {
+	public void displayData(OrderData data) {
 		super.displayData(data);
 		if (data != null) {
 			this.getCashRadioButton().setToggled(data.getIsCash());

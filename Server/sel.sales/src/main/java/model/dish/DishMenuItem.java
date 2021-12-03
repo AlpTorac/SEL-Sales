@@ -42,4 +42,13 @@ public class DishMenuItem extends Entity<DishMenuItemAttribute> {
 				this.getGrossPrice().compareTo(castedO.getGrossPrice()) == 0 &&
 				this.getProductionCost().compareTo(castedO.getProductionCost()) == 0;
 	}
+	
+	public DishMenuItemData toData() {
+		DishMenuItemData data = new DishMenuItemData(this.getID());
+		data.setAttributeValue(DishMenuItemAttribute.DISH_NAME, this.getDishName());
+		data.setAttributeValue(DishMenuItemAttribute.GROSS_PRICE, this.getGrossPrice());
+		data.setAttributeValue(DishMenuItemAttribute.PORTION_SIZE, this.getPortionSize());
+		data.setAttributeValue(DishMenuItemAttribute.PRODUCTION_COST, this.getProductionCost());
+		return data;
+	}
 }

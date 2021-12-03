@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import model.connectivity.FileDeviceDataParser;
 import model.connectivity.IDeviceData;
-import model.dish.IDishMenuData;
+import model.dish.DishMenuData;
 import model.filemanager.FileManager;
 import model.filemanager.IFileManager;
 import model.filemanager.SettingsFile;
@@ -22,11 +22,9 @@ import model.filemanager.StandardSettingsFile;
 import model.filewriter.DeviceDataFile;
 import model.filewriter.DishMenuFile;
 import model.filewriter.FileAccess;
-import model.filewriter.OrderFile;
 import model.filewriter.StandardDeviceDataFile;
 import model.filewriter.StandardDishMenuFile;
-import model.filewriter.StandardOrderFile;
-import model.order.IOrderData;
+import model.order.OrderData;
 import model.settings.HasSettingsField;
 import model.settings.ISettings;
 import model.settings.ISettingsParser;
@@ -70,7 +68,7 @@ class FileManagerPreloadTest {
 	private BigDecimal i3ProCost = BigDecimal.valueOf(3.5);
 	private String i3id = "item3";
 	
-	private IDishMenuData dishMenuData;
+	private DishMenuData dishMenuData;
 	
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 
@@ -198,8 +196,8 @@ class FileManagerPreloadTest {
 		}
 //		fm.loadDishMenu(fileAddress);
 		model.loadDishMenu(fileAddress);
-		IDishMenuData readMenuData = model.getMenuData();
-		IDishMenuData expectedMenuData = model.getDishMenuHelper().parseFileMenuData(fileContent);
+		DishMenuData readMenuData = model.getMenuData();
+		DishMenuData expectedMenuData = model.getDishMenuHelper().parseFileMenuData(fileContent);
 		Assertions.assertTrue(expectedMenuData.equals(readMenuData));
 	}
 	
@@ -241,8 +239,8 @@ class FileManagerPreloadTest {
 		this.addMenuToModel();
 //		fm.loadOrders(fileAddress);
 		model.loadOrders(fileAddress);
-		IOrderData[] readOrderData = model.getAllWrittenOrders();
-		IOrderData[] expectedOrderData = model.getOrderHelper().deserialiseOrderDatas(fileContent);
+		OrderData[] readOrderData = model.getAllWrittenOrders();
+		OrderData[] expectedOrderData = model.getOrderHelper().deserialiseOrderDatas(fileContent);
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(readOrderData, expectedOrderData));
 	}
 	

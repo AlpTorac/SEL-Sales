@@ -2,9 +2,6 @@ package test.external.message;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-
 import external.message.MessageContext;
 import model.exceptions.NoSuchMessageContextException;
 //@Execution(value = ExecutionMode.SAME_THREAD)

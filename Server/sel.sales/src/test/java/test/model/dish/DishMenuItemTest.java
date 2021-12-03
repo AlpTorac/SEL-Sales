@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import model.dish.IDishMenuItem;
-import model.dish.IDishMenuItemData;
+import model.dish.DishMenuItem;
+import model.dish.DishMenuItemData;
 import server.model.IServerModel;
 import server.model.ServerModel;
 //@Execution(value = ExecutionMode.SAME_THREAD)
@@ -39,13 +39,13 @@ class DishMenuItemTest {
 	private BigDecimal i3Disc = BigDecimal.valueOf(1);
 	private String i3id = "item3";
 	
-	private IDishMenuItemData iData1;
-	private IDishMenuItemData iData2;
-	private IDishMenuItemData iData3;
+	private DishMenuItemData iData1;
+	private DishMenuItemData iData2;
+	private DishMenuItemData iData3;
 	
-	private IDishMenuItem i1;
-	private IDishMenuItem i2;
-	private IDishMenuItem i3;
+	private DishMenuItem i1;
+	private DishMenuItem i2;
+	private DishMenuItem i3;
 	
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	
@@ -104,7 +104,7 @@ class DishMenuItemTest {
 
 //	@Test
 //	void setTest() {
-//		IDishMenuItemData i1 = model.getMenuItem(i1id);
+//		DishMenuItemData i1 = model.getMenuItem(i1id);
 //		DishMenuItemTestUtilityClass.assertMenuItemEqual(i1, i1Name, i1id, i1PorSize, i1Price, i1ProCost, i1Disc);
 //		
 //		BigDecimal newDisc = BigDecimal.valueOf(1);

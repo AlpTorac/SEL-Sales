@@ -6,7 +6,6 @@ import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 import client.controller.IClientController;
 import client.controller.StandardClientController;
-import client.external.BluetoothClientExternal;
 import client.external.IClientExternal;
 import client.external.StandardClientExternal;
 import client.model.ClientModel;

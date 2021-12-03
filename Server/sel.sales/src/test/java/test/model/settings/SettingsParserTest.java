@@ -2,9 +2,6 @@ package test.model.settings;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-
 import model.settings.ISettings;
 import model.settings.ISettingsParser;
 import model.settings.SettingsField;

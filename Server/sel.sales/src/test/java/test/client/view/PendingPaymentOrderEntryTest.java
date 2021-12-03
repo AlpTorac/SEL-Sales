@@ -20,8 +20,8 @@ import client.model.IClientModel;
 import client.view.composites.OrderEntry;
 import client.view.composites.PendingPaymentOrderEntry;
 import client.view.composites.PriceUpdateTarget;
-import model.dish.IDishMenuItemData;
-import model.order.IOrderData;
+import model.dish.DishMenuItemData;
+import model.order.OrderData;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
@@ -33,7 +33,7 @@ class PendingPaymentOrderEntryTest extends ApplicationTest {
 	private IServerModel serverModel;
 	private IClientController controller;
 	
-	private IDishMenuItemData item1;
+	private DishMenuItemData item1;
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
 	private BigDecimal i1Price = BigDecimal.valueOf(5);
@@ -41,7 +41,7 @@ class PendingPaymentOrderEntryTest extends ApplicationTest {
 	private BigDecimal i1Disc = BigDecimal.valueOf(0);
 	private String i1id = "item1";
 	
-	private IDishMenuItemData item2;
+	private DishMenuItemData item2;
 	private String i2Name = "bbb";
 	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
 	private BigDecimal i2Price = BigDecimal.valueOf(1);
@@ -49,7 +49,7 @@ class PendingPaymentOrderEntryTest extends ApplicationTest {
 	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
 	private String i2id = "item2";
 	
-	private IDishMenuItemData item3;
+	private DishMenuItemData item3;
 	private String i3Name = "ccc";
 	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
 	private BigDecimal i3Price = BigDecimal.valueOf(4);
@@ -66,7 +66,7 @@ class PendingPaymentOrderEntryTest extends ApplicationTest {
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	
 	private String serialisedOrder;
-	private IOrderData orderData;
+	private OrderData orderData;
 	
 	@BeforeEach
 	void prep() {
@@ -122,7 +122,7 @@ class PendingPaymentOrderEntryTest extends ApplicationTest {
 		Assertions.assertEquals(entry.getActiveData(), orderData);
 		Assertions.assertEquals(entry.getSerialisedOrderID(), orderData.getID().toString());
 		
-		IOrderData newData = serverModel.getOrderHelper().deserialiseOrderData(entry.serialiseCurrentOrder());
+		OrderData newData = serverModel.getOrderHelper().deserialiseOrderData(entry.getCurrentOrder());
 		
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(
 				newData.getOrderedItems(),
@@ -156,7 +156,7 @@ class PendingPaymentOrderEntryTest extends ApplicationTest {
 	@Test
 	void optionsTest() {
 		entry.displayData(orderData);
-		IOrderData newData;
+		OrderData newData;
 		boolean isCash;
 		boolean isHere;
 		
@@ -164,7 +164,7 @@ class PendingPaymentOrderEntryTest extends ApplicationTest {
 		isHere = true;
 		entry.getCashRadioButton().setToggled(isCash);
 		entry.getHereRadioButton().setToggled(isHere);
-		newData = serverModel.getOrderHelper().deserialiseOrderData(entry.serialiseCurrentOrder());
+		newData = serverModel.getOrderHelper().deserialiseOrderData(entry.getCurrentOrder());
 		Assertions.assertEquals(newData.getIsCash(), isCash);
 		Assertions.assertEquals(newData.getIsHere(), isHere);
 		
@@ -172,7 +172,7 @@ class PendingPaymentOrderEntryTest extends ApplicationTest {
 		isHere = true;
 		entry.getCashRadioButton().setToggled(isCash);
 		entry.getHereRadioButton().setToggled(isHere);
-		newData = serverModel.getOrderHelper().deserialiseOrderData(entry.serialiseCurrentOrder());
+		newData = serverModel.getOrderHelper().deserialiseOrderData(entry.getCurrentOrder());
 		Assertions.assertEquals(newData.getIsCash(), isCash);
 		Assertions.assertEquals(newData.getIsHere(), isHere);
 		
@@ -180,7 +180,7 @@ class PendingPaymentOrderEntryTest extends ApplicationTest {
 		isHere = false;
 		entry.getCashRadioButton().setToggled(isCash);
 		entry.getHereRadioButton().setToggled(isHere);
-		newData = serverModel.getOrderHelper().deserialiseOrderData(entry.serialiseCurrentOrder());
+		newData = serverModel.getOrderHelper().deserialiseOrderData(entry.getCurrentOrder());
 		Assertions.assertEquals(newData.getIsCash(), isCash);
 		Assertions.assertEquals(newData.getIsHere(), isHere);
 		
@@ -188,7 +188,7 @@ class PendingPaymentOrderEntryTest extends ApplicationTest {
 		isHere = false;
 		entry.getCashRadioButton().setToggled(isCash);
 		entry.getHereRadioButton().setToggled(isHere);
-		newData = serverModel.getOrderHelper().deserialiseOrderData(entry.serialiseCurrentOrder());
+		newData = serverModel.getOrderHelper().deserialiseOrderData(entry.getCurrentOrder());
 		Assertions.assertEquals(newData.getIsCash(), isCash);
 		Assertions.assertEquals(newData.getIsHere(), isHere);
 	}

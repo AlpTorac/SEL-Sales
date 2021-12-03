@@ -1,11 +1,15 @@
-package model.datamapper;
+package model.datamapper.order;
 
+import java.time.LocalDateTime;
+
+import model.datamapper.IAttribute;
 import model.order.OrderStatus;
 
 public enum OrderAttribute implements IAttribute {
+	ORDER_ITEMS("items", null),
 	IS_HERE("isHere", Boolean.valueOf(true)),
 	IS_CASH("isCash", Boolean.valueOf(true)),
-	DATE("date", null),
+	DATE("date", LocalDateTime.MIN),
 	STATUS("status", OrderStatus.UNDEFINED),
 	IS_WRITTEN("isWritten", Boolean.valueOf(false)),
 	TABLE_NUMBER("tableNumber", Integer.valueOf(-1)),

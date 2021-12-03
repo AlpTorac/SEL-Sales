@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import model.order.IOrderData;
+import model.order.OrderData;
 import server.model.IServerModel;
 import server.model.ServerModel;
 //@Execution(value = ExecutionMode.SAME_THREAD)
@@ -65,7 +65,7 @@ class OrderNoDiscountCalculatedDataTest {
 	
 	@Test
 	void orderDiscountTest() {
-		IOrderData[] orderData = model.getAllUnconfirmedOrders();
+		OrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		Assertions.assertEquals(BigDecimal.valueOf(0).compareTo(orderData[0].getOrderDiscount()), 0);
 		Assertions.assertEquals(BigDecimal.valueOf(0.3).compareTo(orderData[1].getOrderDiscount()), 0);
@@ -75,7 +75,7 @@ class OrderNoDiscountCalculatedDataTest {
 
 	@Test
 	void grossSumTest() {
-		IOrderData[] orderData = model.getAllUnconfirmedOrders();
+		OrderData[] orderData = model.getAllUnconfirmedOrders();
 		
 		Assertions.assertEquals(BigDecimal.valueOf(10).compareTo(orderData[0].getGrossSum()), 0);
 		Assertions.assertEquals(BigDecimal.valueOf(13).compareTo(orderData[1].getGrossSum()), 0);
@@ -84,7 +84,7 @@ class OrderNoDiscountCalculatedDataTest {
 	
 	@Test
 	void netSumTest() {
-		IOrderData[] orderData = model.getAllUnconfirmedOrders();
+		OrderData[] orderData = model.getAllUnconfirmedOrders();
 //		orderData[0].setOrderDiscount(BigDecimal.valueOf(2));
 		Assertions.assertEquals(BigDecimal.valueOf(10).compareTo(orderData[0].getNetSum()), 0);
 //		orderData[1].setOrderDiscount(BigDecimal.valueOf(1));

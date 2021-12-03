@@ -20,8 +20,8 @@ import client.model.IClientModel;
 import client.view.IClientView;
 import client.view.StandardClientView;
 import javafx.application.Platform;
-import model.dish.IDishMenuItemData;
-import model.order.IOrderData;
+import model.dish.DishMenuItemData;
+import model.order.OrderData;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
@@ -30,7 +30,7 @@ import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 //@Execution(value = ExecutionMode.SAME_THREAD)
 class PastOrdersAreaTest extends ApplicationTest {
-	private IDishMenuItemData item1;
+	private DishMenuItemData item1;
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
 	private BigDecimal i1Price = BigDecimal.valueOf(5);
@@ -38,7 +38,7 @@ class PastOrdersAreaTest extends ApplicationTest {
 	private BigDecimal i1Disc = BigDecimal.valueOf(0);
 	private String i1id = "item1";
 	
-	private IDishMenuItemData item2;
+	private DishMenuItemData item2;
 	private String i2Name = "bbb";
 	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
 	private BigDecimal i2Price = BigDecimal.valueOf(1);
@@ -46,7 +46,7 @@ class PastOrdersAreaTest extends ApplicationTest {
 	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
 	private String i2id = "item2";
 	
-	private IDishMenuItemData item3;
+	private DishMenuItemData item3;
 	private String i3Name = "ccc";
 	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
 	private BigDecimal i3Price = BigDecimal.valueOf(4);
@@ -70,7 +70,7 @@ class PastOrdersAreaTest extends ApplicationTest {
 	
 	private StandardClientViewOperationsUtilityClass opHelper;
 	
-	private IOrderData data;
+	private OrderData data;
 	
 	private String o1id = "order2";
 	private String o2id = "order6";
@@ -149,21 +149,21 @@ class PastOrdersAreaTest extends ApplicationTest {
 	@Test
 	void displayedOrdersTest() {
 		Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 2);
-		while (opHelper.getPendingSendOrders().toArray(IOrderData[]::new).length < clientModel.getAllPendingSendOrders().length) {
+		while (opHelper.getPendingSendOrders().toArray(OrderData[]::new).length < clientModel.getAllPendingSendOrders().length) {
 			clientView.refreshOrders();
 		}
-		Assertions.assertEquals(opHelper.getPendingSendOrders().toArray(IOrderData[]::new).length, 2);
+		Assertions.assertEquals(opHelper.getPendingSendOrders().toArray(OrderData[]::new).length, 2);
 		
-		GeneralTestUtilityClass.arrayContentEquals(opHelper.getPendingSendOrders().toArray(IOrderData[]::new),
+		GeneralTestUtilityClass.arrayContentEquals(opHelper.getPendingSendOrders().toArray(OrderData[]::new),
 				clientModel.getAllPendingSendOrders());
 		
 		Assertions.assertEquals(clientModel.getAllSentOrders().length, 1);
-		while (opHelper.getSentOrders().toArray(IOrderData[]::new).length < clientModel.getAllSentOrders().length) {
+		while (opHelper.getSentOrders().toArray(OrderData[]::new).length < clientModel.getAllSentOrders().length) {
 			clientView.refreshOrders();
 		}
-		Assertions.assertEquals(opHelper.getSentOrders().toArray(IOrderData[]::new).length, 1);
+		Assertions.assertEquals(opHelper.getSentOrders().toArray(OrderData[]::new).length, 1);
 		
-		GeneralTestUtilityClass.arrayContentEquals(opHelper.getSentOrders().toArray(IOrderData[]::new),
+		GeneralTestUtilityClass.arrayContentEquals(opHelper.getSentOrders().toArray(OrderData[]::new),
 				clientModel.getAllSentOrders());
 	}
 }

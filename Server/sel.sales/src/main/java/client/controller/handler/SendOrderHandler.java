@@ -1,6 +1,7 @@
 package client.controller.handler;
 
 import client.controller.IClientController;
+import model.order.OrderData;
 
 public class SendOrderHandler extends ClientApplicationEventHandler {
 
@@ -10,7 +11,7 @@ public class SendOrderHandler extends ClientApplicationEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().getModel().makePendingSendOrder((String) args[1]);
+		this.getController().getModel().makePendingSendOrder((OrderData) args[0]);
 	}
 
 }

@@ -21,9 +21,9 @@ import client.model.IClientModel;
 import client.view.IClientView;
 import client.view.StandardClientView;
 import javafx.application.Platform;
-import model.dish.IDishMenu;
-import model.dish.IDishMenuItemData;
-import model.order.IOrderData;
+import model.dish.DishMenu;
+import model.dish.DishMenuItemData;
+import model.order.OrderData;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
@@ -39,7 +39,7 @@ import view.repository.uifx.FXUIComponentFactory;
 @Disabled("Takes too long to finish")
 //@Execution(value = ExecutionMode.SAME_THREAD)
 class InteractiveOrderAreaTest extends ApplicationTest {
-	private IDishMenuItemData item1;
+	private DishMenuItemData item1;
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
 	private BigDecimal i1Price = BigDecimal.valueOf(5);
@@ -47,7 +47,7 @@ class InteractiveOrderAreaTest extends ApplicationTest {
 	private BigDecimal i1Disc = BigDecimal.valueOf(0);
 	private String i1id = "item1";
 	
-	private IDishMenuItemData item2;
+	private DishMenuItemData item2;
 	private String i2Name = "bbb";
 	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
 	private BigDecimal i2Price = BigDecimal.valueOf(1);
@@ -55,7 +55,7 @@ class InteractiveOrderAreaTest extends ApplicationTest {
 	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
 	private String i2id = "item2";
 	
-	private IDishMenuItemData item3;
+	private DishMenuItemData item3;
 	private String i3Name = "ccc";
 	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
 	private BigDecimal i3Price = BigDecimal.valueOf(4);
@@ -86,7 +86,7 @@ class InteractiveOrderAreaTest extends ApplicationTest {
 	
 	private IClientView clientView;
 	
-	private IDishMenu menu;
+	private DishMenu menu;
 	
 	private volatile boolean actionFinished = false;
 	
@@ -104,12 +104,12 @@ class InteractiveOrderAreaTest extends ApplicationTest {
 	private String so5;
 	private String[] sos;
 	
-	private IOrderData od1;
-	private IOrderData od2;
-	private IOrderData od3;
-	private IOrderData od4;
-	private IOrderData od5;
-	private IOrderData[] ods;
+	private OrderData od1;
+	private OrderData od2;
+	private OrderData od3;
+	private OrderData od4;
+	private OrderData od5;
+	private OrderData[] ods;
 	
 	private void waitForAction() {
 		while (!actionFinished) {
@@ -169,7 +169,7 @@ class InteractiveOrderAreaTest extends ApplicationTest {
 		
 		oids = new String[] {o1id, o2id, o3id, o4id, o5id};
 		sos = new String[] {so1, so2, so3, so4, so5};
-		ods = new IOrderData[] {od1, od2, od3, od4, od5};
+		ods = new OrderData[] {od1, od2, od3, od4, od5};
 		
 		runFXAction(()->{
 			clientView = new StandardClientView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), client.getController(), client.getModel());
@@ -186,7 +186,7 @@ class InteractiveOrderAreaTest extends ApplicationTest {
 		GeneralTestUtilityClass.deletePathContent(this.testFolderAddress);
 	}
 	
-	private boolean orderDatasEqual(IOrderData od1, IOrderData od2) {
+	private boolean orderDatasEqual(OrderData od1, OrderData od2) {
 		return GeneralTestUtilityClass.arrayContentEquals(od1.getOrderedItems(), od2.getOrderedItems())
 				&& od1.getID().serialisedIDequals(od2.getID().toString());
 	}

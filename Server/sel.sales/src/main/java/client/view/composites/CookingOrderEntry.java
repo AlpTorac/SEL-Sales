@@ -4,7 +4,7 @@ import client.view.composites.listener.AddPendingPaymentOrderListener;
 import client.view.composites.listener.CancelOrderListener;
 import client.view.composites.listener.EditOrderListener;
 import controller.IController;
-import model.order.IOrderData;
+import model.order.OrderData;
 import view.repository.IButton;
 import view.repository.IIndexedLayout;
 import view.repository.uiwrapper.ClickEventListener;
@@ -16,7 +16,7 @@ public class CookingOrderEntry extends OrderEntry {
 	private IButton editBtn;
 	
 	public CookingOrderEntry(IController controller, UIComponentFactory fac, PriceUpdateTarget<OrderEntry> notifyTarget,
-			IOrderData data) {
+			OrderData data) {
 		super(controller, fac, notifyTarget, data);
 	}
 	

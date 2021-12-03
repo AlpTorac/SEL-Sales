@@ -1,7 +1,6 @@
 package client.controller.handler;
 
 import client.controller.IClientController;
-import client.controller.handler.ClientApplicationEventHandler;
 
 public class RemoveOrderHandler extends ClientApplicationEventHandler {
 

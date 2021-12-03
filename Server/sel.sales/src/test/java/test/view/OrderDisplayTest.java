@@ -13,7 +13,7 @@ import org.testfx.framework.junit5.ApplicationTest;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import model.order.IOrderData;
+import model.order.OrderData;
 import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.model.IServerModel;
@@ -107,7 +107,7 @@ class OrderDisplayTest extends ApplicationTest {
 	@Test
 	void unconfirmedOrderShowingTest() {
 		runFXAction(() -> {
-			IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
+			OrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
 			Assertions.assertEquals(unconfirmedOrders.length, 3);
 			
 //			opHelper.clickOnUnconfirmedOrder(0);
@@ -122,7 +122,7 @@ class OrderDisplayTest extends ApplicationTest {
 	@Test
 	void multiClickOrderShowingTest() {
 		runFXAction(() -> {
-			IOrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
+			OrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
 			Assertions.assertEquals(unconfirmedOrders.length, 3);
 			
 			opHelper.clickOnUnconfirmedOrder(0);
@@ -134,7 +134,7 @@ class OrderDisplayTest extends ApplicationTest {
 		});
 		runFXAction(() -> {
 			model.confirmAllOrders();
-			IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
+			OrderData[] confirmedOrders = model.getAllConfirmedOrders();
 			Assertions.assertEquals(confirmedOrders.length, 3);
 			
 			opHelper.clickOnConfirmedOrder(0);
@@ -151,7 +151,7 @@ class OrderDisplayTest extends ApplicationTest {
 		runFXAction(() -> {
 			opHelper.confirmAllOrdersWithoutReturn();
 			
-			IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
+			OrderData[] confirmedOrders = model.getAllConfirmedOrders();
 			Assertions.assertEquals(confirmedOrders.length, 3);
 			
 //			opHelper.clickOnConfirmedOrder(0);

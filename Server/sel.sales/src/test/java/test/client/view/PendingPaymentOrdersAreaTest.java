@@ -20,8 +20,8 @@ import client.model.IClientModel;
 import client.view.IClientView;
 import client.view.StandardClientView;
 import javafx.application.Platform;
-import model.dish.IDishMenuItemData;
-import model.order.IOrderData;
+import model.dish.DishMenuItemData;
+import model.order.OrderData;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
@@ -30,7 +30,7 @@ import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 //@Execution(value = ExecutionMode.SAME_THREAD)
 class PendingPaymentOrdersAreaTest extends ApplicationTest {
-	private IDishMenuItemData item1;
+	private DishMenuItemData item1;
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
 	private BigDecimal i1Price = BigDecimal.valueOf(5);
@@ -38,7 +38,7 @@ class PendingPaymentOrdersAreaTest extends ApplicationTest {
 	private BigDecimal i1Disc = BigDecimal.valueOf(0);
 	private String i1id = "item1";
 	
-	private IDishMenuItemData item2;
+	private DishMenuItemData item2;
 	private String i2Name = "bbb";
 	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
 	private BigDecimal i2Price = BigDecimal.valueOf(1);
@@ -46,7 +46,7 @@ class PendingPaymentOrdersAreaTest extends ApplicationTest {
 	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
 	private String i2id = "item2";
 	
-	private IDishMenuItemData item3;
+	private DishMenuItemData item3;
 	private String i3Name = "ccc";
 	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
 	private BigDecimal i3Price = BigDecimal.valueOf(4);
@@ -70,7 +70,7 @@ class PendingPaymentOrdersAreaTest extends ApplicationTest {
 	
 	private StandardClientViewOperationsUtilityClass opHelper;
 	
-	private IOrderData data;
+	private OrderData data;
 	
 	private String o1id = "order2";
 	private String o2id = "order6";
@@ -138,13 +138,13 @@ class PendingPaymentOrdersAreaTest extends ApplicationTest {
 	void displayedOrdersTest() {
 		Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 3);
 		
-		while (opHelper.getPendingPaymentOrders().toArray(IOrderData[]::new).length < clientModel.getAllPendingPaymentOrders().length) {
+		while (opHelper.getPendingPaymentOrders().toArray(OrderData[]::new).length < clientModel.getAllPendingPaymentOrders().length) {
 			clientView.refreshOrders();
 		}
 		
-		Assertions.assertEquals(opHelper.getPendingPaymentOrders().toArray(IOrderData[]::new).length, 3);
+		Assertions.assertEquals(opHelper.getPendingPaymentOrders().toArray(OrderData[]::new).length, 3);
 		
-		GeneralTestUtilityClass.arrayContentEquals(opHelper.getPendingPaymentOrders().toArray(IOrderData[]::new),
+		GeneralTestUtilityClass.arrayContentEquals(opHelper.getPendingPaymentOrders().toArray(OrderData[]::new),
 				clientModel.getAllPendingPaymentOrders());
 	}
 	
@@ -183,20 +183,20 @@ class PendingPaymentOrdersAreaTest extends ApplicationTest {
 	void nextTabTest() {
 		this.optionsTest();
 		
-		IOrderData d1PPOA = clientModel.getOrderHelper().deserialiseOrderData(opHelper.ppoaGetSerialisedOrder(o1id));
+		OrderData d1PPOA = clientModel.getOrderHelper().deserialiseOrderData(opHelper.ppoaGetSerialisedOrder(o1id));
 		Assertions.assertFalse(d1PPOA.getIsCash());
 		Assertions.assertTrue(d1PPOA.getIsHere());
 		
-		IOrderData d2PPOA = clientModel.getOrderHelper().deserialiseOrderData(opHelper.ppoaGetSerialisedOrder(o2id));
+		OrderData d2PPOA = clientModel.getOrderHelper().deserialiseOrderData(opHelper.ppoaGetSerialisedOrder(o2id));
 		Assertions.assertFalse(d2PPOA.getIsCash());
 		Assertions.assertFalse(d2PPOA.getIsHere());
 		
-		IOrderData d3PPOA = clientModel.getOrderHelper().deserialiseOrderData(opHelper.ppoaGetSerialisedOrder(o3id));
+		OrderData d3PPOA = clientModel.getOrderHelper().deserialiseOrderData(opHelper.ppoaGetSerialisedOrder(o3id));
 		Assertions.assertTrue(d3PPOA.getIsCash());
 		Assertions.assertFalse(d3PPOA.getIsHere());
 		
-		IOrderData[] dPPOA = new IOrderData[] {d1PPOA, d2PPOA, d3PPOA};
-		IOrderData[] dModel = clientModel.getAllPendingPaymentOrders();
+		OrderData[] dPPOA = new OrderData[] {d1PPOA, d2PPOA, d3PPOA};
+		OrderData[] dModel = clientModel.getAllPendingPaymentOrders();
 		
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(dPPOA, dModel,
 				(o1,o2)->{return o1.itemsEqual(o2);}));

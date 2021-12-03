@@ -3,9 +3,8 @@ package client.view.composites;
 import java.util.Collection;
 
 import controller.IController;
-import model.dish.IDishMenuData;
-import model.order.IOrderData;
-import view.repository.IButton;
+import model.dish.DishMenuData;
+import model.order.OrderData;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIVBoxLayout;
 
@@ -17,7 +16,7 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<O
 	
 //	private Collection<MenuItemEntry> menuItemEntries;
 	
-	private IDishMenuData activeMenu;
+	private DishMenuData activeMenu;
 	
 	public OrderTakingArea(IController controller, UIComponentFactory fac) {
 		super(fac.createVBoxLayout().getComponent());
@@ -32,7 +31,7 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<O
 		return this.orderEntry;
 	}
 	
-	public void displayOrder(IOrderData data) {
+	public void displayOrder(OrderData data) {
 		this.orderEntry.displayData(data);
 	}
 	
@@ -105,7 +104,7 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<O
 //		return new EditableMenuItemEntry(this.controller, this.fac, this.advFac, this);
 //	}
 	
-//	public void refreshMenu(IDishMenuData menuData) {
+//	public void refreshMenu(DishMenuData menuData) {
 //		this.activeMenu = menuData;
 //		this.menuItemEntries.forEach(mie -> mie.refreshMenu(this.activeMenu));
 //	}
@@ -120,7 +119,7 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<O
 //		this.menuItemEntries.remove(referenceOfCaller);
 //	}
 	
-	public void refreshMenu(IDishMenuData menuData) {
+	public void refreshMenu(DishMenuData menuData) {
 		if (menuData != null) {
 			this.activeMenu = menuData;
 			this.orderEntry.refreshMenu(menuData);

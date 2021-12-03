@@ -2,125 +2,80 @@ package model.order;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-import model.datamapper.OrderAttribute;
-import model.entity.Aggregate;
+import model.datamapper.order.OrderAttribute;
+import model.dish.DishMenuItemData;
+import model.entity.AccumulatingAggregateEntry;
 import model.entity.ValueObject;
 import model.entity.id.EntityID;
 
 public class OrderData extends ValueObject<OrderAttribute> {
-	private AccumulatingOrderItemAggregate orderItems;
+//	private AccumulatingOrderItemAggregate orderItems;
 	
 	protected OrderData(EntityID id) {
 		super(id);
-		
-		this.orderItems = new CopyOnWriteArrayList<AccumulatingOrderItemAggregate>(orderItems);
-		this.flatten();
+//		this.orderItems = this.initOrderItemAggregate();
 	}
 	
-	protected void setOrderItems() {
-		
+//	protected AccumulatingOrderItemAggregate initOrderItemAggregate() {
+//		return new AccumulatingOrderItemAggregate();
+//	}
+	
+	public void addOrderItem(DishMenuItemData menuItem, BigDecimal amount) {
+		this.getOrderItemAggregate().addElement(menuItem, amount);
+	}
+	
+	public void removeOrderItem(EntityID menuItemID, BigDecimal amount) {
+		this.getOrderItemAggregate().removeElement(menuItemID, amount);
+	}
+
+	public void removeOrderItemCompletely(EntityID menuItemID) {
+		this.getOrderItemAggregate().removeElementCompletely(menuItemID);
 	}
 	
 	public boolean getIsDiscounted() {
-		return this.orderItems.stream()
-				.anyMatch(item -> item.getGrossPrice().compareTo(BigDecimal.ZERO) < 0);
+		return this.getOrderItemAggregate().getIsDiscounted();
 	}
 	
 	public BigDecimal getGrossSum() {
-		return this.orderItems.stream()
-				.map(i -> i.getGrossPrice())
-				.filter(gp -> gp.compareTo(BigDecimal.ZERO) > 0)
-				.reduce(BigDecimal.ZERO, (gp1,gp2) -> gp1.add(gp2));
+		return this.getOrderItemAggregate().getGrossSum();
 	}
-	
-	
-	public boolean equals(Object o) {
-		if (o == null || !(o instanceof OrderData)) {
-			return false;
-		} else {
-			OrderData otherOrderData = (OrderData) o;
-			return this.getID().equals(otherOrderData.getID()) && 
-					this.getIsCash() == otherOrderData.getIsCash() &&
-					this.getIsHere() == otherOrderData.getIsHere() && 
-					this.getDate().equals(otherOrderData.getDate()) &&
-					this.itemsEqual(otherOrderData);
-		}
-	}
-
 	
 	public BigDecimal getOrderDiscount() {
-		BigDecimal result = BigDecimal.ZERO;
-		for (AccumulatingOrderItemAggregate oi : this.getAllItems()) {
-			if (oi.getAmount()) {
-				
-			}
-		}
-	}
-
-	
-	public OrderData combine(OrderData data) {
-		return new OrderData(this.combineData(data), this.getDate(), this.getIsCash(), this.getIsHere());
-	}
-
-	
-	public void flatten() {
-		this.orderItems = this.flatten(this.orderItems);
+		return this.getOrderItemAggregate().getOrderDiscount();
 	}
 	
 	public BigDecimal getNetSum() {
-		return this.getGrossSum().subtract(this.getOrderDiscount());
-	}
-	
-	public Collection<AccumulatingOrderItemAggregate> flatten(Collection<AccumulatingOrderItemAggregate> orderItems) {
-		Map<EntityID, AccumulatingOrderItemAggregate> newOrderItems = new HashMap<EntityID, AccumulatingOrderItemAggregate>();
-		orderItems.forEach(oid -> {
-			if (oid.getAmount().compareTo(BigDecimal.ZERO) != 0) {
-				EntityID id;
-				if (newOrderItems.containsKey(id = oid.getMenuItem().getID())) {
-					newOrderItems.put(id, newOrderItems.get(id).combine(oid));
-				} else {
-					newOrderItems.put(id, oid);
-				}
-			}
-		});
-		return newOrderItems.values();
-	}
-	
-	public Collection<AccumulatingOrderItemAggregate> combineData(OrderData data) {
-		Collection<AccumulatingOrderItemAggregate> orderItems = new ArrayList<AccumulatingOrderItemAggregate>();
-		for (AccumulatingOrderItemAggregate oid : this.getAllItems()) {
-			orderItems.add(oid);
-		}
-		for (AccumulatingOrderItemAggregate oid : data.getAllItems()) {
-			orderItems.add(oid);
-		}
-		return this.flatten(orderItems);
-	}
-	
-	public boolean itemsEqual(OrderData od) {
-		return this.getOrderItems().stream()
-				.map(oi -> {
-					for (AccumulatingOrderItemAggregate oid : od.getOrderItems()) {
-						if (oi.equals(oid)) {
-							return true;
-						}
-					}
-					return false;
-				}).reduce(true, (b1,b2)->Boolean.logicalAnd(b1, b2)) && this.getOrderItems().size() == od.getOrderItems().size();
-	}
-
-	public void addOrderItem(AccumulatingOrderItemAggregate oi) {
-		// TODO Auto-generated method stub
-		
+		return this.getOrderItemAggregate().getNetSum();
 	}
 	
 	protected AccumulatingOrderItemAggregate getOrderItemAggregate() {
-		return this.orderItems;
+		return (AccumulatingOrderItemAggregate) this.getAttributeValue(OrderAttribute.ORDER_ITEMS);
+	}
+	
+	public void addAllOrderItems(Iterable<AccumulatingAggregateEntry<DishMenuItemData>> es) {
+		this.getOrderItemAggregate().addAll(es);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void addAllOrderItems(AccumulatingAggregateEntry<DishMenuItemData>... es) {
+		this.getOrderItemAggregate().addAll(es);
+	}
+	
+	public AccumulatingAggregateEntry<DishMenuItemData>[] getOrderedItems() {
+		return this.getOrderItemAggregate().getAllEntries();
+	}
+	
+	public Boolean getIsCash() {
+		return (Boolean) this.getAttributeValue(OrderAttribute.IS_CASH);
+	}
+	
+	public Boolean getIsHere() {
+		return (Boolean) this.getAttributeValue(OrderAttribute.IS_HERE);
+	}
+	
+	public LocalDateTime getDate() {
+		return (LocalDateTime) this.getAttributeValue(OrderAttribute.DATE);
 	}
 }

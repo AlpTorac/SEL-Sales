@@ -1,7 +1,5 @@
 package test.external.connection;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;

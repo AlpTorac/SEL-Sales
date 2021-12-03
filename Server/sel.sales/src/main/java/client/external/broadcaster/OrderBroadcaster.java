@@ -6,13 +6,13 @@ import external.message.IMessage;
 import external.message.Message;
 import external.message.MessageContext;
 import model.IModel;
-import model.order.IOrderData;
+import model.order.OrderData;
 
 public class OrderBroadcaster extends Broadcaster {
 	private IModel model;
-	private IOrderData data;
+	private OrderData data;
 	
-	public OrderBroadcaster(ConnectionContainer cc, IModel model, IOrderData data) {
+	public OrderBroadcaster(ConnectionContainer cc, IModel model, OrderData data) {
 		super(cc);
 		this.model = model;
 		this.data = data;
@@ -20,6 +20,6 @@ public class OrderBroadcaster extends Broadcaster {
 
 	@Override
 	public IMessage createMessage() {
-		return new Message(MessageContext.ORDER, null, this.model.getOrderHelper().serialiseForApp(data));
+		return new Message(MessageContext.ORDER, null, this.model.serialiseOrder(data));
 	}
 }

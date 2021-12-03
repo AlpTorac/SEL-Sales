@@ -1,7 +1,7 @@
 package client.view.composites;
 
 import controller.IController;
-import model.order.IOrderData;
+import model.order.OrderData;
 import view.repository.uiwrapper.UIComponentFactory;
 
 public class PendingPaymentOrderAccordion extends OrderAccordion {
@@ -9,7 +9,7 @@ public class PendingPaymentOrderAccordion extends OrderAccordion {
 		super(controller, fac);
 	}
 	
-	protected PendingPaymentOrderEntry createOrderEntry(IOrderData data) {
+	protected PendingPaymentOrderEntry createOrderEntry(OrderData data) {
 		return new PendingPaymentOrderEntry(this.getController(), this.getUIFactory(), this, data);
 	}
 	

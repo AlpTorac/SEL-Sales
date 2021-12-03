@@ -17,8 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import model.dish.IDishMenuData;
-import model.dish.IDishMenuItemData;
+import model.dish.DishMenuData;
+import model.dish.DishMenuItemData;
 import model.dish.serialise.FileDishMenuSerialiser;
 import model.filewriter.DishMenuFile;
 import model.filewriter.FileDishMenuItemSerialiser;
@@ -80,14 +80,14 @@ class DishMenuWriterTest {
 	@Test
 	void fileDishMenuItemSerialiserTest() {
 		FileDishMenuItemSerialiser fdmis = new FileDishMenuItemSerialiser();
-		IDishMenuItemData[] ds = model.getMenuData().getAllItems();
-		IDishMenuItemData d1 = ds[0];
+		DishMenuItemData[] ds = model.getMenuData().getAllItems();
+		DishMenuItemData d1 = ds[0];
 		String s1 = fdmis.serialise(d1);
 		Assertions.assertEquals(s1, i1Name+","+i1id+","+i1PorSize.toPlainString()+","+i1ProCost.toPlainString()+".0"+","+i1Price.toPlainString()+".0");
-//		IDishMenuItemData d2 = ds[1];
+//		DishMenuItemData d2 = ds[1];
 //		String s2 = fdmis.serialise(d2);
 //		Assertions.assertEquals(s2, i2Name+","+i2id+","+i2ProCost.toPlainString()+","+i2Price.toPlainString()+".0,"+i2PorSize.toPlainString());
-//		IDishMenuItemData d3 = ds[2];
+//		DishMenuItemData d3 = ds[2];
 //		String s3 = fdmis.serialise(d3);
 //		Assertions.assertEquals(s3, i3Name+","+i3id+","+i3ProCost.toPlainString()+","+i3Price.toPlainString()+".0,"+i3PorSize.toPlainString());
 	}
@@ -105,8 +105,8 @@ class DishMenuWriterTest {
 	
 	@Test
 	void writeTest() {
-		IDishMenuData menuData = model.getMenuData();
-		IDishMenuItemData[] ds = menuData.getAllItems();
+		DishMenuData menuData = model.getMenuData();
+		DishMenuItemData[] ds = menuData.getAllItems();
 		Assertions.assertEquals(ds.length, 3);
 		Assertions.assertTrue(model.writeDishMenu());
 		File f = new File(testFolder+File.separator+DishMenuFile.getDefaultFileNameForClass()+DishMenuFile.getExtensionForClass());

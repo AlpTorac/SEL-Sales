@@ -9,8 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 import external.device.IDevice;
-import model.dish.IDishMenu;
-import model.settings.SettingsField;
+import model.dish.DishMenu;
 import test.GeneralTestUtilityClass;
 
 public class DummyInteraction implements Closeable {
@@ -41,7 +40,7 @@ public class DummyInteraction implements Closeable {
 		server.setTableNumbers(serialisedRanges);
 	}
 	
-	public void setServerMenu(IDishMenu menu) {
+	public void setServerMenu(DishMenu menu) {
 		server.setMenu(menu);
 	}
 	
@@ -52,7 +51,7 @@ public class DummyInteraction implements Closeable {
 	/**
 	 * Server sends its menu data to all the connected clients
 	 */
-	public void broadcastMenu(IDishMenu menu) {
+	public void broadcastMenu(DishMenu menu) {
 		this.setServerMenu(menu);
 		GeneralTestUtilityClass.performWait(waitTime);
 		for (DummyClient client : this.clients) {

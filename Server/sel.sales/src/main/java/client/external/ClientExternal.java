@@ -5,7 +5,7 @@ import client.external.broadcaster.OrderBroadcaster;
 import client.model.IClientModel;
 import external.External;
 import external.connection.outgoing.IExternalConnector;
-import model.order.IOrderData;
+import model.order.OrderData;
 
 public abstract class ClientExternal extends External implements IClientExternal {
 	
@@ -50,9 +50,9 @@ public abstract class ClientExternal extends External implements IClientExternal
 	@Override
 	public void refreshOrders() {
 		if (this.getConnector() != null) {
-			IOrderData[] orders = this.getModel().getAllPendingSendOrders();
+			OrderData[] orders = this.getModel().getAllPendingSendOrders();
 			if (orders != null) {
-				for (IOrderData order : orders) {
+				for (OrderData order : orders) {
 					new OrderBroadcaster(this.getConnector(), this.getModel(), order).broadcast();
 //					this.connector.broadcastMessage(new Message(MessageContext.ORDER, null, this.getModel().getOrderHelper().serialiseForApp(order)));
 				}

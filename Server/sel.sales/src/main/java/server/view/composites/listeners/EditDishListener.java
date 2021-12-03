@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
+import model.dish.DishMenuItemData;
 import server.controller.IServerController;
 import server.controller.ServerSpecificEvent;
 import server.view.composites.MenuDesignArea;
@@ -30,13 +31,12 @@ public class EditDishListener extends ClickEventListener implements IApplication
 	
 	@Override
 	public Object[] getArgs() {
-		String data = this.controller.getModel().getDishMenuHelper().serialiseMenuItemForApp(
+		DishMenuItemData data = this.controller.getModel().getMenuItemFactory().constructData(
 				this.getDishName().getText(),
 				this.getDishID().getText(),
 				BigDecimal.valueOf(Double.valueOf(this.getPortion().getText()).doubleValue()),
 				BigDecimal.valueOf(Double.valueOf(this.getProductionCost().getText()).doubleValue()),
-				BigDecimal.valueOf(Double.valueOf(this.getPrice().getText()).doubleValue())
-		);
+				BigDecimal.valueOf(Double.valueOf(this.getPrice().getText()).doubleValue()));
 		
 		this.resetUserInput();
 		

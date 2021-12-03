@@ -10,8 +10,6 @@ import external.connection.IService;
 import external.connection.outgoing.IExternalConnector;
 import external.device.DeviceDiscoveryStrategy;
 import external.device.IDeviceManager;
-import server.controller.IServerController;
-import server.model.IServerModel;
 
 public class DummyClientExternal extends ClientExternal implements IDummyExternal {
 	private String serviceID;

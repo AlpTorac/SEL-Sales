@@ -6,7 +6,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.TitledPane;
 import view.repository.IAccordion;
-import view.repository.ITabPane;
 import view.repository.IUIComponent;
 
 public class FXAccordion extends Accordion implements IFXSizable, IAccordion {

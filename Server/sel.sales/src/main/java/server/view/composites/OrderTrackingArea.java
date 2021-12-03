@@ -1,6 +1,6 @@
 package server.view.composites;
 
-import model.order.IOrderData;
+import model.order.OrderData;
 import view.repository.IButton;
 import view.repository.IListView;
 import view.repository.IRadioButton;
@@ -11,8 +11,8 @@ import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIVBoxLayout;
 
 public class OrderTrackingArea extends UIVBoxLayout {
-	private IListView<IOrderData> unconfirmedOrderList;
-	private IListView<IOrderData> confirmedOrderList;
+	private IListView<OrderData> unconfirmedOrderList;
+	private IListView<OrderData> confirmedOrderList;
 	private IRadioButton auto;
 	private IRadioButton manual;
 	private IToggleGroup group;
@@ -48,8 +48,8 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		return button;
 	}
 	
-	protected IListView<IOrderData> initOrderConfirmationTrackingList() {
-		IListView<IOrderData> list = this.fac.createListView();
+	protected IListView<OrderData> initOrderConfirmationTrackingList() {
+		IListView<OrderData> list = this.fac.createListView();
 		return list;
 	}
 	
@@ -74,27 +74,27 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		return optionArea;
 	}
 	
-	protected IListView<IOrderData> initConfirmedOrdersList() {
-		IListView<IOrderData> list = this.fac.createListView();
+	protected IListView<OrderData> initConfirmedOrdersList() {
+		IListView<OrderData> list = this.fac.createListView();
 		return list;
 	}
 	
-	public void addUnconfirmedOrders(IOrderData[] orderDatas) {
-		for (IOrderData d : orderDatas) {
+	public void addUnconfirmedOrders(OrderData[] orderDatas) {
+		for (OrderData d : orderDatas) {
 			this.addUnconfirmedOrder(d);
 		}
 	}
 	
-	public void addUnconfirmedOrder(IOrderData orderData) {
+	public void addUnconfirmedOrder(OrderData orderData) {
 		this.getUnconfirmedOrderList().addItemIfNotPresent(orderData);
 	}
 	
-//	public void confirmOrder(IOrderData orderData) {
+//	public void confirmOrder(OrderData orderData) {
 //		this.getUnconfirmedOrderList().removeItem(orderData);
 //		this.addConfirmedOrder(orderData);
 //	}
 	
-	public void addConfirmedOrder(IOrderData orderData) {
+	public void addConfirmedOrder(OrderData orderData) {
 		this.getConfirmedOrderList().addItemIfNotPresent(orderData);
 	}
 	
@@ -105,11 +105,11 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		this.getConfirmedOrderList().clear();
 	}
 
-	public IListView<IOrderData> getUnconfirmedOrderList() {
+	public IListView<OrderData> getUnconfirmedOrderList() {
 		return unconfirmedOrderList;
 	}
 
-	public IListView<IOrderData> getConfirmedOrderList() {
+	public IListView<OrderData> getConfirmedOrderList() {
 		return confirmedOrderList;
 	}
 
@@ -125,8 +125,8 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		return group;
 	}
 
-	public void addConfirmedOrders(IOrderData[] allConfirmedOrders) {
-		for (IOrderData d : allConfirmedOrders) {
+	public void addConfirmedOrders(OrderData[] allConfirmedOrders) {
+		for (OrderData d : allConfirmedOrders) {
 			this.addConfirmedOrder(d);
 		}
 	}

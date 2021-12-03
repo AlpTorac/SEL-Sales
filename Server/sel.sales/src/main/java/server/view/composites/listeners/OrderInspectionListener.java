@@ -1,6 +1,6 @@
 package server.view.composites.listeners;
 
-import model.order.IOrderData;
+import model.order.OrderData;
 import server.view.composites.OrderInspectionArea;
 import view.repository.uiwrapper.ClickEventListener;
 
@@ -16,7 +16,7 @@ public class OrderInspectionListener extends ClickEventListener {
 		super.multiClickAction(amountOfClicks, parameters);
 		
 		if (amountOfClicks > 1 && parameters != null && parameters.length > 0 && parameters[0] != null) {
-			IOrderData orderData = (IOrderData) parameters[0];
+			OrderData orderData = (OrderData) parameters[0];
 			this.oia.displayOrder(orderData);
 //			if (!this.ota.getPastOrderList().contains(orderData)) {
 //				this.oia.getAddConfirmButton().setEnabled(true);

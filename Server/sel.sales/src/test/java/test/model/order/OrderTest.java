@@ -10,16 +10,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import model.dish.IDishMenuItemData;
+import model.dish.DishMenuItemData;
 import model.entity.id.EntityIDFactory;
 import model.entity.id.MinimalIDFactory;
-import model.order.IOrder;
-import model.order.IOrderDataFactory;
-import model.order.AccumulatingOrderItemAggregate;
 import model.order.AccumulatingOrderItemAggregate;
 import model.order.Order;
-import model.order.OrderDataFactory;
-import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
@@ -28,21 +23,21 @@ class OrderTest {
 	
 	private static IServerModel model;
 	
-	private IDishMenuItemData item1;
+	private DishMenuItemData item1;
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
 	private BigDecimal i1Price = BigDecimal.valueOf(5);
 	private BigDecimal i1ProCost = BigDecimal.valueOf(4);
 	private String i1id = "item1";
 	
-	private IDishMenuItemData item2;
+	private DishMenuItemData item2;
 	private String i2Name = "bbb";
 	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
 	private BigDecimal i2Price = BigDecimal.valueOf(1);
 	private BigDecimal i2ProCost = BigDecimal.valueOf(0.5);
 	private String i2id = "item2";
 	
-	private IDishMenuItemData item3;
+	private DishMenuItemData item3;
 	private String i3Name = "ccc";
 	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
 	private BigDecimal i3Price = BigDecimal.valueOf(4);

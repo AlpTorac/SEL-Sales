@@ -5,11 +5,11 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Assertions;
 
-import model.order.IOrderData;
+import model.order.OrderData;
 import model.order.AccumulatingOrderItemAggregate;
 
 public final class OrderTestUtilityClass {
-	public static void assertOrderDataEqual(IOrderData data, BigDecimal[] amounts, String[] ids) {
+	public static void assertOrderDataEqual(OrderData data, BigDecimal[] amounts, String[] ids) {
 		AccumulatingOrderItemAggregate[] itemData = data.getOrderedItems();
 		for (int i = 0; i < itemData.length; i++) {
 			Assertions.assertEquals(itemData[i].getAmount().compareTo(amounts[i]), 0);
@@ -35,13 +35,13 @@ public final class OrderTestUtilityClass {
 //		Assertions.assertEquals(date1.get(GregorianCalendar.SECOND), date2.get(GregorianCalendar.SECOND));
 	}
 	
-	public static void assertOrderDataEqual(IOrderData order, String id, LocalDateTime date, boolean isCash, boolean isHere) {
+	public static void assertOrderDataEqual(OrderData order, String id, LocalDateTime date, boolean isCash, boolean isHere) {
 		Assertions.assertEquals(id, order.getID().toString());
 		assertDatesEqual(order.getDate(), date);
 		Assertions.assertEquals(order.getIsCash(), isCash);
 		Assertions.assertEquals(order.getIsHere(), isHere);
 	}
-	public static void assertOrderDataEqual(IOrderData order, String id, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount) {
+	public static void assertOrderDataEqual(OrderData order, String id, LocalDateTime date, boolean isCash, boolean isHere, BigDecimal orderDiscount) {
 		Assertions.assertEquals(id, order.getID().toString());
 		assertDatesEqual(order.getDate(), date);
 		Assertions.assertEquals(order.getIsCash(), isCash);
@@ -49,7 +49,7 @@ public final class OrderTestUtilityClass {
 		Assertions.assertEquals(order.getOrderDiscount().compareTo(orderDiscount), 0);
 	}
 	
-	public static void assertOrderDatasEqual(IOrderData orderData1, IOrderData orderData2) {
+	public static void assertOrderDatasEqual(OrderData orderData1, OrderData orderData2) {
 		assertOrderDataEqual(orderData1, orderData2.getID().toString(), orderData2.getDate(), orderData2.getIsCash(), orderData2.getIsHere());
 	}
 	

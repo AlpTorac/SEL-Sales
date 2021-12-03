@@ -8,9 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import model.filewriter.OrderFile;
-import model.filewriter.StandardOrderFile;
-import model.order.IOrderData;
+import model.order.OrderData;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
@@ -43,7 +41,7 @@ class OrderFileAccessTest {
 	
 //	private String orderFileNAE = OrderFile.getDefaultFileNameForClass()+FileAccess.getExtensionForClass();
 	
-	private IOrderData[] orderData;
+	private OrderData[] orderData;
 	
 //	private String getOrderAddress() {
 //		return this.testFolderAddress+File.separator+this.orderFileNAE;
@@ -85,7 +83,7 @@ class OrderFileAccessTest {
 	
 	@Test
 	void loadTest() {
-		IOrderData[] ss = model.getOrderHelper().deserialiseOrderDatas(of.readFile());
+		OrderData[] ss = model.getOrderHelper().deserialiseOrderDatas(of.readFile());
 		for (int i = 0; i < ss.length; i++) {
 			GeneralTestUtilityClass.arrayContains(orderData, ss);
 		}

@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import controller.IController;
-import model.dish.IDishMenuData;
-import model.order.IOrderData;
+import model.dish.DishMenuData;
+import model.dish.DishMenuItemData;
+import model.entity.AccumulatingAggregateEntry;
+import model.order.OrderData;
 import model.order.AccumulatingOrderItemAggregate;
 import view.repository.IChoiceBox;
 import view.repository.IHBoxLayout;
@@ -30,8 +32,8 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 	private UIComponentFactory fac;
 	private PriceUpdateTarget<OrderEntry> notifyTarget;
 	
-	private IOrderData activeData;
-	private IDishMenuData activeMenu;
+	private OrderData activeData;
+	private DishMenuData activeMenu;
 	
 	private List<MenuItemEntry> menuItemEntries;
 	
@@ -77,7 +79,7 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		return tb;
 	}
 
-	public OrderEntry(IController controller, UIComponentFactory fac, PriceUpdateTarget<OrderEntry> notifyTarget, IOrderData data) {
+	public OrderEntry(IController controller, UIComponentFactory fac, PriceUpdateTarget<OrderEntry> notifyTarget, OrderData data) {
 		this(controller, fac, notifyTarget);
 		this.activeData = data;
 		this.displayData(this.activeData);
@@ -147,23 +149,23 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		return this.getEntries().get(pos);
 	}
 	
-	protected void setActiveMenu(IDishMenuData menu) {
+	protected void setActiveMenu(DishMenuData menu) {
 		this.activeMenu = menu;
 	}
 	
-	public IDishMenuData getActiveMenu() {
+	public DishMenuData getActiveMenu() {
 		return this.activeMenu;
 	}
 	
-	public IOrderData getActiveData() {
+	public OrderData getActiveData() {
 		return this.activeData;
 	}
 	
-	protected void setActiveData(IOrderData data) {
+	protected void setActiveData(OrderData data) {
 		this.activeData = data;
 	}
 	
-	public void displayData(IOrderData data) {
+	public void displayData(OrderData data) {
 		if (data != null) {
 			this.resetUserInput();
 			this.noteBox.setCaption(this.getController().getModel()
@@ -193,13 +195,13 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		return lbl;
 	}
 
-	protected void initMenuItemEntries(IOrderData data) {
-		for (AccumulatingOrderItemAggregate itemData : data.getOrderedItems()) {
+	protected void initMenuItemEntries(OrderData data) {
+		for (AccumulatingAggregateEntry<DishMenuItemData> itemData : data.getOrderedItems()) {
 			this.addMenuItemEntry(itemData);
 		}
 	}
 	
-	protected void addMenuItemEntry(AccumulatingOrderItemAggregate data) {
+	protected void addMenuItemEntry(AccumulatingAggregateEntry<DishMenuItemData> data) {
 		if (data.getAmount().doubleValue() > 0) {
 			this.addMenuItemEntry(this.createItemEntry(data));
 		};
@@ -220,7 +222,7 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		return new MenuItemEntry(fac, this);
 	}
 	
-	protected MenuItemEntry createItemEntry(AccumulatingOrderItemAggregate data) {
+	protected MenuItemEntry createItemEntry(AccumulatingAggregateEntry<DishMenuItemData> data) {
 		MenuItemEntry e  = this.createItemEntry();
 		e.displayData(data);
 		return e;
@@ -249,7 +251,7 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		
 	}
 	
-	public void refreshMenu(IDishMenuData menuData) {
+	public void refreshMenu(DishMenuData menuData) {
 		if (menuData != null) {
 			this.setActiveMenu(menuData);
 			this.getEntries().forEach(mie -> mie.refreshMenu(this.getActiveMenu()));
@@ -273,13 +275,6 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		return this.getActiveData().getID().toString();
 	}
 	
-	public AccumulatingOrderItemAggregate[] getCurrentOrder() {
-		return this.getEntries().stream()
-		.filter(mie -> mie.getSelectedMenuItem() != null && mie.getAmount().compareTo(BigDecimal.ZERO) != 0)
-		.map(mie -> this.controller.getModel().getOrderHelper().createOrderItem(mie.getSelectedMenuItem(), mie.getAmount()))
-		.toArray(AccumulatingOrderItemAggregate[]::new);
-	}
-	
 	protected boolean isCash() {
 		return DEFAULT_IS_CASH;
 	}
@@ -288,14 +283,19 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		return DEFAULT_IS_HERE;
 	}
 	
-	public String serialiseCurrentOrder() {
-		System.out.println("isCash: " + this.isCash() + " , isHere: " + this.isHere());
-		return this.controller.getModel().getOrderHelper().serialiseForApp(
-				this.getCurrentOrder(),
-				LocalDateTime.now(),
-				this.isCash(),
-				this.isHere(),
-				this.getSerialisedOrderID());
+	public OrderData getCurrentOrder() {
+		OrderData data = this.getController().getModel().getOrderFactory()
+				.constructData(
+						this.getSerialisedOrderID(),
+						LocalDateTime.now(),
+						this.isCash(),
+						this.isHere());
+		
+		this.getEntries().stream()
+		.filter(mie -> mie.getSelectedMenuItem() != null && mie.getAmount().compareTo(BigDecimal.ZERO) != 0)
+		.forEach(mie -> data.addOrderItem(mie.getSelectedMenuItem(), mie.getPrice()));
+		
+		return data;
 	}
 	
 	public void resetUserInput() {

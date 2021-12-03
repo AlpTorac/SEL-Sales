@@ -3,7 +3,7 @@ package model.datamapper;
 import java.math.BigDecimal;
 
 public enum DishMenuItemAttribute implements IAttribute {
-	DISH_NAME("dishName", null),
+	DISH_NAME("dishName", ""),
 	PORTION_SIZE("portionSize", BigDecimal.ONE),
 	GROSS_PRICE("grossPrice", BigDecimal.ZERO),
 	PRODUCTION_COST("productionCost", BigDecimal.ZERO)

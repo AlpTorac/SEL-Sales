@@ -22,8 +22,8 @@ import client.model.IClientModel;
 import client.view.IClientView;
 import client.view.StandardClientView;
 import javafx.application.Platform;
-import model.dish.IDishMenuItemData;
-import model.order.IOrderData;
+import model.dish.DishMenuItemData;
+import model.order.OrderData;
 import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
 import server.model.ServerModel;
@@ -35,7 +35,7 @@ import view.repository.uifx.FXUIComponentFactory;
 
 //@Execution(value = ExecutionMode.SAME_THREAD)
 class OrderTakingAreaTest extends ApplicationTest {
-	private IDishMenuItemData item1;
+	private DishMenuItemData item1;
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
 	private BigDecimal i1Price = BigDecimal.valueOf(5);
@@ -43,7 +43,7 @@ class OrderTakingAreaTest extends ApplicationTest {
 	private BigDecimal i1Disc = BigDecimal.valueOf(0);
 	private String i1id = "item1";
 	
-	private IDishMenuItemData item2;
+	private DishMenuItemData item2;
 	private String i2Name = "bbb";
 	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
 	private BigDecimal i2Price = BigDecimal.valueOf(1);
@@ -51,7 +51,7 @@ class OrderTakingAreaTest extends ApplicationTest {
 	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
 	private String i2id = "item2";
 	
-	private IDishMenuItemData item3;
+	private DishMenuItemData item3;
 	private String i3Name = "ccc";
 	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
 	private BigDecimal i3Price = BigDecimal.valueOf(4);
@@ -75,7 +75,7 @@ class OrderTakingAreaTest extends ApplicationTest {
 	
 	private StandardClientViewOperationsUtilityClass opHelper;
 	
-	private IOrderData data;
+	private OrderData data;
 	
 	private volatile boolean actionFinished = false;
 	

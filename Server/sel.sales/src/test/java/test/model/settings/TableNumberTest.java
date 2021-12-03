@@ -1,7 +1,5 @@
 package test.model.settings;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.File;
 import java.util.Collection;
 
@@ -12,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import model.IModel;
 import model.settings.SettingsField;
-import model.settings.TableNumberContainer;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
 

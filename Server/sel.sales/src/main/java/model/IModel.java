@@ -4,24 +4,23 @@ import java.io.Closeable;
 import java.util.Collection;
 
 import model.connectivity.IDeviceData;
-import model.dish.IDishMenuData;
-import model.dish.IDishMenuHelper;
-import model.dish.IDishMenuItemData;
-import model.dish.IDishMenuItemFinder;
-import model.order.IOrderData;
-import model.order.IOrderHelper;
+import model.dish.DishMenuData;
+import model.dish.DishMenuItemData;
+import model.dish.DishMenuItemFactory;
+import model.dish.DishMenuItemFinder;
+import model.order.OrderData;
+import model.order.OrderFactory;
 import model.settings.ISettings;
 import model.settings.SettingsField;
 
 public interface IModel extends Closeable {
+	void addOrder(OrderData data);
 	void addOrder(String serialisedOrderData);
 	void subscribe(Updatable updatable);
-	IDishMenuItemData getMenuItem(String id);
-	IDishMenuData getMenuData();
-	IOrderData getOrder(String id);
-	IOrderData[] getAllWrittenOrders();
-	IDishMenuHelper getDishMenuHelper();
-	IOrderHelper getOrderHelper();
+	DishMenuItemData getMenuItem(String id);
+	DishMenuData getMenuData();
+	OrderData getOrder(String id);
+	OrderData[] getAllWrittenOrders();
 	void addDiscoveredDevice(String deviceName, String deviceAddress);
 	void addKnownDevice(String deviceAddress);
 	void removeKnownDevice(String deviceAddress);
@@ -50,7 +49,7 @@ public interface IModel extends Closeable {
 	void setSettings(String[][] settings);
 	void setDishMenuFromFile(String menu);
 	void setDishMenuFromExternal(String menu);
-	void setDishMenu(IDishMenuData menu);
+	void setDishMenu(DishMenuData menu);
 	void setKnownDevices(String serialisedDeviceData);
 	void loadSaved();
 	void loadKnownDevices(String fileAddress);
@@ -58,9 +57,9 @@ public interface IModel extends Closeable {
 	boolean writeSettings();
 	void close();
 	void setWrittenOrders(String readFile);
-	IDishMenuItemFinder getActiveDishMenuItemFinder();
+	DishMenuItemFinder getActiveDishMenuItemFinder();
 	boolean isOrderWritten(String orderID);
-	IDateSettings getDateSettings();
+	DateSettings getDateSettings();
 	void setOrderTableNumbersFromFile(String readFile);
 	void setOrderStatusesFromFile(String readFile);
 	Collection<Integer> getTableNumbers();
@@ -75,4 +74,7 @@ public interface IModel extends Closeable {
 	 * Checks if the order exists and has not been cancelled
 	 */
 	boolean isOrderValid(String orderID);
+	OrderFactory getOrderFactory();
+	DishMenuItemFactory getMenuItemFactory();
+	String serialiseOrder(OrderData data);
 }

@@ -3,9 +3,6 @@ package test.external.device;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-
 import external.device.IDevice;
 import test.external.dummy.DummyDevice;
 //@Execution(value = ExecutionMode.SAME_THREAD)

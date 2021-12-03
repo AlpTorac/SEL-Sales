@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import external.bluetooth.WindowsBluetoothConnectionUtility;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import model.dish.DishMenuItemData;
 import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.external.BluetoothServerExternal;
@@ -51,7 +52,7 @@ public class ServerApp extends Application {
 		// ADD FAKE DATA -------------------------------------------------------
 		// ADD FAKE DATA -------------------------------------------------------
 		
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(
+		model.addMenuItem(model.getMenuItemFactory().constructData(
 				"aaa",
 				"item1",
 				BigDecimal.valueOf(2.34),
@@ -59,7 +60,7 @@ public class ServerApp extends Application {
 				BigDecimal.valueOf(4)
 				));
 		
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(
+		model.addMenuItem(model.getMenuItemFactory().constructData(
 				"bbb",
 				"item2",
 				BigDecimal.valueOf(1),
@@ -67,7 +68,7 @@ public class ServerApp extends Application {
 				BigDecimal.valueOf(10)
 				));
 		
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(
+		model.addMenuItem(model.getMenuItemFactory().constructData(
 				"ccc",
 				"item3",
 				BigDecimal.valueOf(2.5),
@@ -75,7 +76,7 @@ public class ServerApp extends Application {
 				BigDecimal.valueOf(4)
 				));
 		
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(
+		model.addMenuItem(model.getMenuItemFactory().constructData(
 				"discount",
 				"disc",
 				BigDecimal.valueOf(1),

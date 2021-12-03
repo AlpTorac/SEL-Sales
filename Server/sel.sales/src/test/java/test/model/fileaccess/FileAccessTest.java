@@ -15,9 +15,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-
 import model.filewriter.FileAccess;
 import test.GeneralTestUtilityClass;
 //@Execution(value = ExecutionMode.SAME_THREAD)

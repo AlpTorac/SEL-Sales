@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import model.dish.IDishMenuItem;
-import model.dish.IDishMenuItemData;
+import model.dish.DishMenuItem;
+import model.dish.DishMenuItemData;
 import server.model.IServerModel;
 import server.model.ServerModel;
 //@Execution(value = ExecutionMode.SAME_THREAD)
@@ -39,9 +39,9 @@ class DishMenuItemDataTest {
 	private BigDecimal i3Disc = BigDecimal.valueOf(1);
 	private String i3id = "item3";
 	
-	private IDishMenuItemData iData1;
-	private IDishMenuItemData iData2;
-	private IDishMenuItemData iData3;
+	private DishMenuItemData iData1;
+	private DishMenuItemData iData2;
+	private DishMenuItemData iData3;
 	
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	
@@ -64,8 +64,8 @@ class DishMenuItemDataTest {
 	
 	@Test
 	void getAssociatedMenuItemTest() {
-		IDishMenuItemData currentData = model.getMenuItem(i1id);
-		IDishMenuItem currentItem = currentData.getAssociatedItem(model.getActiveDishMenuItemFinder());
+		DishMenuItemData currentData = model.getMenuItem(i1id);
+		DishMenuItem currentItem = currentData.getAssociatedItem(model.getActiveDishMenuItemFinder());
 		
 		Assertions.assertTrue(currentData.equals(iData1));
 		Assertions.assertTrue(currentItem.equals(iData1.getAssociatedItem(model.getActiveDishMenuItemFinder())));
@@ -82,8 +82,8 @@ class DishMenuItemDataTest {
 				newProCost,
 				newPrice));
 
-		IDishMenuItemData newData = model.getMenuItem(i1id);
-		IDishMenuItem newItem = newData.getAssociatedItem(model.getActiveDishMenuItemFinder());
+		DishMenuItemData newData = model.getMenuItem(i1id);
+		DishMenuItem newItem = newData.getAssociatedItem(model.getActiveDishMenuItemFinder());
 		
 		Assertions.assertFalse(newData.equals(iData1));
 		Assertions.assertFalse(currentItem.equals(newItem));
@@ -126,21 +126,21 @@ class DishMenuItemDataTest {
 	
 	@Test
 	void contentTest() {
-		IDishMenuItemData d1 = model.getMenuItem(i1id);
+		DishMenuItemData d1 = model.getMenuItem(i1id);
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d1, i1Name, i1id, i1PorSize, i1Price, i1ProCost);
-		IDishMenuItemData d2 = model.getMenuItem(i2id);
+		DishMenuItemData d2 = model.getMenuItem(i2id);
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d2, i2Name, i2id, i2PorSize, i2Price, i2ProCost);
-		IDishMenuItemData d3 = model.getMenuItem(i3id);
+		DishMenuItemData d3 = model.getMenuItem(i3id);
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(d3, i3Name, i3id, i3PorSize, i3Price, i3ProCost);
 	}
 	
 	@Test
 	void pricesPerPortionTest() {
-		IDishMenuItemData[] data = model.getMenuData().getAllItems();
+		DishMenuItemData[] data = model.getMenuData().getAllItems();
 		
-		IDishMenuItemData d1 = data[0];
-		IDishMenuItemData d2 = data[1];
-		IDishMenuItemData d3 = data[2];
+		DishMenuItemData d1 = data[0];
+		DishMenuItemData d2 = data[1];
+		DishMenuItemData d3 = data[2];
 		
 		DishMenuItemTestUtilityClass.assertMenuItemDataPricesEqual(d1, i1PorSize, i1Price);
 		DishMenuItemTestUtilityClass.assertMenuItemDataPricesEqual(d2, i2PorSize, i2Price);

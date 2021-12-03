@@ -18,9 +18,9 @@ import client.model.IClientModel;
 import client.view.IClientView;
 import client.view.StandardClientView;
 import javafx.application.Platform;
-import model.dish.IDishMenu;
-import model.dish.IDishMenuItemData;
-import model.order.IOrderData;
+import model.dish.DishMenu;
+import model.dish.DishMenuItemData;
+import model.order.OrderData;
 import model.settings.SettingsField;
 import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyConnectionUtility;
@@ -31,7 +31,7 @@ import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
 class OrderAreaTest extends ApplicationTest {
-	private IDishMenuItemData item1;
+	private DishMenuItemData item1;
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
 	private BigDecimal i1Price = BigDecimal.valueOf(5);
@@ -39,7 +39,7 @@ class OrderAreaTest extends ApplicationTest {
 	private BigDecimal i1Disc = BigDecimal.valueOf(0);
 	private String i1id = "item1";
 	
-	private IDishMenuItemData item2;
+	private DishMenuItemData item2;
 	private String i2Name = "bbb";
 	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
 	private BigDecimal i2Price = BigDecimal.valueOf(1);
@@ -47,7 +47,7 @@ class OrderAreaTest extends ApplicationTest {
 	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
 	private String i2id = "item2";
 	
-	private IDishMenuItemData item3;
+	private DishMenuItemData item3;
 	private String i3Name = "ccc";
 	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
 	private BigDecimal i3Price = BigDecimal.valueOf(4);
@@ -65,7 +65,7 @@ class OrderAreaTest extends ApplicationTest {
 	private IClientController clientController;
 	private IClientView clientView;
 	
-	private IDishMenu menu;
+	private DishMenu menu;
 	
 	private volatile boolean actionFinished = false;
 	
@@ -81,12 +81,12 @@ class OrderAreaTest extends ApplicationTest {
 	private String so4;
 	private String so5;
 	
-	private IOrderData od1;
-	private IOrderData od2;
-	private IOrderData od3;
-	private IOrderData od4;
-	private IOrderData od5;
-	private IOrderData[] ods;
+	private OrderData od1;
+	private OrderData od2;
+	private OrderData od3;
+	private OrderData od4;
+	private OrderData od5;
+	private OrderData[] ods;
 	
 	private void waitForAction() {
 		while (!actionFinished) {
@@ -145,7 +145,7 @@ class OrderAreaTest extends ApplicationTest {
 		od3 = clientModel.getOrderHelper().deserialiseOrderData(so3);
 		od4 = clientModel.getOrderHelper().deserialiseOrderData(so4);
 		od5 = clientModel.getOrderHelper().deserialiseOrderData(so5);
-		ods = new IOrderData[] {od1, od2, od3, od4, od5};
+		ods = new OrderData[] {od1, od2, od3, od4, od5};
 		
 		clientModel.addSetting(SettingsField.DISH_MENU_FOLDER, this.testFolderAddress);
 		clientModel.addSetting(SettingsField.ORDER_FOLDER, this.testFolderAddress);
@@ -159,7 +159,7 @@ class OrderAreaTest extends ApplicationTest {
 		GeneralTestUtilityClass.deletePathContent(this.testFolderAddress);
 	}
 	
-	private boolean orderDatasEqual(IOrderData od1, IOrderData od2) {
+	private boolean orderDatasEqual(OrderData od1, OrderData od2) {
 		od1.flatten();
 		od2.flatten();
 		return od1.itemsEqual(od2);
@@ -186,7 +186,7 @@ class OrderAreaTest extends ApplicationTest {
 			final boolean isHere = GeneralTestUtilityClass.generateRandomBoolean();
 			final int tnIndex = GeneralTestUtilityClass.generateRandomNumber(0, tableNumbers.length - 1);
 			final String orderNote = GeneralTestUtilityClass.generateRandomWord(5);
-			final IOrderData currentData = ods[index];
+			final OrderData currentData = ods[index];
 			final String currentID = currentData.getID().toString();
 			
 			removeOrder = GeneralTestUtilityClass.generateRandomBoolean();
@@ -306,7 +306,7 @@ class OrderAreaTest extends ApplicationTest {
 			final boolean isHere = GeneralTestUtilityClass.generateRandomBoolean();
 			final int tnIndex = GeneralTestUtilityClass.generateRandomNumber(0, tableNumbers.length - 1);
 			final String orderNote = GeneralTestUtilityClass.generateRandomWord(5);
-			final IOrderData currentData = ods[index];
+			final OrderData currentData = ods[index];
 			final String currentID = currentData.getID().toString();
 			
 			status = GeneralTestUtilityClass.generateRandomNumber(1, 4);
@@ -394,7 +394,7 @@ class OrderAreaTest extends ApplicationTest {
 				clientOpHelper.setOrderNote(orderNote);
 			});
 //			GeneralTestUtilityClass.performWait(100);
-			IOrderData d = clientOpHelper.getOrderTakingAreaCurrentOrder();
+			OrderData d = clientOpHelper.getOrderTakingAreaCurrentOrder();
 			d.flatten();
 			Assertions.assertTrue(this.orderDatasEqual(ods[index], d));
 			

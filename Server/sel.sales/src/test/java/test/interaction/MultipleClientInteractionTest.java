@@ -17,9 +17,9 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import model.connectivity.DeviceData;
 import model.connectivity.IDeviceData;
-import model.dish.IDishMenu;
-import model.dish.IDishMenuData;
-import model.order.IOrderData;
+import model.dish.DishMenu;
+import model.dish.DishMenuData;
+import model.order.OrderData;
 import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyClient;
 import test.external.dummy.DummyInteraction;
@@ -91,7 +91,7 @@ class MultipleClientInteractionTest {
 	private String serviceID = "serviceID";
 	private String serviceName = "serviceName";
 	
-	private IDishMenu menu;
+	private DishMenu menu;
 	
 	private DummyInteraction interaction;
 	
@@ -233,7 +233,7 @@ class MultipleClientInteractionTest {
 		interaction.setServerMenu(menu);
 		
 		for (DummyClient client : clients) {
-			IDishMenuData menuData = client.getMenuData();
+			DishMenuData menuData = client.getMenuData();
 			while (menuData.getAllItems().length == 0) {
 				interaction.reSetServerMenu();
 				GeneralTestUtilityClass.performWait(waitTime);
@@ -251,8 +251,8 @@ class MultipleClientInteractionTest {
 			interaction.addPendingSendOrderToClient(clients[i], oids[i], sos[i]);
 		}
 		
-		IOrderData[] uoActual = server.getAllUnconfirmedOrders();
-		IOrderData[] uoExpected = new IOrderData[clients.length];
+		OrderData[] uoActual = server.getAllUnconfirmedOrders();
+		OrderData[] uoExpected = new OrderData[clients.length];
 		
 		for (int i = 0; i < clients.length; i++) {
 			uoExpected[i] = clients[i].deserialiseOrderData(sos[i]);
@@ -321,11 +321,11 @@ class MultipleClientInteractionTest {
 				DummyClient dc = clients[j];
 				Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(server.getAllUnconfirmedOrders(),
 						soCols.stream().map(so -> dc.deserialiseOrderData(so))
-						.toArray(IOrderData[]::new)));
+						.toArray(OrderData[]::new)));
 				
 				Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(dc.getAllSentOrders(),
 						clientOrders.get(j).stream().map(so -> dc.deserialiseOrderData(so))
-						.toArray(IOrderData[]::new)));
+						.toArray(OrderData[]::new)));
 			}
 			clientOrders.get(i).clear();
 		}

@@ -8,8 +8,8 @@ import java.util.Collection;
 
 import org.junit.jupiter.api.Assertions;
 
-import model.dish.IDishMenuItemData;
-import model.order.IOrderData;
+import model.dish.DishMenuItemData;
+import model.order.OrderData;
 import model.order.AccumulatingOrderItemAggregate;
 import server.controller.IServerController;
 import server.model.IServerModel;
@@ -82,7 +82,7 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		return (StandardServerView) super.getView();
 	}
 	
-	public IDishMenuItemData addMenuItem(String name, String id, BigDecimal price, BigDecimal productionCost, BigDecimal portionSize, BigDecimal discount) {
+	public DishMenuItemData addMenuItem(String name, String id, BigDecimal price, BigDecimal productionCost, BigDecimal portionSize, BigDecimal discount) {
 		this.setMenuOrderTabActive();
 		dishNameBox.setCaption(name);
 		priceBox.setCaption(String.valueOf(price.doubleValue()));
@@ -99,9 +99,9 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		return this.getModel().getMenuItem(id);
 	}
 	
-	public IDishMenuItemData removeMenuItem(String id) {
+	public DishMenuItemData removeMenuItem(String id) {
 		this.setMenuOrderTabActive();
-		IDishMenuItemData itemToBeRemoved = this.getModel().getMenuItem(id);
+		DishMenuItemData itemToBeRemoved = this.getModel().getMenuItem(id);
 		
 		idBox.setCaption(id);
 		
@@ -116,7 +116,7 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		}
 	}
 	
-	public IDishMenuItemData editMenuItem(String name, String id, BigDecimal price, BigDecimal productionCost, BigDecimal portionSize, BigDecimal discount) {
+	public DishMenuItemData editMenuItem(String name, String id, BigDecimal price, BigDecimal productionCost, BigDecimal portionSize, BigDecimal discount) {
 		this.setMenuOrderTabActive();
 		dishNameBox.setCaption(name);
 		priceBox.setCaption(String.valueOf(price.doubleValue()));
@@ -130,15 +130,15 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		
 		GeneralTestUtilityClass.performWait(waitTime);
 		
-		IDishMenuItemData editedItem = this.getModel().getMenuItem(id);
+		DishMenuItemData editedItem = this.getModel().getMenuItem(id);
 		
 		return editedItem;
 	}
 	
-	public IOrderData addConfirmOrder() {
+	public OrderData addConfirmOrder() {
 		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
-		IOrderData data = this.ota.getUnconfirmedOrderList().getItem(0);
+		OrderData data = this.ota.getUnconfirmedOrderList().getItem(0);
 		GeneralTestUtilityClass.performWait(waitTime);
 		this.oia.displayOrder(data);
 		GeneralTestUtilityClass.performWait(waitTime);
@@ -155,31 +155,31 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		this.oia.getConfirmAllButton().performArtificialClick();
 	}
 	
-	public Collection<IOrderData> confirmAllOrders() {
+	public Collection<OrderData> confirmAllOrders() {
 		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
-//		Collection<IOrderData> unconfirmedOrders = this.getUnconfirmedOrders();
-//		IOrderData[] confirmedOrders = new IOrderData[unconfirmedOrders.size()];
+//		Collection<OrderData> unconfirmedOrders = this.getUnconfirmedOrders();
+//		OrderData[] confirmedOrders = new OrderData[unconfirmedOrders.size()];
 //		GeneralTestUtilityClass.performWait(waitTime);
 //		int size = unconfirmedOrders.size();
 //		
 //		for (int i = 0; i < size; i++) {
 //			
-//			IOrderData data = this.addConfirmOrder();
+//			OrderData data = this.addConfirmOrder();
 //			confirmedOrders[i] = data;
 //		}
 //		
-//		Collection<IOrderData> co = new ArrayList<IOrderData>();
+//		Collection<OrderData> co = new ArrayList<OrderData>();
 //		
-//		for (IOrderData d : confirmedOrders) {
+//		for (OrderData d : confirmedOrders) {
 //			co.add(d);
 //		}
 //		
 //		return co;
 		this.clickOnConfirmAllOrdersButton();
 		GeneralTestUtilityClass.performWait(waitTime);
-		Collection<IOrderData> col = new ArrayList<IOrderData>();
-		for (IOrderData d : this.getModel().getAllConfirmedOrders()) {
+		Collection<OrderData> col = new ArrayList<OrderData>();
+		for (OrderData d : this.getModel().getAllConfirmedOrders()) {
 			col.add(d);
 		}
 		return col;
@@ -201,10 +201,10 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		this.ota.getAuto().setToggled(false);
 	}
 	
-	public IOrderData removeUnconfirmedOrder() {
+	public OrderData removeUnconfirmedOrder() {
 		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
-		IOrderData data = this.ota.getUnconfirmedOrderList().getItem(0);
+		OrderData data = this.ota.getUnconfirmedOrderList().getItem(0);
 		GeneralTestUtilityClass.performWait(waitTime);
 		this.oia.displayOrder(data);
 		GeneralTestUtilityClass.performWait(waitTime);
@@ -217,10 +217,10 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		return data;
 	}
 	
-	public IOrderData removeConfirmedOrder() {
+	public OrderData removeConfirmedOrder() {
 		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
-		IOrderData data = this.ota.getConfirmedOrderList().getItem(0);
+		OrderData data = this.ota.getConfirmedOrderList().getItem(0);
 		GeneralTestUtilityClass.performWait(waitTime);
 		this.oia.displayOrder(data);
 		GeneralTestUtilityClass.performWait(waitTime);
@@ -233,13 +233,13 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		return data;
 	}
 	
-	public Collection<IOrderData> getUnconfirmedOrders() {
+	public Collection<OrderData> getUnconfirmedOrders() {
 		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
 		return ota.getUnconfirmedOrderList().getAllItems();
 	}
 	
-	public Collection<IOrderData> getConfirmedOrders() {
+	public Collection<OrderData> getConfirmedOrders() {
 		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
 		return ota.getConfirmedOrderList().getAllItems();
@@ -261,7 +261,7 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
-	public void assertShownOrderEquals(IOrderData orderData) {
+	public void assertShownOrderEquals(OrderData orderData) {
 		this.setMenuOrderTabActive();
 		GeneralTestUtilityClass.performWait(waitTime);
 		oia.displayOrder(orderData);

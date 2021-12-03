@@ -26,7 +26,7 @@ public class SendOrderListener extends ClickEventListener implements IApplicatio
 	
 	@Override
 	public Object[] getArgs() {
-		return new Object[] {this.oe.getSerialisedOrderID(), this.oe.serialiseCurrentOrder()};
+		return new Object[] {this.oe.getCurrentOrder()};
 	}
 
 	@Override

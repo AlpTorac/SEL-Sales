@@ -1,10 +1,7 @@
 package client.view.composites.listener;
 
 import client.controller.ClientSpecificEvent;
-import client.view.composites.CookingOrdersArea;
 import client.view.composites.OrderEntry;
-import client.view.composites.OrderTakingArea;
-import controller.GeneralEvent;
 import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
 import controller.IController;

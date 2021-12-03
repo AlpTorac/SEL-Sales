@@ -1,6 +1,5 @@
 package view.repository.uiwrapper;
 
-import view.repository.IChoiceBox;
 import view.repository.IUIComponent;
 import view.repository.IUIComponentFactory;
 

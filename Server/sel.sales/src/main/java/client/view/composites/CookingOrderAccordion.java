@@ -1,7 +1,7 @@
 package client.view.composites;
 
 import controller.IController;
-import model.order.IOrderData;
+import model.order.OrderData;
 import view.repository.uiwrapper.UIComponentFactory;
 
 public class CookingOrderAccordion extends OrderAccordion {
@@ -9,7 +9,7 @@ public class CookingOrderAccordion extends OrderAccordion {
 		super(controller, fac);
 	}
 	@Override
-	protected CookingOrderEntry createOrderEntry(IOrderData data) {
+	protected CookingOrderEntry createOrderEntry(OrderData data) {
 		return new CookingOrderEntry(this.getController(), this.getUIFactory(), this, data);
 	}
 	public void setEditAvailability(boolean editEnabled) {

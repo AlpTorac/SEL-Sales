@@ -13,12 +13,12 @@ public class DishMenuItemFinder implements IDishMenuItemFinder {
 	}
 	
 	@Override
-	public DishMenuItem getDish(EntityID id) {
+	public DishMenuItem getMenuItem(EntityID id) {
 		return this.menu.getElement(id);
 	}
 
 	@Override
-	public DishMenuItem getDish(String id) {
+	public DishMenuItem getMenuItem(String id) {
 		return this.menu.getElement(this.fac.createID(id));
 	}
 

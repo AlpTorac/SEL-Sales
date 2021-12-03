@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import model.dish.IDishMenuData;
+import model.dish.DishMenuData;
 import model.filewriter.DishMenuFile;
 import model.filewriter.StandardDishMenuFile;
 import server.model.IServerModel;
@@ -42,7 +42,7 @@ class DishMenuFileAccessTest {
 	
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	
-	private IDishMenuData dishMenuData;
+	private DishMenuData dishMenuData;
 	
 	@BeforeEach
 	void prep() {
@@ -71,7 +71,7 @@ class DishMenuFileAccessTest {
 	
 	@Test
 	void loadTest() {
-		IDishMenuData s = model.getDishMenuHelper().parseFileMenuData(dmf.readFile());
+		DishMenuData s = model.getDishMenuHelper().parseFileMenuData(dmf.readFile());
 		Assertions.assertTrue(dishMenuData.equals(s));
 	}
 }

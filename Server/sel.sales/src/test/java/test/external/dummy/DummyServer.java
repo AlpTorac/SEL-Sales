@@ -1,21 +1,12 @@
 package test.external.dummy;
 
-import java.io.Closeable;
-
-import client.view.IClientView;
-import client.view.StandardClientView;
 import controller.IController;
 import model.IModel;
-import model.dish.IDishMenu;
-import model.dish.IDishMenuData;
-import model.order.IOrderData;
+import model.order.OrderData;
 import server.controller.IServerController;
 import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
-import server.view.IServerView;
-import server.view.StandardServerView;
-import view.IView;
 
 public class DummyServer extends DummyInteractionPartaker {
 	public DummyServer(String serviceID, String serviceName, String serverName, String serverAddress) {
@@ -53,11 +44,11 @@ public class DummyServer extends DummyInteractionPartaker {
 		return (IDummyExternal) super.getExternal();
 	}
 	
-	public IOrderData[] getAllUnconfirmedOrders() {
+	public OrderData[] getAllUnconfirmedOrders() {
 		return this.getModel().getAllUnconfirmedOrders();
 	}
 	
-	public IOrderData[] getAllConfirmedOrders() {
+	public OrderData[] getAllConfirmedOrders() {
 		return this.getModel().getAllConfirmedOrders();
 	}
 }

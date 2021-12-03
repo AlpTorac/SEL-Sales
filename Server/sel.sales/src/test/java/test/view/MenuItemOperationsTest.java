@@ -7,17 +7,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import javafx.stage.Stage;
-import model.dish.DishMenu;
-import model.dish.IDishMenu;
-import model.dish.IDishMenuData;
-import model.dish.IDishMenuItemData;
-import model.settings.ISettings;
-import model.settings.Settings;
+import model.dish.DishMenuData;
+import model.dish.DishMenuItemData;
 import model.settings.SettingsField;
 import server.controller.IServerController;
 import server.controller.StandardServerController;
@@ -82,9 +76,9 @@ class MenuItemOperationsTest extends ApplicationTest {
 	@Test
 	void addMenuItemtest() {
 		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
-		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
+		DishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
 		
-		IDishMenuItemData[] datas = model.getMenuData().getAllItems();
+		DishMenuItemData[] datas = model.getMenuData().getAllItems();
 		Assertions.assertEquals(datas.length, 1);
 		
 		Assertions.assertTrue(addedItem.equals(datas[0]));
@@ -93,13 +87,13 @@ class MenuItemOperationsTest extends ApplicationTest {
 	@Test
 	void removeMenuItemTest() {
 		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
-		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1ProCost, i1PorSize, i1Disc);
-		IDishMenuItemData[] datas = model.getMenuData().getAllItems();
+		DishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1ProCost, i1PorSize, i1Disc);
+		DishMenuItemData[] datas = model.getMenuData().getAllItems();
 		Assertions.assertEquals(datas.length, 1);
 		
 		Assertions.assertTrue(addedItem.equals(datas[0]));
 		
-		IDishMenuItemData removedItem = opHelper.removeMenuItem(i1id);
+		DishMenuItemData removedItem = opHelper.removeMenuItem(i1id);
 		datas = model.getMenuData().getAllItems();
 		
 		Assertions.assertTrue(addedItem.equals(removedItem));
@@ -109,14 +103,14 @@ class MenuItemOperationsTest extends ApplicationTest {
 	@Test
 	void editMenuItemTest() {
 		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
-		IDishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
+		DishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
 		
-		IDishMenuItemData[] datas = model.getMenuData().getAllItems();
+		DishMenuItemData[] datas = model.getMenuData().getAllItems();
 		Assertions.assertEquals(datas.length, 1);
 		
 		Assertions.assertTrue(addedItem.equals(datas[0]));
 		
-		IDishMenuItemData editedItem = opHelper.editMenuItem(i2Name, i1id, i3Price, i2ProCost, i3PorSize, i2Disc);
+		DishMenuItemData editedItem = opHelper.editMenuItem(i2Name, i1id, i3Price, i2ProCost, i3PorSize, i2Disc);
 		
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(editedItem, i2Name, i1id, i3PorSize, i3Price, i2ProCost);
 	}
@@ -125,11 +119,11 @@ class MenuItemOperationsTest extends ApplicationTest {
 	void writeMenuTest() {
 		Assertions.assertEquals(model.getMenuData().getAllItems().length, 0);
 		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
-		IDishMenuItemData addedItem1 = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
-		IDishMenuItemData addedItem2 = opHelper.addMenuItem(i2Name, i2id, i2Price, i2Price, i2PorSize, i2Disc);
-		IDishMenuItemData addedItem3 = opHelper.addMenuItem(i3Name, i3id, i3Price, i3Price, i3PorSize, i3Disc);
+		DishMenuItemData addedItem1 = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
+		DishMenuItemData addedItem2 = opHelper.addMenuItem(i2Name, i2id, i2Price, i2Price, i2PorSize, i2Disc);
+		DishMenuItemData addedItem3 = opHelper.addMenuItem(i3Name, i3id, i3Price, i3Price, i3PorSize, i3Disc);
 		
-		IDishMenuData menu = model.getMenuData();
+		DishMenuData menu = model.getMenuData();
 		
 		GeneralTestUtilityClass.performWait(300);
 		GeneralTestUtilityClass.deletePathContent(testFolderAddress);

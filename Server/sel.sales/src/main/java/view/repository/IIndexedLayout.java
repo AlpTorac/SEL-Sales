@@ -44,7 +44,12 @@ public interface IIndexedLayout extends ILayout {
 		((IIndexedLayout) this.getComponent()).addUIComponent(c);
 	}
 	
-	default public void addUIComponents(IUIComponent[] cs) {
+	default public void addUIComponents(Iterable<IUIComponent> cs) {
+		for (IUIComponent c : cs) {
+			this.addUIComponent(c);
+		}
+	}
+	default public void addUIComponents(IUIComponent... cs) {
 		for (IUIComponent c : cs) {
 			this.addUIComponent(c);
 		}

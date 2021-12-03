@@ -5,7 +5,6 @@ import client.model.IClientModel;
 import client.view.composites.ClientConnectionArea;
 import client.view.composites.ClientSettingsArea;
 import client.view.composites.OrderArea;
-import model.order.IOrderData;
 import view.repository.IUILibraryHelper;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.UIComponent;

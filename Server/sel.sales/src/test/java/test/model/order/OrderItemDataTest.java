@@ -8,11 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import model.dish.IDishMenuItemData;
-import model.order.AccumulatingOrderItemAggregate;
-import model.order.AccumulatingOrderItemAggregate;
-import model.order.AccumulatingOrderItemAggregate;
-import model.order.AccumulatingOrderItemAggregate;
+import model.dish.DishMenuItemData;
 import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
 import server.model.ServerModel;
@@ -21,21 +17,21 @@ class OrderItemTest {
 
 	private static IServerModel model;
 	
-	private IDishMenuItemData item1;
+	private DishMenuItemData item1;
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
 	private BigDecimal i1Price = BigDecimal.valueOf(5);
 	private BigDecimal i1ProCost = BigDecimal.valueOf(4);
 	private String i1id = "item1";
 	
-	private IDishMenuItemData item2;
+	private DishMenuItemData item2;
 	private String i2Name = "bbb";
 	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
 	private BigDecimal i2Price = BigDecimal.valueOf(1);
 	private BigDecimal i2ProCost = BigDecimal.valueOf(0.5);
 	private String i2id = "item2";
 	
-	private IDishMenuItemData item3;
+	private DishMenuItemData item3;
 	private String i3Name = "ccc";
 	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
 	private BigDecimal i3Price = BigDecimal.valueOf(4);
@@ -100,37 +96,37 @@ class OrderItemTest {
 
 	@Test
 	void portionsInOrderTest() {
-		IDishMenuItemData oi1 = orderItemData1.getItemData();
+		DishMenuItemData oi1 = orderItemData1.getItemData();
 		Assertions.assertEquals(orderItemData1.getPortionsInOrder().compareTo(oi1.getPortionSize().multiply(orderItemData1.getAmount())), 0);
 		
-		IDishMenuItemData oi2 = orderItemData2.getItemData();
+		DishMenuItemData oi2 = orderItemData2.getItemData();
 		Assertions.assertEquals(orderItemData2.getPortionsInOrder().compareTo(oi2.getPortionSize().multiply(orderItemData2.getAmount())), 0);
 		
-		IDishMenuItemData oi3 = orderItemData3.getItemData();
+		DishMenuItemData oi3 = orderItemData3.getItemData();
 		Assertions.assertEquals(orderItemData3.getPortionsInOrder().compareTo(oi3.getPortionSize().multiply(orderItemData3.getAmount())), 0);
 	}
 	
 	@Test
 	void grossPricePerPortionTest() {
-		IDishMenuItemData oi1 = orderItemData1.getItemData();
+		DishMenuItemData oi1 = orderItemData1.getItemData();
 		Assertions.assertEquals(orderItemData1.getGrossPricePerPortion().compareTo(oi1.getGrossPricePerPortion()), 0);
 		
-		IDishMenuItemData oi2 = orderItemData2.getItemData();
+		DishMenuItemData oi2 = orderItemData2.getItemData();
 		Assertions.assertEquals(orderItemData2.getGrossPricePerPortion().compareTo(oi2.getGrossPricePerPortion()), 0);
 		
-		IDishMenuItemData oi3 = orderItemData3.getItemData();
+		DishMenuItemData oi3 = orderItemData3.getItemData();
 		Assertions.assertEquals(orderItemData3.getGrossPricePerPortion().compareTo(oi3.getGrossPricePerPortion()), 0);
 	}
 	
 	@Test
 	void grossPricePerMenuItemTest() {
-		IDishMenuItemData oi1 = orderItemData1.getItemData();
+		DishMenuItemData oi1 = orderItemData1.getItemData();
 		Assertions.assertEquals(orderItemData1.getGrossPricePerMenuItem().compareTo(oi1.getGrossPrice()), 0);
 		
-		IDishMenuItemData oi2 = orderItemData2.getItemData();
+		DishMenuItemData oi2 = orderItemData2.getItemData();
 		Assertions.assertEquals(orderItemData2.getGrossPricePerMenuItem().compareTo(oi2.getGrossPrice()), 0);
 		
-		IDishMenuItemData oi3 = orderItemData3.getItemData();
+		DishMenuItemData oi3 = orderItemData3.getItemData();
 		Assertions.assertEquals(orderItemData3.getGrossPricePerMenuItem().compareTo(oi3.getGrossPrice()), 0);
 	}
 	

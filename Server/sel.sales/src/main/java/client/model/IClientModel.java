@@ -1,23 +1,23 @@
 package client.model;
 
 import model.IModel;
-import model.order.IOrderData;
+import model.order.OrderData;
 
 public interface IClientModel extends IModel {
-	void addCookingOrder(String serialisedOrderData);
+	void addCookingOrder(OrderData data);
 	void makePendingPaymentOrder(String orderID);
-	void makePendingSendOrder(String serialisedOrderData);
+	void makePendingSendOrder(OrderData data);
 	void makeSentOrder(String orderID);
-	IOrderData getCookingOrder(String orderID);
-	IOrderData getPendingPaymentOrder(String orderID);
-	IOrderData getPendingSendOrder(String orderID);
-	IOrderData getSentOrder(String orderID);
-	IOrderData[] getAllCookingOrders();
-	IOrderData[] getAllPendingPaymentOrders();
-	IOrderData[] getAllPendingSendOrders();
-	IOrderData[] getAllSentOrders();
+	OrderData getCookingOrder(String orderID);
+	OrderData getPendingPaymentOrder(String orderID);
+	OrderData getPendingSendOrder(String orderID);
+	OrderData getSentOrder(String orderID);
+	OrderData[] getAllCookingOrders();
+	OrderData[] getAllPendingPaymentOrders();
+	OrderData[] getAllPendingSendOrders();
+	OrderData[] getAllSentOrders();
 	void editOrder(String orderID);
-	IOrderData getEditTarget();
+	OrderData getEditTarget();
 	void orderSent(String orderID);
 	void setOrderNote(String orderID, String note);
 }

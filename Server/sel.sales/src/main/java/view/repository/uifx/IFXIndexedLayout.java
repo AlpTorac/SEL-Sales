@@ -35,7 +35,7 @@ public interface IFXIndexedLayout extends IFXLayout, IIndexedLayout {
 		((Pane) this).getChildren().add(index, (Node) c.getComponent());
 	}
 	
-	default public void addUIComponents(IUIComponent[] cs) {
+	default public void addUIComponents(Iterable<IUIComponent> cs) {
 		for (IUIComponent c : cs) {
 			this.addUIComponent(c);
 		}

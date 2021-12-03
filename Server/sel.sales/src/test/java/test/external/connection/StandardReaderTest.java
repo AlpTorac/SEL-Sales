@@ -12,9 +12,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-
 import external.connection.incoming.IMessageReadingStrategy;
 import external.connection.incoming.StandardReader;
 import external.message.IMessage;

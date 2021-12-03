@@ -4,8 +4,8 @@ import java.util.Collection;
 
 import controller.IController;
 import model.IModel;
-import model.dish.IDishMenuData;
-import model.order.IOrderData;
+import model.dish.DishMenuData;
+import model.order.OrderData;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UILayout;
@@ -81,36 +81,36 @@ public class OrderArea extends UIVBoxLayout {
 		return this.fac.createHBoxLayout();
 	}
 	
-	public void refreshMenu(IDishMenuData menuData) {
+	public void refreshMenu(DishMenuData menuData) {
 		this.ota.refreshMenu(menuData);
 	}
 	
-	public void refreshCookingOrders(IOrderData[] orderDatas) {
+	public void refreshCookingOrders(OrderData[] orderDatas) {
 		this.coa.refreshDisplayedOrders(orderDatas);
 	}
 	
-	public void refreshPendingPaymentOrders(IOrderData[] orderDatas) {
+	public void refreshPendingPaymentOrders(OrderData[] orderDatas) {
 		this.uoa.refreshDisplayedOrders(orderDatas);
 	}
 	
-	public void refreshPastOrdersTab(IOrderData[] pendingSendOrders, IOrderData[] sentOrders) {
+	public void refreshPastOrdersTab(OrderData[] pendingSendOrders, OrderData[] sentOrders) {
 		this.refreshPendingSendOrders(pendingSendOrders);
 		this.refreshSentOrders(sentOrders);
 	}
 	
-	protected void refreshPendingSendOrders(IOrderData[] orderDatas) {
+	protected void refreshPendingSendOrders(OrderData[] orderDatas) {
 		this.poa.refreshPendingSendOrders(orderDatas);
 	}
 
-	protected void refreshSentOrders(IOrderData[] orderDatas) {
+	protected void refreshSentOrders(OrderData[] orderDatas) {
 		this.poa.refreshSentOrders(orderDatas);
 	}
 	
-	public void displayOrder(IOrderData data) {
+	public void displayOrder(OrderData data) {
 		this.ota.displayOrder(data);
 	}
 
-	public void refreshEditTarget(IOrderData editTarget) {
+	public void refreshEditTarget(OrderData editTarget) {
 		if (editTarget != null) {
 			this.displayOrder(editTarget);
 		}

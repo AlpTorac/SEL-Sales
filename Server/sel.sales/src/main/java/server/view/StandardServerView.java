@@ -6,8 +6,6 @@ import server.view.composites.MainArea;
 import server.view.composites.ServerConnectionArea;
 import server.view.composites.ServerSettingsArea;
 import server.view.composites.listeners.LoadDishMenuListener;
-import view.composites.ConnectionArea;
-import view.composites.SettingsArea;
 import view.repository.IUILibraryHelper;
 import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.ClickEventListener;

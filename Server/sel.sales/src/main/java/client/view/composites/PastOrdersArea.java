@@ -1,7 +1,7 @@
 package client.view.composites;
 
 import controller.IController;
-import model.order.IOrderData;
+import model.order.OrderData;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIVBoxLayout;
 
@@ -31,21 +31,21 @@ public class PastOrdersArea extends UIVBoxLayout {
 		this.addUIComponent(this.pendingSendAccordion);
 	}
 	
-	public void refreshPastOrdersTab(IOrderData[] pendingSendOrders, IOrderData[] sentOrders) {
+	public void refreshPastOrdersTab(OrderData[] pendingSendOrders, OrderData[] sentOrders) {
 		this.refreshPendingSendOrders(pendingSendOrders);
 		this.refreshSentOrders(sentOrders);
 	}
 	
-	protected void refreshPendingSendOrders(IOrderData[] pendingSendOrders) {
+	protected void refreshPendingSendOrders(OrderData[] pendingSendOrders) {
 		this.pendingSendAccordion.removeAllTabs();
-		for (IOrderData data : pendingSendOrders) {
+		for (OrderData data : pendingSendOrders) {
 			this.pendingSendAccordion.addOrderData(data);
 		}
 	}
 	
-	protected void refreshSentOrders(IOrderData[] sentOrders) {
+	protected void refreshSentOrders(OrderData[] sentOrders) {
 		this.sentAccordion.removeAllTabs();
-		for (IOrderData data : sentOrders) {
+		for (OrderData data : sentOrders) {
 			this.sentAccordion.addOrderData(data);
 		}
 	}

@@ -1,9 +1,7 @@
 package client.view.composites;
 
 import controller.IController;
-import model.order.IOrderData;
-import view.repository.IButton;
-import view.repository.IRadioButton;
+import model.order.OrderData;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIVBoxLayout;
 
@@ -25,9 +23,9 @@ public class PendingPaymentOrdersArea extends UIVBoxLayout {
 		this.addUIComponent(this.accordion);
 	}
 	
-	public void refreshDisplayedOrders(IOrderData[] datas) {
+	public void refreshDisplayedOrders(OrderData[] datas) {
 		this.accordion.removeAllTabs();
-		for (IOrderData data : datas) {
+		for (OrderData data : datas) {
 			this.accordion.addOrderData(data);
 		}
 	}

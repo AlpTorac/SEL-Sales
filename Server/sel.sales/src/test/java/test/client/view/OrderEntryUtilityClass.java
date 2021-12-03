@@ -7,16 +7,16 @@ import org.junit.jupiter.api.Assertions;
 
 import client.view.composites.MenuItemEntry;
 import client.view.composites.OrderEntry;
-import model.dish.IDishMenuItemData;
-import model.order.IOrderData;
+import model.dish.DishMenuItemData;
+import model.order.OrderData;
 import model.order.AccumulatingOrderItemAggregate;
 
 public class OrderEntryUtilityClass {
-	public static void assertOrderEntryDisplayEquals(OrderEntry entry, IOrderData orderData) {
+	public static void assertOrderEntryDisplayEquals(OrderEntry entry, OrderData orderData) {
 		Collection<MenuItemEntry> col = entry.cloneMenuItemEntries();
 		
 		for (AccumulatingOrderItemAggregate oid : orderData.getOrderedItems()) {
-			IDishMenuItemData item = oid.getItemData();
+			DishMenuItemData item = oid.getItemData();
 			BigDecimal amount = oid.getAmount();
 			Assertions.assertEquals(col.stream().filter(mie -> mie.getSelectedMenuItem().equals(item)).count(), 1);
 			col.stream().filter(mie -> mie.getSelectedMenuItem().equals(item))

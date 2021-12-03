@@ -2,7 +2,6 @@ package model.entity;
 
 import model.datamapper.IAttribute;
 import model.entity.id.EntityID;
-import model.order.AccumulatingOrderItemAggregate;
 
 public interface IAggregate<A extends IAttribute, I extends IDOwner<A>> {
 	I[] getAllItems();

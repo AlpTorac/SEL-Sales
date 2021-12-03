@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import model.dish.IDishMenuItemData;
+import model.dish.DishMenuItemData;
 import server.model.IServerModel;
 import server.model.ServerModel;
 //@Execution(value = ExecutionMode.SAME_THREAD)
@@ -49,7 +49,7 @@ class DishMenuTest {
 	
 	@Test
 	void addMenuItemTest() {
-		IDishMenuItemData[] data = model.getMenuData().getAllItems();
+		DishMenuItemData[] data = model.getMenuData().getAllItems();
 		
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i1Name, i1id, i1PorSize, i1Price, i1ProCost);
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i2Name, i2id, i2PorSize, i2Price, i2ProCost);
@@ -58,7 +58,7 @@ class DishMenuTest {
 
 	@Test
 	void removeMenuItemTest() {
-		IDishMenuItemData[] data = model.getMenuData().getAllItems();
+		DishMenuItemData[] data = model.getMenuData().getAllItems();
 		
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i1Name, i1id, i1PorSize, i1Price, i1ProCost);
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i2Name, i2id, i2PorSize, i2Price, i2ProCost);
@@ -94,7 +94,7 @@ class DishMenuTest {
 	void duplicateAddTest() {
 		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
 		
-		IDishMenuItemData[] data = model.getMenuData().getAllItems();
+		DishMenuItemData[] data = model.getMenuData().getAllItems();
 		
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[0], i1Name, i1id, i1PorSize, i1Price, i1ProCost);
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(data[1], i2Name, i2id, i2PorSize, i2Price, i2ProCost);
@@ -105,11 +105,11 @@ class DishMenuTest {
 	
 	@Test
 	void getTest() {
-		IDishMenuItemData i1 = model.getMenuItem("item1");
+		DishMenuItemData i1 = model.getMenuItem("item1");
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(i1, i1Name, i1id, i1PorSize, i1Price, i1ProCost);
-		IDishMenuItemData i2 = model.getMenuItem("item2");
+		DishMenuItemData i2 = model.getMenuItem("item2");
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(i2, i2Name, i2id, i2PorSize, i2Price, i2ProCost);
-		IDishMenuItemData i3 = model.getMenuItem("item3");
+		DishMenuItemData i3 = model.getMenuItem("item3");
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(i3, i3Name, i3id, i3PorSize, i3Price, i3ProCost);
 	}
 }

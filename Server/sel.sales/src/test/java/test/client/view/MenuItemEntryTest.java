@@ -17,8 +17,8 @@ import client.model.ClientModel;
 import client.model.IClientModel;
 import client.view.composites.MenuItemEntry;
 import client.view.composites.PriceUpdateTarget;
-import model.dish.IDishMenuData;
-import model.dish.IDishMenuItemData;
+import model.dish.DishMenuData;
+import model.dish.DishMenuItemData;
 import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
 import server.model.ServerModel;
@@ -28,7 +28,7 @@ class MenuItemEntryTest extends ApplicationTest {
 	
 	private IServerModel model;
 	
-	private IDishMenuItemData item1;
+	private DishMenuItemData item1;
 	private String i1Name = "aaa";
 	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
 	private BigDecimal i1Price = BigDecimal.valueOf(5);
@@ -36,7 +36,7 @@ class MenuItemEntryTest extends ApplicationTest {
 	private BigDecimal i1Disc = BigDecimal.valueOf(0);
 	private String i1id = "item1";
 	
-	private IDishMenuItemData item2;
+	private DishMenuItemData item2;
 	private String i2Name = "bbb";
 	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
 	private BigDecimal i2Price = BigDecimal.valueOf(1);
@@ -44,7 +44,7 @@ class MenuItemEntryTest extends ApplicationTest {
 	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
 	private String i2id = "item2";
 	
-	private IDishMenuItemData item3;
+	private DishMenuItemData item3;
 	private String i3Name = "ccc";
 	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
 	private BigDecimal i3Price = BigDecimal.valueOf(4);
@@ -117,7 +117,7 @@ class MenuItemEntryTest extends ApplicationTest {
 	void refreshMenuTest() {
 		Assertions.assertNull(entry.getActiveMenu());
 		
-		IDishMenuData menuData = model.getMenuData();
+		DishMenuData menuData = model.getMenuData();
 		
 		entry.refreshMenu(menuData);
 		Assertions.assertEquals(entry.getActiveMenu(), menuData);
@@ -138,7 +138,7 @@ class MenuItemEntryTest extends ApplicationTest {
 	void selectionPersistenceTest() {
 		Assertions.assertNull(entry.getActiveMenu());
 		
-		IDishMenuData menuData = model.getMenuData();
+		DishMenuData menuData = model.getMenuData();
 		
 		entry.refreshMenu(menuData);
 		Assertions.assertEquals(entry.getActiveMenu(), menuData);

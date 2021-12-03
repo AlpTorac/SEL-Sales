@@ -8,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import controller.IController;
 import model.entity.id.EntityID;
-import model.order.IOrderData;
+import model.order.OrderData;
 import view.repository.uiwrapper.UIAccordion;
 import view.repository.uiwrapper.UIComponentFactory;
 
@@ -26,7 +26,7 @@ public abstract class OrderAccordion extends UIAccordion implements PriceUpdateT
 		this.fac = fac;
 	}
 	
-	public void addOrderData(IOrderData data) {
+	public void addOrderData(OrderData data) {
 		OrderEntry entry = this.createOrderEntry(data);
 		EntityID id = data.getID();
 		super.addTab(id.toString(), entry);
@@ -36,7 +36,7 @@ public abstract class OrderAccordion extends UIAccordion implements PriceUpdateT
 		}
 	}
 	
-	protected abstract OrderEntry createOrderEntry(IOrderData data);
+	protected abstract OrderEntry createOrderEntry(OrderData data);
 //	{
 //		return new OrderEntry(controller, fac, this, data);
 //	}
@@ -65,8 +65,8 @@ public abstract class OrderAccordion extends UIAccordion implements PriceUpdateT
 		return col;
 	}
 	
-	public Collection<IOrderData> getDisplayedOrders() {
-		Collection<IOrderData> col = new CopyOnWriteArrayList<IOrderData>();
+	public Collection<OrderData> getDisplayedOrders() {
+		Collection<OrderData> col = new CopyOnWriteArrayList<OrderData>();
 		this.orderEntries.values().forEach(e -> col.add(e.getActiveData()));
 		return col;
 	}

@@ -20,15 +20,13 @@ public class AddCookingOrderListener extends ClickEventListener implements IAppl
 	
 	@Override
 	public void clickAction() {
-		if (this.oe.getCurrentOrder().length > 0) {
-			this.fireApplicationEvent(this.controller);
-		}
+		this.fireApplicationEvent(this.controller);
 		this.oe.orderSentToNextTab();
 	}
 	
 	@Override
 	public Object[] getArgs() {
-		return new Object[] {this.oe.serialiseCurrentOrder()};
+		return new Object[] {this.oe.getCurrentOrder()};
 	}
 
 	@Override

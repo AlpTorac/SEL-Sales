@@ -2,8 +2,10 @@ package server.view.composites;
 
 import java.time.LocalDateTime;
 
-import model.IDateSettings;
-import model.order.IOrderData;
+import model.DateSettings;
+import model.dish.DishMenuItemData;
+import model.entity.AccumulatingAggregateEntry;
+import model.order.OrderData;
 import model.order.AccumulatingOrderItemAggregate;
 import view.repository.IButton;
 import view.repository.IGridLayout;
@@ -18,13 +20,13 @@ import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIVBoxLayout;
 
 public class OrderInspectionArea extends UIVBoxLayout {
-	private IDateSettings ds;
+	private DateSettings ds;
 
 	private ILabel orderIDLabel;
 	private ILabel orderTimeInDayLabel;
 	private ILabel orderDateLabel;
 	
-	private ITable<AccumulatingOrderItemAggregate> orderDetailsDisplay;
+	private ITable<AccumulatingAggregateEntry<DishMenuItemData>> orderDetailsDisplay;
 	
 	private IRadioButton cashRadioButton;
 	private IRadioButton cardRadioButton;
@@ -46,7 +48,7 @@ public class OrderInspectionArea extends UIVBoxLayout {
 	
 	private UIComponentFactory fac;
 	
-	public OrderInspectionArea(UIComponentFactory fac, IDateSettings ds) {
+	public OrderInspectionArea(UIComponentFactory fac, DateSettings ds) {
 		super(fac.createVBoxLayout().getComponent());
 		this.ds = ds;
 		this.fac = fac;
@@ -72,7 +74,7 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		this.getEditButton().setEnabled(false);
 	}
 	
-	public void displayOrder(IOrderData data) {
+	public void displayOrder(OrderData data) {
 		this.displayOrderID(data);
 		this.displayOrderDate(data);
 		this.displayOrderedItems(data);
@@ -84,35 +86,35 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		this.getEditButton().setEnabled(true);
 	}
 	
-	private void displayOrderID(IOrderData data) {
+	private void displayOrderID(OrderData data) {
 		this.getOrderIDLabel().setCaption(data.getID().toString());
 	}
 	
-	private void displayOrderPriceDetails(IOrderData data) {
+	private void displayOrderPriceDetails(OrderData data) {
 		this.getGrossSumDisplay().setCaption(data.getGrossSum().toPlainString());
 		this.getDiscountDisplay().setCaption(data.getOrderDiscount().toPlainString());
 		this.getNetSumDisplay().setCaption(data.getNetSum().toPlainString());
 	}
 	
-	private void displayOrderedItems(IOrderData data) {
+	private void displayOrderedItems(OrderData data) {
 		this.getOrderDetailsDisplay().clear();
 		this.getOrderDetailsDisplay().addItems(data.getOrderedItems());
 	}
 	
-	private void displayOrderDate(IOrderData data) {
+	private void displayOrderDate(OrderData data) {
 		LocalDateTime orderDate = data.getDate();
 		this.getOrderTimeInDayLabel().setCaption(this.ds.getTimeInDay(orderDate));
 		this.getOrderDateLabel().setCaption(this.ds.getDateInYear(orderDate));
 	}
 	
-	private void displayIsCash(IOrderData data) {
+	private void displayIsCash(OrderData data) {
 		boolean isCash = data.getIsCash();
 		
 		this.getCashRadioButton().setToggled(isCash);
 		this.getCardRadioButton().setToggled(!isCash);
 	}
 	
-	private void displayIsHere(IOrderData data) {
+	private void displayIsHere(OrderData data) {
 		boolean isHere = data.getIsHere();
 		
 		this.getHereRadioButton().setToggled(isHere);
@@ -195,8 +197,8 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		return label;
 	}
 	
-	protected ITable<AccumulatingOrderItemAggregate> initOrderDetailsTable() {
-		ITable<AccumulatingOrderItemAggregate> table = this.fac.createTable();
+	protected ITable<AccumulatingAggregateEntry<DishMenuItemData>> initOrderDetailsTable() {
+		ITable<AccumulatingAggregateEntry<DishMenuItemData>> table = this.fac.createTable();
 		table.addColumn("Menu Item", "ItemData");
 		table.addColumn("Amount", "Amount");
 		table.addColumn("Gross Price", "GrossPrice");
@@ -375,7 +377,7 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		return orderDateLabel;
 	}
 
-	public ITable<AccumulatingOrderItemAggregate> getOrderDetailsDisplay() {
+	public ITable<AccumulatingAggregateEntry<DishMenuItemData>> getOrderDetailsDisplay() {
 		return orderDetailsDisplay;
 	}
 

@@ -1,8 +1,7 @@
 package server.view.composites;
 
 import model.DateSettings;
-import model.IDateSettings;
-import model.order.IOrderData;
+import model.order.OrderData;
 import server.controller.IServerController;
 import server.controller.ServerSpecificEvent;
 import server.model.IServerModel;
@@ -25,7 +24,7 @@ import view.repository.uiwrapper.UIHBoxLayout;
 public class MainArea extends UIHBoxLayout {
 	private UIComponentFactory fac;
 	private AdvancedUIComponentFactory advFac;
-	private IDateSettings ds;
+	private DateSettings ds;
 	
 	private MenuDesignArea mda;
 	private OrderTrackingArea ota;
@@ -110,9 +109,9 @@ public class MainArea extends UIHBoxLayout {
 
 	public void refreshConfirmedOrders() {
 		this.ota.clearConfirmedOrderList();
-		IOrderData[] confirmedOrders = model.getAllConfirmedOrders();
+		OrderData[] confirmedOrders = model.getAllConfirmedOrders();
 		this.ota.addConfirmedOrders(confirmedOrders);
-//		for (IOrderData order : confirmedOrders) {
+//		for (OrderData order : confirmedOrders) {
 //			this.ota.confirmOrder(order);
 //		}
 	}

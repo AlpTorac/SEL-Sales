@@ -1,5 +1,6 @@
 package server.controller.handler;
 
+import model.order.OrderData;
 import server.controller.IServerController;
 
 public class ConfirmOrderHandler extends ServerApplicationEventHandler {
@@ -10,7 +11,7 @@ public class ConfirmOrderHandler extends ServerApplicationEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().getModel().confirmOrder((String) args[0]);
+		this.getController().getModel().confirmOrder((OrderData) args[0]);
 	}
 
 }

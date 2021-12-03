@@ -1,21 +1,25 @@
 package server.model;
 
 import model.IModel;
-import model.order.IOrderData;
+import model.dish.DishMenuItemData;
+import model.order.OrderData;
 
 public interface IServerModel extends IModel {
-	default void addOrder(String serialisedOrderData) {
-		this.addUnconfirmedOrder(serialisedOrderData);
+	void addOrder(String serialisedOrderData);
+	default void addOrder(OrderData data) {
+		this.addUnconfirmedOrder(data);
 	}
-	void addUnconfirmedOrder(String serialisedOrderData);
-	void confirmOrder(String serialisedConfirmedOrderData);
+	void addUnconfirmedOrder(OrderData data);
+	void confirmOrder(OrderData data);
 	void removeUnconfirmedOrder(String id);
 	void removeConfirmedOrder(String id);
+	
+	void addMenuItem(DishMenuItemData data);
 	void addMenuItem(String serialisedItemData);
-	void editMenuItem(String serialisedNewItemData);
+	void editMenuItem(DishMenuItemData data);
 	void removeMenuItem(String id);
-	IOrderData[] getAllUnconfirmedOrders();
-	IOrderData[] getAllConfirmedOrders();
+	OrderData[] getAllUnconfirmedOrders();
+	OrderData[] getAllConfirmedOrders();
 	void removeAllUnconfirmedOrders();
 	void removeAllConfirmedOrders();
 	@Override
