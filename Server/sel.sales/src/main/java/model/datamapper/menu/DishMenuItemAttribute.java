@@ -1,6 +1,8 @@
-package model.datamapper;
+package model.datamapper.menu;
 
 import java.math.BigDecimal;
+
+import model.datamapper.IAttribute;
 
 public enum DishMenuItemAttribute implements IAttribute {
 	DISH_NAME("dishName", ""),

@@ -2,8 +2,6 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -12,6 +10,7 @@ import model.connectivity.FileDeviceDataParser;
 import model.connectivity.FileDeviceDataSerialiser;
 import model.connectivity.IConnectivityManager;
 import model.connectivity.IDeviceData;
+import model.datamapper.menu.DishMenuItemDAO;
 import model.datamapper.order.OrderAttribute;
 import model.datamapper.order.OrderDAO;
 import model.dish.DishMenuItemFinder;
@@ -20,7 +19,6 @@ import model.entity.id.EntityIDFactory;
 import model.entity.id.MinimalIDFactory;
 import model.dish.DishMenu;
 import model.dish.DishMenuData;
-import model.dish.DishMenuItem;
 import model.dish.DishMenuItemData;
 import model.dish.DishMenuItemFactory;
 import model.filemanager.FileManager;
@@ -66,6 +64,7 @@ public abstract class Model implements IModel {
 	private OrderCollector orderCollector;
 	
 	private OrderDAO orderDAO;
+	private DishMenuItemDAO menuDAO;
 	
 	private TableNumberContainer tnc;
 	
@@ -80,6 +79,7 @@ public abstract class Model implements IModel {
 		this.part = new ArrayList<HasSettingsField>();
 		
 		this.ds = new DateSettings();
+		this.orderFac = new OrderFactory();
 		this.menuItemFac = new DishMenuItemFactory();
 		
 		this.orderCollector = this.initOrderCollector();
@@ -87,7 +87,7 @@ public abstract class Model implements IModel {
 		this.deviceDataParser = new FileDeviceDataParser();
 		this.deviceDataSerialiser = new FileDeviceDataSerialiser();
 		
-		this.dishMenu = this.initDishMenu();
+		this.setDishMenu(this.initDishMenu());
 		
 		this.connManager = new ConnectivityManager();
 		
@@ -99,9 +99,23 @@ public abstract class Model implements IModel {
 		this.tnc = new TableNumberContainer(this);
 		
 		this.orderDAO = new OrderDAO(this.resourceFolderAddress);
+		this.menuDAO = new DishMenuItemDAO(this.resourceFolderAddress);
 		
 		this.part.add(this.tnc);
 		this.part.add(this.fileManager);
+	}
+	
+	protected OrderDAO getOrderDAO() {
+		return this.orderDAO;
+	}
+	
+	protected DishMenuItemDAO getDishMenuItemDAO() {
+		return this.menuDAO;
+	}
+	
+	@Override
+	public String serialiseOrder(OrderData data) {
+		return this.getOrderDAO().serialiseValueObjects(data);
 	}
 	
 	@Override
@@ -149,7 +163,7 @@ public abstract class Model implements IModel {
 //		if (order == null) {
 //			order = this.orderConfirmedCollector.getOrder(id);
 //		}
-		return this.getOrderCollector().getAsValueObject(id);
+		return this.getOrderCollector().getElementAsValueObject(id);
 	}
 	
 	@Override
@@ -219,32 +233,8 @@ public abstract class Model implements IModel {
 				u -> ((OrderUpdatable) u).refreshOrders());
 	}
 	
-	protected void orderStatusChanged(String orderID) {
-		this.orderStatusChanged(this.createMinimalID(orderID));
-	}
-
-	protected void orderStatusChanged(EntityID orderID) {
-		this.orderDAO.getDAO(OrderAttribute.STATUS).writeToFileFor(this.getOrderCollector(), orderID);
-	}
-	
-	protected void orderTableNumberChanged(String orderID) {
-		this.orderTableNumberChanged(this.createMinimalID(orderID));
-	}
-	
-	protected void orderTableNumberChanged(EntityID orderID) {
-		this.orderDAO.getDAO(OrderAttribute.TABLE_NUMBER).writeToFileFor(this.getOrderCollector(), orderID);
-	}
-	
-	protected void orderNoteChanged(String orderID) {
-		this.orderNoteChanged(this.createMinimalID(orderID));
-	}
-	
-	protected void orderNoteChanged(EntityID orderID) {
-		this.orderDAO.getDAO(OrderAttribute.NOTE).writeToFileFor(this.getOrderCollector(), orderID);
-	}
-	
 	public DishMenuItemData getMenuItem(EntityID id) {
-		return this.getDishMenu().getAsValueObject(id);
+		return this.getDishMenu().getElementAsValueObject(id);
 	}
 	
 	@Override
@@ -356,15 +346,23 @@ public abstract class Model implements IModel {
 		this.dishMenu = dishMenu;
 		this.finder = new DishMenuItemFinder(this.getDishMenu());
 	}
+	
+	protected void setDishMenu(Iterable<DishMenuItemData> dishMenu) {
+		DishMenu menu = new DishMenu();
+		for (DishMenuItemData data : dishMenu) {
+			menu.addElement(data);
+		}
+		this.setDishMenu(menu);
+	}
 
 	@Override
 	public void setDishMenuFromFile(String menu) {
-		this.setDishMenu(this.menuHelper.parseFileMenuData(menu));
+		this.setDishMenu(this.getDishMenuItemDAO().parseValueObjects(menu));
 	}
 	
 	@Override
 	public void setDishMenuFromExternal(String menu) {
-		this.setDishMenu(this.menuHelper.parseExternalMenuData(menu));
+		this.setDishMenu(this.getDishMenuItemDAO().parseValueObjects(menu));
 	}
 	
 	@Override
@@ -418,12 +416,14 @@ public abstract class Model implements IModel {
 	}
 
 	public boolean writeOrder(EntityID orderID) {
-		if (!this.isOrderWritten(orderID)) {
-			boolean isWritten = this.getFileManager().writeOrderData(this.getOrderHelper().serialiseForFile(this.getOrder(orderID)));
-			this.getOrderCollector().setAttributeValue(OrderAttribute.IS_WRITTEN, orderID, true);
-			return isWritten;
+		OrderData[] datas = this.getOrderCollector().getAllElementsAsValueObjects().toArray(OrderData[]::new);
+		boolean isWritten = this.getFileManager().writeOrderDatas(this.getOrderDAO().serialiseValueObjects(datas));
+		if (isWritten) {
+			for (OrderData d : datas) {
+				this.getOrderCollector().setAttributeValue(OrderAttribute.IS_WRITTEN, d.getID(), true);
+			}
 		}
-		return true;
+		return isWritten;
 	}
 	
 	@Override
@@ -449,8 +449,7 @@ public abstract class Model implements IModel {
 		if (readFile == null) {
 			return;
 		}
-		OrderData[] orderData = this.getOrderHelper().deserialiseOrderDatas(readFile);
-		for (OrderData od : orderData) {
+		for (OrderData od : this.getOrderDAO().parseValueObjects(readFile)) {
 			this.addWrittenOrder(od);
 		}
 	}
@@ -468,21 +467,7 @@ public abstract class Model implements IModel {
 	
 	@Override
 	public OrderData[] getAllWrittenOrders() {
-		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.IS_WRITTEN, true));
-	}
-	
-	@Override
-	public void setOrderTableNumbersFromFile(String readFile) {
-		this.orderDAO.getDAO(OrderAttribute.TABLE_NUMBER).setAttributesFromFile(this.getOrderCollector(), readFile);
-	}
-	
-	@Override
-	public void setOrderNotesFromFile(String readFile) {
-		this.orderDAO.getDAO(OrderAttribute.NOTE).setAttributesFromFile(this.getOrderCollector(), readFile);
-	}
-	@Override
-	public void setOrderStatusesFromFile(String readFile) {
-		this.orderDAO.getDAO(OrderAttribute.STATUS).setAttributesFromFile(this.getOrderCollector(), readFile);
+		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.IS_WRITTEN, true)).toArray(OrderData[]::new);
 	}
 	@Override
 	public Collection<Integer> getTableNumbers() {
@@ -495,7 +480,6 @@ public abstract class Model implements IModel {
 	
 	public void setOrderTableNumber(EntityID orderID, int tableNumber) {
 		this.getOrderCollector().setAttributeValue(OrderAttribute.TABLE_NUMBER, orderID, tableNumber);
-		this.orderTableNumberChanged(orderID);
 	}
 	
 	@Override
@@ -505,7 +489,6 @@ public abstract class Model implements IModel {
 	
 	public void removeOrder(EntityID id) {
 		this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, id, OrderStatus.CANCELLED);
-		this.orderStatusChanged(id);
 		this.getOrderCollector().removeElement(id);
 		this.ordersChanged();
 	}
@@ -515,34 +498,13 @@ public abstract class Model implements IModel {
 		this.removeOrder(this.createMinimalID(id));
 	}
 	
-	@Override
-	public Integer getOrderTableNumber(String orderID) {
-		Number n = (Number) this.getOrderCollector().getAttributeValue(OrderAttribute.TABLE_NUMBER, this.createMinimalID(orderID));
-		if (n != null) {
-			return n.intValue();
-		} else {
-			return this.getPlaceholderTableNumber();
-		}
-	}
-	
 	public void setOrderNote(EntityID orderID, String note) {
 		this.getOrderCollector().setAttributeValue(OrderAttribute.NOTE, orderID, note);
-		this.orderNoteChanged(orderID);
 	}
 	
 	@Override
 	public void setOrderNote(String orderID, String note) {
 		this.setOrderNote(this.createMinimalID(orderID), note);
-	}
-	
-	@Override
-	public String getOrderNote(String orderID) {
-		return (String) this.getOrderCollector().getAttributeValue(OrderAttribute.NOTE, this.createMinimalID(orderID));
-	}
-	
-	@Override
-	public Integer getPlaceholderTableNumber() {
-		return (Integer) OrderAttribute.TABLE_NUMBER.getDefaultValue();
 	}
 	
 	@Override
@@ -555,5 +517,15 @@ public abstract class Model implements IModel {
 		return this.getOrder(orderID) != null &&
 				!this.getOrderCollector().getAttributeValue(OrderAttribute.STATUS, this.createMinimalID(orderID))
 				.equals(OrderStatus.CANCELLED);
+	}
+	
+	@Override
+	public String serialiseMenuData() {
+		return this.getDishMenuItemDAO().serialiseValueObjects(this.getMenuData().getAllItems().toArray(DishMenuItemData[]::new));
+	}
+	
+	@Override
+	public String serialiseMenuItem(DishMenuItemData data) {
+		return this.getDishMenuItemDAO().serialiseValueObjects(data);
 	}
 }

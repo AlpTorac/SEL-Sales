@@ -1,55 +1,68 @@
 package model.filemanager;
 
 import model.IModel;
-import model.filewriter.DeviceDataFile;
-import model.filewriter.DishMenuFile;
-import model.filewriter.StandardDeviceDataFile;
-import model.filewriter.StandardDishMenuFile;
+import model.filewriter.IFileAccess;
+import model.filewriter.StandardFileAccess;
 import model.settings.SettingsField;
 
 public class FileManager implements IFileManager {
-	private DishMenuFile dishMenuWriter;
+	private final String menuFileName = "menu";
+	private final String orderFileName = "orders";
+	private final String settingsFileName = "settings";
+	private final String deviceDataFileName = "knownDevices";
+	
+	private IFileAccess menuFile;
+	private IFileAccess settingsFile;
+	private IFileAccess deviceDataFile;
+	private IFileAccess orderFile;
 	
 	private String settingsFolderAddress;
-	private SettingsFile settingsFile;
-	private DeviceDataFile deviceDataFile;
+	
 	private IModel model;
 	
 	public FileManager(IModel model, String settingsFolderAddress) {
 		this.model = model;
 		
 		this.setResourcesFolderAddress(settingsFolderAddress);
-		this.dishMenuWriter = new StandardDishMenuFile(this.model.getSettings().getSetting(SettingsField.DISH_MENU_FOLDER));
+		this.menuFile = new StandardFileAccess(this.model.getSettings().getSetting(SettingsField.DISH_MENU_FOLDER), this.menuFileName);
+		this.orderFile = new StandardFileAccess(this.model.getSettings().getSetting(SettingsField.ORDER_FOLDER), this.orderFileName);
 	}
 	
-	protected void setDishMenuInModel(DishMenuFile f) {
+	protected void setDishMenuInModel(IFileAccess f) {
 		String menu = f.readFile();
 		if (menu != null && !menu.isEmpty()) {
-//			System.out.println("Dish menu preloaded");
 			this.model.setDishMenuFromFile(menu);
+		}
+	}
+	
+	protected void setOrdersInModel(IFileAccess f) {
+		String orders = f.readFile();
+		if (orders != null && !orders.isEmpty()) {
+			this.model.setWrittenOrders(orders);
 		}
 	}
 	
 	protected void initSettings() {
 		String s = this.settingsFile.readFile();
 		if (s != null && !s.isEmpty()) {
-//			System.out.println("Settings preloaded");
 			this.model.setSettings(s);
 		}
 	}
 	
+	protected void initOrders() {
+		String s = this.orderFile.readFile();
+		if (s != null && !s.isEmpty()) {
+			this.model.setWrittenOrders(s);
+		}
+	}
+	
 	protected void initDishMenu() {
-//		String menu = this.dishMenuWriter.readFile();
-//		if (menu != null && !menu.isEmpty()) {
-//			System.out.println("Dish menu preloaded");
-//			this.model.setDishMenu(menu);
-//		}
-		this.setDishMenuInModel(this.dishMenuWriter);
+		this.setDishMenuInModel(this.menuFile);
 	}
 	
 	@Override
 	public boolean writeDishMenuData(String data) {
-		return this.dishMenuWriter.remakeFile() && this.dishMenuWriter.writeToFile(data);
+		return this.menuFile.remakeFile() && this.menuFile.writeToFile(data);
 	}
 	
 	@Override
@@ -63,22 +76,26 @@ public class FileManager implements IFileManager {
 
 	@Override
 	public void refreshValue() {
-		this.dishMenuWriter.setAddress(this.model.getSettings().getSetting(SettingsField.DISH_MENU_FOLDER));
+		this.menuFile.setAddress(this.model.getSettings().getSetting(SettingsField.DISH_MENU_FOLDER));
 	}
 	@Override
 	public void close() {
-		this.dishMenuWriter.close();
+		this.menuFile.close();
 		this.settingsFile.close();
 		this.deviceDataFile.close();
+		this.orderFile.close();
 	}
 
 	@Override
+	public void loadOrders(String fileAddress) {
+		IFileAccess file = new StandardFileAccess(fileAddress, this.orderFileName);
+		this.setOrdersInModel(file);
+		file.close();
+	}
+	
+	@Override
 	public void loadDishMenu(String fileAddress) {
-		DishMenuFile file = new StandardDishMenuFile(fileAddress);
-//		String menu = file.readFile();
-//		if (menu != null && !menu.isEmpty()) {
-//			this.model.setDishMenu(menu);
-//		}
+		IFileAccess file = new StandardFileAccess(fileAddress, this.menuFileName);
 		this.setDishMenuInModel(file);
 		file.close();
 	}
@@ -90,12 +107,12 @@ public class FileManager implements IFileManager {
 
 	@Override
 	public void loadKnownDevices(String fileAddress) {
-		DeviceDataFile file = new StandardDeviceDataFile(fileAddress);
+		IFileAccess file = new StandardFileAccess(fileAddress, this.deviceDataFileName);
 		this.setKnownDevicesInModel(file);
 		file.close();
 	}
 
-	protected void setKnownDevicesInModel(DeviceDataFile file) {
+	protected void setKnownDevicesInModel(IFileAccess file) {
 		this.model.setKnownDevices(file.readFile());
 	}
 
@@ -108,8 +125,8 @@ public class FileManager implements IFileManager {
 		if (this.settingsFile != null) {
 			this.settingsFile.close();
 		}
-		this.deviceDataFile = new StandardDeviceDataFile(this.settingsFolderAddress);
-		this.settingsFile = new StandardSettingsFile(this.settingsFolderAddress);
+		this.deviceDataFile = new StandardFileAccess(this.settingsFolderAddress, this.deviceDataFileName);
+		this.settingsFile = new StandardFileAccess(this.settingsFolderAddress, this.settingsFileName);
 	}
 
 	@Override
@@ -125,5 +142,15 @@ public class FileManager implements IFileManager {
 	@Override
 	public void loadSavedKnownDevices() {
 		this.initKnownDevices();
+	}
+
+	@Override
+	public void loadSavedOrders() {
+		this.initOrders();
+	}
+
+	@Override
+	public boolean writeOrderDatas(String orderDatas) {
+		return this.orderFile.remakeFile() && this.orderFile.writeToFile(orderDatas);
 	}
 }

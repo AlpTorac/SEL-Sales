@@ -1,7 +1,5 @@
 package view.repository;
 
-import java.util.Collection;
-
 import view.repository.uiwrapper.ChangeEventListener;
 
 public interface IToggleGroup {

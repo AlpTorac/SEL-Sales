@@ -1,8 +1,11 @@
 package model.entity;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-
+import java.util.concurrent.CopyOnWriteArrayList;
 import model.datamapper.IAttribute;
 import model.entity.id.EntityID;
 import model.entity.id.EntityIDFactory;
@@ -15,8 +18,12 @@ public abstract class Repository<A extends IAttribute, E extends Entity<A>, V ex
 	
 	protected Repository() {
 		this.entities = this.initEntityMap();
-		this.fac = this.initFactory();
+		this.fac = this.getDefaultFactory();
 		this.idFac = this.initIDFactory();
+	}
+	
+	public void setFactory(IFactory<A,E,V> fac) {
+		this.fac = fac;
 	}
 	
 	protected Map<EntityID, E> getEntityMap() {
@@ -35,7 +42,7 @@ public abstract class Repository<A extends IAttribute, E extends Entity<A>, V ex
 		return this.fac;
 	}
 	
-	protected abstract IFactory<A, E, V> initFactory();
+	protected abstract IFactory<A, E, V> getDefaultFactory();
 	
 	public V getValueObjectFor(E entity) {
 		return this.getFactory().entityToValue(entity);
@@ -45,17 +52,13 @@ public abstract class Repository<A extends IAttribute, E extends Entity<A>, V ex
 		return this.getFactory().entityToValue(entity);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public V[] toValueObjectArray(E[] entities) {
-		int size = entities.length;
-		Object[] arr = new Object[size];
-		for (int i = 0; i < size; i++) {
-			arr[i] = this.getFactory().entityToValue(entities[i]);
-		}
-		return (V[]) arr;
+	public Collection<V> toValueObjectArray(Collection<E> entities) {
+		Collection<V> result = new CopyOnWriteArrayList<V>();
+		entities.forEach(e -> result.add(this.toValueObject(e)));
+		return result;
 	}
 	
-	public V getAsValueObject(EntityID id) {
+	public V getElementAsValueObject(EntityID id) {
 		return this.getFactory().entityToValue(this.getElement(id));
 	}
 	
@@ -75,11 +78,19 @@ public abstract class Repository<A extends IAttribute, E extends Entity<A>, V ex
 	}
 	
 	public E getElement(EntityID id) {
-		return this.contains(id) ? this.getEntityMap().get(id) : null;
+		Optional<Entry<EntityID, E>> o = this.getEntityMap().entrySet().stream()
+				.filter(e -> e.getKey().equals(id))
+				.findFirst();
+		
+		return o.isPresent() ? o.get().getValue() : null;
 	}
 	
 	public E removeElement(EntityID id) {
-		return this.getEntityMap().remove(id);
+		Optional<Entry<EntityID, E>> o = this.getEntityMap().entrySet().stream()
+				.filter(e -> e.getKey().equals(id))
+				.findFirst();
+		
+		return o.isPresent() ? this.getEntityMap().remove(o.get().getKey()) : null;
 	}
 	
 	public E removeElementIfAttributeValueEquals(A attribute, EntityID id, Object attributeValue) {
@@ -93,20 +104,28 @@ public abstract class Repository<A extends IAttribute, E extends Entity<A>, V ex
 		this.addElement(this.getFactory().valueToEntity(valueObjectOfElement));
 	}
 	public void addElement(E element) {
-		this.getEntityMap().put(element.getID(), element);
+		if (!this.contains(element.getID())) {
+			this.getEntityMap().put(element.getID(), element);
+		}
 	}
 	public boolean contains(EntityID id) {
-		return this.getEntityMap().containsKey(id);
+		return this.getEntityMap().keySet().stream().anyMatch(k -> k.equals(id));
 	}
-	@SuppressWarnings("unchecked")
-	public E[] getAllElements() {
-		return (E[]) this.getEntityMap().values().toArray(Entity[]::new);
+	public Collection<E> getAllElements() {
+		return this.getEntityMap().values();
 	}
-	@SuppressWarnings("unchecked")
-	public E[] getAllElementsByAttributeValue(A attribute, Object attributeValue) {
-		return (E[]) this.getEntityMap().values().stream()
-				.filter(v -> v.getAttributeValue(attribute).equals(attributeValue))
-				.toArray(Entity[]::new);
+	public Collection<V> getAllElementsAsValueObjects() {
+		Collection<V> result = new CopyOnWriteArrayList<V>();
+		this.getEntityMap().values().stream().map(e -> this.toValueObject(e))
+		.forEach(v -> result.add(v));
+		return result;
+	}
+	public Collection<E> getAllElementsByAttributeValue(A attribute, Object attributeValue) {
+		Collection<E> result = new CopyOnWriteArrayList<E>();
+		this.getEntityMap().values().stream()
+		.filter(e -> e.getAttributeValue(attribute).equals(attributeValue))
+		.forEach(e -> result.add(e));
+		return result;
 	}
 	public E getElementIfAttributeValueEquals(A attribute, EntityID id, Object attributeValue) {
 		E element = this.getElement(id);

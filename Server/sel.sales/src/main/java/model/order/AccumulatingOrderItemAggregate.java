@@ -4,8 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import model.datamapper.DishMenuItemAttribute;
-import model.dish.DishMenuItem;
+import model.datamapper.menu.DishMenuItemAttribute;
 import model.dish.DishMenuItemData;
 import model.dish.IDishMenuItemFinder;
 import model.entity.AccumulatingAggregate;
@@ -18,7 +17,17 @@ public class AccumulatingOrderItemAggregate extends AccumulatingAggregate<DishMe
 	private Collection<AccumulatingAggregateEntry<EntityID>> cache = new CopyOnWriteArrayList<AccumulatingAggregateEntry<EntityID>>();
 	
 	public void setDishMenuFinder(IDishMenuItemFinder finder) {
-		this.finder = finder;
+		if (finder != null) {
+			this.finder = finder;
+			DishMenuItemData d;
+			AccumulatingAggregateEntry<?>[] entryArr = this.cache.toArray(AccumulatingAggregateEntry<?>[]::new);
+			for (AccumulatingAggregateEntry<?> e : entryArr) {
+				if ((d = this.finder.getMenuItemData((EntityID) e.getItem())) != null) {
+					this.addElement(d, e.getAmount());
+					this.cache.remove(e);
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -51,13 +60,32 @@ public class AccumulatingOrderItemAggregate extends AccumulatingAggregate<DishMe
 				.reduce(BigDecimal.ZERO, (gp1,gp2) -> gp1.add(gp2));
 	}
 	
+	public AccumulatingAggregateEntry<DishMenuItemData> getOrderedItem(EntityID id) {
+		return super.getElementEntry(id);
+	}
+	
 	public AccumulatingAggregateEntry<DishMenuItemData>[] getOrderedItems() {
 		return super.getAllEntries();
 	}
 	
+	@Override
+	public BigDecimal getElementAmount(EntityID id) {
+		BigDecimal result = BigDecimal.ZERO;
+		
+		BigDecimal amount = super.getElementAmount(id);
+		if (amount != null) {
+			result = amount;
+		}
+		
+		return result.add(this.cache.stream().filter(i -> i.getItem().equals(id))
+		.map(i -> i.getAmount())
+		.reduce(BigDecimal.ZERO, (a1,a2)->a1.add(a2)));
+	}
+	
 	public void addElement(EntityID id, BigDecimal amount) {
-		if (this.finder != null) {
-			this.addElement(this.finder.getMenuItemData(id), amount);
+		DishMenuItemData data;
+		if (this.finder != null && (data = this.finder.getMenuItemData(id)) != null) {
+			this.addElement(data, amount);
 		} else {
 			this.cache.add(new AccumulatingAggregateEntry<EntityID>(id, amount));
 		}

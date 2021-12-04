@@ -2,7 +2,7 @@ package model.dish;
 
 import java.math.BigDecimal;
 
-import model.datamapper.DishMenuItemAttribute;
+import model.datamapper.menu.DishMenuItemAttribute;
 import model.entity.IFactory;
 import model.entity.id.EntityID;
 import model.entity.id.EntityIDFactory;
@@ -58,5 +58,10 @@ public class DishMenuItemFactory implements IFactory<DishMenuItemAttribute, Dish
 		item.setAttributeValue(DishMenuItemAttribute.GROSS_PRICE, valueObject.getGrossPrice());
 		item.setAttributeValue(DishMenuItemAttribute.PRODUCTION_COST, valueObject.getProductionCost());
 		return item;
+	}
+
+	@Override
+	public DishMenuItemData constructMinimalValueObject(EntityID id) {
+		return new DishMenuItemData(id);
 	}
 }

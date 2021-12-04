@@ -19,7 +19,7 @@ public final class DishMenuItemTestUtilityClass {
 		Assertions.assertEquals(data.getProductionCost().compareTo(productionCost), 0);
 	}
 	public static void assertMenuItemEqual(DishMenuItem item, String dishName, String id, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost) {
-		Assertions.assertEquals(item.getDishName().getName(), dishName);
+		Assertions.assertEquals(item.getDishName(), dishName);
 		Assertions.assertEquals(item.getID().toString(), id);
 		Assertions.assertEquals(item.getPortionSize().compareTo(portionSize), 0);
 		Assertions.assertEquals(item.getGrossPrice().compareTo(price), 0);
@@ -30,7 +30,7 @@ public final class DishMenuItemTestUtilityClass {
 		Assertions.assertEquals(data.getGrossPricePerPortion().compareTo(grossPrice.divide(portionSize, mc)), 0);
 	}
 	public static void assertMenuItemAndDataEqual(DishMenuItem item, DishMenuItemData data) {
-		Assertions.assertEquals(item.getDishName().getName(), data.getDishName());
+		Assertions.assertEquals(item.getDishName(), data.getDishName());
 		Assertions.assertEquals(item.getID().toString(), data.getID().toString());
 		Assertions.assertEquals(item.getPortionSize().compareTo(data.getPortionSize()), 0);
 		Assertions.assertEquals(item.getGrossPrice().compareTo(data.getGrossPrice()), 0);

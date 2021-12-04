@@ -6,6 +6,7 @@ public class StandardFileAccess extends FileAccess {
 	public StandardFileAccess(String address, String fileName) {
 		super(address);
 		this.defaultFileName = fileName;
+		this.setAddress(address);
 	}
 
 	@Override

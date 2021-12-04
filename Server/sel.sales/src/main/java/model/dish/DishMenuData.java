@@ -1,6 +1,6 @@
 package model.dish;
 
-import model.datamapper.DishMenuItemAttribute;
+import model.datamapper.menu.DishMenuItemAttribute;
 import model.entity.Aggregate;
 
 public class DishMenuData extends Aggregate<DishMenuItemAttribute, DishMenuItemData> {

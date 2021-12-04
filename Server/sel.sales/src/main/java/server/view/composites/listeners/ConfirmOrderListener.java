@@ -1,6 +1,5 @@
 package server.view.composites.listeners;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -8,7 +7,6 @@ import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
 import model.dish.DishMenuItemData;
 import model.entity.AccumulatingAggregateEntry;
-import model.order.AccumulatingOrderItemAggregate;
 import model.order.OrderData;
 import server.controller.IServerController;
 import server.controller.ServerSpecificEvent;

@@ -2,8 +2,6 @@ package model.order;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collection;
-
 import model.datamapper.order.OrderAttribute;
 import model.dish.DishMenuItemData;
 import model.entity.AccumulatingAggregateEntry;
@@ -15,6 +13,7 @@ public class OrderData extends ValueObject<OrderAttribute> {
 	
 	protected OrderData(EntityID id) {
 		super(id);
+		this.setAttributeValue(OrderAttribute.ORDER_ITEMS, new AccumulatingOrderItemAggregate());
 //		this.orderItems = this.initOrderItemAggregate();
 	}
 	
@@ -58,13 +57,20 @@ public class OrderData extends ValueObject<OrderAttribute> {
 		this.getOrderItemAggregate().addAll(es);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void addAllOrderItems(AccumulatingAggregateEntry<DishMenuItemData>... es) {
+	public void addAllOrderItems(AccumulatingAggregateEntry<DishMenuItemData>[] es) {
 		this.getOrderItemAggregate().addAll(es);
+	}
+	
+	public BigDecimal getOrderedItemAmount(EntityID id) {
+		return this.getOrderItemAggregate().getElementAmount(id);
 	}
 	
 	public AccumulatingAggregateEntry<DishMenuItemData>[] getOrderedItems() {
 		return this.getOrderItemAggregate().getAllEntries();
+	}
+	
+	public AccumulatingAggregateEntry<DishMenuItemData> getOrderedItem(EntityID id) {
+		return this.getOrderItemAggregate().getElementEntry(id);
 	}
 	
 	public Boolean getIsCash() {
@@ -77,5 +83,13 @@ public class OrderData extends ValueObject<OrderAttribute> {
 	
 	public LocalDateTime getDate() {
 		return (LocalDateTime) this.getAttributeValue(OrderAttribute.DATE);
+	}
+	
+	public String getNote() {
+		return (String) this.getAttributeValue(OrderAttribute.NOTE);
+	}
+
+	public Integer getTableNumber() {
+		return (Integer) this.getAttributeValue(OrderAttribute.TABLE_NUMBER);
 	}
 }

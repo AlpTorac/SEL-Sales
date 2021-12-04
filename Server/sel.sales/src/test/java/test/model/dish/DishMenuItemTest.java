@@ -1,68 +1,19 @@
 package test.model.dish;
 
-import java.io.File;
-import java.math.BigDecimal;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-
-import model.dish.DishMenuItem;
-import model.dish.DishMenuItemData;
 import server.model.IServerModel;
-import server.model.ServerModel;
+import test.TestTemplate;
 //@Execution(value = ExecutionMode.SAME_THREAD)
-class DishMenuItemTest {
-	private static IServerModel model;
-	
-	private String i1Name = "aaa";
-	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
-	private BigDecimal i1Price = BigDecimal.valueOf(5);
-	private BigDecimal i1ProCost = BigDecimal.valueOf(4);
-	private BigDecimal i1Disc = BigDecimal.valueOf(0);
-	private String i1id = "item1";
-	
-	private String i2Name = "bbb";
-	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
-	private BigDecimal i2Price = BigDecimal.valueOf(1);
-	private BigDecimal i2ProCost = BigDecimal.valueOf(0.5);
-	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
-	private String i2id = "item2";
-	
-	private String i3Name = "ccc";
-	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
-	private BigDecimal i3Price = BigDecimal.valueOf(4);
-	private BigDecimal i3ProCost = BigDecimal.valueOf(3.5);
-	private BigDecimal i3Disc = BigDecimal.valueOf(1);
-	private String i3id = "item3";
-	
-	private DishMenuItemData iData1;
-	private DishMenuItemData iData2;
-	private DishMenuItemData iData3;
-	
-	private DishMenuItem i1;
-	private DishMenuItem i2;
-	private DishMenuItem i3;
-	
-	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
+class DishMenuItemTest extends TestTemplate {
+	private IServerModel model;
 	
 	@BeforeEach
 	void prep() {
-		model = new ServerModel(this.testFolderAddress);
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
-		
-		iData1 = model.getMenuItem(i1id);
-		iData2 = model.getMenuItem(i2id);
-		iData3 = model.getMenuItem(i3id);
-		
-		i1 = iData1.getAssociatedItem(model.getActiveDishMenuItemFinder());
-		i2 = iData2.getAssociatedItem(model.getActiveDishMenuItemFinder());
-		i3 = iData3.getAssociatedItem(model.getActiveDishMenuItemFinder());
+		model = this.initServerModel();
+		this.addDishMenuToServerModel(model);
 	}
 	
 	@AfterEach

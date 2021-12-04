@@ -11,18 +11,14 @@ import model.dish.DishMenuData;
 import model.dish.DishMenuItemData;
 import model.entity.AccumulatingAggregateEntry;
 import model.order.OrderData;
-import model.order.AccumulatingOrderItemAggregate;
 import view.repository.IChoiceBox;
 import view.repository.IHBoxLayout;
 import view.repository.IIndexedLayout;
 import view.repository.ILabel;
-import view.repository.ISingleRowTextBox;
 import view.repository.ITextBox;
 import view.repository.IUIComponent;
-import view.repository.uiwrapper.ItemChangeListener;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIHBoxLayout;
-import view.repository.uiwrapper.UIVBoxLayout;
 
 public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuItemEntry>, Cloneable {
 	private static final boolean DEFAULT_IS_CASH = false;
@@ -168,10 +164,8 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 	public void displayData(OrderData data) {
 		if (data != null) {
 			this.resetUserInput();
-			this.noteBox.setCaption(this.getController().getModel()
-					.getOrderNote(data.getID().toString()));
-			this.tableNumberCB.artificiallySelectItem(
-					this.getController().getModel().getOrderTableNumber(data.getID().toString()));
+			this.noteBox.setCaption(data.getNote());
+			this.tableNumberCB.artificiallySelectItem(data.getTableNumber());
 			this.setActiveData(data);
 			this.initMenuItemEntries(this.getActiveData());
 		}
@@ -336,12 +330,12 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		return clone;
 	}
 	
-	public int getTableNumberSelection() {
+	public Integer getTableNumberSelection() {
 		Integer element = this.tableNumberCB.getSelectedElement();
 		if (element != null) {
 			return element;
 		}
-		return this.getController().getModel().getPlaceholderTableNumber();
+		return null;
 	}
 	
 	public String getCurrentOrderNote() {

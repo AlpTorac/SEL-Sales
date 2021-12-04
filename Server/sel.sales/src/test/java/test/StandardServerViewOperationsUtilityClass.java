@@ -9,8 +9,8 @@ import java.util.Collection;
 import org.junit.jupiter.api.Assertions;
 
 import model.dish.DishMenuItemData;
+import model.entity.AccumulatingAggregateEntry;
 import model.order.OrderData;
-import model.order.AccumulatingOrderItemAggregate;
 import server.controller.IServerController;
 import server.model.IServerModel;
 import server.view.StandardServerView;
@@ -274,9 +274,9 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		BigDecimal totalOrderDiscount = BigDecimal.valueOf(Double.valueOf(oia.getDiscountDisplay().getText()));
 		BigDecimal grossSum = BigDecimal.valueOf(Double.valueOf(oia.getGrossSumDisplay().getText()));
 		BigDecimal netSum = BigDecimal.valueOf(Double.valueOf(oia.getNetSumDisplay().getText()));
-		String[] itemIDs = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getItemData().getID().toString()).toArray(String[]::new);
+		String[] itemIDs = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getItem().getID().toString()).toArray(String[]::new);
 		BigDecimal[] itemAmounts = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getAmount()).toArray(BigDecimal[]::new);
-		BigDecimal[] itemGrossPrices = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getGrossPrice()).toArray(BigDecimal[]::new);
+		BigDecimal[] itemGrossPrices = oia.getOrderDetailsDisplay().getAllItems().stream().map(d -> d.getItem().getGrossPrice()).toArray(BigDecimal[]::new);
 		
 		OrderTestUtilityClass.assertOrderDataEqual(
 				orderData,
@@ -288,11 +288,11 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		Assertions.assertEquals(orderData.getGrossSum().compareTo(grossSum), 0);
 		Assertions.assertEquals(orderData.getOrderDiscount().compareTo(totalOrderDiscount), 0);
 		Assertions.assertEquals(orderData.getNetSum().compareTo(netSum), 0);
-		AccumulatingOrderItemAggregate[] idatas = orderData.getOrderedItems();
+		AccumulatingAggregateEntry<DishMenuItemData>[] idatas = orderData.getOrderedItems();
 		int orderItemLen = idatas.length;
 		for (int i = 0; i < orderItemLen; i++) {
 			OrderTestUtilityClass.assertOrderItemEqual(idatas[i], itemIDs[i], itemAmounts[i]);
-			Assertions.assertEquals(idatas[i].getGrossPrice().compareTo(itemGrossPrices[i]), 0);
+			Assertions.assertEquals(idatas[i].getItem().getGrossPrice().compareTo(itemGrossPrices[i]), 0);
 		}
 	}
 	

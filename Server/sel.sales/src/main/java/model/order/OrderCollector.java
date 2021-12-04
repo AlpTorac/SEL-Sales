@@ -6,7 +6,7 @@ import model.entity.Repository;
 
 public class OrderCollector extends Repository<OrderAttribute, Order, OrderData> {
 	@Override
-	protected IFactory<OrderAttribute, Order, OrderData> initFactory() {
+	protected IFactory<OrderAttribute, Order, OrderData> getDefaultFactory() {
 		return new OrderFactory();
 	}
 }

@@ -6,7 +6,6 @@ import model.DateSettings;
 import model.dish.DishMenuItemData;
 import model.entity.AccumulatingAggregateEntry;
 import model.order.OrderData;
-import model.order.AccumulatingOrderItemAggregate;
 import view.repository.IButton;
 import view.repository.IGridLayout;
 import view.repository.IHBoxLayout;

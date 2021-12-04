@@ -1,32 +1,55 @@
 package model.datamapper;
 
-public class AttributeFormat {
-	private String fileStart = "";
+import java.util.regex.Pattern;
+
+/**
+ * {someAttrName:field1}
+ */
+public class AttributeFormat implements IFormat {
+	private String attributeStart = "{";
 	
-	private String fieldStart = "";
-	private String fieldSeparator = "#";
-	private String fieldEnd = ";" + System.lineSeparator();
+	private String nameAndFieldSeparator = ":";
 	
-	private String fileEnd = "";
+	private String attributeEnd = "}";
 	
+	private Pattern pattern = Pattern.compile("["+ attributeStart + "]" + "[a-zA-Z]+" + "[" + nameAndFieldSeparator + "]" + "[^" + attributeStart+ attributeEnd + "]*" + "[" + attributeEnd + "]");
 	
-	public String getFieldStart() {
-		return this.fieldStart;
+	protected String getAttributeNameFieldSeparator() {
+		return this.nameAndFieldSeparator;
 	}
 	
-	public String getFieldSeparator() {
-		return this.fieldSeparator;
+	protected String getAttributeStart() {
+		return this.attributeStart;
 	}
 	
-	public String getFieldEnd() {
-		return this.fieldEnd;
+	protected String getAttributeEnd() {
+		return this.attributeEnd;
 	}
 	
-	public String getFileStart() {
-		return this.fileStart;
+	public String format(IAttribute attribute, String serialisedValue) {
+		String result = "";
+		
+		result += this.getAttributeStart();
+		result += attribute.getDescription();
+		result += this.getAttributeNameFieldSeparator();
+		result += serialisedValue;
+		result += this.getAttributeEnd();
+		
+		return result;
+	}
+
+	public String[] getFields(String text) {
+		String match;
+		if ((match = this.getMatch(text)) != null) {
+			match = match.replaceAll("["+this.getAttributeStart()+"]", "");
+			match = match.replaceAll("["+this.getAttributeEnd()+"]", "");
+			return match.split(this.getAttributeNameFieldSeparator());
+		}
+		return null;
 	}
 	
-	public String getFileEnd() {
-		return this.fileEnd;
+	@Override
+	public Pattern getPattern() {
+		return this.pattern;
 	}
 }

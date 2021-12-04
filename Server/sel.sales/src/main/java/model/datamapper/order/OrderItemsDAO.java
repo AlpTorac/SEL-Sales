@@ -5,19 +5,12 @@ import model.entity.AccumulatingAggregateEntry;
 import model.order.AccumulatingOrderItemAggregate;
 
 public class OrderItemsDAO extends OrderAttributeDAO {
-	protected OrderItemsDAO(String fileAddress, String defaultFileName) {
-		super(fileAddress, defaultFileName);
-	}
-
 	@Override
 	protected String serialiseNotNullValue(Object attributeValue) {
 		AccumulatingOrderItemAggregate aggr = (AccumulatingOrderItemAggregate) attributeValue;
 		String result = "";
 		for (AccumulatingAggregateEntry<DishMenuItemData> e : aggr.getAllEntries()) {
-			result += e.getItem().getID().toString();
-			result += this.getAggregateFormat().getFieldSeparator();
-			result += this.serialiseBigDecimal(e.getAmount());
-			result += this.getAggregateFormat().getEntrySeparator();
+			result += this.getAggregateFormat().format(e.getItem().getID().toString(), this.serialiseBigDecimal(e.getAmount()));
 		}
 		return result;
 	}
@@ -25,10 +18,10 @@ public class OrderItemsDAO extends OrderAttributeDAO {
 	@Override
 	protected AccumulatingOrderItemAggregate parseNotNullSerialisedValue(String serialisedValue) {
 		AccumulatingOrderItemAggregate aggr = new AccumulatingOrderItemAggregate();
-		String[] entries = serialisedValue.split(this.getAggregateFormat().getEntrySeparator());
+		String[] entries = this.getAggregateFormat().getMatches(serialisedValue).toArray(String[]::new);
 		for (String e : entries) {
 			if (e != null) {
-				String[] fields = e.split(this.getAggregateFormat().getFieldSeparator());
+				String[] fields = this.getAggregateFormat().getFields(e);
 				if (fields.length > 1) {
 					//fields[0] = id, fields[1] = amount
 					aggr.addElement(this.parseID(fields[0]), this.parseBigDecimal(fields[1]));

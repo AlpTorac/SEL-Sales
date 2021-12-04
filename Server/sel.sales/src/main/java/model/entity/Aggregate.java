@@ -18,10 +18,9 @@ public abstract class Aggregate<A extends IAttribute, I extends IDOwner<A>> impl
 		return new CopyOnWriteArrayList<I>();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public I[] getAllItems() {
-		return (I[]) this.getElementCollection().toArray(Object[]::new);
+	public Collection<I> getAllItems() {
+		return this.getElementCollection();
 	}
 
 	@Override

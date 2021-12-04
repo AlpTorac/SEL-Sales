@@ -12,17 +12,12 @@ import model.util.IParser;
 import model.util.ISerialiser;
 
 public abstract class AttributeDAO<A extends IAttribute, E extends Entity<A>, V extends ValueObject<A>, C extends Repository<A, E, V>> implements IParser, ISerialiser {
-	private FileAccess fa;
 	private AttributeFormat attributeFormat = new AttributeFormat();
 	private AggregateFormat aggregateFormat = new AggregateFormat();
 	private EntityIDFactory idFac = new MinimalIDFactory();
 	
-	protected AttributeDAO(String fileAddress, String defaultFileName) {
-		this.fa = this.initFileAccess(fileAddress, defaultFileName);
-	}
-	
-	protected FileAccess getFileAccess() {
-		return this.fa;
+	protected AttributeDAO() {
+		
 	}
 	
 	protected FileAccess initFileAccess(String fileAddress, String defaultFileName) {
@@ -62,33 +57,9 @@ public abstract class AttributeDAO<A extends IAttribute, E extends Entity<A>, V 
 	
 	protected abstract A getAssociatedAttribute();
 	
-	public void setAttributesFromFile(C col, String readFile) {
-		if (readFile == null) {
-			return;
-		}
-		String body = this.getDataBody(readFile, this.getAttributeFormat().getFileStart(), this.getAttributeFormat().getFieldEnd());
-		String[] entries = body.split(this.getAttributeFormat().getFieldEnd());
-		String[] idNAttr;
-		EntityID orderID;
-		String serialisedAttribute;
-		for (String e : entries) {
-			if (e != null) {
-				idNAttr = e.split(this.getAttributeFormat().getFieldSeparator());
-//				System.out.println("Setting attribute, entry: " + e);
-//				System.out.println("Setting fields: " + idNAttr[0] + ", " + idNAttr[1]);
-				if (col.contains(orderID = this.parseID(idNAttr[0])) && idNAttr.length > 1) {
-					serialisedAttribute = idNAttr[1];
-//					System.out.println("Setting attribute, entry: " + e);
-//					System.out.println("Setting fields: " + idNAttr[0] + ", " + idNAttr[1]);
-					this.setAttributeAlgorithm(col, orderID, serialisedAttribute);
-				}
-			}
-		}
-	}
-	
 	public String serialiseAll(C col) {
 		String result = "";
-		result += this.getAttributeFormat().getFileStart();
+		result += this.getAttributeFormat().getAttributeStart();
 		EntityID currentID;
 		for (E data : col.getAllElements()) {
 			currentID = data.getID();
@@ -98,36 +69,35 @@ public abstract class AttributeDAO<A extends IAttribute, E extends Entity<A>, V 
 //			result += this.getFormat().getFieldSeparator();
 //			result += this.serialiseOrderAttribute(orderCollector, currentID);
 //			result += this.getFormat().getFieldEnd();
-			result += this.serialiseFor(col, currentID);
+			result += this.serialiseAttributeOf(col, currentID);
 		}
-		result += this.getAttributeFormat().getFileEnd();
+		result += this.getAttributeFormat().getAttributeEnd();
 		return result;
 	}
 	
-	public String serialiseFor(C col, String orderID) {
-		return this.serialiseFor(col, this.idFac.createID(orderID));
+	public String serialiseAttributeOf(C col, String orderID) {
+		return this.serialiseAttributeOf(col, this.idFac.createID(orderID));
 	}
 	
-	public String serialiseFor(C col, EntityID orderID) {
-		String result = "";
-		result += this.getAttributeFormat().getFieldStart();
-		result += orderID.toString();
-		result += this.getAttributeFormat().getFieldSeparator();
-		result += this.serialiseAttribute(col, orderID);
-		result += this.getAttributeFormat().getFieldEnd();
-		return result;
+	public String serialiseAttributeOf(C col, EntityID orderID) {
+		return this.getAttributeFormat().format(
+				this.getAssociatedAttribute(),
+				this.serialiseAttribute(col, orderID));
 	}
 	
 	protected String serialiseAttribute(C col, EntityID orderID) {
-		return this.serialiseValue(col.getAttributeValue(this.getAssociatedAttribute(), orderID));
+		return this.getAttributeFormat().format(this.getAssociatedAttribute(),
+				this.serialiseValue(col.getAttributeValue(this.getAssociatedAttribute(), orderID)));
 	}
 	
 	public String serialiseAttribute(V valueObject) {
-		return this.serialiseValue(valueObject.getAttributeValue(this.getAssociatedAttribute()));
+		return this.getAttributeFormat().format(this.getAssociatedAttribute(),
+				this.serialiseValue(valueObject.getAttributeValue(this.getAssociatedAttribute())));
 	}
 	
 	public String serialiseAttribute(E entity) {
-		return this.serialiseValue(entity.getAttributeValue(this.getAssociatedAttribute()));
+		return this.getAttributeFormat().format(this.getAssociatedAttribute(),
+				this.serialiseValue(entity.getAttributeValue(this.getAssociatedAttribute())));
 	}
 	
 	protected AttributeFormat getAttributeFormat() {
@@ -140,9 +110,5 @@ public abstract class AttributeDAO<A extends IAttribute, E extends Entity<A>, V 
 	
 	protected EntityID parseID(String id) {
 		return this.idFac.createID(id);
-	}
-	
-	public boolean writeToFileFor(C col, EntityID id) {
-		return this.getFileAccess().writeToFile(this.serialiseFor(col, id));
 	}
 }

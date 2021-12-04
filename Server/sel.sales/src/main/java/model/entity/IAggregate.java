@@ -1,10 +1,12 @@
 package model.entity;
 
+import java.util.Collection;
+
 import model.datamapper.IAttribute;
 import model.entity.id.EntityID;
 
 public interface IAggregate<A extends IAttribute, I extends IDOwner<A>> {
-	I[] getAllItems();
+	Collection<I> getAllItems();
 	boolean isEmpty();
 	void addElement(I element);
 	I getElement(EntityID id);

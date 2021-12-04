@@ -7,8 +7,8 @@ import model.DateSettings;
 public class OrderDateDAO extends OrderAttributeDAO {
 	private DateSettings ds;
 	
-	protected OrderDateDAO(String fileAddress, String defaultFileName, DateSettings ds) {
-		super(fileAddress, defaultFileName);
+	protected OrderDateDAO(DateSettings ds) {
+		super();
 		this.ds = ds;
 	}
 	

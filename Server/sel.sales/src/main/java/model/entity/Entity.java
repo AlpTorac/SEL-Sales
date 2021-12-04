@@ -3,13 +3,9 @@ package model.entity;
 import model.datamapper.IAttribute;
 import model.entity.id.EntityID;
 
-public abstract class Entity<A extends IAttribute> extends IDOwner<A> implements Comparable<Entity<A>> {
+public abstract class Entity<A extends IAttribute> extends IDOwner<A> {
 	protected Entity(EntityID id) {
 		super(id);
-	}
-
-	public int compareTo(Entity<A> o) {
-		return this.getID().compareTo(o.getID());
 	}
 	
 	@Override

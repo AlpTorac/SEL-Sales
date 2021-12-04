@@ -2,7 +2,7 @@ package model.dish;
 
 import java.math.BigDecimal;
 
-import model.datamapper.DishMenuItemAttribute;
+import model.datamapper.menu.DishMenuItemAttribute;
 import model.entity.Entity;
 import model.entity.id.EntityID;
 

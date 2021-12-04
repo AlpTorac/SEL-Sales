@@ -462,7 +462,7 @@ class OrderAreaTest extends ApplicationTest {
 			Assertions.assertEquals(clientModel.getAllSentOrders().length, index);
 			Assertions.assertEquals(clientModel.getAllWrittenOrders().length, i+1);
 			
-			clientModel.orderSent(ods[index].getID().toString());
+			clientModel.orderSentByID(ods[index].getID().toString());
 			
 			Assertions.assertTrue(this.orderDatasEqual(clientModel.getSentOrder(ods[index].getID().toString()), ods[index]));
 			Assertions.assertEquals(clientModel.getOrderNote(ods[index].getID().toString()), orderNote);

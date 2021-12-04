@@ -1,6 +1,7 @@
 package model.entity;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -23,10 +24,9 @@ public abstract class AccumulatingAggregate<A extends IAttribute, I extends IDOw
 	/**
 	 * Only returns the array of the entities
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public I[] getAllItems() {
-		return (I[]) this.getElementToAmountMap().values().toArray(Object[]::new);
+	public Collection<I> getAllItems() {
+		return this.getElementToAmountMap().keySet();
 	}
 
 	@Override
@@ -63,18 +63,30 @@ public abstract class AccumulatingAggregate<A extends IAttribute, I extends IDOw
 		return null;
 	}
 	
+	public AccumulatingAggregateEntry<I> getElementEntry(EntityID id) {
+		Entry<I, BigDecimal> e = this.getEntry(id);
+		if (e != null) {
+			return new AccumulatingAggregateEntry<I>(e.getKey(), e.getValue());
+		}
+		return null;
+	}
+	
 	@Override
 	public void addElement(I element) {
-		BigDecimal pastAmount = this.getElementToAmountMap().put(element, BigDecimal.ONE);
-		if (pastAmount != null) {
-			this.getElementToAmountMap().put(element, pastAmount.add(BigDecimal.ONE));
+		if (element != null) {
+			BigDecimal pastAmount = this.getElementToAmountMap().put(element, BigDecimal.ONE);
+			if (pastAmount != null) {
+				this.getElementToAmountMap().put(element, pastAmount.add(BigDecimal.ONE));
+			}
 		}
 	}
 	
 	public void addElement(I element, BigDecimal amount) {
-		BigDecimal pastAmount = this.getElementToAmountMap().put(element, amount);
-		if (pastAmount != null) {
-			this.getElementToAmountMap().put(element, amount.add(pastAmount));
+		if (element != null) {
+			BigDecimal pastAmount = this.getElementToAmountMap().put(element, amount);
+			if (pastAmount != null) {
+				this.getElementToAmountMap().put(element, amount.add(pastAmount));
+			}
 		}
 	}
 	
@@ -139,24 +151,22 @@ public abstract class AccumulatingAggregate<A extends IAttribute, I extends IDOw
 	
 	public void addAll(Iterable<AccumulatingAggregateEntry<I>> es) {
 		for (AccumulatingAggregateEntry<I> e : es) {
-			this.addElement(e.getItem(), e.getAmount());
+			if (e != null) {
+				this.addElement(e.getItem(), e.getAmount());
+			}
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void addAll(AccumulatingAggregateEntry<I>... es) {
+	public void addAll(AccumulatingAggregateEntry<I>[] es) {
 		for (AccumulatingAggregateEntry<I> e : es) {
-			this.addElement(e.getItem(), e.getAmount());
+			if (e != null) {
+				this.addElement(e.getItem(), e.getAmount());
+			}
 		}
 	}
 	
 	public void addAll(AccumulatingAggregate<A, I> aggr) {
-		for (Entry<I, BigDecimal> e : aggr.getElementToAmountMap().entrySet()) {
-			this.getElementToAmountMap().merge(e.getKey(), e.getValue(),
-					(v1,v2)->{
-						return v1.add(v2);
-					});
-		}
+		this.addAll(aggr.getAllEntries());
 	}
 	
 	@SuppressWarnings("unchecked")

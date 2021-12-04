@@ -18,7 +18,7 @@ public class OrderFactory implements IFactory<OrderAttribute, Order, OrderData> 
 				(Boolean) entity.getAttributeValue(OrderAttribute.IS_CASH),
 				(Boolean) entity.getAttributeValue(OrderAttribute.IS_HERE));
 		
-		data.getOrderItemAggregate().addAll(entity.getOrderItemAggregate());
+		data.getOrderItemAggregate().addAll(entity.getOrderItemAggregate().getOrderedItems());
 		return data;
 	}
 	
@@ -39,14 +39,14 @@ public class OrderFactory implements IFactory<OrderAttribute, Order, OrderData> 
 	}
 	
 	public OrderData constructData(String id, LocalDateTime date, boolean isCash, boolean isHere) {
-		OrderData data = new OrderData(this.idFac.createID(id));
-		data.setAttributeValue(OrderAttribute.DATE, date);
-		data.setAttributeValue(OrderAttribute.IS_CASH, isCash);
-		data.setAttributeValue(OrderAttribute.IS_HERE, isHere);
-		return data;
+		return this.constructData(this.idFac.createID(id), date, isCash, isHere);
 	}
 	
-	public OrderData constructMinimalData(EntityID id) {
+	public OrderData constructMinimalValueObject(String id) {
+		return this.constructMinimalValueObject(this.idFac.createID(id));
+	}
+	
+	public OrderData constructMinimalValueObject(EntityID id) {
 		return new OrderData(id);
 	}
 

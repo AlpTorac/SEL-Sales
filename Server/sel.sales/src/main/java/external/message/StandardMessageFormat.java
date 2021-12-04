@@ -2,7 +2,7 @@ package external.message;
 
 public class StandardMessageFormat extends MessageFormat {
 	public StandardMessageFormat() {
-		super("[|]", ",", "", "\n");
+		super("[|]", ",", "", System.lineSeparator());
 	}
 
 	@Override

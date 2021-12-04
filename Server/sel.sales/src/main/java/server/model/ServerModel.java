@@ -89,8 +89,7 @@ public class ServerModel extends Model implements IServerModel {
 	}
 	
 	public void addMenuItem(String serialisedItemData) {
-		DishMenuItemData data = this.dishMenuItemDeserialiser.deserialise(serialisedItemData);
-		this.addMenuItem(data);
+		this.addMenuItem(this.getDishMenuItemDAO().parseValueObject(serialisedItemData));
 	}
 	
 	public void removeMenuItem(EntityID id) {
@@ -117,7 +116,7 @@ public class ServerModel extends Model implements IServerModel {
 	@Override
 	public OrderData[] getAllUnconfirmedOrders() {
 //		return this.orderUnconfirmedCollector.getAllOrders();
-		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.UNCONFIRMED));
+		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.UNCONFIRMED)).toArray(OrderData[]::new);
 	}
 
 	@Override
@@ -143,7 +142,7 @@ public class ServerModel extends Model implements IServerModel {
 
 	@Override
 	public OrderData[] getAllConfirmedOrders() {
-		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.CONFIRMED));
+		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.CONFIRMED)).toArray(OrderData[]::new);
 //		return this.orderConfirmedCollector.getAllOrders();
 	}
 	
@@ -178,12 +177,12 @@ public class ServerModel extends Model implements IServerModel {
 
 	@Override
 	public boolean writeDishMenu() {
-		return this.getFileManager().writeDishMenuData(this.getDishMenuHelper().serialiseMenuForFile(this.getDishMenu().toData()));
+		return this.getFileManager().writeDishMenuData(this.getDishMenuItemDAO().serialiseValueObjects(this.getDishMenu().toData().getAllItems().toArray(DishMenuItemData[]::new)));
 	}
 	
 	@Override
 	public void confirmAllOrders() {
-		OrderData[] unconfirmedOrders = this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.UNCONFIRMED));
+		OrderData[] unconfirmedOrders = this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.UNCONFIRMED)).toArray(OrderData[]::new);
 //		OrderData[] unconfirmedOrders = this.orderUnconfirmedCollector.getAllOrders();
 		for (OrderData uco : unconfirmedOrders) {
 			this.confirmOrder(uco);
@@ -219,7 +218,6 @@ public class ServerModel extends Model implements IServerModel {
 
 	@Override
 	public void addOrder(String serialisedOrderData) {
-		OrderData data = serialisedOrderData;
-		this.addOrder(data);
+		this.addOrder(this.getOrderDAO().parseValueObject(serialisedOrderData));
 	}
 }

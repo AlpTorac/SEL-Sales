@@ -119,7 +119,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
-		clientModel.orderSent(o1id);
+		clientModel.orderSentByID(o1id);
 		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(data));
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
@@ -171,7 +171,7 @@ class ClientModelTest {
 		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
-		clientModel.orderSent(o1id);
+		clientModel.orderSentByID(o1id);
 		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(newData));
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);

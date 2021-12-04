@@ -60,16 +60,10 @@ public interface IModel extends Closeable {
 	DishMenuItemFinder getActiveDishMenuItemFinder();
 	boolean isOrderWritten(String orderID);
 	DateSettings getDateSettings();
-	void setOrderTableNumbersFromFile(String readFile);
-	void setOrderStatusesFromFile(String readFile);
 	Collection<Integer> getTableNumbers();
 	boolean tableExists(int tableNumber);
 	void setOrderTableNumber(String orderID, int tableNumber);
-	Integer getOrderTableNumber(String orderID);
-	Integer getPlaceholderTableNumber();
 	void setOrderNote(String orderID, String note);
-	String getOrderNote(String orderID);
-	void setOrderNotesFromFile(String readFile);
 	/**
 	 * Checks if the order exists and has not been cancelled
 	 */
@@ -77,4 +71,6 @@ public interface IModel extends Closeable {
 	OrderFactory getOrderFactory();
 	DishMenuItemFactory getMenuItemFactory();
 	String serialiseOrder(OrderData data);
+	String serialiseMenuItem(DishMenuItemData data);
+	String serialiseMenuData();
 }

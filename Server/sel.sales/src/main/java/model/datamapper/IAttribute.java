@@ -1,9 +1,9 @@
 package model.datamapper;
 
 public interface IAttribute {
-	default IAttribute parseAttribute(String description) {
+	static IAttribute parseAttribute(IAttribute[] attrs, String description) {
 		if (description != null) {
-			for (IAttribute attr : this.getAllAttributes()) {
+			for (IAttribute attr : attrs) {
 				if (description.equals(attr.getDescription())) {
 					return attr;
 				}

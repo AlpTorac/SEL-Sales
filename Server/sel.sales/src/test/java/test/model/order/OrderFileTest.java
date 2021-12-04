@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import model.filewriter.FileOrderSerialiser;
 import model.order.OrderData;
 import model.settings.SettingsField;
 import server.model.IServerModel;

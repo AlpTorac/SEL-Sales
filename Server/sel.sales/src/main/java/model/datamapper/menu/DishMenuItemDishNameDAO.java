@@ -1,10 +1,6 @@
-package model.datamapper.order;
+package model.datamapper.menu;
 
-public class OrderNoteDAO extends OrderAttributeDAO {
-	@Override
-	protected OrderAttribute getAssociatedAttribute() {
-		return OrderAttribute.NOTE;
-	}
+public class DishMenuItemDishNameDAO extends DishMenuItemAttributeDAO {
 
 	@Override
 	protected String serialiseNotNullValue(Object attributeValue) {
@@ -14,6 +10,11 @@ public class OrderNoteDAO extends OrderAttributeDAO {
 	@Override
 	protected String parseNotNullSerialisedValue(String serialisedValue) {
 		return this.parseString(serialisedValue);
+	}
+
+	@Override
+	protected DishMenuItemAttribute getAssociatedAttribute() {
+		return DishMenuItemAttribute.DISH_NAME;
 	}
 
 }

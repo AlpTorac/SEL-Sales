@@ -14,6 +14,7 @@ public class Order extends Entity<OrderAttribute> {
 	
 	public Order(EntityID id) {
 		super(id);
+		this.setAttributeValue(OrderAttribute.ORDER_ITEMS, new AccumulatingOrderItemAggregate());
 //		this.orderItems = this.initOrderItemAggregate();
 	}
 	

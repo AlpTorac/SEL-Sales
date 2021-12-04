@@ -7,8 +7,4 @@ import model.order.OrderData;
 
 public abstract class OrderAttributeDAO extends AttributeDAO<OrderAttribute, Order, OrderData, OrderCollector> {
 
-	protected OrderAttributeDAO(String fileAddress, String defaultFileName) {
-		super(fileAddress, defaultFileName);
-	}
-
 }

@@ -6,33 +6,29 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.Assertions;
 
 import model.order.OrderData;
-import model.order.AccumulatingOrderItemAggregate;
+import model.dish.DishMenuItemData;
+import model.entity.AccumulatingAggregateEntry;
 
 public final class OrderTestUtilityClass {
 	public static void assertOrderDataEqual(OrderData data, BigDecimal[] amounts, String[] ids) {
-		AccumulatingOrderItemAggregate[] itemData = data.getOrderedItems();
+		AccumulatingAggregateEntry<DishMenuItemData>[] itemData = data.getOrderedItems();
 		for (int i = 0; i < itemData.length; i++) {
 			Assertions.assertEquals(itemData[i].getAmount().compareTo(amounts[i]), 0);
 			assertOrderItemIDEqual(itemData[i], ids[i]);
 		}
 	}
 	
-	public static void assertOrderItemIDEqual(AccumulatingOrderItemAggregate data, String id) {
-		data.getItemData().getID().serialisedIDequals(id);
+	public static void assertOrderItemIDEqual(AccumulatingAggregateEntry<DishMenuItemData> data, String id) {
+		Assertions.assertEquals(data.getItem().getID().toString(), id);
 	}
 	
-	public static void assertOrderItemEqual(AccumulatingOrderItemAggregate data, String id, BigDecimal amount) {
+	public static void assertOrderItemEqual(AccumulatingAggregateEntry<DishMenuItemData> data, String id, BigDecimal amount) {
 		assertOrderItemIDEqual(data, id);
 		Assertions.assertEquals(data.getAmount().compareTo(amount), 0);
 	}
 	
 	public static void assertDatesEqual(LocalDateTime date1, LocalDateTime date2) {
 		Assertions.assertEquals(date1, date2);
-//		Assertions.assertEquals(date1.get(GregorianCalendar.MONTH), date2.get(GregorianCalendar.MONTH));
-//		Assertions.assertEquals(date1.get(GregorianCalendar.DAY_OF_MONTH), date2.get(GregorianCalendar.DAY_OF_MONTH));
-//		Assertions.assertEquals(date1.get(GregorianCalendar.HOUR_OF_DAY), date2.get(GregorianCalendar.HOUR_OF_DAY));
-//		Assertions.assertEquals(date1.get(GregorianCalendar.MINUTE), date2.get(GregorianCalendar.MINUTE));
-//		Assertions.assertEquals(date1.get(GregorianCalendar.SECOND), date2.get(GregorianCalendar.SECOND));
 	}
 	
 	public static void assertOrderDataEqual(OrderData order, String id, LocalDateTime date, boolean isCash, boolean isHere) {

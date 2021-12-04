@@ -13,7 +13,7 @@ public abstract class FileAccess implements IFileAccess {
 	private RandomAccessFile raf;
 	
 	public FileAccess(String address) {
-		this.setAddress(address);
+		this.address = address;
 	}
 //	protected boolean isFileFilled(File f) {
 //		return f != null && f.exists() && f.length() > 0;

@@ -13,8 +13,9 @@ import model.order.OrderData;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
+import test.TestTemplate;
 //@Execution(value = ExecutionMode.SAME_THREAD)
-class GetOrderTest {
+class GetOrderTest extends TestTemplate {
 	private static IServerModel model;
 	
 	private String i1Name = "aaa";

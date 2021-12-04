@@ -39,6 +39,7 @@ class FileAccessTest {
 	void prep() {
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 		fa = new FileAccess(this.testFolderAddress) {};
+		fa.setAddress(testFolderAddress);
 		Assertions.assertTrue(fa.isAddressValid());
 		Assertions.assertTrue(fa.fileExists());
 	}

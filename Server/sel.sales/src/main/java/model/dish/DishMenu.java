@@ -1,6 +1,6 @@
 package model.dish;
 
-import model.datamapper.DishMenuItemAttribute;
+import model.datamapper.menu.DishMenuItemAttribute;
 import model.entity.IFactory;
 import model.entity.Repository;
 
@@ -10,7 +10,7 @@ public class DishMenu extends Repository<DishMenuItemAttribute, DishMenuItem, Di
 	}
 	
 	@Override
-	protected IFactory<DishMenuItemAttribute, DishMenuItem, DishMenuItemData> initFactory() {
+	protected IFactory<DishMenuItemAttribute, DishMenuItem, DishMenuItemData> getDefaultFactory() {
 		return new DishMenuItemFactory();
 	}
 	

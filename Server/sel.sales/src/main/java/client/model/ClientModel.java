@@ -28,6 +28,10 @@ public class ClientModel extends Model implements IClientModel {
 		this.getOrderCollector().clearAllElements();
 		this.ordersChanged();
 	}
+	
+	public void addCookingOrder(String serialisedOrder) {
+		this.addCookingOrder(this.getOrderDAO().parseValueObject(serialisedOrder));
+	}
 
 	@Override
 	public void addCookingOrder(OrderData data) {
@@ -44,7 +48,6 @@ public class ClientModel extends Model implements IClientModel {
 			this.getOrderCollector().addElement(data);
 			this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, orderID, OrderStatus.COOKING);
 			this.writeOrder(orderID);
-			this.orderStatusChanged(orderID);
 			this.ordersChanged();
 		}
 	}
@@ -57,7 +60,6 @@ public class ClientModel extends Model implements IClientModel {
 //			this.cookingOrders.removeOrder(orderID);
 //			this.getOrderCollector().editOrderStatus(orderID, OrderStatus.PENDING_PAYMENT);
 			this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, orderID, OrderStatus.PENDING_PAYMENT);
-			this.orderStatusChanged(orderID);
 			this.ordersChanged();
 		}
 	}
@@ -79,7 +81,6 @@ public class ClientModel extends Model implements IClientModel {
 //			this.pendingPaymentOrders.removeOrder(data.getID().toString());
 			this.getOrderCollector().addElement(data);
 			this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, orderID, OrderStatus.PENDING_SEND);
-			this.orderStatusChanged(orderID);
 			this.ordersChanged();
 		}
 	}
@@ -87,7 +88,6 @@ public class ClientModel extends Model implements IClientModel {
 	public void makeSentOrder(EntityID orderID) {
 		if (this.getPendingSendOrder(orderID) != null) {
 			this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, orderID, OrderStatus.SENT);
-			this.orderStatusChanged(orderID);
 			this.ordersChanged();
 		}
 	}
@@ -99,25 +99,25 @@ public class ClientModel extends Model implements IClientModel {
 
 	@Override
 	public OrderData[] getAllCookingOrders() {
-		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.COOKING));
+		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.COOKING)).toArray(OrderData[]::new);
 	}
 
 	@Override
 	public OrderData[] getAllPendingPaymentOrders() {
 //		return this.pendingPaymentOrders.getAllOrders();
-		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.PENDING_PAYMENT));
+		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.PENDING_PAYMENT)).toArray(OrderData[]::new);
 	}
 
 	@Override
 	public OrderData[] getAllPendingSendOrders() {
 //		return this.pendingSendOrders.getAllOrders();
-		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.PENDING_SEND));
+		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.PENDING_SEND)).toArray(OrderData[]::new);
 	}
 
 	@Override
 	public OrderData[] getAllSentOrders() {
 //		return this.sentOrders.getAllOrders();
-		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.SENT));
+		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.SENT)).toArray(OrderData[]::new);
 	}
 	
 	public OrderData getCookingOrder(EntityID orderID) {
@@ -174,7 +174,6 @@ public class ClientModel extends Model implements IClientModel {
 			this.editOrderID = orderID;
 //			this.getOrderCollector().editOrderStatus(editOrderID, OrderStatus.EDITING);
 			this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, this.editOrderID, OrderStatus.EDITING);
-			this.orderStatusChanged(this.editOrderID);
 			this.ordersChanged();
 		}
 	}
@@ -195,15 +194,21 @@ public class ClientModel extends Model implements IClientModel {
 	}
 
 	@Override
-	public void orderSent(String orderID) {
+	public void orderSentByID(String orderID) {
 		this.makeSentOrder(orderID);
 	}
 	
 	@Override
 	public void removeOrder(String orderID) {
-		if (this.editOrderID != null && this.editOrderID.equals(orderID)) {
+		if (this.editOrderID != null && this.editOrderID.equals(this.createMinimalID(orderID))) {
 			this.clearEditTarget();
 		}
 		super.removeOrder(orderID);
+	}
+
+	@Override
+	public void orderSentBySerialisedVersion(String serialisedOrderData) {
+		OrderData data = this.getOrderDAO().parseValueObject(serialisedOrderData);
+		this.orderSentByID(data.getID().toString());
 	}
 }

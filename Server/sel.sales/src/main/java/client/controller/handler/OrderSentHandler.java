@@ -10,6 +10,6 @@ public class OrderSentHandler extends ClientApplicationEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().getModel().orderSent((String) args[0]);
+		this.getController().getModel().orderSentBySerialisedVersion((String) args[0]);
 	}
 }
