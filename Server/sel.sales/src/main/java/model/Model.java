@@ -99,6 +99,7 @@ public abstract class Model implements IModel {
 		this.tnc = new TableNumberContainer(this);
 		
 		this.orderDAO = new OrderDAO(this.resourceFolderAddress);
+		this.orderDAO.setFinder(this.finder);
 		this.menuDAO = new DishMenuItemDAO(this.resourceFolderAddress);
 		
 		this.part.add(this.tnc);
@@ -115,12 +116,17 @@ public abstract class Model implements IModel {
 	
 	@Override
 	public String serialiseOrder(OrderData data) {
-		return this.getOrderDAO().serialiseValueObjects(data);
+		return this.getOrderDAO().serialiseValueObject(data);
 	}
 	
 	@Override
-	public void addOrder(OrderData data) {
-		this.getOrderCollector().addElement(data);
+	public abstract void addOrder(OrderData data);
+//		this.getOrderCollector().addElement(data);
+//	}
+	
+	@Override
+	public void addOrder(String serialisedOrderData) {
+		this.addOrder(this.getOrderDAO().parseValueObject(serialisedOrderData));
 	}
 	
 	@Override
@@ -345,6 +351,9 @@ public abstract class Model implements IModel {
 	protected void setDishMenu(DishMenu dishMenu) {
 		this.dishMenu = dishMenu;
 		this.finder = new DishMenuItemFinder(this.getDishMenu());
+		if (this.getOrderDAO() != null) {
+			this.getOrderDAO().setFinder(this.finder);
+		}
 	}
 	
 	protected void setDishMenu(Iterable<DishMenuItemData> dishMenu) {
@@ -417,13 +426,11 @@ public abstract class Model implements IModel {
 
 	public boolean writeOrder(EntityID orderID) {
 		OrderData[] datas = this.getOrderCollector().getAllElementsAsValueObjects().toArray(OrderData[]::new);
-		boolean isWritten = this.getFileManager().writeOrderDatas(this.getOrderDAO().serialiseValueObjects(datas));
-		if (isWritten) {
-			for (OrderData d : datas) {
-				this.getOrderCollector().setAttributeValue(OrderAttribute.IS_WRITTEN, d.getID(), true);
-			}
+		this.getFileManager().writeOrderDatas(this.getOrderDAO().serialiseValueObjects(datas));
+		for (OrderData d : datas) {
+			this.getOrderCollector().setAttributeValue(OrderAttribute.IS_WRITTEN, d.getID(), true);
 		}
-		return isWritten;
+		return true;
 	}
 	
 	@Override
@@ -521,11 +528,11 @@ public abstract class Model implements IModel {
 	
 	@Override
 	public String serialiseMenuData() {
-		return this.getDishMenuItemDAO().serialiseValueObjects(this.getMenuData().getAllItems().toArray(DishMenuItemData[]::new));
+		return this.getDishMenuItemDAO().serialiseValueObjects(this.getMenuData().getAllElements().toArray(DishMenuItemData[]::new));
 	}
 	
 	@Override
 	public String serialiseMenuItem(DishMenuItemData data) {
-		return this.getDishMenuItemDAO().serialiseValueObjects(data);
+		return this.getDishMenuItemDAO().serialiseValueObject(data);
 	}
 }

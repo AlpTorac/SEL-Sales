@@ -40,7 +40,7 @@ public abstract class AttributeOwner<A extends IAttribute> {
 		AttributeOwner<?> castedO = (AttributeOwner<?>) o;
 		Map<?, ?> map = castedO.getEntityMap();
 		for (Entry<A, Object> e : this.getEntityMap().entrySet()) {
-			if (!map.containsKey(e.getValue()) || !this.valuesEqual(e.getValue(), map.get(e.getKey()))) {
+			if (!map.containsKey(e.getKey()) || !this.valuesEqual(e.getValue(), map.get(e.getKey()))) {
 				return false;
 			}
 		}
@@ -52,7 +52,7 @@ public abstract class AttributeOwner<A extends IAttribute> {
 			return true;
 		}
 		
-		if (value1 == null || value2 == null) {
+		if (value1 == null ^ value2 == null) {
 			return false;
 		}
 		
@@ -62,6 +62,10 @@ public abstract class AttributeOwner<A extends IAttribute> {
 		
 		if (value1 instanceof BigDecimal && value2 instanceof BigDecimal) {
 			return ((BigDecimal) value1).compareTo(((BigDecimal) value2)) == 0;
+		}
+		
+		if (value1 instanceof IAggregate && value2 instanceof IAggregate) {
+			return ((IAggregate<?, ?>) value1).equals((IAggregate<?, ?>) value2);
 		}
 		
 		if (value1 instanceof Iterable && value2 instanceof Iterable) {

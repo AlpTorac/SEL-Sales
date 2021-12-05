@@ -7,6 +7,7 @@ import model.DateSettings;
 import model.datamapper.AttributeDAO;
 import model.datamapper.EntityDAO;
 import model.datamapper.IAttribute;
+import model.dish.IDishMenuItemFinder;
 import model.entity.IFactory;
 import model.order.Order;
 import model.order.OrderCollector;
@@ -14,8 +15,14 @@ import model.order.OrderData;
 import model.order.OrderFactory;
 
 public class OrderDAO extends EntityDAO<OrderAttribute, Order, OrderData, OrderCollector> {
+	private IDishMenuItemFinder finder;
+	
 	public OrderDAO(String address) {
 		super(address);
+	}
+	
+	public void setFinder(IDishMenuItemFinder finder) {
+		this.finder = finder;
 	}
 	
 	public AttributeDAO<OrderAttribute, Order, OrderData, OrderCollector> getDAO(String serialisedDesc) {
@@ -41,5 +48,12 @@ public class OrderDAO extends EntityDAO<OrderAttribute, Order, OrderData, OrderC
 	@Override
 	protected IFactory<OrderAttribute, Order, OrderData> initFactory() {
 		return new OrderFactory();
+	}
+	
+	@Override
+	public OrderData parseValueObject(String serialisedOrder) {
+		OrderData od = super.parseValueObject(serialisedOrder);
+		od.setFinder(finder);
+		return od;
 	}
 }

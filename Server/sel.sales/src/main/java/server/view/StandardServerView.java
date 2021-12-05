@@ -7,7 +7,6 @@ import server.view.composites.ServerConnectionArea;
 import server.view.composites.ServerSettingsArea;
 import server.view.composites.listeners.LoadDishMenuListener;
 import view.repository.IUILibraryHelper;
-import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.ClickEventListener;
 import view.repository.uiwrapper.UIComponent;
 import view.repository.uiwrapper.UIComponentFactory;
@@ -36,16 +35,14 @@ public class StandardServerView extends ServerView {
 //	private OrderInspectionArea oia;
 	
 	private UIComponentFactory fac;
-	private AdvancedUIComponentFactory advFac;
 	
 	private String menuOrderAreaTabName = "Menu/Orders";
 	private String connAreaTabName = "Connectivity";
 	private String settingsAreaTabName = "Settings";
 	
-	public StandardServerView(UIComponentFactory fac, AdvancedUIComponentFactory advFac, IServerController controller, IServerModel model) {
+	public StandardServerView(UIComponentFactory fac, IServerController controller, IServerModel model) {
 		super(controller, model);
 		this.fac = fac;
-		this.advFac = advFac;
 		this.initUI();
 		this.initListeners();
 	}
@@ -94,10 +91,10 @@ public class StandardServerView extends ServerView {
 		return rc;
 	}
 	protected MainArea initMainArea() {
-		return new MainArea(this.getController(), this.getModel(), this.fac, this.advFac);
+		return new MainArea(this.getController(), this.getModel(), this.fac);
 	}
 	protected ServerConnectionArea initConnArea() {
-		return new ServerConnectionArea(this.getController(), this.fac, this.advFac);
+		return new ServerConnectionArea(this.getController(), this.fac);
 	}
 	protected UIInnerFrame initFrame(UIComponent parent) {
 		return this.fac.createInnerFrame(parent);

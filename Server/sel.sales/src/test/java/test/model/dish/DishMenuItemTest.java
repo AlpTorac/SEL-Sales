@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.model.IServerModel;
-import test.TestTemplate;
+import test.FXTestTemplate;
 //@Execution(value = ExecutionMode.SAME_THREAD)
-class DishMenuItemTest extends TestTemplate {
+class DishMenuItemTest extends FXTestTemplate {
 	private IServerModel model;
 	
 	@BeforeEach
@@ -18,7 +18,7 @@ class DishMenuItemTest extends TestTemplate {
 	
 	@AfterEach
 	void cleanUp() {
-		model.close();
+		this.closeModel(model);
 	}
 	
 	@Test

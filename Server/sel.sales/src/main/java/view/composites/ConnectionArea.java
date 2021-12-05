@@ -10,7 +10,6 @@ import view.composites.listeners.RemoveKnownDeviceListener;
 import view.repository.IButton;
 import view.repository.ITable;
 import view.repository.IUIComponent;
-import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.ClickEventListener;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIHBoxLayout;
@@ -18,7 +17,6 @@ import view.repository.uiwrapper.UIVBoxLayout;
 
 public class ConnectionArea extends UIHBoxLayout {
 	private UIComponentFactory fac;
-	private AdvancedUIComponentFactory advFac;
 	private IController controller;
 	
 	private ITable<IDeviceData> discoveredDevices;
@@ -32,11 +30,10 @@ public class ConnectionArea extends UIHBoxLayout {
 	private IButton allowDeviceButton;
 	private IButton blockDeviceButton;
 	
-	public ConnectionArea(IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac) {
+	public ConnectionArea(IController controller, UIComponentFactory fac) {
 		super(fac.createHBoxLayout().getComponent());
 		this.controller = controller;
 		this.fac = fac;
-		this.advFac = advFac;
 		this.init();
 		this.initListeners();
 	}

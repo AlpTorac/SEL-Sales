@@ -18,4 +18,14 @@ public abstract class IDOwner<A extends IAttribute> extends AttributeOwner<A> im
 	public int compareTo(IDOwner<A> other) {
 		return this.getID().compareTo(other.getID());
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null | !(o instanceof IDOwner)) {
+			return false;
+		}
+		
+		IDOwner<?> castedO = (IDOwner<?>) o;
+		return this.getID().equals(castedO.getID()) && super.equals(castedO);
+	}
 }

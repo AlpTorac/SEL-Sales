@@ -26,35 +26,11 @@ import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
+import test.FXTestTemplate;
 import test.external.dummy.DummyClientExternal;
-import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 //@Execution(value = ExecutionMode.SAME_THREAD)
-class CookingOrdersAreaTest extends ApplicationTest {
-	private DishMenuItemData item1;
-	private String i1Name = "aaa";
-	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
-	private BigDecimal i1Price = BigDecimal.valueOf(5);
-	private BigDecimal i1ProCost = BigDecimal.valueOf(4);
-	private BigDecimal i1Disc = BigDecimal.valueOf(0);
-	private String i1id = "item1";
-	
-	private DishMenuItemData item2;
-	private String i2Name = "bbb";
-	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
-	private BigDecimal i2Price = BigDecimal.valueOf(1);
-	private BigDecimal i2ProCost = BigDecimal.valueOf(0.5);
-	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
-	private String i2id = "item2";
-	
-	private DishMenuItemData item3;
-	private String i3Name = "ccc";
-	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
-	private BigDecimal i3Price = BigDecimal.valueOf(4);
-	private BigDecimal i3ProCost = BigDecimal.valueOf(3.5);
-	private BigDecimal i3Disc = BigDecimal.valueOf(1);
-	private String i3id = "item3";
-	
+class CookingOrdersAreaTest extends FXTestTemplate {
 	private IServerModel serverModel;
 	
 	private IClientModel clientModel;
@@ -62,77 +38,42 @@ class CookingOrdersAreaTest extends ApplicationTest {
 	private IClientView clientView;
 	private DummyClientExternal clientExternal;
 	
-	private String serviceID = "serviceID";
-	private String serviceName = "serviceName";
-	private String deviceName = "deviceName";
-	private String deviceAddress = "deviceAddress";
-	
-	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
-	
-	private StandardClientViewOperationsUtilityClass opHelper;
-	
 	private OrderData data;
-	
-	private volatile boolean actionFinished = false;
-	
-	private void waitForAction() {
-		while (!actionFinished) {
-			
-		}
-		actionFinished = false;
-	}
-	
-	private void runFXAction(Runnable run) {
-		Platform.runLater(() -> {
-			run.run();
-			actionFinished = true;
-		});
-		waitForAction();
-	}
 	
 	@BeforeEach
 	void prep() {
 		runFXAction(()->{
-			clientModel = new ClientModel(this.testFolderAddress);
-			clientController = new StandardClientController(clientModel);
-			clientView = new StandardClientView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), clientController, clientModel);
-			clientExternal = new DummyClientExternal(serviceID, serviceName, clientController, clientModel);
+			clientModel = this.initClientModel();
+			clientController = this.initClientController(clientModel);
+			clientView = this.initClientView(clientModel, clientController);
+			clientExternal = this.initClientExternal(serviceID, serviceName, clientModel, clientController);
 			
-			serverModel = new ServerModel(this.testFolderAddress);
-			serverModel.addMenuItem(serverModel.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
-			serverModel.addMenuItem(serverModel.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-			serverModel.addMenuItem(serverModel.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
-			clientModel.setDishMenu(serverModel.getMenuData());
-			clientView.refreshMenu();
-			
-			item1 = clientModel.getMenuItem(i1id);
-			item2 = clientModel.getMenuItem(i2id);
-			item3 = clientModel.getMenuItem(i3id);
-			
-			clientModel.addCookingOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-			clientModel.addCookingOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
-			clientModel.addCookingOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
-			opHelper = new StandardClientViewOperationsUtilityClass(
-					clientView, clientController, clientModel);
+			serverModel = this.initServerModel();
+			this.addDishMenuToServerModel(serverModel);
+			this.getServerMenuIntoClient(serverModel, clientModel, clientView);
+			this.initOrders(clientModel);
+			this.addOrdersToModel(clientModel);
+			this.setClientOpHelper(clientModel, clientController, clientView);
+//			clientModel.addCookingOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+//			clientModel.addCookingOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
+//			clientModel.addCookingOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
 		});
 	}
 
 	@AfterEach
 	void cleanUp() {
-		clientExternal.close();
-		clientModel.close();
-		serverModel.close();
+		this.closeAll(clientExternal, clientModel, serverModel);
 	}
 	
 	@Test
 	void displayedOrdersTest() {
 		Assertions.assertEquals(clientModel.getAllCookingOrders().length, 3);
-		while (opHelper.getCookingOrders().toArray(OrderData[]::new).length < clientModel.getAllCookingOrders().length) {
+		while (clientOpHelper.getCookingOrders().toArray(OrderData[]::new).length < clientModel.getAllCookingOrders().length) {
 			clientView.refreshOrders();
 		}
-		Assertions.assertEquals(opHelper.getCookingOrders().toArray(OrderData[]::new).length, 3);
+		Assertions.assertEquals(clientOpHelper.getCookingOrders().toArray(OrderData[]::new).length, 3);
 		
-		GeneralTestUtilityClass.arrayContentEquals(opHelper.getCookingOrders().toArray(OrderData[]::new),
+		GeneralTestUtilityClass.arrayContentEquals(clientOpHelper.getCookingOrders().toArray(OrderData[]::new),
 				clientModel.getAllCookingOrders());
 	}
 }

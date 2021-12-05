@@ -55,7 +55,7 @@ public class DummyInteraction implements Closeable {
 		this.setServerMenu(menu);
 		GeneralTestUtilityClass.performWait(waitTime);
 		for (DummyClient client : this.clients) {
-			while (client.getMenuData().getAllItems().length == 0 || !client.menuDatasEqual(server)) {
+			while (client.getMenuData().getAllElements().size() == 0 || !client.menuDatasEqual(server)) {
 				this.reSetServerMenu();
 				GeneralTestUtilityClass.performWait(waitTime);
 			}

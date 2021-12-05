@@ -287,7 +287,7 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		
 		this.getEntries().stream()
 		.filter(mie -> mie.getSelectedMenuItem() != null && mie.getAmount().compareTo(BigDecimal.ZERO) != 0)
-		.forEach(mie -> data.addOrderItem(mie.getSelectedMenuItem(), mie.getPrice()));
+		.forEach(mie -> data.addOrderItem(mie.getSelectedMenuItem(), mie.getAmount()));
 		
 		return data;
 	}

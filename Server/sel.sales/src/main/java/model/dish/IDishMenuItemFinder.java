@@ -6,9 +6,17 @@ public interface IDishMenuItemFinder {
 	DishMenuItem getMenuItem(EntityID id);
 	DishMenuItem getMenuItem(String id);
 	default DishMenuItemData getMenuItemData(EntityID id) {
-		return this.getMenuItem(id).toData();
+		DishMenuItem item = this.getMenuItem(id);
+		if (item != null) {
+			return item.toData();
+		}
+		return null;
 	}
 	default DishMenuItemData getMenuItemData(String id) {
-		return this.getMenuItem(id).toData();
+		DishMenuItem item = this.getMenuItem(id);
+		if (item != null) {
+			return item.toData();
+		}
+		return null;
 	}
 }

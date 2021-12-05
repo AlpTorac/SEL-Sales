@@ -27,7 +27,6 @@ import test.external.dummy.DummyConnectionUtility;
 import test.external.dummy.DummyStandardClient;
 import test.external.dummy.DummyStandardInteraction;
 import test.external.dummy.DummyStandardServer;
-import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
 class OrderAreaTest extends ApplicationTest {
@@ -110,7 +109,7 @@ class OrderAreaTest extends ApplicationTest {
 		clientController = new StandardClientController(clientModel);
 		
 		runFXAction(()->{
-			clientView = new StandardClientView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), clientController, clientModel);
+			clientView = new StandardClientView(new FXUIComponentFactory(), clientController, clientModel);
 			clientView.startUp();
 			
 			clientOpHelper = new StandardClientViewOperationsUtilityClass(

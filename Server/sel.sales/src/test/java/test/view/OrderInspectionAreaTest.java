@@ -18,72 +18,29 @@ import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import server.view.StandardServerView;
+import test.FXTestTemplate;
 import test.GeneralTestUtilityClass;
 import test.StandardServerViewOperationsUtilityClass;
 import test.model.order.OrderTestUtilityClass;
 import view.IView;
-import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
 //@Execution(value = ExecutionMode.SAME_THREAD)
-class OrderInspectionAreaTest extends ApplicationTest {
-	private long waitTime = 100;
-	
-	private static IServerModel model;
-	private static IServerController controller;
-	private static IView view;
-	
-	private String i1Name = "aaa";
-	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
-	private BigDecimal i1Price = BigDecimal.valueOf(5);
-	private BigDecimal i1ProCost = BigDecimal.valueOf(4);
-	private BigDecimal i1Disc = BigDecimal.valueOf(0);
-	private String i1id = "item1";
-	
-	private String i2Name = "bbb";
-	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
-	private BigDecimal i2Price = BigDecimal.valueOf(1);
-	private BigDecimal i2ProCost = BigDecimal.valueOf(0.5);
-	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
-	private String i2id = "item2";
-	
-	private String i3Name = "ccc";
-	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
-	private BigDecimal i3Price = BigDecimal.valueOf(4);
-	private BigDecimal i3ProCost = BigDecimal.valueOf(3.5);
-	private BigDecimal i3Disc = BigDecimal.valueOf(1);
-	private String i3id = "item3";
-	
-	private volatile boolean actionFinished = false;
-	
-	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
-	
-	private void waitForAction() {
-		while (!actionFinished) {
-			
-		}
-		actionFinished = false;
-	}
-	
-	private void runFXAction(Runnable run) {
-		Platform.runLater(() -> {
-			run.run();
-			actionFinished = true;
-		});
-		waitForAction();
-	}
+class OrderInspectionAreaTest extends FXTestTemplate {
+	private IServerModel model;
+	private IServerController controller;
+	private StandardServerView view;
 	
 	@BeforeEach
 	void cleanUp() {
 		runFXAction(()->{
-			model = new ServerModel(this.testFolderAddress);
-			controller = new StandardServerController(model);
-			view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
+			model = this.initServerModel();
+			controller = this.initServerController(model);
+			view = this.initServerView(model, controller);
 			view.startUp();
 			view.show();
-			model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
-			model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-			model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
+			this.addDishMenuToServerModel(model);
+			this.initOrders(model);
 		});
 	}
 	
@@ -92,27 +49,22 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		runFXAction(()->{
 			model.removeAllOrders();
 			view.hide();
-			model.close();
+			this.closeModel(model);
 		});
-	}
-	
-	@Override
-	public void start(Stage stage) {
-
 	}
 	
 	@Test
 	void confirmOrderTest() {
 		runFXAction(()->{
-			model.addUnconfirmedOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+			model.addOrder(oData2);
 		});
 			OrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
 			Assertions.assertEquals(unconfirmedOrders.length, 1);
 			OrderData addedUnconfirmedOrder = unconfirmedOrders[0];
 			
 		runFXAction(()->{
-			StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
-			confirmedOrderData = opHelper.addConfirmOrder();
+			this.setServerOpHelper(model, controller, view);
+			confirmedOrderData = serverOpHelper.addConfirmOrder();
 		});
 			
 			OrderTestUtilityClass.assertOrderDatasEqual(addedUnconfirmedOrder, confirmedOrderData);
@@ -129,15 +81,15 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	@Test
 	void removeUnconfirmedOrderTest() {
 		runFXAction(()->{
-			model.addUnconfirmedOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+			model.addOrder(oData2);
 		});
 			OrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
 			Assertions.assertEquals(unconfirmedOrders.length, 1);
 			OrderData addedUnconfirmedOrder = unconfirmedOrders[0];
 			
 		runFXAction(()->{
-			StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
-			removedOrderData = opHelper.removeUnconfirmedOrder();
+			this.setServerOpHelper(model, controller, view);
+			removedOrderData = serverOpHelper.removeUnconfirmedOrder();
 		});
 			
 			unconfirmedOrders = model.getAllUnconfirmedOrders();
@@ -158,7 +110,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	@Test
 	void removeConfirmedOrderTest() {
 		runFXAction(()->{
-			model.addUnconfirmedOrder("order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
+			model.addOrder(oData2);
 		});
 		
 			OrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
@@ -168,8 +120,8 @@ class OrderInspectionAreaTest extends ApplicationTest {
 			OrderData[] confirmedOrders = model.getAllConfirmedOrders();
 			Assertions.assertEquals(confirmedOrders.length, 0);
 		runFXAction(()->{
-			StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
-			confirmedOrderData = opHelper.addConfirmOrder();
+			this.setServerOpHelper(model, controller, view);
+			confirmedOrderData = serverOpHelper.addConfirmOrder();
 		});
 		OrderTestUtilityClass.assertOrderDatasEqual(addedUnconfirmedOrder, confirmedOrderData);
 			
@@ -179,8 +131,8 @@ class OrderInspectionAreaTest extends ApplicationTest {
 		unconfirmedOrders = model.getAllUnconfirmedOrders();
 		Assertions.assertEquals(unconfirmedOrders.length, 0);
 		runFXAction(()->{
-			StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
-			removedConfirmedOrderData = opHelper.removeConfirmedOrder();
+			this.setServerOpHelper(model, controller, view);
+			removedConfirmedOrderData = serverOpHelper.removeConfirmedOrder();
 		});
 		
 		runFXAction(()->{
@@ -199,9 +151,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	@Test
 	void confirmAllOrdersTest() {
 		runFXAction(()->{
-			model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-			model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
-			model.addUnconfirmedOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
+			this.addOrdersToModel(model);
 		});
 		
 			OrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
@@ -210,11 +160,11 @@ class OrderInspectionAreaTest extends ApplicationTest {
 			OrderData[] confirmedOrders = model.getAllConfirmedOrders();
 			Assertions.assertEquals(confirmedOrders.length, 0);
 			
-			StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
-			unconfirmedOrderDatas = opHelper.getUnconfirmedOrders().toArray(OrderData[]::new);
+			this.setServerOpHelper(model, controller, view);
+			unconfirmedOrderDatas = serverOpHelper.getUnconfirmedOrders().toArray(OrderData[]::new);
 			
 		runFXAction(()->{
-			confirmedOrderDatas = opHelper.confirmAllOrders().toArray(OrderData[]::new);
+			confirmedOrderDatas = serverOpHelper.confirmAllOrders().toArray(OrderData[]::new);
 		});
 			
 			confirmedOrders = model.getAllConfirmedOrders();
@@ -236,9 +186,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	@Test
 	void confirmAllOrdersWithButtonTest() {
 		runFXAction(()->{
-			model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-			model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
-			model.addUnconfirmedOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
+			this.addOrdersToModel(model);
 		});
 			
 			OrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
@@ -247,12 +195,12 @@ class OrderInspectionAreaTest extends ApplicationTest {
 			OrderData[] confirmedOrders = model.getAllConfirmedOrders();
 			Assertions.assertEquals(confirmedOrders.length, 0);
 		runFXAction(()->{
-			StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
-			unconfirmedOrderDatas = opHelper.getUnconfirmedOrders().toArray(OrderData[]::new);
+			this.setServerOpHelper(model, controller, view);
+			unconfirmedOrderDatas = serverOpHelper.getUnconfirmedOrders().toArray(OrderData[]::new);
 		});
 		runFXAction(()->{
-			StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
-			opHelper.confirmAllOrdersWithoutReturn();
+			this.setServerOpHelper(model, controller, view);
+			serverOpHelper.confirmAllOrdersWithoutReturn();
 		});
 			confirmedOrders = model.getAllConfirmedOrders();
 			Assertions.assertEquals(confirmedOrders.length, 3);
@@ -273,8 +221,8 @@ class OrderInspectionAreaTest extends ApplicationTest {
 	@Test
 	void confirmAllOrdersWithAutoTest() {		
 		runFXAction(()->{
-			StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
-			opHelper.toggleOnAutoConfirm();
+			this.setServerOpHelper(model, controller, view);
+			serverOpHelper.toggleOnAutoConfirm();
 		});
 		runFXAction(()->{
 			OrderData[] unconfirmedOrders = model.getAllUnconfirmedOrders();
@@ -283,9 +231,7 @@ class OrderInspectionAreaTest extends ApplicationTest {
 			OrderData[] confirmedOrders = model.getAllConfirmedOrders();
 			Assertions.assertEquals(confirmedOrders.length, 0);
 			
-			model.addUnconfirmedOrder("order2#20200809235959299#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1");
-			model.addUnconfirmedOrder("order6#20200813000000183#1#1:item3,5;item3,4;");
-			model.addUnconfirmedOrder("order7#20200909112233937#0#0:item1,2;item2,5;");
+			this.addOrdersToModel(model);
 		});
 		runFXAction(()->{
 			OrderData[] co = model.getAllConfirmedOrders();

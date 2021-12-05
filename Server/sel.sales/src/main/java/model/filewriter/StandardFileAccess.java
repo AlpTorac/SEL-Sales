@@ -11,7 +11,7 @@ public class StandardFileAccess extends FileAccess {
 
 	@Override
 	public String getDefaultFileName() {
-		if (this.defaultFileName != null) {
+		if (this.defaultFileName == null) {
 			return super.getDefaultFileName();
 		}
 		return this.defaultFileName;

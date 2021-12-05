@@ -1,36 +1,27 @@
 package test.model.order;
 
-import java.io.File;
-import java.math.BigDecimal;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import model.dish.DishMenuItemData;
-import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
-import server.model.ServerModel;
-import test.TestTemplate;
+import test.FXTestTemplate;
 
-class OrderItemTest extends TestTemplate {
+class OrderItemTest extends FXTestTemplate {
 	private IServerModel model;
 	
 	@BeforeEach
 	void prep() {
 		model = this.initServerModel();
 		this.addDishMenuToServerModel(model);
-		this.addOrdersToServerModel(model);
-		
-//		orderItem1 = fac.orderItemToData(orderItem1);
-//		orderItem2 = fac.orderItemToData(orderItem2);
-//		orderItem3 = fac.orderItemToData(orderItem3);
+		this.initOrders(model);
+		this.addOrdersToModel(model);
 	}
 
 	@AfterEach
 	void cleanUp() {
-		model.close();
+		this.closeModel(model);
 	}
 
 //	@Test
@@ -87,8 +78,13 @@ class OrderItemTest extends TestTemplate {
 	@Test
 	void contentTest() {
 		Assertions.assertTrue(orderItem1.getItem().equals(iData1));
+		Assertions.assertTrue(orderItem1.getAmount().compareTo(o1a1) == 0);
+		
 		Assertions.assertTrue(orderItem2.getItem().equals(iData2));
+		Assertions.assertTrue(orderItem2.getAmount().compareTo(o2a2) == 0);
+		
 		Assertions.assertTrue(orderItem3.getItem().equals(iData3));
+		Assertions.assertTrue(orderItem3.getAmount().compareTo(o3a3) == 0);
 	}
 	
 //	@SuppressWarnings("unlikely-arg-type")
@@ -112,7 +108,6 @@ class OrderItemTest extends TestTemplate {
 //		Assertions.assertTrue(orderItem3.equals(fac.constructData(orderItem3.getItemData(), orderItem3.getAmount())));
 		
 		Assertions.assertFalse(orderItem1.equals(null));
-		Assertions.assertFalse(orderItem1.equals(orderItem1));
 	}
 	
 //	@Test

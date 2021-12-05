@@ -25,7 +25,7 @@ public abstract class AccumulatingAggregate<A extends IAttribute, I extends IDOw
 	 * Only returns the array of the entities
 	 */
 	@Override
-	public Collection<I> getAllItems() {
+	public Collection<I> getAllElements() {
 		return this.getElementToAmountMap().keySet();
 	}
 
@@ -92,6 +92,10 @@ public abstract class AccumulatingAggregate<A extends IAttribute, I extends IDOw
 	
 	public boolean removeElementCompletely(EntityID id) {
 		return this.getElementToAmountMap().keySet().removeIf(i -> i.getID().equals(id));
+	}
+	
+	public void removeElement(I item, BigDecimal amount) {
+		this.removeElement(item.getID(), amount);
 	}
 	
 	public void removeElement(EntityID id, BigDecimal amount) {
@@ -176,6 +180,7 @@ public abstract class AccumulatingAggregate<A extends IAttribute, I extends IDOw
 		int i = 0;
 		for (Entry<I, BigDecimal> e : this.getElementToAmountMap().entrySet()) {
 			arr[i] = new AccumulatingAggregateEntry<I>(e.getKey(), e.getValue());
+			i++;
 		}
 		return (AccumulatingAggregateEntry<I>[]) arr;
 	}

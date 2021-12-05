@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import model.datamapper.order.OrderAttribute;
 import model.dish.DishMenuItemData;
+import model.dish.IDishMenuItemFinder;
 import model.entity.AccumulatingAggregateEntry;
 import model.entity.ValueObject;
 import model.entity.id.EntityID;
@@ -13,16 +14,19 @@ public class OrderData extends ValueObject<OrderAttribute> {
 	
 	protected OrderData(EntityID id) {
 		super(id);
-		this.setAttributeValue(OrderAttribute.ORDER_ITEMS, new AccumulatingOrderItemAggregate());
 //		this.orderItems = this.initOrderItemAggregate();
 	}
 	
-//	protected AccumulatingOrderItemAggregate initOrderItemAggregate() {
-//		return new AccumulatingOrderItemAggregate();
-//	}
+	public void setFinder(IDishMenuItemFinder finder) {
+		this.getOrderItemAggregate().setDishMenuFinder(finder);
+	}
 	
 	public void addOrderItem(DishMenuItemData menuItem, BigDecimal amount) {
 		this.getOrderItemAggregate().addElement(menuItem, amount);
+	}
+	
+	public void removeOrderItem(DishMenuItemData menuItem, BigDecimal amount) {
+		this.getOrderItemAggregate().removeElement(menuItem, amount);
 	}
 	
 	public void removeOrderItem(EntityID menuItemID, BigDecimal amount) {
@@ -91,5 +95,10 @@ public class OrderData extends ValueObject<OrderAttribute> {
 
 	public Integer getTableNumber() {
 		return (Integer) this.getAttributeValue(OrderAttribute.TABLE_NUMBER);
+	}
+	
+	@Override
+	public String toString() {
+		return this.getID().toString();
 	}
 }

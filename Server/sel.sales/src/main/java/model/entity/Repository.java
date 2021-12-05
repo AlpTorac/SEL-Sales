@@ -49,7 +49,10 @@ public abstract class Repository<A extends IAttribute, E extends Entity<A>, V ex
 	}
 	
 	public V toValueObject(E entity) {
-		return this.getFactory().entityToValue(entity);
+		if (entity != null) {
+			return this.getFactory().entityToValue(entity);
+		}
+		return null;
 	}
 	
 	public Collection<V> toValueObjectArray(Collection<E> entities) {
@@ -59,7 +62,11 @@ public abstract class Repository<A extends IAttribute, E extends Entity<A>, V ex
 	}
 	
 	public V getElementAsValueObject(EntityID id) {
-		return this.getFactory().entityToValue(this.getElement(id));
+		E element = this.getElement(id);
+		if (element == null) {
+			return null;
+		}
+		return this.getFactory().entityToValue(element);
 	}
 	
 	public Object getAttributeValue(A attribute, EntityID id) {

@@ -7,6 +7,7 @@ import client.model.ClientModel;
 import client.model.IClientModel;
 import controller.IController;
 import model.IModel;
+import model.datamapper.order.OrderDAO;
 import model.order.OrderData;
 
 public class DummyClient extends DummyInteractionPartaker {
@@ -71,7 +72,7 @@ public class DummyClient extends DummyInteractionPartaker {
 	}
 	
 	public void addCookingOrder(String serialisedOrder) {
-		this.getModel().addCookingOrder(serialisedOrder);
+		this.getModel().addOrder(serialisedOrder);
 	}
 	
 	public void makePendingPaymentOrder(String orderID) {
@@ -79,7 +80,8 @@ public class DummyClient extends DummyInteractionPartaker {
 	}
 	
 	public void makePendingSendOrder(String formerID, String serialisedOrder) {
-		this.getModel().makePendingSendOrder(serialisedOrder);
+		OrderDAO dao = new OrderDAO("");
+		this.getModel().makePendingSendOrder(dao.parseValueObject(serialisedOrder));
 	}
 	
 	public void makeSentOrder(String orderID) {

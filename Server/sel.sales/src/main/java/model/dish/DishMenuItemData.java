@@ -56,6 +56,11 @@ public class DishMenuItemData extends ValueObject<DishMenuItemAttribute> {
 	}
 	
 	@Override
+	public String toString() {
+		return this.getID().toString();
+	}
+	
+	@Override
 	public boolean equals(Object o) {
 		if (o == null || !(o instanceof DishMenuItemData)) {
 			return false;

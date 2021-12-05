@@ -127,7 +127,7 @@ public final class GeneralTestUtilityClass {
 	}
 	public static <T> boolean arrayContains(T[] array, T element) {
 		return arrayContains(array, element, (t1,t2) -> {
-			return t1.equals(t2);
+			return t1 != null && t2 != null && t1.equals(t2);
 		});
 	}
 	public static <T> boolean arrayContentEquals(T[] array1, T[] array2) {

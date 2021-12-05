@@ -2,7 +2,6 @@ package client;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 import client.controller.IClientController;
 import client.controller.StandardClientController;
@@ -38,7 +37,7 @@ public class ClientApp extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		model = new ClientModel();
 		controller = new StandardClientController(model);
-		view = new StandardClientView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
+		view = new StandardClientView(new FXUIComponentFactory(), controller, model);
 //		external = new BluetoothClientExternal(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		external = new StandardClientExternal(controller, model, new WindowsBluetoothConnectionUtility(), pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		view.startUp();

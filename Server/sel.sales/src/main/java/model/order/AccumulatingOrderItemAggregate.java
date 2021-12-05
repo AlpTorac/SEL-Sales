@@ -50,8 +50,8 @@ public class AccumulatingOrderItemAggregate extends AccumulatingAggregate<DishMe
 	public BigDecimal getOrderDiscount() {
 		return this.getElementToAmountMap().entrySet().stream()
 				.filter(e -> e.getKey().getGrossPrice().compareTo(BigDecimal.ZERO) < 0)
-				.map(e -> e.getKey().getGrossPrice().multiply(e.getValue()))
-				.reduce(BigDecimal.ZERO, (gp1,gp2) -> gp1.add(gp2)).abs();
+				.map(e -> e.getKey().getGrossPrice().multiply(e.getValue()).abs())
+				.reduce(BigDecimal.ZERO, (gp1,gp2) -> gp1.add(gp2));
 	}
 	
 	public BigDecimal getNetSum() {

@@ -6,7 +6,7 @@ import model.datamapper.IAttribute;
 import model.entity.id.EntityID;
 
 public interface IAggregate<A extends IAttribute, I extends IDOwner<A>> {
-	Collection<I> getAllItems();
+	Collection<I> getAllElements();
 	boolean isEmpty();
 	void addElement(I element);
 	I getElement(EntityID id);

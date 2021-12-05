@@ -12,7 +12,7 @@ public class DishMenuData extends Aggregate<DishMenuItemAttribute, DishMenuItemD
 	
 	public DishMenu toDishMenu() {
 		DishMenu menu = new DishMenu();
-		for (DishMenuItemData data : this.getAllItems()) {
+		for (DishMenuItemData data : this.getAllElements()) {
 			menu.addElement(data);
 		}
 		return menu;

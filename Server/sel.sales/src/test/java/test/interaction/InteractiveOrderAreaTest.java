@@ -33,7 +33,6 @@ import test.external.dummy.DummyConnectionUtility;
 import test.external.dummy.DummyStandardClient;
 import test.external.dummy.DummyStandardInteraction;
 import test.external.dummy.DummyStandardServer;
-import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
 @Disabled("Takes too long to finish")
@@ -172,7 +171,7 @@ class InteractiveOrderAreaTest extends ApplicationTest {
 		ods = new OrderData[] {od1, od2, od3, od4, od5};
 		
 		runFXAction(()->{
-			clientView = new StandardClientView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), client.getController(), client.getModel());
+			clientView = new StandardClientView(new FXUIComponentFactory(), client.getController(), client.getModel());
 			clientView.startUp();
 			
 			clientOpHelper = new StandardClientViewOperationsUtilityClass(

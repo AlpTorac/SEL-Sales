@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public class AttributeFormat implements IFormat {
 	private String attributeStart = "{";
 	
-	private String nameAndFieldSeparator = ":";
+	private String nameAndFieldSeparator = "#";
 	
 	private String attributeEnd = "}";
 	

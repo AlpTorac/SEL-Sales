@@ -10,17 +10,18 @@ import external.connection.IConnection;
 import external.device.IDevice;
 import model.IModel;
 import model.connectivity.IDeviceData;
+import model.datamapper.order.OrderDAO;
 import model.dish.DishMenu;
 import model.dish.DishMenuData;
 import model.dish.DishMenuItem;
+import model.dish.DishMenuItemData;
+import model.dish.DishMenuItemFactory;
 import model.order.OrderData;
 import model.settings.SettingsField;
 import test.GeneralTestUtilityClass;
 import view.IView;
 import view.repository.IUILibraryHelper;
-import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
-import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.UIComponentFactory;
 
 public abstract class DummyInteractionPartaker implements Closeable {
@@ -124,11 +125,11 @@ public abstract class DummyInteractionPartaker implements Closeable {
 	}
 	
 	public boolean menuEqual(DishMenu menu) {
-		return this.getModel().getMenuData().equals(this.getModel().getDishMenuHelper().dishMenuToData(menu));
+		return this.getModel().getMenuData().equals(menu.toData());
 	}
 	
 	public void setMenu(DishMenu menu) {
-		this.setMenu(this.getModel().getDishMenuHelper().dishMenuToData(menu));
+		this.setMenu(menu.toData());
 	}
 	
 	public void setMenu(DishMenuData menuData) {
@@ -145,15 +146,17 @@ public abstract class DummyInteractionPartaker implements Closeable {
 	}
 	
 	public OrderData deserialiseOrderData(String serialisedOrder) {
-		return this.getModel().getOrderHelper().deserialiseOrderData(serialisedOrder);
+		OrderDAO dao = new OrderDAO("");
+		return dao.parseValueObject(serialisedOrder);
 	}
 	
 	public DishMenu createDishMenu() {
-		return this.getModel().getDishMenuHelper().createDishMenu();
+		return new DishMenu();
 	}
 	
-	public DishMenuItem createDishMenuItem(String name, BigDecimal porSize, BigDecimal proCost, BigDecimal price, String id) {
-		return this.getModel().getDishMenuHelper().createDishMenuItem(name, porSize, proCost, price, id);
+	public DishMenuItemData createDishMenuItem(String name, BigDecimal porSize, BigDecimal proCost, BigDecimal price, String id) {
+		DishMenuItemFactory fac = new DishMenuItemFactory();
+		return fac.constructData(name, id, porSize, proCost, price);
 	}
 	
 	public boolean menuDatasEqual(DummyInteractionPartaker dip) {

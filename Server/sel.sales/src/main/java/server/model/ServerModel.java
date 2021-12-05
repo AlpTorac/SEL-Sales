@@ -38,6 +38,11 @@ public class ServerModel extends Model implements IServerModel {
 //	}
 	
 	@Override
+	public void addOrder(OrderData data) {
+		this.addUnconfirmedOrder(data);
+	}
+	
+	@Override
 	public void loadSaved() {
 		this.getFileManager().loadSaved();
 	}
@@ -70,10 +75,10 @@ public class ServerModel extends Model implements IServerModel {
 //				ordersToBeWritten.add(od);
 //			}
 //		}
-		boolean allWritten = true;
+//		boolean allWritten = true;
 //		boolean current = false;
 		for (OrderData od : orders) {
-			allWritten = allWritten && this.writeOrder(od.getID().toString());
+			this.writeOrder(od.getID().toString());
 		}
 		
 //		OrderData[] array = ordersToBeWritten.toArray(OrderData[]::new);
@@ -85,7 +90,7 @@ public class ServerModel extends Model implements IServerModel {
 //			}
 //		}
 		
-		return allWritten;
+		return true;
 	}
 	
 	public void addMenuItem(String serialisedItemData) {
@@ -128,8 +133,11 @@ public class ServerModel extends Model implements IServerModel {
 
 	@Override
 	public void editMenuItem(DishMenuItemData data) {
-		this.getDishMenu().addElement(data);
-		this.menuChanged();
+		if (data != null) {
+			this.getDishMenu().removeElement(data.getID());
+			this.getDishMenu().addElement(data);
+			this.menuChanged();
+		}
 	}
 	
 	@Override
@@ -177,7 +185,7 @@ public class ServerModel extends Model implements IServerModel {
 
 	@Override
 	public boolean writeDishMenu() {
-		return this.getFileManager().writeDishMenuData(this.getDishMenuItemDAO().serialiseValueObjects(this.getDishMenu().toData().getAllItems().toArray(DishMenuItemData[]::new)));
+		return this.getFileManager().writeDishMenuData(this.getDishMenuItemDAO().serialiseValueObjects(this.getDishMenu().toData().getAllElements().toArray(DishMenuItemData[]::new)));
 	}
 	
 	@Override
@@ -214,10 +222,5 @@ public class ServerModel extends Model implements IServerModel {
 	public void addMenuItem(DishMenuItemData data) {
 		this.getDishMenu().addElement(data);
 		this.menuChanged();
-	}
-
-	@Override
-	public void addOrder(String serialisedOrderData) {
-		this.addOrder(this.getOrderDAO().parseValueObject(serialisedOrderData));
 	}
 }

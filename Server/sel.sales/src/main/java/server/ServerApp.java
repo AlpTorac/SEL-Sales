@@ -13,7 +13,6 @@ import server.model.IServerModel;
 import server.model.ServerModel;
 import server.view.IServerView;
 import server.view.StandardServerView;
-import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
 public class ServerApp extends Application {
@@ -40,7 +39,7 @@ public class ServerApp extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		model = new ServerModel();
 		controller = new StandardServerController(model);
-		view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
+		view = new StandardServerView(new FXUIComponentFactory(), controller, model);
 //		external = new BluetoothServerExternal(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		external = new StandardServerExternal(controller, model, new WindowsBluetoothConnectionUtility(), pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		view.startUp();

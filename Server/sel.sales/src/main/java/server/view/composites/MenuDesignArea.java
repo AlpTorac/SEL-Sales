@@ -220,6 +220,6 @@ public class MenuDesignArea extends UIVBoxLayout {
 //			transformedData[i] = data[i].allToString();
 //		}
 		
-		this.getMenuItemTable().addItems(data.getAllItems());
+		this.getMenuItemTable().addItems(data.getAllElements());
 	}
 }

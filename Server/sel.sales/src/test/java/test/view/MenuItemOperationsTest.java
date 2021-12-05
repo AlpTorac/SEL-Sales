@@ -18,40 +18,17 @@ import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import server.view.StandardServerView;
+import test.FXTestTemplate;
 import test.GeneralTestUtilityClass;
 import test.StandardServerViewOperationsUtilityClass;
 import test.model.dish.DishMenuItemTestUtilityClass;
 import view.IView;
-import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 //@Execution(value = ExecutionMode.SAME_THREAD)
-class MenuItemOperationsTest extends ApplicationTest {
-	private static IServerModel model;
-	private static IServerController controller;
-	private static IView view;
-	
-	private String i1Name = "aaa";
-	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
-	private BigDecimal i1Price = BigDecimal.valueOf(5);
-	private BigDecimal i1ProCost = BigDecimal.valueOf(4);
-	private BigDecimal i1Disc = BigDecimal.valueOf(0);
-	private String i1id = "item1";
-	
-	private String i2Name = "bbb";
-	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
-	private BigDecimal i2Price = BigDecimal.valueOf(1);
-	private BigDecimal i2ProCost = BigDecimal.valueOf(0.5);
-	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
-	private String i2id = "item2";
-	
-	private String i3Name = "ccc";
-	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
-	private BigDecimal i3Price = BigDecimal.valueOf(4);
-	private BigDecimal i3ProCost = BigDecimal.valueOf(3.5);
-	private BigDecimal i3Disc = BigDecimal.valueOf(1);
-	private String i3id = "item3";
-	
-	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
+class MenuItemOperationsTest extends FXTestTemplate {
+	private IServerModel model;
+	private IServerController controller;
+	private StandardServerView view;
 	
 	@BeforeEach
 	void prep() {
@@ -67,18 +44,18 @@ class MenuItemOperationsTest extends ApplicationTest {
 	
 	@Override
 	public void start(Stage stage) {
-		model = new ServerModel(this.testFolderAddress);
-		controller = new StandardServerController(model);
-		view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
+		model = this.initServerModel();
+		controller = this.initServerController(model);
+		view = this.initServerView(model, controller);
 		view.startUp();
+		this.setServerOpHelper(model, controller, view);
 	}
 	
 	@Test
 	void addMenuItemtest() {
-		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
-		DishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
+		DishMenuItemData addedItem = serverOpHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
 		
-		DishMenuItemData[] datas = model.getMenuData().getAllItems();
+		DishMenuItemData[] datas = model.getMenuData().getAllElements().toArray(DishMenuItemData[]::new);
 		Assertions.assertEquals(datas.length, 1);
 		
 		Assertions.assertTrue(addedItem.equals(datas[0]));
@@ -88,13 +65,13 @@ class MenuItemOperationsTest extends ApplicationTest {
 	void removeMenuItemTest() {
 		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		DishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1ProCost, i1PorSize, i1Disc);
-		DishMenuItemData[] datas = model.getMenuData().getAllItems();
+		DishMenuItemData[] datas = model.getMenuData().getAllElements().toArray(DishMenuItemData[]::new);
 		Assertions.assertEquals(datas.length, 1);
 		
 		Assertions.assertTrue(addedItem.equals(datas[0]));
 		
 		DishMenuItemData removedItem = opHelper.removeMenuItem(i1id);
-		datas = model.getMenuData().getAllItems();
+		datas = model.getMenuData().getAllElements().toArray(DishMenuItemData[]::new);
 		
 		Assertions.assertTrue(addedItem.equals(removedItem));
 		Assertions.assertEquals(datas.length, 0);
@@ -103,21 +80,26 @@ class MenuItemOperationsTest extends ApplicationTest {
 	@Test
 	void editMenuItemTest() {
 		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
-		DishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
+		DishMenuItemData addedItem = opHelper.addMenuItem(i1Name, i1id, i1Price, i1ProCost, i1PorSize, i1Disc);
 		
-		DishMenuItemData[] datas = model.getMenuData().getAllItems();
+		DishMenuItemData[] datas = model.getMenuData().getAllElements().toArray(DishMenuItemData[]::new);
 		Assertions.assertEquals(datas.length, 1);
 		
 		Assertions.assertTrue(addedItem.equals(datas[0]));
 		
-		DishMenuItemData editedItem = opHelper.editMenuItem(i2Name, i1id, i3Price, i2ProCost, i3PorSize, i2Disc);
+		DishMenuItemData itemData = opHelper.editMenuItem(i2Name, i1id, i3Price, i2ProCost, i3PorSize, i2Disc);
+//		DishMenuItemData data = model.getMenuItem(i1id);
+//		Assertions.assertEquals(data.getDishName(), i2Name);
+//		Assertions.assertEquals(data.getPortionSize().compareTo(i3PorSize), 0);
+//		Assertions.assertEquals(data.getGrossPrice().compareTo(i3Price), 0);
+//		Assertions.assertEquals(data.getProductionCost().compareTo(i2ProCost), 0);
 		
-		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(editedItem, i2Name, i1id, i3PorSize, i3Price, i2ProCost);
+		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(itemData, i2Name, i1id, i3PorSize, i3Price, i2ProCost);
 	}
 
 	@Test
 	void writeMenuTest() {
-		Assertions.assertEquals(model.getMenuData().getAllItems().length, 0);
+		Assertions.assertEquals(model.getMenuData().getAllElements().size(), 0);
 		StandardServerViewOperationsUtilityClass opHelper = new StandardServerViewOperationsUtilityClass((StandardServerView) view, controller, model);
 		DishMenuItemData addedItem1 = opHelper.addMenuItem(i1Name, i1id, i1Price, i1Price, i1PorSize, i1Disc);
 		DishMenuItemData addedItem2 = opHelper.addMenuItem(i2Name, i2id, i2Price, i2Price, i2PorSize, i2Disc);

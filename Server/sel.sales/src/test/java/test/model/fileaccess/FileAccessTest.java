@@ -23,7 +23,7 @@ class FileAccessTest {
 	
 	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	
-	private String fileNAE = FileAccess.getDefaultFileNameForClass()+FileAccess.getExtensionForClass();
+	private String fileNAE;
 
 	private String fileContent =
 			"line1"+System.lineSeparator()+
@@ -39,6 +39,7 @@ class FileAccessTest {
 	void prep() {
 		GeneralTestUtilityClass.deletePathContent(new File(this.testFolderAddress));
 		fa = new FileAccess(this.testFolderAddress) {};
+		fileNAE = fa.getDefaultFileName()+fa.getExtension();
 		fa.setAddress(testFolderAddress);
 		Assertions.assertTrue(fa.isAddressValid());
 		Assertions.assertTrue(fa.fileExists());

@@ -18,4 +18,18 @@ public class AccumulatingAggregateEntry<T> {
 	public BigDecimal getAmount() {
 		return this.amount;
 	}
+	
+	@Override
+	public String toString() {
+		return this.getItem().toString() + "=" + this.getAmount().toPlainString();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof AccumulatingAggregateEntry)) {
+			return false;
+		}
+		AccumulatingAggregateEntry<?> castedO = (AccumulatingAggregateEntry<?>) o;
+		return this.getItem().equals(castedO.getItem()) && this.getAmount().compareTo(castedO.getAmount()) == 0;
+	}
 }

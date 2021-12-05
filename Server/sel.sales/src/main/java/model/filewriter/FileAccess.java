@@ -15,12 +15,6 @@ public abstract class FileAccess implements IFileAccess {
 	public FileAccess(String address) {
 		this.address = address;
 	}
-//	protected boolean isFileFilled(File f) {
-//		return f != null && f.exists() && f.length() > 0;
-//	}
-	public static String getDefaultFileNameForClass() {
-		return defaultName;
-	}
 	@Override
 	public String getFileName() {
 		return this.fileName != null ? this.fileName : this.getDefaultFileName()+this.getExtension();

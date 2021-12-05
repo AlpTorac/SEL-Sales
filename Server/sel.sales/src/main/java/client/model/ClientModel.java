@@ -17,12 +17,12 @@ public class ClientModel extends Model implements IClientModel {
 		this();
 		this.getFileManager().setResourcesFolderAddress(resourceFolder);
 	}
-	
-	@Override
-	public void addOrder(String serialisedOrderData) {
-		this.addCookingOrder(serialisedOrderData);
-	}
 
+	@Override
+	public void addOrder(OrderData data) {
+		this.addCookingOrder(data);
+	}
+	
 	@Override
 	public void removeAllOrders() {
 		this.getOrderCollector().clearAllElements();

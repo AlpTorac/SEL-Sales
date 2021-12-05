@@ -77,6 +77,7 @@ public class FileManager implements IFileManager {
 	@Override
 	public void refreshValue() {
 		this.menuFile.setAddress(this.model.getSettings().getSetting(SettingsField.DISH_MENU_FOLDER));
+		this.orderFile.setAddress(this.model.getSettings().getSetting(SettingsField.ORDER_FOLDER));
 	}
 	@Override
 	public void close() {

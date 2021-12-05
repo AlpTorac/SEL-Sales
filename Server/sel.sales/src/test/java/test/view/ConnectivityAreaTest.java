@@ -29,7 +29,6 @@ import test.external.dummy.DummyDeviceDiscoveryStrategy;
 import test.external.dummy.DummyServerExternal;
 import test.external.dummy.DummyService;
 import test.external.dummy.DummyServiceConnectionManager;
-import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 
 class ConnectivityAreaTest extends ApplicationTest {
@@ -118,7 +117,7 @@ class ConnectivityAreaTest extends ApplicationTest {
 		runFXAction(()->{
 			model = new ServerModel(this.testFolderAddress);
 			controller = new StandardServerController(model);
-			view = new StandardServerView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), controller, model);
+			view = new StandardServerView(new FXUIComponentFactory(), controller, model);
 			external = new DummyServerExternal("id", "name", controller, model, 1000, 100, 2000, 3);
 			service = GeneralTestUtilityClass.getPrivateFieldValue((External) external, "service");
 			dscm = (DummyServiceConnectionManager) service.getServiceConnectionManager();

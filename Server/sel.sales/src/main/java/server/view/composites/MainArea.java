@@ -15,7 +15,6 @@ import server.view.composites.listeners.RemoveOrderListener;
 import server.view.composites.listeners.WriteDishMenuListener;
 import server.view.composites.listeners.WriteOrdersListener;
 import view.repository.ILayout;
-import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.ChangeEventListener;
 import view.repository.uiwrapper.ClickEventListener;
 import view.repository.uiwrapper.UIComponentFactory;
@@ -23,7 +22,6 @@ import view.repository.uiwrapper.UIHBoxLayout;
 
 public class MainArea extends UIHBoxLayout {
 	private UIComponentFactory fac;
-	private AdvancedUIComponentFactory advFac;
 	private DateSettings ds;
 	
 	private MenuDesignArea mda;
@@ -33,13 +31,12 @@ public class MainArea extends UIHBoxLayout {
 	private IServerController controller;
 	private IServerModel model;
 	
-	public MainArea(IServerController controller, IServerModel model, UIComponentFactory fac, AdvancedUIComponentFactory advFac) {
+	public MainArea(IServerController controller, IServerModel model, UIComponentFactory fac) {
 		super(fac.createHBoxLayout().getComponent());
 		this.controller = controller;
 		this.model = model;
 		this.ds = new DateSettings();
 		this.fac = fac;
-		this.advFac = advFac;
 		this.init();
 	}
 	

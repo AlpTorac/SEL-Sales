@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
 import model.dish.DishMenuItem;
 import model.dish.DishMenuItemData;
 import server.model.IServerModel;
-import test.TestTemplate;
+import test.FXTestTemplate;
 //@Execution(value = ExecutionMode.SAME_THREAD)
-class DishMenuItemDataTest extends TestTemplate {
+class DishMenuItemDataTest extends FXTestTemplate {
 	private static IServerModel model;
 	
 	@BeforeEach
@@ -23,7 +23,7 @@ class DishMenuItemDataTest extends TestTemplate {
 	
 	@AfterEach
 	void cleanUp() {
-		model.close();
+		this.closeModel(model);
 	}
 	
 	@Test
@@ -100,11 +100,9 @@ class DishMenuItemDataTest extends TestTemplate {
 	
 	@Test
 	void pricesPerPortionTest() {
-		DishMenuItemData[] data = model.getMenuData().getAllItems().toArray(DishMenuItemData[]::new);
-		
-		DishMenuItemData d1 = data[0];
-		DishMenuItemData d2 = data[1];
-		DishMenuItemData d3 = data[2];
+		DishMenuItemData d1 = model.getMenuItem(i1id);
+		DishMenuItemData d2 = model.getMenuItem(i2id);
+		DishMenuItemData d3 = model.getMenuItem(i3id);
 		
 		DishMenuItemTestUtilityClass.assertMenuItemDataPricesEqual(d1, i1PorSize, i1Price);
 		DishMenuItemTestUtilityClass.assertMenuItemDataPricesEqual(d2, i2PorSize, i2Price);

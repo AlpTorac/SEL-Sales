@@ -35,8 +35,8 @@ public class EditDishListener extends ClickEventListener implements IApplication
 				this.getDishName().getText(),
 				this.getDishID().getText(),
 				BigDecimal.valueOf(Double.valueOf(this.getPortion().getText()).doubleValue()),
-				BigDecimal.valueOf(Double.valueOf(this.getProductionCost().getText()).doubleValue()),
-				BigDecimal.valueOf(Double.valueOf(this.getPrice().getText()).doubleValue()));
+				BigDecimal.valueOf(Double.valueOf(this.getPrice().getText()).doubleValue()),
+				BigDecimal.valueOf(Double.valueOf(this.getProductionCost().getText()).doubleValue()));
 		
 		this.resetUserInput();
 		

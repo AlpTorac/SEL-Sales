@@ -6,9 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import model.dish.DishMenuItemData;
 import server.model.IServerModel;
-import test.TestTemplate;
+import test.FXTestTemplate;
 //@Execution(value = ExecutionMode.SAME_THREAD)
-class DishMenuParserTest extends TestTemplate {
+class DishMenuParserTest extends FXTestTemplate {
 	private IServerModel model;
 	
 	@BeforeEach
@@ -19,7 +19,7 @@ class DishMenuParserTest extends TestTemplate {
 	
 	@AfterEach
 	void cleanUp() {
-		model.close();
+		this.closeModel(model);
 	}
 	
 	@Test

@@ -198,9 +198,11 @@ public class OrderInspectionArea extends UIVBoxLayout {
 	
 	protected ITable<AccumulatingAggregateEntry<DishMenuItemData>> initOrderDetailsTable() {
 		ITable<AccumulatingAggregateEntry<DishMenuItemData>> table = this.fac.createTable();
-		table.addColumn("Menu Item", "ItemData");
+		table.addColumn("Menu Item", "Item");
 		table.addColumn("Amount", "Amount");
-		table.addColumn("Gross Price", "GrossPrice");
+		table.addColumn("Gross Price", (e) -> {
+			return e.getItem().getGrossPrice().multiply(e.getAmount()).toPlainString();
+		});
 		return table;
 	}
 	

@@ -6,7 +6,6 @@ import client.view.composites.ClientConnectionArea;
 import client.view.composites.ClientSettingsArea;
 import client.view.composites.OrderArea;
 import view.repository.IUILibraryHelper;
-import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.UIComponent;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIInnerFrame;
@@ -28,16 +27,14 @@ public class StandardClientView extends ClientView {
 	private UITabPane mainTabPane;
 	
 	private UIComponentFactory fac;
-	private AdvancedUIComponentFactory advFac;
 	
 	private String oaTabName = "Order Area";
 	private String ccaTabName = "Connection Area";
 	private String csaTabName = "Settings Area";
 	
-	public StandardClientView(UIComponentFactory fac, AdvancedUIComponentFactory advFac, IClientController controller, IClientModel model) {
+	public StandardClientView(UIComponentFactory fac, IClientController controller, IClientModel model) {
 		super(controller, model);
 		this.fac = fac;
-		this.advFac = advFac;
 		this.initUI();
 	}
 	
@@ -58,11 +55,11 @@ public class StandardClientView extends ClientView {
 	}
 
 	protected ClientConnectionArea initClientConnectionArea() {
-		return new ClientConnectionArea(this.getController(), this.fac, this.advFac);
+		return new ClientConnectionArea(this.getController(), this.fac);
 	}
 
 	protected OrderArea initOrderTakingArea() {
-		return new OrderArea(this.getModel(), this.getController(), this.fac, this.advFac);
+		return new OrderArea(this.getModel(), this.getController(), this.fac);
 	}
 
 	protected UIInnerFrame initFrame(UIComponent parent) {

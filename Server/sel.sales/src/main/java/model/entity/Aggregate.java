@@ -19,7 +19,7 @@ public abstract class Aggregate<A extends IAttribute, I extends IDOwner<A>> impl
 	}
 	
 	@Override
-	public Collection<I> getAllItems() {
+	public Collection<I> getAllElements() {
 		return this.getElementCollection();
 	}
 
@@ -67,8 +67,22 @@ public abstract class Aggregate<A extends IAttribute, I extends IDOwner<A>> impl
 			return false;
 		}
 		Aggregate<?,?> castedO = (Aggregate<?,?>) o;
-		return this.getElementCollection().size() == castedO.getElementCollection().size() &&
-				this.getElementCollection().containsAll(castedO.getElementCollection());
+		
+		IDOwner<?>[] oArr = castedO.getAllElements().toArray(IDOwner<?>[]::new);
+		IDOwner<?>[] thisArr = this.getAllElements().toArray(IDOwner<?>[]::new);
+		
+		boolean contains = false;
+		for (IDOwner<?> i1 : oArr) {
+			contains = false;
+			for (IDOwner<?> i2 : thisArr) {
+				contains = contains || i1.equals(i2);
+			}
+			if (!contains) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	@Override

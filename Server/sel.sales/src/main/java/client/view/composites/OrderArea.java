@@ -6,7 +6,6 @@ import controller.IController;
 import model.IModel;
 import model.dish.DishMenuData;
 import model.order.OrderData;
-import view.repository.uiwrapper.AdvancedUIComponentFactory;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UILayout;
 import view.repository.uiwrapper.UITabPane;
@@ -25,19 +24,17 @@ public class OrderArea extends UIVBoxLayout {
 	private IModel model;
 	private IController controller;
 	private UIComponentFactory fac;
-	private AdvancedUIComponentFactory advFac;
 	
 	private String otaTabName = "Order Taking Area";
 	private String coaTabName = "Cooking Orders Area";
 	private String uoaTabName = "Unpaid Orders Area";
 	private String poaTabName = "Past Orders Area";
 	
-	public OrderArea(IModel model, IController controller, UIComponentFactory fac, AdvancedUIComponentFactory advFac) {
+	public OrderArea(IModel model, IController controller, UIComponentFactory fac) {
 		super(fac.createVBoxLayout().getComponent());
 		this.model = model;
 		this.controller = controller;
 		this.fac = fac;
-		this.advFac = advFac;
 		
 		this.tabArea = this.initTabArea();
 		

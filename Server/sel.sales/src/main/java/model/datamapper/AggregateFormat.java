@@ -6,8 +6,8 @@ public class AggregateFormat implements IFormat {
 	private String aggregateEntryFieldSeparator = ",";
 	private String aggregateEntrySeparator = ";";
 	
-	private Pattern pattern = Pattern.compile("(" + "[^"+aggregateEntryFieldSeparator + aggregateEntrySeparator +"]"
-			+ aggregateEntryFieldSeparator + "[^"+aggregateEntryFieldSeparator + aggregateEntrySeparator +"]" + ")*"
+	private Pattern pattern = Pattern.compile("(" + "[^"+aggregateEntryFieldSeparator + aggregateEntrySeparator +"]*"
+			+ aggregateEntryFieldSeparator + "[^"+aggregateEntryFieldSeparator + aggregateEntrySeparator +"]*" + ")*"
 			+ aggregateEntrySeparator);
 	
 	public String getFieldSeparator() {

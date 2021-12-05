@@ -245,7 +245,7 @@ class MultipleStandardExternalInteractionTest {
 		
 		for (DummyClient client : clients) {
 			DishMenuData menuData = client.getMenuData();
-			while (menuData.getAllItems().length == 0) {
+			while (menuData.getAllElements().length == 0) {
 				interaction.reSetServerMenu();
 				GeneralTestUtilityClass.performWait(waitTime);
 				menuData = client.getMenuData();

@@ -1,5 +1,7 @@
 package view.repository.uifx;
 
+import java.util.function.Function;
+
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -23,8 +25,8 @@ public class FXTable<T> extends TableView<T> implements FXHasText, ITable<T>, FX
 	}
 
 	@Override
-	public <O> void addColumn(String title) {
-		super.getColumns().add(this.makeSimpleValueColumn(title));
+	public <O> void addColumn(String title, Function<T, O> f) {
+		super.getColumns().add(this.makeSimpleValueColumn(title, f));
 	}
 	
 	protected <O> TableColumn<T, O> makePropertyValueColumn(String title, String fieldName) {
@@ -33,9 +35,9 @@ public class FXTable<T> extends TableView<T> implements FXHasText, ITable<T>, FX
 		return col;
 	}
 	
-	protected <O> TableColumn<T, O> makeSimpleValueColumn(String title) {
+	protected <O> TableColumn<T, O> makeSimpleValueColumn(String title, Function<T, O> f) {
 		TableColumn<T, O> col = new TableColumn<>(title);
-		col.setCellValueFactory(cd -> new SimpleObjectProperty<O>());
+		col.setCellValueFactory(cd -> new SimpleObjectProperty<O>(f.apply(cd.getValue())));
 		col.setCellFactory(c -> new TableCell<T, O>() {
 			@Override
 			protected void updateItem(O item, boolean empty) {

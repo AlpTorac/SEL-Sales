@@ -33,6 +33,10 @@ public abstract class EntityDAO<A extends IAttribute, E extends Entity<A>, V ext
 
 	protected abstract IFactory<A,E,V> initFactory();
 	
+	protected IFactory<A,E,V> getFactory() {
+		return this.fac;
+	}
+	
 	public AttributeDAO<A,E,V,C> getDAO(IAttribute oa) {
 		return this.getDAOMap().get(oa);
 	}
@@ -67,15 +71,20 @@ public abstract class EntityDAO<A extends IAttribute, E extends Entity<A>, V ext
 		return this.attributeFormat;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public String serialiseValueObjects(V... data) {
+	public String serialiseValueObject(V data) {
+		String result = "";
+		String serialisedAttributes = "";
+		for (AttributeDAO<A,E,V,C> dao : this.getDAOMap().values()) {
+			serialisedAttributes += dao.serialiseAttribute(data);
+		}
+		result += this.getEntityFormat().format(data.getID(), serialisedAttributes);
+		return result;
+	}
+	
+	public String serialiseValueObjects(V[] data) {
 		String result = "";
 		for (V d : data) {
-			String serialisedAttributes = "";
-			for (AttributeDAO<A,E,V,C> dao : this.getDAOMap().values()) {
-				serialisedAttributes += dao.serialiseAttribute(d);
-			}
-			result += this.getEntityFormat().format(d.getID(), serialisedAttributes);
+			result += this.serialiseValueObject(d);
 		}
 		return result;
 	}
@@ -99,7 +108,7 @@ public abstract class EntityDAO<A extends IAttribute, E extends Entity<A>, V ext
 			if (fields.length > 1) {
 				String id = fields[0];
 				String[] serialisedAttributes = this.getAttributeFormat().getMatches(fields[1]).toArray(String[]::new);
-				V data = this.fac.constructMinimalValueObject(this.createMinimalID(id));
+				V data = this.getFactory().constructMinimalValueObject(this.createMinimalID(id));
 				for (String attr : serialisedAttributes) {
 					if (attr != null) {
 						String[] attributeFields = this.getAttributeFormat().getFields(attr);

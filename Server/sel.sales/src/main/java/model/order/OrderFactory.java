@@ -23,15 +23,21 @@ public class OrderFactory implements IFactory<OrderAttribute, Order, OrderData> 
 	}
 	
 	Order constructOrder(EntityID id, LocalDateTime date, boolean isCash, boolean isHere) {
-		Order order = new Order(id);
+		Order order = this.constructMinimalEntity(id);
 		order.setAttributeValue(OrderAttribute.DATE, date);
 		order.setAttributeValue(OrderAttribute.IS_CASH, isCash);
 		order.setAttributeValue(OrderAttribute.IS_HERE, isHere);
 		return order;
 	}
 	
+	Order constructMinimalEntity(EntityID id) {
+		Order order = new Order(id);
+		order.setAttributeValue(OrderAttribute.ORDER_ITEMS, new AccumulatingOrderItemAggregate());
+		return order;
+	}
+	
 	public OrderData constructData(EntityID id, LocalDateTime date, boolean isCash, boolean isHere) {
-		OrderData data = new OrderData(id);
+		OrderData data = this.constructMinimalValueObject(id);
 		data.setAttributeValue(OrderAttribute.DATE, date);
 		data.setAttributeValue(OrderAttribute.IS_CASH, isCash);
 		data.setAttributeValue(OrderAttribute.IS_HERE, isHere);
@@ -47,12 +53,14 @@ public class OrderFactory implements IFactory<OrderAttribute, Order, OrderData> 
 	}
 	
 	public OrderData constructMinimalValueObject(EntityID id) {
-		return new OrderData(id);
+		OrderData data = new OrderData(id);
+		data.setAttributeValue(OrderAttribute.ORDER_ITEMS, new AccumulatingOrderItemAggregate());
+		return data;
 	}
 
 	@Override
 	public Order valueToEntity(OrderData valueObject) {
-		Order order = new Order(valueObject.getID());
+		Order order = this.constructMinimalEntity(valueObject.getID());
 		order.setAttributeValue(OrderAttribute.DATE, valueObject.getAttributeValue(OrderAttribute.DATE));
 		order.setAttributeValue(OrderAttribute.IS_CASH, valueObject.getAttributeValue(OrderAttribute.IS_CASH));
 		order.setAttributeValue(OrderAttribute.IS_HERE, valueObject.getAttributeValue(OrderAttribute.IS_HERE));

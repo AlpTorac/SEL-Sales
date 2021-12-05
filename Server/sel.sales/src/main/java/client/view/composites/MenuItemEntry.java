@@ -115,7 +115,7 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 		if (menuData != null) {
 			this.setActiveMenu(menuData);
 			this.cb.clear();
-			for (DishMenuItemData data : this.getActiveMenu().getAllItems()) {
+			for (DishMenuItemData data : this.getActiveMenu().getAllElements()) {
 				this.addMenuItem(data);
 			}
 		}

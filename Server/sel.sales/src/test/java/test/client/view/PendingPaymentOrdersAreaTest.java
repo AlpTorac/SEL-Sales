@@ -26,7 +26,6 @@ import server.model.IServerModel;
 import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyClientExternal;
-import view.repository.uifx.FXAdvancedUIComponentFactory;
 import view.repository.uifx.FXUIComponentFactory;
 //@Execution(value = ExecutionMode.SAME_THREAD)
 class PendingPaymentOrdersAreaTest extends ApplicationTest {
@@ -98,7 +97,7 @@ class PendingPaymentOrdersAreaTest extends ApplicationTest {
 		runFXAction(()->{
 			clientModel = new ClientModel(this.testFolderAddress);
 			clientController = new StandardClientController(clientModel);
-			clientView = new StandardClientView(new FXUIComponentFactory(), new FXAdvancedUIComponentFactory(), clientController, clientModel);
+			clientView = new StandardClientView(new FXUIComponentFactory(), clientController, clientModel);
 			clientExternal = new DummyClientExternal(serviceID, serviceName, clientController, clientModel);
 			
 			serverModel = new ServerModel(this.testFolderAddress);

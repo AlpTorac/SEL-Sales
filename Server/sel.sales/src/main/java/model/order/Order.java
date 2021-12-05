@@ -12,9 +12,8 @@ import model.entity.id.EntityID;
 public class Order extends Entity<OrderAttribute> {
 //	private AccumulatingOrderItemAggregate orderItems;
 	
-	public Order(EntityID id) {
+	protected Order(EntityID id) {
 		super(id);
-		this.setAttributeValue(OrderAttribute.ORDER_ITEMS, new AccumulatingOrderItemAggregate());
 //		this.orderItems = this.initOrderItemAggregate();
 	}
 	
