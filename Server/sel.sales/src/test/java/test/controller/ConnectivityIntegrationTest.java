@@ -1,8 +1,5 @@
 package test.controller;
 
-import java.io.File;
-import java.math.BigDecimal;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,19 +8,16 @@ import org.junit.jupiter.api.Test;
 import controller.GeneralEvent;
 import model.connectivity.DeviceData;
 import model.connectivity.IDeviceData;
-import model.connectivity.IConnectivityManager;
 import model.order.OrderData;
 import server.controller.IServerController;
-import server.controller.StandardServerController;
 import server.model.IServerModel;
-import server.model.ServerModel;
+import test.FXTestTemplate;
 import test.GeneralTestUtilityClass;
 
-class ConnectivityIntegrationTest {
+class ConnectivityIntegrationTest extends FXTestTemplate {
 
 	private IServerModel model;
 	private IServerController controller;
-	private IConnectivityManager connManager;
 	
 	private IDeviceData discoveredDevice1Data;
 	private IDeviceData discoveredDevice2Data;
@@ -31,38 +25,9 @@ class ConnectivityIntegrationTest {
 	private IDeviceData knownDevice1Data;
 	private IDeviceData knownDevice2Data;
 	
-	private String Device1Name;
-	private String Device1Address;
-	private String Device2Name;
-	private String Device2Address;
-	
-	private String i1Name = "aaa";
-	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
-	private BigDecimal i1Price = BigDecimal.valueOf(5);
-	private BigDecimal i1ProCost = BigDecimal.valueOf(4);
-	private String i1id = "item1";
-	
-	private String i2Name = "bbb";
-	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
-	private BigDecimal i2Price = BigDecimal.valueOf(1);
-	private BigDecimal i2ProCost = BigDecimal.valueOf(0.5);
-	private String i2id = "item2";
-	
-	private String i3Name = "ccc";
-	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
-	private BigDecimal i3Price = BigDecimal.valueOf(4);
-	private BigDecimal i3ProCost = BigDecimal.valueOf(3.5);
-	private String i3id = "item3";
-	
-	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
-	
 	@BeforeEach
 	void prep() {
-		init();
-		Device1Name = "c1n";
-		Device1Address = "c1a";
-		Device2Name = "c2n";
-		Device2Address = "c2a";
+		initSetup();
 		discoveredDevice1Data = new DeviceData(Device1Name,Device1Address,false,false);
 		discoveredDevice2Data = new DeviceData(Device2Name,Device2Address,false,false);
 		knownDevice1Data = new DeviceData(Device1Name,Device1Address,true,false);
@@ -75,27 +40,20 @@ class ConnectivityIntegrationTest {
 	
 	@AfterEach
 	void cleanUp() {
-		model.close();
+		this.closeAll(model);
 	}
 	
-	private void initConnManager() {
-		connManager = GeneralTestUtilityClass.getPrivateFieldValue((ServerModel) model, "connManager");
-	}
-	
-	private void init() {
-		model = new ServerModel(this.testFolderAddress);
-		controller = new StandardServerController(model);
+	private void initSetup() {
+		model = this.initServerModel();
+		controller = this.initServerController(model);
 		
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
-		
-		initConnManager();
+		this.addDishMenuToServerModel(model);
+		this.initOrders(model);
 	}
 	
 	@Test
 	void addDiscoveredDeviceTest() {
-		init();
+		initSetup();
 		controller.getModel().addDiscoveredDevice(Device1Name, Device1Address);
 		Assertions.assertTrue(GeneralTestUtilityClass.arrayContains(connManager.getAllDiscoveredDeviceData(), discoveredDevice1Data,
 				(dc1, dc2) -> {
@@ -113,7 +71,7 @@ class ConnectivityIntegrationTest {
 	
 	@Test
 	void addKnownDeviceTest() {
-		init();
+		initSetup();
 		controller.getModel().addDiscoveredDevice(Device1Name, Device1Address);
 		controller.getModel().addDiscoveredDevice(Device2Name, Device2Address);
 		controller.getModel().addKnownDevice(Device1Address);
@@ -224,7 +182,7 @@ class ConnectivityIntegrationTest {
 	
 	@Test
 	void getDeviceDataTest() {
-		init();
+		initSetup();
 		Assertions.assertEquals(connManager.getAllDiscoveredDeviceData().length, 0);
 		Assertions.assertEquals(connManager.getAllKnownDeviceData().length, 0);
 		controller.getModel().addDiscoveredDevice(Device1Name, Device1Address);
@@ -256,13 +214,9 @@ class ConnectivityIntegrationTest {
 		Assertions.assertEquals(0, model.getAllUnconfirmedOrders().length);
 		Assertions.assertEquals(0, model.getAllConfirmedOrders().length);
 		
-		String serialisedOrder1 = "order2#20200809235959890#1#0:item1,2;item2,3;item3,5;item1,7;item2,0;item3,1;";
-		String serialisedOrder2 = "order6#20200813000000183#1#1:item3,5;item3,4;";
-		String serialisedOrder3 = "order7#20200909112233937#0#0:item1,2;item2,5;";
-		
-		controller.handleApplicationEvent(GeneralEvent.ADD_ORDER, new Object[] {serialisedOrder1});
-		controller.handleApplicationEvent(GeneralEvent.ADD_ORDER, new Object[] {serialisedOrder2});
-		controller.handleApplicationEvent(GeneralEvent.ADD_ORDER, new Object[] {serialisedOrder3});
+		controller.handleApplicationEvent(GeneralEvent.ADD_ORDER, new Object[] {oData1});
+		controller.handleApplicationEvent(GeneralEvent.ADD_ORDER, new Object[] {oData2});
+		controller.handleApplicationEvent(GeneralEvent.ADD_ORDER, new Object[] {oData3});
 		
 		Assertions.assertEquals(3, model.getAllUnconfirmedOrders().length);
 		Assertions.assertEquals(0, model.getAllConfirmedOrders().length);
@@ -275,10 +229,11 @@ class ConnectivityIntegrationTest {
 		
 		OrderData[] orders = new OrderData[3];
 		
-		orders[0] = model.getOrderHelper().deserialiseOrderData(serialisedOrder1);
-		orders[1] = model.getOrderHelper().deserialiseOrderData(serialisedOrder2);
-		orders[2] = model.getOrderHelper().deserialiseOrderData(serialisedOrder3);
+		orders[0] = oData1;
+		orders[1] = oData2;
+		orders[2] = oData3;
 		
-		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(model.getAllUnconfirmedOrders(), orders));
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(model.getAllUnconfirmedOrders(), orders,
+				(od1,od2)->this.ordersEqual(od1, od2)));
 	}
 }

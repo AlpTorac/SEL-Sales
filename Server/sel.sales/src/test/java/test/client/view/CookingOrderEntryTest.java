@@ -108,6 +108,6 @@ class CookingOrderEntryTest extends FXTestTemplate {
 		
 		entry.getEditButton().performArtificialClick();
 		
-		Assertions.assertEquals(clientModel.getEditTarget(), orderData);
+		Assertions.assertTrue(this.ordersEqual(clientModel.getEditTarget(), orderData));
 	}
 }

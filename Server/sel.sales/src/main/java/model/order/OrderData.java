@@ -2,6 +2,7 @@ package model.order;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 import model.datamapper.order.OrderAttribute;
 import model.dish.DishMenuItemData;
 import model.dish.IDishMenuItemFinder;
@@ -99,6 +100,11 @@ public class OrderData extends ValueObject<OrderAttribute> {
 	
 	@Override
 	public String toString() {
-		return this.getID().toString();
+		return this.getOrderItemAggregate().toString() + " - " + this.getTableNumber();
+	}
+	
+	@Override
+	public OrderAttribute[] getAllAttributeEnumValues() {
+		return OrderAttribute.values();
 	}
 }

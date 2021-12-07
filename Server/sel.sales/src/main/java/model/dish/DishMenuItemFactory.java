@@ -10,7 +10,7 @@ import model.entity.id.MinimalIDFactory;
 
 public class DishMenuItemFactory implements IFactory<DishMenuItemAttribute, DishMenuItem, DishMenuItemData> {
 	private EntityIDFactory idFac = new MinimalIDFactory();
-	public DishMenuItem createMenuItem(String dishName, BigDecimal portionSize, BigDecimal price,
+	DishMenuItem createMenuItem(String dishName, BigDecimal portionSize, BigDecimal price,
 			BigDecimal productionCost, EntityID id) {
 		DishMenuItem dmi = new DishMenuItem(id);
 		dmi.setAttributeValue(DishMenuItemAttribute.DISH_NAME, dishName);
@@ -22,12 +22,15 @@ public class DishMenuItemFactory implements IFactory<DishMenuItemAttribute, Dish
 	
 	@Override
 	public DishMenuItemData entityToValue(DishMenuItem item) {
-		return this.constructData(
-				item.getDishName(),
-				item.getPortionSize(),
-				item.getGrossPrice(),
-				item.getProductionCost(),
-				item.getID());
+		DishMenuItemData data = this.constructMinimalValueObject(item.getID());
+		data.setAttributesSameAs(item);
+		return data;
+//		return this.constructData(
+//				item.getDishName(),
+//				item.getPortionSize(),
+//				item.getGrossPrice(),
+//				item.getProductionCost(),
+//				item.getID());
 	}
 	
 	public DishMenuItemData constructData(String dishName, BigDecimal portionSize, BigDecimal price,
@@ -53,10 +56,11 @@ public class DishMenuItemFactory implements IFactory<DishMenuItemAttribute, Dish
 	@Override
 	public DishMenuItem valueToEntity(DishMenuItemData valueObject) {
 		DishMenuItem item = new DishMenuItem(valueObject.getID());
-		item.setAttributeValue(DishMenuItemAttribute.DISH_NAME, valueObject.getDishName());
-		item.setAttributeValue(DishMenuItemAttribute.PORTION_SIZE, valueObject.getPortionSize());
-		item.setAttributeValue(DishMenuItemAttribute.GROSS_PRICE, valueObject.getGrossPrice());
-		item.setAttributeValue(DishMenuItemAttribute.PRODUCTION_COST, valueObject.getProductionCost());
+//		item.setAttributeValue(DishMenuItemAttribute.DISH_NAME, valueObject.getDishName());
+//		item.setAttributeValue(DishMenuItemAttribute.PORTION_SIZE, valueObject.getPortionSize());
+//		item.setAttributeValue(DishMenuItemAttribute.GROSS_PRICE, valueObject.getGrossPrice());
+//		item.setAttributeValue(DishMenuItemAttribute.PRODUCTION_COST, valueObject.getProductionCost());
+		item.setAttributesSameAs(valueObject);
 		return item;
 	}
 

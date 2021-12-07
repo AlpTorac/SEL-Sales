@@ -118,7 +118,7 @@ class ConnectivityAreaTest extends ApplicationTest {
 			model = new ServerModel(this.testFolderAddress);
 			controller = new StandardServerController(model);
 			view = new StandardServerView(new FXUIComponentFactory(), controller, model);
-			external = new DummyServerExternal("id", "name", controller, model, 1000, 100, 2000, 3);
+			external = new DummyServerExternal("id", "name", controller, model, 200, 100, 2000, 3);
 			service = GeneralTestUtilityClass.getPrivateFieldValue((External) external, "service");
 			dscm = (DummyServiceConnectionManager) service.getServiceConnectionManager();
 			view.startUp();
@@ -288,7 +288,7 @@ class ConnectivityAreaTest extends ApplicationTest {
 		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
 		Assertions.assertEquals(ddarr.length, 2);
 		
-		GeneralTestUtilityClass.performWait(10);
+		GeneralTestUtilityClass.performWait(100);
 		
 		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
 		
@@ -304,7 +304,7 @@ class ConnectivityAreaTest extends ApplicationTest {
 		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
 		Assertions.assertEquals(ddarr.length, 2);
 		
-		GeneralTestUtilityClass.performWait(this.external.getEstimatedPPTimeout());
+		GeneralTestUtilityClass.performWait(this.dscm.getEstimatedPPCloseTime());
 		
 		ddarr = opHelper.getKnownDevices().toArray(IDeviceData[]::new);
 		

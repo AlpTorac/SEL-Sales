@@ -28,17 +28,28 @@ public interface IParser {
 	}
 	
 	default String getDataBody(String data, String startToRemove, String endToRemove) {
-		int begin = 0;
-		int end = 0;
+//		int begin = 0;
+//		int end = 0;
+//		
+//		if (data.startsWith(startToRemove)) {
+//			begin = startToRemove.length();
+//		}
+//		
+//		if (data.endsWith(endToRemove)) {
+//			end = data.length() - endToRemove.length();
+//		}
+//		
+//		return data.substring(begin, end);
 		
+		int startIndex = 0;
+		int endIndex = data.length();
 		if (data.startsWith(startToRemove)) {
-			begin = startToRemove.length();
+			int len = startToRemove.length();
+			startIndex = len == 0 ? 0 : len - 1;
 		}
-		
 		if (data.endsWith(endToRemove)) {
-			end = data.length() - endToRemove.length();
+			endIndex -= endToRemove.length();
 		}
-		
-		return data.substring(begin, end);
+		return data.substring(startIndex, endIndex);
 	}
 }

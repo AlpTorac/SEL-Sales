@@ -1,33 +1,18 @@
 package test.view;
 
-import java.io.File;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.testfx.framework.junit5.ApplicationTest;
-
-import javafx.stage.Stage;
 import server.controller.IServerController;
-import server.controller.StandardServerController;
 import server.model.IServerModel;
-import server.model.ServerModel;
-import server.view.IServerView;
 import server.view.StandardServerView;
 import test.FXTestTemplate;
 import test.GeneralTestUtilityClass;
-import test.StandardServerViewOperationsUtilityClass;
 import test.model.order.ClientSimulant;
-import view.IView;
-import view.repository.uifx.FXUIComponentFactory;
 
 //@Execution(value = ExecutionMode.SAME_THREAD)
 class UnconfirmedOrderTest extends FXTestTemplate {

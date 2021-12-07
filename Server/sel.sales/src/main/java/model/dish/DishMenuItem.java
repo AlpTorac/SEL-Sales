@@ -31,24 +31,26 @@ public class DishMenuItem extends Entity<DishMenuItemAttribute> {
 		return this.getGrossPrice().divide(this.getPortionSize());
 	}
 	
-	public boolean equals(Object o) {
-		if (o == null || !(o instanceof DishMenuItem)) {
-			return false;
-		}
-		DishMenuItem castedO = (DishMenuItem) o;
-		return this.getDishName().equals(castedO.getDishName()) &&
-				this.getID().equals(castedO.getID()) &&
-				this.getPortionSize().compareTo(castedO.getPortionSize()) == 0 &&
-				this.getGrossPrice().compareTo(castedO.getGrossPrice()) == 0 &&
-				this.getProductionCost().compareTo(castedO.getProductionCost()) == 0;
-	}
+//	public boolean equals(Object o) {
+//		if (o == null || !(o instanceof DishMenuItem)) {
+//			return false;
+//		}
+//		DishMenuItem castedO = (DishMenuItem) o;
+//		return this.getDishName().equals(castedO.getDishName()) &&
+//				this.getID().equals(castedO.getID()) &&
+//				this.getPortionSize().compareTo(castedO.getPortionSize()) == 0 &&
+//				this.getGrossPrice().compareTo(castedO.getGrossPrice()) == 0 &&
+//				this.getProductionCost().compareTo(castedO.getProductionCost()) == 0;
+//	}
 	
 	public DishMenuItemData toData() {
 		DishMenuItemData data = new DishMenuItemData(this.getID());
-		data.setAttributeValue(DishMenuItemAttribute.DISH_NAME, this.getDishName());
-		data.setAttributeValue(DishMenuItemAttribute.GROSS_PRICE, this.getGrossPrice());
-		data.setAttributeValue(DishMenuItemAttribute.PORTION_SIZE, this.getPortionSize());
-		data.setAttributeValue(DishMenuItemAttribute.PRODUCTION_COST, this.getProductionCost());
+		data.setAttributesSameAs(this);
 		return data;
+	}
+
+	@Override
+	public DishMenuItemAttribute[] getAllAttributeEnumValues() {
+		return DishMenuItemAttribute.values();
 	}
 }

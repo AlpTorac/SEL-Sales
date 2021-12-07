@@ -20,10 +20,10 @@ public class BasicMessageSender implements IMessageSendingStrategy {
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));
 		try {
 			if (!conn.isClosed()) {
-				System.out.println("Writing: " + messageSerialiser.serialise(message));
+//				System.out.println("Writing: " + messageSerialiser.serialise(message));
 				writer.write(messageSerialiser.serialise(message));
 				writer.flush();
-				System.out.println("Wrote: " + messageSerialiser.serialise(message));
+//				System.out.println("Wrote: " + messageSerialiser.serialise(message));
 			}
 		} catch (IOException e) {
 //			e.printStackTrace();

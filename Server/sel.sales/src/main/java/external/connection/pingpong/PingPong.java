@@ -99,34 +99,34 @@ public abstract class PingPong implements IPingPong {
 		boolean isSent = this.mss.sendMessage(conn, this.generatePingPongMessage());
 		if (isSent) {
 			this.startTimeoutTimer();
-			System.out.println("Ping pong message sent");
+//			System.out.println("Ping pong message sent");
 		}
 		return isSent;
 	}
 	@Override
 	public void startTimeoutTimer() {
-		System.out.println("Ping pong start timer");
+//		System.out.println("Ping pong start timer");
 		this.ts.startTimer();
 	}
 	
 	protected void resetTimeoutTimer() {
-		System.out.println("Ping pong reset timer");
+//		System.out.println("Ping pong reset timer");
 		this.ts.reset();
 	}
 	
 	protected void resetResendCount() {
-		System.out.println("Ping pong reset resend count");
+//		System.out.println("Ping pong reset resend count");
 		this.resendCount = 0;
 	}
 	
 	protected void resendPingPongMessage() {
 		this.increaseResendCount();
-		System.out.println("Ping pong resend, count = " + this.resendCount);
+//		System.out.println("Ping pong resend, count = " + this.resendCount);
 		this.sendPingPongMessageAndStartTimer();
 	}
 	
 	protected void increaseResendCount() {
-		System.out.println("Ping pong resend count ++");
+//		System.out.println("Ping pong resend count ++");
 		this.resendCount = this.resendCount + 1;
 	}
 	
@@ -142,7 +142,7 @@ public abstract class PingPong implements IPingPong {
 	
 	@Override
 	public void receiveResponse(IMessage message) {
-		System.out.println("Ping pong receive response");
+//		System.out.println("Ping pong receive response");
 		this.resetTimeoutTimer();
 		this.resetResendCount();
 		this.unblock();
@@ -163,7 +163,7 @@ public abstract class PingPong implements IPingPong {
 	@Override
 	public void timeoutTimerStopped(boolean wasReset, boolean wasTerminated) {
 		if (!wasReset && !wasTerminated && !this.isClosed()) {
-			System.out.println("Ping pong timeout: " + this.getRemainingResendTries());
+//			System.out.println("Ping pong timeout: " + this.getRemainingResendTries());
 			if (this.getRemainingResendTries() > 0) {
 //				this.resendPingPongMessage();
 			} else {

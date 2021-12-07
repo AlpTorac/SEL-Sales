@@ -188,14 +188,6 @@ public class SettingsArea extends UIVBoxLayout {
 	protected class FileAddressUI extends BasicSettingsInputArea {
 		private IButton fileChooserButton;
 		
-		private ClickEventListener cel = new ClickEventListener() {
-			@Override
-			public void clickAction() {
-				File f = fac.createDirectoryChooser().showDialog(mainWindow);
-				getAddressBox().setCaption(f.getPath());
-			}
-		};
-		
 		protected FileAddressUI(String labelCaption, SettingsField sf) {
 			super(labelCaption, sf);
 //			this.labelCaption = labelCaption + descriptionEnd;
@@ -213,7 +205,13 @@ public class SettingsArea extends UIVBoxLayout {
 		
 		private IButton initFileChooseButton() {
 			IButton button = fac.createButton();
-			button.addClickListener(cel);
+			button.addClickListener(new ClickEventListener() {
+				@Override
+				public void clickAction() {
+					File f = fac.createDirectoryChooser().showDialog(mainWindow);
+					getAddressBox().setCaption(f.getPath());
+				}
+			});
 			return button;
 		}
 	}

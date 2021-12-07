@@ -2,16 +2,16 @@ package external;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import controller.IController;
 import external.connection.IService;
-import external.connection.IServiceConnectionManager;
+import external.connection.ServiceConnectionManager;
 import external.device.IDeviceManager;
 import model.IModel;
+import model.settings.ISettings;
 
 public abstract class External implements IExternal {
 	
-	protected ExecutorService es = Executors.newCachedThreadPool();
+	private ExecutorService es;
 	private IService service;
 	private IModel model;
 	private IController controller;
@@ -25,11 +25,16 @@ public abstract class External implements IExternal {
 			long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
 		this.controller = controller;
 		this.model = model;
+		this.es = Executors.newCachedThreadPool();
 		this.pingPongTimeout = pingPongTimeout;
 		this.minimalPingPongDelay = minimalPingPongDelay;
 		this.sendTimeout = sendTimeout;
 		this.resendLimit = resendLimit;
 		this.subscribe();
+	}
+	
+	protected ExecutorService getES() {
+		return this.es;
 	}
 	
 	protected void setupService() {
@@ -38,7 +43,7 @@ public abstract class External implements IExternal {
 	
 	protected abstract IDeviceManager initDeviceManager();
 	
-	protected IServiceConnectionManager getServiceConnectionManager() {
+	protected ServiceConnectionManager getServiceConnectionManager() {
 		return this.getService().getServiceConnectionManager();
 	}
 	
@@ -93,9 +98,10 @@ public abstract class External implements IExternal {
 	}
 	@Override
 	public void refreshSettings() {
-		if (this.getService() != null) {
-			this.getService().receiveSettings(this.getModel().getSettings());
-		}
+//		if (this.getService() != null) {
+//			this.getService().receiveSettings(this.getModel().getSettings());
+//		}
+		this.notifyInnerConstructs(this.getModel().getSettings());
 	}
 	@Override
 	public void close() {
@@ -104,20 +110,53 @@ public abstract class External implements IExternal {
 			this.getServiceConnectionManager().close();
 		}
 	}
+	
+	@Override
+	public void notifyInnerConstructs(ISettings settings) {
+		if (this.getService() != null) {
+			this.getService().receiveSettings(settings);
+		}
+		if (this.getServiceConnectionManager() != null) {
+			this.getServiceConnectionManager().notifyInnerConstructs(settings);
+		}
+	}
+
+	@Override
+	public void setMinimalPingPongDelay(long minimalPingPongDelay) {
+		this.minimalPingPongDelay = minimalPingPongDelay;
+	}
+
+	@Override
+	public void setSendTimeoutInMillis(long sendTimeoutInMillis) {
+		this.sendTimeout = sendTimeoutInMillis;
+	}
+
+	@Override
+	public void setPingPongTimeoutInMillis(long pingPongTimeoutInMillis) {
+		this.pingPongTimeout = pingPongTimeoutInMillis;
+	}
+
+	@Override
+	public void setPingPongResendLimit(int pingPongResendLimit) {
+		this.resendLimit = pingPongResendLimit;
+	}
+
+	@Override
+	public long getSendTimeoutInMillis() {
+		return this.sendTimeout;
+	}
+
+	@Override
+	public long getPingPongTimeoutInMillis() {
+		return this.pingPongTimeout;
+	}
+
+	@Override
+	public int getPingPongResendLimit() {
+		return this.resendLimit;
+	}
 	@Override
 	public long getMinimalPingPongDelay() {
-		return minimalPingPongDelay;
-	}
-	@Override
-	public int getResendLimit() {
-		return resendLimit;
-	}
-	@Override
-	public long getPingPongTimeout() {
-		return pingPongTimeout;
-	}
-	@Override
-	public long getSendTimeout() {
-		return sendTimeout;
+		return this.minimalPingPongDelay;
 	}
 }

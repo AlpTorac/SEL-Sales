@@ -5,10 +5,10 @@ import model.dish.DishMenuItemData;
 import model.order.OrderData;
 
 public interface IServerModel extends IModel {
-	void addOrder(String serialisedOrderData);
-	default void addOrder(OrderData data) {
-		this.addUnconfirmedOrder(data);
-	}
+//	void addOrder(String serialisedOrderData);
+//	default void addOrder(OrderData data) {
+//		this.addUnconfirmedOrder(data);
+//	}
 	void addUnconfirmedOrder(OrderData data);
 	void confirmOrder(OrderData data);
 	void removeUnconfirmedOrder(String id);
@@ -22,11 +22,11 @@ public interface IServerModel extends IModel {
 	OrderData[] getAllConfirmedOrders();
 	void removeAllUnconfirmedOrders();
 	void removeAllConfirmedOrders();
-	@Override
-	default void removeAllOrders() {
-		this.removeAllUnconfirmedOrders();
-		this.removeAllConfirmedOrders();
-	}
+//	@Override
+//	default void removeAllOrders() {
+//		this.removeAllUnconfirmedOrders();
+//		this.removeAllConfirmedOrders();
+//	}
 	void confirmAllOrders();
 	
 	void setAutoConfirmOrders(boolean autoConfirm);

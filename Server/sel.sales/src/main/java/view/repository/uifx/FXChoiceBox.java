@@ -1,8 +1,11 @@
 package view.repository.uifx;
 
+import java.util.function.Function;
+
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
+import javafx.util.StringConverter;
 import view.repository.IChoiceBox;
 import view.repository.uiwrapper.ItemChangeListener;
 
@@ -10,6 +13,21 @@ public class FXChoiceBox<T> extends ChoiceBox<T> implements FXDataCollectingUICo
 	
 	FXChoiceBox() {
 		super();
+	}
+	
+	@Override
+	public void setChoiceDisplay(Function<T, String> toStringFunction, Function<String, T> fromStringFunction) {
+		super.setConverter(new StringConverter<T>() {
+			@Override
+			public String toString(T object) {
+				return toStringFunction.apply(object);
+			}
+
+			@Override
+			public T fromString(String string) {
+				return fromStringFunction.apply(string);
+			}
+		});
 	}
 	
 	@Override

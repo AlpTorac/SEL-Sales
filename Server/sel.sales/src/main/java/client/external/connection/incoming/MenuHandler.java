@@ -17,7 +17,7 @@ public class MenuHandler extends MessageHandler {
 
 	@Override
 	public boolean verify(IMessage message) {
-		System.out.println("Menu handler verifying received message");
+//		System.out.println("Menu handler verifying received message");
 		return !message.isAcknowledgementMessage() && message.hasContext(MessageContext.MENU);
 	}
 

@@ -113,7 +113,7 @@ public abstract class SendBuffer implements ISendBuffer {
 //		if (isSent) {
 //			this.startTimeoutTimer();
 //		}
-		System.out.println("Sent sequence number: " + this.getCurrentSequenceNumber());
+//		System.out.println("Sent sequence number: " + this.getCurrentSequenceNumber());
 		this.startTimeoutTimer();
 		return isSent;
 	}

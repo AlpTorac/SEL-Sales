@@ -12,13 +12,16 @@ public class OrderFactory implements IFactory<OrderAttribute, Order, OrderData> 
 	private EntityIDFactory idFac = new MinimalIDFactory();
 	@Override
 	public OrderData entityToValue(Order entity) {
-		OrderData data = this.constructData(
-				entity.getID(),
-				(LocalDateTime) entity.getAttributeValue(OrderAttribute.DATE),
-				(Boolean) entity.getAttributeValue(OrderAttribute.IS_CASH),
-				(Boolean) entity.getAttributeValue(OrderAttribute.IS_HERE));
+//		OrderData data = this.constructData(
+//				entity.getID(),
+//				(LocalDateTime) entity.getAttributeValue(OrderAttribute.DATE),
+//				(Boolean) entity.getAttributeValue(OrderAttribute.IS_CASH),
+//				(Boolean) entity.getAttributeValue(OrderAttribute.IS_HERE));
+//		
+//		data.getOrderItemAggregate().addAll(entity.getOrderItemAggregate().getOrderedItems());
 		
-		data.getOrderItemAggregate().addAll(entity.getOrderItemAggregate().getOrderedItems());
+		OrderData data = this.constructMinimalValueObject(entity.getID());
+		data.setAttributesSameAs(entity);
 		return data;
 	}
 	
@@ -61,10 +64,11 @@ public class OrderFactory implements IFactory<OrderAttribute, Order, OrderData> 
 	@Override
 	public Order valueToEntity(OrderData valueObject) {
 		Order order = this.constructMinimalEntity(valueObject.getID());
-		order.setAttributeValue(OrderAttribute.DATE, valueObject.getAttributeValue(OrderAttribute.DATE));
-		order.setAttributeValue(OrderAttribute.IS_CASH, valueObject.getAttributeValue(OrderAttribute.IS_CASH));
-		order.setAttributeValue(OrderAttribute.IS_HERE, valueObject.getAttributeValue(OrderAttribute.IS_HERE));
-		order.addAllOrderItems(valueObject.getOrderedItems());
+//		order.setAttributeValue(OrderAttribute.DATE, valueObject.getAttributeValue(OrderAttribute.DATE));
+//		order.setAttributeValue(OrderAttribute.IS_CASH, valueObject.getAttributeValue(OrderAttribute.IS_CASH));
+//		order.setAttributeValue(OrderAttribute.IS_HERE, valueObject.getAttributeValue(OrderAttribute.IS_HERE));
+//		order.addAllOrderItems(valueObject.getOrderedItems());
+		order.setAttributesSameAs(valueObject);
 		return order;
 	}
 }

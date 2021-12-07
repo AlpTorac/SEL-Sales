@@ -34,7 +34,6 @@ import test.external.dummy.DummyDeviceManager;
 import test.external.dummy.DummyExternalConnector;
 import test.external.dummy.DummyServerController;
 import test.external.dummy.DummyService;
-import test.external.dummy.DummyServiceConnectionManager;
 
 class ExternalConnectorTest {
 	private long waitTime = 100;
@@ -86,7 +85,7 @@ class ExternalConnectorTest {
 		manager.allowDevice(Device3Address);
 		controller = initController();
 		service = new DummyService(serviceID, serviceName, manager, controller, es);
-		connector = new DummyExternalConnector(service, controller, es);
+		connector = new DummyExternalConnector(service, controller, es, 200, 100, 100, 3);
 		isOrderReceivedByController = false;
 	}
 	
@@ -273,7 +272,7 @@ class ExternalConnectorTest {
 		
 		Collection<IConnectionManager> connectionManagers = connector.getConnectionManagers();
 		
-		GeneralTestUtilityClass.performWait(DummyServiceConnectionManager.ESTIMATED_PP_TIMEOUT / 2);
+//		GeneralTestUtilityClass.performWait(DummyServiceConnectionManager.ESTIMATED_PP_TIMEOUT / 2);
 		IConnectionManager cm = connectionManagers.stream().findAny().get();
 		IPingPong pp = cm.getPingPong();
 		pp.receiveResponse(new Message(MessageContext.PINGPONG, null, null));
@@ -285,7 +284,7 @@ class ExternalConnectorTest {
 			}
 		};
 		cm2.setDisconnectionListener(l);
-		GeneralTestUtilityClass.performWait(DummyServiceConnectionManager.ESTIMATED_PP_TIMEOUT / 2);
+		GeneralTestUtilityClass.performWait(connector.getEstimatedPPCloseTime());
 		Assertions.assertTrue(isDisconnected);
 	}
 	

@@ -94,7 +94,7 @@ public abstract class EntityDAO<A extends IAttribute, E extends Entity<A>, V ext
 			Collection<V> col = new ArrayList<V>();
 			String[] serialisedOrders = this.getEntityFormat().getMatches(serialisedOrder).toArray(String[]::new);
 			for (String so : serialisedOrders) {
-				System.out.println("serialisedEntity: " + so);
+//				System.out.println("serialisedEntity: " + so);
 				col.add(this.parseValueObject(so));
 			}
 			return col;
@@ -115,8 +115,8 @@ public abstract class EntityDAO<A extends IAttribute, E extends Entity<A>, V ext
 						if (attributeFields.length > 1) {
 							String attrDesc = attributeFields[0];
 							String attrValue = attributeFields[1];
-							System.out.println("desc: " + attrDesc);
-							System.out.println("val: " + attrValue);
+//							System.out.println("desc: " + attrDesc);
+//							System.out.println("val: " + attrValue);
 							this.getDAO(attrDesc).setAttributeAlgorithm(data, attrValue);
 						}
 					}

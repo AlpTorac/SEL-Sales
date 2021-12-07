@@ -13,27 +13,28 @@ import external.connection.ServiceConnectionManager;
 import test.GeneralTestUtilityClass;
 
 public class DummyServiceConnectionManager extends ServiceConnectionManager {
-	public final static long DEFAULT_PP_TIMEOUT = 200;
-	public final static long DEFAULT_PP_MINIMAL_TIMEOUT = 100;
-	public final static long SEND_TIMEOUT = 2000;
-	public final static int RESEND_LIMIT = 10;
-	
-	public final static long ESTIMATED_PP_TIMEOUT = DEFAULT_PP_TIMEOUT * (RESEND_LIMIT + 1);
-	
 	private boolean attemptToReconnect = false;
 	
 	private volatile DummyDevice currentDevice;
-	private DisconnectionListener newDl = new DisconnectionListener(controller);
+	private DisconnectionListener newDl = new DisconnectionListener(this.getController());
 	
 	public DummyServiceConnectionManager(IDeviceManager manager, IController controller, ExecutorService es, boolean attemptToReconnect) {
 //		super(manager, controller, es, 10000, 1000, 2000, 10);
-		this(manager, controller, es, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
+		this(manager, controller, es,
+				DummyConnectionSettings.DEFAULT_PP_TIMEOUT,
+				DummyConnectionSettings.DEFAULT_PP_MINIMAL_TIMEOUT,
+				DummyConnectionSettings.SEND_TIMEOUT,
+				DummyConnectionSettings.RESEND_LIMIT);
 		this.attemptToReconnect = attemptToReconnect;
 	}
 	
 	public DummyServiceConnectionManager(IDeviceManager manager, IController controller, ExecutorService es) {
 //		super(manager, controller, es, 10000, 1000, 2000, 10);
-		this(manager, controller, es, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
+		this(manager, controller, es,
+				DummyConnectionSettings.DEFAULT_PP_TIMEOUT,
+				DummyConnectionSettings.DEFAULT_PP_MINIMAL_TIMEOUT,
+				DummyConnectionSettings.SEND_TIMEOUT,
+				DummyConnectionSettings.RESEND_LIMIT);
 	}
 	
 	public DummyServiceConnectionManager(IDeviceManager manager, IController controller, ExecutorService es, long pingPongTimeout, long minimalPingPongDelay, long sendTimeout, int resendLimit) {
@@ -96,6 +97,6 @@ public class DummyServiceConnectionManager extends ServiceConnectionManager {
 	@Override
 	protected IConnectionManager createConnectionManager(IConnection conn, long pingPongTimeout, long sendTimeout, int resendLimit, long minimalPingPongDelay) {
 //		return new DummyConnectionManager(controller, conn, es, this.getPingPongTimeout(), this.getSendTimeout(), this.getResendLimit(), this.getMinimalPingPongDelay());
-		return new DummyConnectionManager(controller, conn, es, this.getPingPongTimeoutInMillis(), this.getSendTimeoutInMillis(), this.getPingPongResendLimit(), this.getMinimalPingPongDelay());
+		return new DummyConnectionManager(this.getController(), conn, this.getES(), this.getPingPongTimeoutInMillis(), this.getSendTimeoutInMillis(), this.getPingPongResendLimit(), this.getMinimalPingPongDelay());
 	}
 }

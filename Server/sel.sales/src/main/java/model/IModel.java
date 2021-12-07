@@ -33,10 +33,6 @@ public interface IModel extends Closeable {
 	IDeviceData[] getAllKnownDeviceData();
 	IDeviceData[] getAllDiscoveredDeviceData();
 	void removeAllOrders();
-	/**
-	 * Removes all orders without changing their attributes
-	 */
-	void clearAllOrders();
 	void removeOrder(String id);
 	/**
 	 * @return True, if the order is written (now or in the past)
@@ -62,8 +58,6 @@ public interface IModel extends Closeable {
 	DateSettings getDateSettings();
 	Collection<Integer> getTableNumbers();
 	boolean tableExists(int tableNumber);
-	void setOrderTableNumber(String orderID, int tableNumber);
-	void setOrderNote(String orderID, String note);
 	/**
 	 * Checks if the order exists and has not been cancelled
 	 */
@@ -73,4 +67,8 @@ public interface IModel extends Closeable {
 	String serialiseOrder(OrderData data);
 	String serialiseMenuItem(DishMenuItemData data);
 	String serialiseMenuData();
+	/**
+	 * Removes all orders without erasing them from the file
+	 */
+	void clearAllOrders();
 }

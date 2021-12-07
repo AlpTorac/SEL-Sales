@@ -21,7 +21,7 @@ public interface IFormat {
 		Matcher m = this.getPattern().matcher(textToSearch);
 		while (m.find()) {
 			String match = m.group();
-			System.out.println("matched: " + match);
+//			System.out.println("matched: " + match);
 			col.add(match);
 		}
 		return col;

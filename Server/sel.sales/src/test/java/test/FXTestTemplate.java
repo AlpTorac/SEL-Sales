@@ -19,10 +19,13 @@ import client.view.IClientView;
 import client.view.StandardClientView;
 import javafx.application.Platform;
 import model.IModel;
+import model.connectivity.IConnectivityManager;
 import model.datamapper.menu.DishMenuItemDAO;
 import model.datamapper.order.OrderDAO;
+import model.dish.DishMenu;
 import model.dish.DishMenuItem;
 import model.dish.DishMenuItemData;
+import model.dish.DishMenuItemFactory;
 import model.entity.AccumulatingAggregateEntry;
 import model.order.OrderData;
 import model.settings.SettingsField;
@@ -66,18 +69,10 @@ public abstract class FXTestTemplate extends ApplicationTest {
 	protected final BigDecimal discProCost = BigDecimal.ONE;
 	protected final String discID = "discID";
 	
-	protected DishMenuItemData iData1;
-	protected DishMenuItemData iData2;
-	protected DishMenuItemData iData3;
-	protected DishMenuItemData discData;
-	
-	protected DishMenuItem i1;
-	protected DishMenuItem i2;
-	protected DishMenuItem i3;
-	protected DishMenuItem disc;
-	
-	protected DishMenuItemDAO menuDAO;
-	protected OrderDAO orderDAO;
+	protected final String Device1Name = "c1n";
+	protected final String Device1Address = "c1a";
+	protected final String Device2Name = "c2n";
+	protected final String Device2Address = "c2a";
 	
 	protected final BigDecimal o1a1 = BigDecimal.valueOf(2);
 	
@@ -88,9 +83,23 @@ public abstract class FXTestTemplate extends ApplicationTest {
 	protected final BigDecimal o3a3 = BigDecimal.valueOf(5);
 	protected final BigDecimal o3ad = BigDecimal.valueOf(5);
 	
-	protected String o1id = "order1";
-	protected String o2id = "order2";
-	protected String o3id = "order3";
+	protected DishMenuItemData iData1;
+	protected DishMenuItemData iData2;
+	protected DishMenuItemData iData3;
+	protected DishMenuItemData discData;
+	
+	protected DishMenuItem i1;
+	protected DishMenuItem i2;
+	protected DishMenuItem i3;
+	protected DishMenuItem disc;
+	
+	protected IConnectivityManager connManager;
+	protected DishMenuItemDAO menuDAO;
+	protected OrderDAO orderDAO;
+	
+	protected final String o1id = "order1";
+	protected final String o2id = "order2";
+	protected final String o3id = "order3";
 	
 	protected OrderData oData1;
 	protected OrderData oData2;
@@ -100,15 +109,26 @@ public abstract class FXTestTemplate extends ApplicationTest {
 	protected AccumulatingAggregateEntry<DishMenuItemData> orderItem2;
 	protected AccumulatingAggregateEntry<DishMenuItemData> orderItem3;
 	
-	protected String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
+	protected final String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	
-	protected String serviceID = "serviceID";
-	protected String serviceName = "serviceName";
-	protected String deviceName = "deviceName";
-	protected String deviceAddress = "deviceAddress";
+	protected final String serviceID = "serviceID";
+	protected final String serviceName = "serviceName";
+	
+	protected final String clientAddress = "clientAddress";
+	protected final String clientName = "clientName";
+	protected final String serverAddress = "serverAddress";
+	protected final String serverName = "serverName";
+	
+	protected final String deviceName = "deviceName";
+	protected final String deviceAddress = "deviceAddress";
+	
+	protected final String serialisedTableNumbers = "1-2,4,5,1-10,90,11";
+	protected final String serialisedTableNumbers2 = "1-5";
 	
 	protected StandardClientViewOperationsUtilityClass clientOpHelper;
 	protected StandardServerViewOperationsUtilityClass serverOpHelper;
+	
+	protected DishMenu menu;
 	
 	protected volatile boolean actionFinished = false;
 	
@@ -125,6 +145,21 @@ public abstract class FXTestTemplate extends ApplicationTest {
 			actionFinished = true;
 		});
 		waitForAction();
+	}
+	
+	public void initDishMenu() {
+		menu = new DishMenu();
+		menu.addElement(iData1);
+		menu.addElement(iData2);
+		menu.addElement(iData3);
+	}
+	
+	public static boolean ordersEqualStatic(OrderData od1, OrderData od2) {
+		return GeneralTestUtilityClass.arrayContentEquals(od1.getOrderedItems(), od2.getOrderedItems());
+	}
+	
+	public boolean ordersEqual(OrderData od1, OrderData od2) {
+		return GeneralTestUtilityClass.arrayContentEquals(od1.getOrderedItems(), od2.getOrderedItems());
 	}
 	
 	public void setServerOpHelper(IServerModel serverModel, IServerController serverController, StandardServerView serverView) {
@@ -152,12 +187,17 @@ public abstract class FXTestTemplate extends ApplicationTest {
 		return new StandardServerView(new FXUIComponentFactory(), controller, model);
 	}
 	
-	public IClientModel initClientModel() {
-		IClientModel model = new ClientModel(this.testFolderAddress);
+	public void getPrivateFieldsFromModel(IModel model) {
 		menuDAO = GeneralTestUtilityClass.getPrivateFieldValue(model, "menuDAO");
 		orderDAO = GeneralTestUtilityClass.getPrivateFieldValue(model, "orderDAO");
+		connManager = GeneralTestUtilityClass.getPrivateFieldValue(model, "connManager");
 		model.addSetting(SettingsField.DISH_MENU_FOLDER, this.testFolderAddress);
 		model.addSetting(SettingsField.ORDER_FOLDER, this.testFolderAddress);
+	}
+	
+	public IClientModel initClientModel() {
+		IClientModel model = new ClientModel(this.testFolderAddress);
+		this.getPrivateFieldsFromModel(model);
 		return model;
 	}
 	
@@ -167,10 +207,7 @@ public abstract class FXTestTemplate extends ApplicationTest {
 	
 	public IServerModel initServerModel() {
 		IServerModel model = new ServerModel(this.testFolderAddress);
-		menuDAO = GeneralTestUtilityClass.getPrivateFieldValue(model, "menuDAO");
-		orderDAO = GeneralTestUtilityClass.getPrivateFieldValue(model, "orderDAO");
-		model.addSetting(SettingsField.DISH_MENU_FOLDER, this.testFolderAddress);
-		model.addSetting(SettingsField.ORDER_FOLDER, this.testFolderAddress);
+		this.getPrivateFieldsFromModel(model);
 		return model;
 	}
 	
@@ -250,18 +287,35 @@ public abstract class FXTestTemplate extends ApplicationTest {
 		orderItem3 = oData3.getOrderedItem(iData3.getID());
 	}
 	
+	public void initDishMenuItems(IModel model) {
+		DishMenuItemFactory fac = model.getMenuItemFactory();
+		
+		iData1 = fac.constructData(i1Name, i1id, i1PorSize, i1Price, i1ProCost);
+		iData2 = fac.constructData(i2Name, i2id, i2PorSize, i2Price, i2ProCost);
+		iData3 = fac.constructData(i3Name, i3id, i3PorSize, i3Price, i3ProCost);
+		
+		i1 = fac.valueToEntity(iData1);
+		i2 = fac.valueToEntity(iData2);
+		i3 = fac.valueToEntity(iData3);
+	}
+	
 	public void addDishMenuToServerModel(IServerModel model) {
-		this.addMenuItemToServerModel(model, i1Name, i1id, i1PorSize, i1Price, i1ProCost);
-		this.addMenuItemToServerModel(model, i2Name, i2id, i2PorSize, i2Price, i2ProCost);
-		this.addMenuItemToServerModel(model, i3Name, i3id, i3PorSize, i3Price, i3ProCost);
+		this.initDishMenuItems(model);
+		model.addMenuItem(iData1);
+		model.addMenuItem(iData2);
+		model.addMenuItem(iData3);
 		
-		iData1 = model.getMenuItem(i1id);
-		iData2 = model.getMenuItem(i2id);
-		iData3 = model.getMenuItem(i3id);
-		
-		i1 = iData1.getAssociatedItem(model.getActiveDishMenuItemFinder());
-		i2 = iData2.getAssociatedItem(model.getActiveDishMenuItemFinder());
-		i3 = iData3.getAssociatedItem(model.getActiveDishMenuItemFinder());
+//		this.addMenuItemToServerModel(model, i1Name, i1id, i1PorSize, i1Price, i1ProCost);
+//		this.addMenuItemToServerModel(model, i2Name, i2id, i2PorSize, i2Price, i2ProCost);
+//		this.addMenuItemToServerModel(model, i3Name, i3id, i3PorSize, i3Price, i3ProCost);
+//		
+//		iData1 = model.getMenuItem(i1id);
+//		iData2 = model.getMenuItem(i2id);
+//		iData3 = model.getMenuItem(i3id);
+//		
+//		i1 = iData1.getAssociatedItem(model.getActiveDishMenuItemFinder());
+//		i2 = iData2.getAssociatedItem(model.getActiveDishMenuItemFinder());
+//		i3 = iData3.getAssociatedItem(model.getActiveDishMenuItemFinder());
 	}
 	
 	public void addDiscDishMenuToServerModel(IServerModel model) {
@@ -315,6 +369,7 @@ public abstract class FXTestTemplate extends ApplicationTest {
 				}
 			}
 		}
+		this.cleanTestFolder();
 	}
 	
 	public void closeModel(IModel model) {

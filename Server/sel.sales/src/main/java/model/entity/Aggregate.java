@@ -98,4 +98,13 @@ public abstract class Aggregate<A extends IAttribute, I extends IDOwner<A>> impl
 	public void addAll(Aggregate<A, I> aggr) {
 		this.getElementCollection().addAll(aggr.getElementCollection());
 	}
+	
+	@Override
+	public String toString() {
+		Optional<String> o = this.getElementCollection().stream()
+				.map(e -> e.toString())
+				.reduce((s1,s2)->s1+", "+s2);
+		
+		return o.isPresent() ? o.get() : "";
+	}
 }

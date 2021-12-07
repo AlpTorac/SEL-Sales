@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 
 import external.device.IDevice;
 import model.dish.DishMenu;
+import test.FXTestTemplate;
 import test.GeneralTestUtilityClass;
 
 public class DummyInteraction implements Closeable {
@@ -55,10 +56,12 @@ public class DummyInteraction implements Closeable {
 		this.setServerMenu(menu);
 		GeneralTestUtilityClass.performWait(waitTime);
 		for (DummyClient client : this.clients) {
+			System.out.println("Exchanging menu with: " + client.getAddress());
 			while (client.getMenuData().getAllElements().size() == 0 || !client.menuDatasEqual(server)) {
 				this.reSetServerMenu();
 				GeneralTestUtilityClass.performWait(waitTime);
 			}
+			System.out.println("Exchanged menu with: " + client.getAddress());
 		}
 	}
 	
@@ -79,7 +82,9 @@ public class DummyInteraction implements Closeable {
 		client.makePendingSendOrder(orderID, serialisedOrder);
 		while (server.getOrder(orderID) == null ||
 				!GeneralTestUtilityClass.arrayContains(client.getAllSentOrders(),
-						client.deserialiseOrderData(serialisedOrder))) {
+						client.deserialiseOrderData(serialisedOrder),
+						(od1,od2)->FXTestTemplate.ordersEqualStatic(od1, od2))) {
+			System.out.println("Sending " + orderID + " to server");
 			GeneralTestUtilityClass.performWait(waitTime);
 			client.refreshOrders();
 		}
@@ -134,13 +139,14 @@ public class DummyInteraction implements Closeable {
 		DummyConnection conn2 = (DummyConnection) dip2.getConnection(dip1.getAddress());
 		
 		while (conn1 == null || conn2 == null) {
-			System.out.println("waiting for connections");
+//			System.out.println("waiting for connections");
 			GeneralTestUtilityClass.performWait(100);
 			conn1 = (DummyConnection) dip1.getConnection(dip2.getAddress());
-			System.out.println("Conn1: " + conn1);
+//			System.out.println("Conn1: " + conn1);
 			conn2 = (DummyConnection) dip2.getConnection(dip1.getAddress());
-			System.out.println("Conn2: " + conn2);
+//			System.out.println("Conn2: " + conn2);
 		}
+		System.out.println("Connected pair: " + conn1.getTargetDeviceAddress() + " AND " + conn2.getTargetDeviceAddress());
 		InteractionUtilityClass.bindConnectionStreams(conn1, conn2);
 		return this.createConnectionPair(conn1, conn2);
 	}

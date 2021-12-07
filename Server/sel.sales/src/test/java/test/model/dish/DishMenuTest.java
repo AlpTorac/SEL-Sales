@@ -15,6 +15,7 @@ class DishMenuTest extends FXTestTemplate {
 	void startUp() {
 		model = this.initServerModel();
 		this.addDishMenuToServerModel(model);
+		this.initDishMenu();
 	}
 	
 	@AfterEach
@@ -66,5 +67,10 @@ class DishMenuTest extends FXTestTemplate {
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(i2, i2Name, i2id, i2PorSize, i2Price, i2ProCost);
 		DishMenuItemData i3 = model.getMenuItem("item3");
 		DishMenuItemTestUtilityClass.assertMenuItemDataEqual(i3, i3Name, i3id, i3PorSize, i3Price, i3ProCost);
+	}
+	
+	@Test
+	void equalsTest() {
+		Assertions.assertTrue(menu.toData().equals(model.getMenuData()));
 	}
 }

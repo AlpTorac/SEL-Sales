@@ -11,7 +11,8 @@ public class FileDeviceDataParser extends DeviceDataParser {
 	@Override
 	public IDeviceData[] parseDeviceDatas(String serialisedDeviceDatas) {
 		Collection<IDeviceData> cds = new ArrayList<IDeviceData>();
-		String body = this.getSerialisedDeviceDatasBody(serialisedDeviceDatas);
+//		String body = this.getSerialisedDeviceDatasBody(serialisedDeviceDatas);
+		String body = this.getDataBody(serialisedDeviceDatas, this.getFormat().getStartIndicator(), this.getFormat().getEndIndicator());
 		String[] serialisedDatas = body.split(this.getFormat().getDataFieldEnd());
 		for (String sd : serialisedDatas) {
 			if (sd != null && sd.length() > 0) {

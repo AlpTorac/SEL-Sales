@@ -1,4 +1,4 @@
-package external.bluetooth;
+package oldbluetooth;
 
 import java.io.IOException;
 import java.io.InputStream;

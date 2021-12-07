@@ -13,16 +13,11 @@ import model.connectivity.IDeviceData;
 import model.datamapper.order.OrderDAO;
 import model.dish.DishMenu;
 import model.dish.DishMenuData;
-import model.dish.DishMenuItem;
 import model.dish.DishMenuItemData;
 import model.dish.DishMenuItemFactory;
 import model.order.OrderData;
 import model.settings.SettingsField;
 import test.GeneralTestUtilityClass;
-import view.IView;
-import view.repository.IUILibraryHelper;
-import view.repository.uifx.FXUIComponentFactory;
-import view.repository.uiwrapper.UIComponentFactory;
 
 public abstract class DummyInteractionPartaker implements Closeable {
 	private static final String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";

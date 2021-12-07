@@ -1,34 +1,17 @@
 package test.client.view;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.File;
-import java.math.BigDecimal;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.testfx.framework.junit5.ApplicationTest;
-
 import client.controller.IClientController;
-import client.controller.StandardClientController;
-import client.model.ClientModel;
 import client.model.IClientModel;
 import client.view.IClientView;
-import client.view.StandardClientView;
-import javafx.application.Platform;
-import model.dish.DishMenuItemData;
 import model.order.OrderData;
-import model.order.AccumulatingOrderItemAggregate;
 import server.model.IServerModel;
-import server.model.ServerModel;
 import test.GeneralTestUtilityClass;
 import test.FXTestTemplate;
 import test.external.dummy.DummyClientExternal;
-import view.repository.uifx.FXUIComponentFactory;
 //@Execution(value = ExecutionMode.SAME_THREAD)
 class CookingOrdersAreaTest extends FXTestTemplate {
 	private IServerModel serverModel;

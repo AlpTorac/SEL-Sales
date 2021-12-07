@@ -9,7 +9,8 @@ public abstract class MessageParser implements IMessageParser {
 	
 	@Override
 	public Message parseMessage(String message) {
-		String messageBody = this.parseMessageBody(message);
+//		String messageBody = this.parseMessageBody(message);
+		String messageBody = this.getDataBody(message, this.getMessageStart(), this.getMessageEnd());
 		String[] fields = this.parseDataFields(messageBody);
 		int sequenceNumber = IMessage.DEFAULT_SEQUENCE_NUMBER;
 		if (fields.length > 0 && fields[0] != null && fields[0].length() > 0) {
@@ -38,7 +39,7 @@ public abstract class MessageParser implements IMessageParser {
 			startIndex = len == 0 ? 0 : len - 1;
 		}
 		if (message.endsWith(this.getMessageEnd())) {
-			endIndex = message.length() - this.getMessageEnd().length();
+			endIndex -= this.getMessageEnd().length();
 		}
 		return message.substring(startIndex, endIndex);
 	}

@@ -13,6 +13,7 @@ public interface IConnectionManager extends Closeable, IHasConnectionSettings {
 	IPingPong getPingPong();
 	IMessageReceptionist getIncomingMessageListener();
 	void sendMessage(IMessage message);
+	void checkCycle();
 	void close();
 	void setDisconnectionListener(DisconnectionListener dl);
 	boolean isClosed();

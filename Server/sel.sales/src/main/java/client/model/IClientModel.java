@@ -20,5 +20,4 @@ public interface IClientModel extends IModel {
 	OrderData getEditTarget();
 	void orderSentByID(String orderID);
 	void orderSentBySerialisedVersion(String serialisedOrderData);
-	void setOrderNote(String orderID, String note);
 }

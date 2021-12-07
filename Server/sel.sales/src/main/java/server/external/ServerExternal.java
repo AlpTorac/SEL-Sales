@@ -14,7 +14,7 @@ public abstract class ServerExternal extends External implements IServerExternal
 	
 //	protected abstract IDeviceManager initDeviceManager();
 	
-//	protected IServiceConnectionManager getServiceConnectionManager() {
+//	protected ServiceConnectionManager getServiceConnectionManager() {
 //		return this.getService().getServiceConnectionManager();
 //	}
 //	

@@ -14,16 +14,8 @@ import model.connectivity.IDeviceData;
 import test.GeneralTestUtilityClass;
 
 public class DummyExternalConnector extends ExternalConnector {
-
-	public final static long DEFAULT_PP_TIMEOUT = 200;
-	public final static long DEFAULT_PP_MINIMAL_TIMEOUT = 100;
-	public final static long SEND_TIMEOUT = 2000;
-	public final static int RESEND_LIMIT = 10;
-	
-	public final static long ESTIMATED_PP_TIMEOUT = DEFAULT_PP_TIMEOUT * (RESEND_LIMIT + 1);
-	
 	private volatile DummyDevice currentDevice;
-	private DisconnectionListener newDl = new DisconnectionListener(controller);
+	private DisconnectionListener newDl = new DisconnectionListener(this.getController());
 	
 	public DummyExternalConnector(IService service, IController controller, ExecutorService es, long pingPongTimeout,
 			long minimalPingPongDelay, long sendTimeout, int resendLimit) {
@@ -31,9 +23,13 @@ public class DummyExternalConnector extends ExternalConnector {
 	}
 	
 	public DummyExternalConnector(IService service, IController controller, ExecutorService es) {
-		this(service, controller, es, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
+		this(service, controller, es,
+				DummyConnectionSettings.DEFAULT_PP_TIMEOUT,
+				DummyConnectionSettings.DEFAULT_PP_MINIMAL_TIMEOUT,
+				DummyConnectionSettings.SEND_TIMEOUT,
+				DummyConnectionSettings.RESEND_LIMIT);
 	}
-
+	
 	public Collection<IConnectionManager> getConnectionManagers() {
 		return GeneralTestUtilityClass.getPrivateFieldValue(this, "connectionManagers");
 	}
@@ -73,7 +69,7 @@ public class DummyExternalConnector extends ExternalConnector {
 	@Override
 	protected IConnectionManager createConnectionManager(IConnection conn, long pingPongTimeout, long sendTimeout,
 			int resendLimit, long minimalPingPongDelay) {
-		return new DummyConnectionManager(controller, conn, es, this.getPingPongTimeoutInMillis(), this.getSendTimeoutInMillis(), this.getPingPongResendLimit(), this.getMinimalPingPongDelay());
+		return new DummyConnectionManager(this.getController(), conn, this.getES(), this.getPingPongTimeoutInMillis(), this.getSendTimeoutInMillis(), this.getPingPongResendLimit(), this.getMinimalPingPongDelay());
 	}
 
 	@Override

@@ -1,20 +1,14 @@
 package test.view;
 
-import java.io.File;
-import java.math.BigDecimal;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testfx.framework.junit5.ApplicationTest;
-
 import javafx.stage.Stage;
 import model.dish.DishMenuData;
 import model.dish.DishMenuItemData;
 import model.settings.SettingsField;
 import server.controller.IServerController;
-import server.controller.StandardServerController;
 import server.model.IServerModel;
 import server.model.ServerModel;
 import server.view.StandardServerView;
@@ -22,8 +16,6 @@ import test.FXTestTemplate;
 import test.GeneralTestUtilityClass;
 import test.StandardServerViewOperationsUtilityClass;
 import test.model.dish.DishMenuItemTestUtilityClass;
-import view.IView;
-import view.repository.uifx.FXUIComponentFactory;
 //@Execution(value = ExecutionMode.SAME_THREAD)
 class MenuItemOperationsTest extends FXTestTemplate {
 	private IServerModel model;

@@ -1,7 +1,5 @@
 package test.external.dummy;
 
-import java.util.concurrent.ExecutorService;
-
 import client.controller.IClientController;
 import client.external.StandardClientExternal;
 import client.model.IClientModel;
@@ -17,11 +15,11 @@ public class DummyStandardClientExternal extends StandardClientExternal implemen
 	}
 
 	public DummyStandardClientExternal(IClientController controller, IClientModel model, IConnectionUtility connUtil) {
-		this(controller, model, connUtil, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
-	}
-	
-	public ExecutorService getES() {
-		return this.es;
+		this(controller, model, connUtil,
+				DummyConnectionSettings.DEFAULT_PP_TIMEOUT,
+				DummyConnectionSettings.DEFAULT_PP_MINIMAL_TIMEOUT,
+				DummyConnectionSettings.SEND_TIMEOUT,
+				DummyConnectionSettings.RESEND_LIMIT);
 	}
 	
 	public void setDiscoveryStrategy(DeviceDiscoveryStrategy cds) {

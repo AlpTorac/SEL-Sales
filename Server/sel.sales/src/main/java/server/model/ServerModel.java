@@ -42,11 +42,6 @@ public class ServerModel extends Model implements IServerModel {
 		this.addUnconfirmedOrder(data);
 	}
 	
-	@Override
-	public void loadSaved() {
-		this.getFileManager().loadSaved();
-	}
-	
 	protected void unconfirmedOrdersChanged() {
 		this.notifyUpdatableChange(u -> u instanceof OrderConfirmationStatusUpdatable,
 				u -> ((OrderConfirmationStatusUpdatable) u).refreshUnconfirmedOrders());

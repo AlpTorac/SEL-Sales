@@ -17,12 +17,11 @@ import client.view.composites.PendingPaymentOrdersArea;
 import controller.IController;
 import model.IModel;
 import model.dish.DishMenuItemData;
+import model.entity.AccumulatingAggregateEntry;
 import model.order.OrderData;
-import model.order.AccumulatingOrderItemAggregate;
 import test.GeneralTestUtilityClass;
 import test.ViewOperationsUtilityClass;
 import view.IView;
-import view.repository.IButton;
 import view.repository.uiwrapper.UITabPane;
 
 public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtilityClass {
@@ -158,16 +157,16 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 		return this.ota.getEntry().getEntries().size();
 	}
 	
-	public AccumulatingOrderItemAggregate[] getOrderTakingAreaCurrentOrderItems() {
-		return this.ota.getEntry().getCurrentOrderItems();
+	public AccumulatingAggregateEntry<DishMenuItemData>[] getOrderTakingAreaCurrentOrderItems() {
+		return this.ota.getEntry().getCurrentOrder().getOrderedItems();
 	}
 	
 	public OrderData getOrderTakingAreaCurrentOrder() {
-		return this.getModel().getOrderHelper().deserialiseOrderData(this.ota.getEntry().getCurrentOrder());
+		return this.ota.getEntry().getCurrentOrder();
 	}
 	
 	public String getOrderTakingAreaSerialisedOrder() {
-		return this.ota.getEntry().getCurrentOrder();
+		return this.getModel().serialiseOrder(this.getOrderTakingAreaCurrentOrder());
 	}
 	
 	public void orderTakingAreaDisplayOrder(OrderData data) {
@@ -217,7 +216,7 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	}
 	
 	public String ppoaGetSerialisedOrder(String formerID) {
-		return this.uoa.getOrderAccordion().getEntry(formerID).getCurrentOrder();
+		return this.getModel().serialiseOrder(this.uoa.getOrderAccordion().getEntry(formerID).getCurrentOrder());
 	}
 	
 	protected void setOrderAreaTabActive() {

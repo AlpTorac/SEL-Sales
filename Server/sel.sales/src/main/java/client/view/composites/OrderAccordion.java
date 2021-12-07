@@ -29,7 +29,7 @@ public abstract class OrderAccordion extends UIAccordion implements PriceUpdateT
 	public void addOrderData(OrderData data) {
 		OrderEntry entry = this.createOrderEntry(data);
 		EntityID id = data.getID();
-		super.addTab(id.toString(), entry);
+		super.addTab(data.toString() + " - " + data.getTableNumber(), entry);
 		OrderEntry pastEntry = this.orderEntries.put(id, entry);
 		if (pastEntry != null) {
 			this.remove(pastEntry);

@@ -1,55 +1,24 @@
 package test.client.view;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.File;
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.testfx.framework.junit5.ApplicationTest;
-
 import client.view.composites.EditableMenuItemEntry;
 import client.view.composites.MenuItemEntry;
 import client.view.composites.PriceUpdateTarget;
 import model.dish.DishMenuData;
 import model.dish.DishMenuItemData;
-import model.order.AccumulatingOrderItemAggregate;
+import model.entity.AccumulatingAggregateEntry;
 import server.model.IServerModel;
-import server.model.ServerModel;
+import test.FXTestTemplate;
 import view.repository.uifx.FXUIComponentFactory;
 //@Execution(value = ExecutionMode.SAME_THREAD)
-class EditableMenuItemEntryTest extends ApplicationTest {
+class EditableMenuItemEntryTest extends FXTestTemplate {
 	
 	private IServerModel model;
-	
-	private DishMenuItemData item1;
-	private String i1Name = "aaa";
-	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
-	private BigDecimal i1Price = BigDecimal.valueOf(5);
-	private BigDecimal i1ProCost = BigDecimal.valueOf(4);
-	private BigDecimal i1Disc = BigDecimal.valueOf(0);
-	private String i1id = "item1";
-	
-	private DishMenuItemData item2;
-	private String i2Name = "bbb";
-	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
-	private BigDecimal i2Price = BigDecimal.valueOf(1);
-	private BigDecimal i2ProCost = BigDecimal.valueOf(0.5);
-	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
-	private String i2id = "item2";
-	
-	private DishMenuItemData item3;
-	private String i3Name = "ccc";
-	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
-	private BigDecimal i3Price = BigDecimal.valueOf(4);
-	private BigDecimal i3ProCost = BigDecimal.valueOf(3.5);
-	private BigDecimal i3Disc = BigDecimal.valueOf(1);
-	private String i3id = "item3";
 	
 	private PriceUpdateTarget<MenuItemEntry> u;
 	private EditableMenuItemEntry entry;
@@ -57,18 +26,11 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 	private boolean isPriceRefreshed;
 	private boolean isRemoved;
 	
-	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
-	
 	@BeforeEach
 	void prep() {
-		model = new ServerModel(this.testFolderAddress);
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i1Name, i1id, i1PorSize, i1ProCost, i1Price));
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i2Name, i2id, i2PorSize, i2ProCost, i2Price));
-		model.addMenuItem(model.getDishMenuHelper().serialiseMenuItemForApp(i3Name, i3id, i3PorSize, i3ProCost, i3Price));
-		
-		item1 = model.getMenuItem(i1id);
-		item2 = model.getMenuItem(i2id);
-		item3 = model.getMenuItem(i3id);
+		model = this.initServerModel();
+		this.initDishMenuItems(model);
+		this.addDishMenuToServerModel(model);
 		
 		isPriceRefreshed = false;
 		isRemoved = false;
@@ -89,7 +51,7 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 
 	@AfterEach
 	void cleanUp() {
-		model.close();
+		this.closeModel(model);
 		entry = null;
 		u = null;
 	}
@@ -100,10 +62,10 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 		
 		BigDecimal amount =  BigDecimal.valueOf(2);
 		
-		AccumulatingOrderItemAggregate itemData = model.getOrderHelper().createOrderItem(item1, amount);
+		AccumulatingAggregateEntry<DishMenuItemData> itemData = new AccumulatingAggregateEntry<DishMenuItemData>(iData1, amount);
 		entry.displayData(itemData);
 		
-		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, item1, amount);
+		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, iData1, amount);
 		
 //		Assertions.assertEquals(entry.getMenuItemChoiceBox().getSelectedElement(), item1);
 //		Assertions.assertEquals(entry.getSelectedMenuItem(), item1);
@@ -141,9 +103,9 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 		Assertions.assertNull(entry.getSelectedMenuItem());
 		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
 		
-		entry.getMenuItemChoiceBox().artificiallySelectItem(item2);
+		entry.getMenuItemChoiceBox().artificiallySelectItem(iData2);
 		
-		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, item2, amount);
+		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, iData2, amount);
 		
 //		Assertions.assertEquals(entry.getMenuItemChoiceBox().getSelectedElement(), item2);
 //		Assertions.assertEquals(entry.getSelectedMenuItem(), item2);
@@ -160,13 +122,13 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 		Assertions.assertNull(entry.getSelectedMenuItem());
 		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
 		
-		entry.getMenuItemChoiceBox().artificiallySelectItem(item2);
-		Assertions.assertEquals(entry.getPrice().doubleValue(), item2.getGrossPrice().multiply(amount).doubleValue());
+		entry.getMenuItemChoiceBox().artificiallySelectItem(iData2);
+		Assertions.assertEquals(entry.getPrice().doubleValue(), iData2.getGrossPrice().multiply(amount).doubleValue());
 		
 		entry.getAmountIncButton().performArtificialClick();
 		amount = amount.add(BigDecimal.ONE);
 		
-		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, item2, amount);
+		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, iData2, amount);
 		
 //		Assertions.assertEquals(Integer.valueOf(entry.getAmountTextBox().getText()), amount.intValue());
 //		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
@@ -183,14 +145,14 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 		Assertions.assertNull(entry.getSelectedMenuItem());
 		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
 		
-		entry.getMenuItemChoiceBox().artificiallySelectItem(item2);
-		Assertions.assertEquals(entry.getPrice().doubleValue(), item2.getGrossPrice().multiply(amount).doubleValue());
+		entry.getMenuItemChoiceBox().artificiallySelectItem(iData2);
+		Assertions.assertEquals(entry.getPrice().doubleValue(), iData2.getGrossPrice().multiply(amount).doubleValue());
 		
 		// amount = 0
 		entry.getAmountDecButton().performArtificialClick();
 		amount = amount.subtract(BigDecimal.ONE);
 		
-		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, item2, amount);
+		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, iData2, amount);
 		
 //		Assertions.assertEquals(Integer.valueOf(entry.getAmountTextBox().getText()), amount.intValue());
 //		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
@@ -201,7 +163,7 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 		// amount still = 0
 		entry.getAmountDecButton().performArtificialClick();
 		
-		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, item2, amount);
+		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(entry, iData2, amount);
 		
 //		Assertions.assertEquals(Integer.valueOf(entry.getAmountTextBox().getText()), amount.intValue());
 //		Assertions.assertEquals(entry.getAmount().intValue(), amount.intValue());
@@ -215,14 +177,14 @@ class EditableMenuItemEntryTest extends ApplicationTest {
 		
 		BigDecimal amount =  BigDecimal.valueOf(2);
 		
-		AccumulatingOrderItemAggregate itemData = model.getOrderHelper().createOrderItem(item1, amount);
+		AccumulatingAggregateEntry<DishMenuItemData> itemData = new AccumulatingAggregateEntry<DishMenuItemData>(iData1, amount);
 		entry.displayData(itemData);
 		
 		EditableMenuItemEntry clone = entry.clone();
 		
 		Assertions.assertFalse(clone == entry);
 		
-		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(clone, item1, amount);
+		MenuItemEntryUtilityClass.assertMenuItemEntryEquals(clone, iData1, amount);
 		
 //		Assertions.assertEquals(clone.getMenuItemChoiceBox().getSelectedElement(), item1);
 //		Assertions.assertEquals(clone.getSelectedMenuItem(), item1);

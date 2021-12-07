@@ -1,13 +1,11 @@
 package test.external.dummy;
 
-import java.util.concurrent.ExecutorService;
-
 import client.controller.IClientController;
 import client.external.ClientExternal;
 import client.model.IClientModel;
 import external.connection.IConnection;
 import external.connection.IService;
-import external.connection.outgoing.IExternalConnector;
+import external.connection.outgoing.ExternalConnector;
 import external.device.DeviceDiscoveryStrategy;
 import external.device.IDeviceManager;
 
@@ -20,32 +18,32 @@ public class DummyClientExternal extends ClientExternal implements IDummyExterna
 		super(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		this.serviceID = serviceID;
 		this.serviceName = serviceName;
-		System.out.println("Service: " + this.getService());
+//		System.out.println("Service: " + this.getService());
 	}
 
 	public DummyClientExternal(String id, String name, IClientController controller, IClientModel model) {
-		this(id, name, controller, model, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
-	}
-	
-	public ExecutorService getES() {
-		return this.es;
+		this(id, name, controller, model,
+				DummyConnectionSettings.DEFAULT_PP_TIMEOUT,
+				DummyConnectionSettings.DEFAULT_PP_MINIMAL_TIMEOUT,
+				DummyConnectionSettings.SEND_TIMEOUT,
+				DummyConnectionSettings.RESEND_LIMIT);
 	}
 	
 	public void setDiscoveryStrategy(DeviceDiscoveryStrategy cds) {
-		System.out.println("Discovery strategy set");
+//		System.out.println("Discovery strategy set");
 //		this.cm.setDiscoveryStrategy(cds);
 		this.getService().getDeviceManager().setDiscoveryStrategy(cds);
 	}
 	
 	@Override
-	protected IExternalConnector initConnector() {
-		System.out.println("Connector service: " + this.getService());
+	protected ExternalConnector initConnector() {
+//		System.out.println("Connector service: " + this.getService());
 		return new DummyExternalConnector(
 				this.getService(),
 				this.getController(),
 				this.getES(),
-				this.getPingPongTimeout(),
-				this.getMinimalPingPongDelay(), this.getSendTimeout(), this.getResendLimit());
+				this.getPingPongTimeoutInMillis(),
+				this.getMinimalPingPongDelay(), this.getSendTimeoutInMillis(), this.getPingPongResendLimit());
 	}
 
 	@Override
@@ -56,10 +54,10 @@ public class DummyClientExternal extends ClientExternal implements IDummyExterna
 				this.initDeviceManager(), 
 				this.getController(), 
 				this.getES(), 
-				this.getPingPongTimeout(), 
+				this.getPingPongTimeoutInMillis(), 
 				this.getMinimalPingPongDelay(), 
-				this.getSendTimeout(), 
-				this.getResendLimit());
+				this.getSendTimeoutInMillis(), 
+				this.getPingPongResendLimit());
 	}
 
 	@Override

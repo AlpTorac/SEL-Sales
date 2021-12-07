@@ -1,24 +1,13 @@
 package test.client;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.File;
-import java.math.BigDecimal;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-
-import client.model.ClientModel;
 import client.model.IClientModel;
 import model.order.OrderData;
 import server.model.IServerModel;
-import server.model.ServerModel;
 import test.FXTestTemplate;
-import test.GeneralTestUtilityClass;
 //@Execution(value = ExecutionMode.SAME_THREAD)
 class ClientModelTest extends FXTestTemplate {
 
@@ -55,7 +44,7 @@ class ClientModelTest extends FXTestTemplate {
 		
 		Assertions.assertNull(this.clientModel.getOrder(o1id));
 		clientModel.addOrder(oData1);
-		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(oData1));
+		Assertions.assertTrue(this.ordersEqual(this.clientModel.getOrder(o1id), oData1));
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 1);
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
@@ -64,7 +53,7 @@ class ClientModelTest extends FXTestTemplate {
 		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
 		clientModel.makePendingPaymentOrder(o1id);
-		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(oData1));
+		Assertions.assertTrue(this.ordersEqual(this.clientModel.getOrder(o1id), oData1));
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 1);
@@ -73,7 +62,7 @@ class ClientModelTest extends FXTestTemplate {
 		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
 		clientModel.makePendingSendOrder(oData1);
-		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(oData1));
+		Assertions.assertTrue(this.ordersEqual(this.clientModel.getOrder(o1id), oData1));
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
@@ -82,7 +71,7 @@ class ClientModelTest extends FXTestTemplate {
 		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
 		clientModel.orderSentByID(o1id);
-		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(oData1));
+		Assertions.assertTrue(this.ordersEqual(this.clientModel.getOrder(o1id), oData1));
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
@@ -101,7 +90,7 @@ class ClientModelTest extends FXTestTemplate {
 		
 		Assertions.assertNull(this.clientModel.getOrder(o1id));
 		clientModel.addOrder(oData1);
-		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(oData1));
+		Assertions.assertTrue(this.ordersEqual(this.clientModel.getOrder(o1id), oData1));
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 1);
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
@@ -110,7 +99,7 @@ class ClientModelTest extends FXTestTemplate {
 		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
 		clientModel.makePendingPaymentOrder(o1id);
-		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(oData1));
+		Assertions.assertTrue(this.ordersEqual(this.clientModel.getOrder(o1id), oData1));
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 1);
@@ -122,7 +111,7 @@ class ClientModelTest extends FXTestTemplate {
 		newData.addOrderItem(iData2, o1a1);
 		
 		clientModel.makePendingSendOrder(newData);
-		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(newData));
+		Assertions.assertTrue(this.ordersEqual(this.clientModel.getOrder(o1id), newData));
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
@@ -131,7 +120,7 @@ class ClientModelTest extends FXTestTemplate {
 		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
 		
 		clientModel.orderSentByID(o1id);
-		Assertions.assertTrue(this.clientModel.getOrder(o1id).equals(newData));
+		Assertions.assertTrue(this.ordersEqual(this.clientModel.getOrder(o1id), newData));
 		
 		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
 		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
@@ -193,7 +182,12 @@ class ClientModelTest extends FXTestTemplate {
 		this.clientModel.addOrder(data);
 		this.clientModel.editOrder(data.getID().toString());
 		
-		Assertions.assertTrue(data.equals(this.clientModel.getEditTarget()));
+		Assertions.assertEquals(this.clientModel.getAllCookingOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllPendingPaymentOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllPendingSendOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllSentOrders().length, 0);
+		Assertions.assertEquals(this.clientModel.getAllWrittenOrders().length, 1);
+		Assertions.assertTrue(this.ordersEqual(data, this.clientModel.getEditTarget()));
 		
 		this.clientModel.addOrder(newData);
 		this.clientModel.removeOrder(newData.getID().toString());

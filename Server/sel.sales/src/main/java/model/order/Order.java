@@ -52,4 +52,22 @@ public class Order extends Entity<OrderAttribute> {
 	public LocalDateTime getDate() {
 		return (LocalDateTime) this.getAttributeValue(OrderAttribute.DATE);
 	}
+
+	public String getNote() {
+		return (String) this.getAttributeValue(OrderAttribute.NOTE);
+	}
+
+	public Integer getTableNumber() {
+		return (Integer) this.getAttributeValue(OrderAttribute.TABLE_NUMBER);
+	}
+	
+	@Override
+	public OrderAttribute[] getAllAttributeEnumValues() {
+		return OrderAttribute.values();
+	}
+	
+	@Override
+	public String toString() {
+		return this.getOrderItemAggregate().toString() + " - " + this.getTableNumber();
+	}
 }

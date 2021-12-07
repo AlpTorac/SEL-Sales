@@ -9,7 +9,7 @@ public interface IService {
 	String getName();
 	String getURL();
 	void publish();
-	IServiceConnectionManager getServiceConnectionManager();
+	ServiceConnectionManager getServiceConnectionManager();
 	IDeviceManager getDeviceManager();
 	String generateURL();
 	void receiveKnownDeviceData(IDeviceData[] deviceData);

@@ -1,4 +1,4 @@
-package external.bluetooth;
+package external;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,9 +18,6 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 
-import external.IConnectionUtility;
-import external.IServiceInfo;
-import external.ServiceInfo;
 import external.connection.ConnectionObject;
 import external.connection.IConnectionObject;
 import external.connection.IService;

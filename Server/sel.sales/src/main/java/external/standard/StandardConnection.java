@@ -23,6 +23,8 @@ public class StandardConnection implements IConnection {
 	
 	@Override
 	public void close() throws IOException {
+		this.is.close();
+		this.os.close();
 		this.connectionObject.close();
 	}
 

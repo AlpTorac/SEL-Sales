@@ -2,7 +2,7 @@ package server;
 
 import java.math.BigDecimal;
 
-import external.bluetooth.WindowsBluetoothConnectionUtility;
+import external.WindowsBluetoothConnectionUtility;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import server.controller.IServerController;
@@ -53,32 +53,32 @@ public class ServerApp extends Application {
 				"aaa",
 				"item1",
 				BigDecimal.valueOf(2.34),
-				BigDecimal.valueOf(2),
-				BigDecimal.valueOf(4)
+				BigDecimal.valueOf(4),
+				BigDecimal.valueOf(2)
 				));
 		
 		model.addMenuItem(model.getMenuItemFactory().constructData(
 				"bbb",
 				"item2",
 				BigDecimal.valueOf(1),
-				BigDecimal.valueOf(5.67),
-				BigDecimal.valueOf(10)
+				BigDecimal.valueOf(10),
+				BigDecimal.valueOf(5.67)
 				));
 		
 		model.addMenuItem(model.getMenuItemFactory().constructData(
 				"ccc",
 				"item3",
 				BigDecimal.valueOf(2.5),
-				BigDecimal.valueOf(1),
-				BigDecimal.valueOf(4)
+				BigDecimal.valueOf(4),
+				BigDecimal.valueOf(1)
 				));
 		
 		model.addMenuItem(model.getMenuItemFactory().constructData(
 				"discount",
 				"disc",
 				BigDecimal.valueOf(1),
-				BigDecimal.valueOf(0),
-				BigDecimal.valueOf(-1)
+				BigDecimal.valueOf(-1),
+				BigDecimal.valueOf(0)
 				));
 		
 //		model.addUnconfirmedOrder("order1#20200820112233000#0#0:item1,2;");

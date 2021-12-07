@@ -4,12 +4,13 @@ import client.controller.IClientController;
 import client.external.broadcaster.OrderBroadcaster;
 import client.model.IClientModel;
 import external.External;
-import external.connection.outgoing.IExternalConnector;
+import external.connection.outgoing.ExternalConnector;
 import model.order.OrderData;
+import model.settings.ISettings;
 
 public abstract class ClientExternal extends External implements IClientExternal {
 	
-	private IExternalConnector connector;
+	private ExternalConnector connector;
 	
 	protected ClientExternal(IClientController controller, IClientModel model, long pingPongTimeout, long minimalPingPongDelay,
 			long sendTimeout, int resendLimit) {
@@ -20,7 +21,7 @@ public abstract class ClientExternal extends External implements IClientExternal
 		this.connector = this.initConnector();
 	}
 	
-	protected IExternalConnector getConnector() {
+	protected ExternalConnector getConnector() {
 		if (this.connector == null) {
 			this.setupConnector();
 		}
@@ -37,7 +38,15 @@ public abstract class ClientExternal extends External implements IClientExternal
 		return (IClientController) super.getController();
 	}
 	
-	protected abstract IExternalConnector initConnector();
+	protected abstract ExternalConnector initConnector();
+	
+	@Override
+	public void notifyInnerConstructs(ISettings settings) {
+		super.notifyInnerConstructs(settings);
+		if (this.getConnector() != null) {
+			this.getConnector().notifyInnerConstructs(settings);
+		}
+	}
 	
 	@Override
 	public void refreshKnownDevices() {

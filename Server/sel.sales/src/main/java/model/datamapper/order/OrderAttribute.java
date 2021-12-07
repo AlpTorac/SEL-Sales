@@ -3,10 +3,11 @@ package model.datamapper.order;
 import java.time.LocalDateTime;
 
 import model.datamapper.IAttribute;
+import model.order.AccumulatingOrderItemAggregate;
 import model.order.OrderStatus;
 
 public enum OrderAttribute implements IAttribute {
-	ORDER_ITEMS("items", null),
+	ORDER_ITEMS("items", new AccumulatingOrderItemAggregate()),
 	IS_HERE("isHere", Boolean.valueOf(true)),
 	IS_CASH("isCash", Boolean.valueOf(true)),
 	DATE("date", LocalDateTime.MIN),

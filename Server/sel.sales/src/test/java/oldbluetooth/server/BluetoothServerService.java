@@ -1,13 +1,13 @@
-package server.external;
+package oldbluetooth.server;
 
 import java.util.concurrent.ExecutorService;
 
 import javax.bluetooth.UUID;
 
 import controller.IController;
-import external.bluetooth.BluetoothDeviceManager;
-import external.bluetooth.BluetoothService;
-import external.bluetooth.BluetoothServiceConnectionManager;
+import oldbluetooth.BluetoothDeviceManager;
+import oldbluetooth.BluetoothService;
+import oldbluetooth.BluetoothServiceConnectionManager;
 
 public class BluetoothServerService extends BluetoothService {
 

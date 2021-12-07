@@ -49,6 +49,13 @@ class OrderDataTest extends FXTestTemplate {
 		Assertions.assertFalse(orderData[1].equals(orderData[2]));
 		Assertions.assertFalse(orderData[2].equals(orderData[0]));
 		Assertions.assertFalse(orderData[2].equals(orderData[1]));
+		
+//		Assertions.assertFalse(this.ordersEqual(orderData[0], orderData[1]));
+//		Assertions.assertFalse(this.ordersEqual(orderData[0], orderData[2]));
+//		Assertions.assertFalse(this.ordersEqual(orderData[1], orderData[0]));
+//		Assertions.assertFalse(this.ordersEqual(orderData[1], orderData[2]));
+//		Assertions.assertFalse(this.ordersEqual(orderData[2], orderData[0]));
+//		Assertions.assertFalse(this.ordersEqual(orderData[2], orderData[1]));
 	}
 	
 	@Test

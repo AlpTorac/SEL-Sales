@@ -18,19 +18,19 @@ public class StandardClientExternal extends ClientExternal {
 
 	@Override
 	protected StandardExternalConnector initConnector() {
-		return new StandardExternalConnector(this.getService(), this.getController(), es,
-				this.connUtil, this.getPingPongTimeout(), this.getMinimalPingPongDelay(), this.getSendTimeout(), this.getResendLimit());
+		return new StandardExternalConnector(this.getService(), this.getController(), this.getES(),
+				this.connUtil, this.getPingPongTimeoutInMillis(), this.getMinimalPingPongDelay(), this.getSendTimeoutInMillis(), this.getPingPongResendLimit());
 	}
 
 	@Override
 	protected StandardDeviceManager initDeviceManager() {
-		return new StandardDeviceManager(es, this.getController(), this.connUtil);
+		return new StandardDeviceManager(this.getES(), this.getController(), this.connUtil);
 	}
 
 	@Override
 	protected StandardService initService() {
-		return new StandardService(this.initDeviceManager(), this.getController(), es, this.connUtil,
-				this.getPingPongTimeout(), this.getMinimalPingPongDelay(), this.getSendTimeout(), this.getResendLimit());
+		return new StandardService(this.initDeviceManager(), this.getController(), this.getES(), this.connUtil,
+				this.getPingPongTimeoutInMillis(), this.getMinimalPingPongDelay(), this.getSendTimeoutInMillis(), this.getPingPongResendLimit());
 	}
 
 	protected IConnectionUtility getConnectionUtility() {

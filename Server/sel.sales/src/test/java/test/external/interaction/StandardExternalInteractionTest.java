@@ -1,89 +1,29 @@
-package test.interaction;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.File;
-import java.math.BigDecimal;
+package test.external.interaction;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-
-import external.IConnectionUtility;
-import model.dish.DishMenu;
 import model.dish.DishMenuData;
-import server.controller.IServerController;
-import server.controller.ServerController;
-import server.controller.StandardServerController;
-import server.external.IServerExternal;
-import server.external.StandardServerExternal;
-import server.model.IServerModel;
-import server.model.ServerModel;
+import test.FXTestTemplate;
 import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyConnectionUtility;
 import test.external.dummy.DummyStandardClient;
 import test.external.dummy.DummyStandardInteraction;
 import test.external.dummy.DummyStandardServer;
 
-class StandardExternalInteractionTest {
-	private long waitTime = 100;
-	
-	private String i1Name = "aaa";
-	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
-	private BigDecimal i1Price = BigDecimal.valueOf(5);
-	private BigDecimal i1ProCost = BigDecimal.valueOf(4);
-	private BigDecimal i1Disc = BigDecimal.valueOf(0);
-	private String i1id = "item1";
-	
-	private String i2Name = "bbb";
-	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
-	private BigDecimal i2Price = BigDecimal.valueOf(1);
-	private BigDecimal i2ProCost = BigDecimal.valueOf(0.5);
-	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
-	private String i2id = "item2";
-	
-	private String i3Name = "ccc";
-	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
-	private BigDecimal i3Price = BigDecimal.valueOf(4);
-	private BigDecimal i3ProCost = BigDecimal.valueOf(3.5);
-	private BigDecimal i3Disc = BigDecimal.valueOf(1);
-	private String i3id = "item3";
-	
-	private BigDecimal o1a1 = BigDecimal.valueOf(2);
-	private BigDecimal o2a1 = BigDecimal.valueOf(2);
-	private BigDecimal o2a2 = BigDecimal.valueOf(3);
-	private BigDecimal o3a3 = BigDecimal.valueOf(5);
-	
-	private String o1id = "order1";
-	private String o2id = "order2";
-	private String o3id = "order3";
-	
+//@Disabled("Takes too long to finish")
+class StandardExternalInteractionTest extends FXTestTemplate {
 	private String so1;
 	private String so2;
 	
-	private String serviceID = "serviceID";
-	private String serviceName = "serviceName";
-	
-	private DishMenu menu;
-	
 	private DummyStandardServer server;
-	private String serverName = "serverName";
-	private String serverAddress = "serverAddress";
 	private DummyConnectionUtility connUtilServer;
 	
 	private DummyStandardClient client;
-	private String clientName = "clientName";
-	private String clientAddress = "clientAddress";
 	private DummyConnectionUtility connUtilClient;
 	
 	private DummyStandardInteraction interaction;
-	
-	private String serialisedTableNumbers = "1-2,4,5,1-10,90,11";
-	private String serialisedTableNumbers2 = "1-5";
-	
-	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
 	
 	@BeforeEach
 	void prep() {
@@ -96,13 +36,12 @@ class StandardExternalInteractionTest {
 		interaction = new DummyStandardInteraction(server, client);
 		interaction.connectPartakers(server, client);
 		
-		menu = server.createDishMenu();
-		menu.addMenuItem(server.createDishMenuItem(i1Name, i1PorSize, i1ProCost, i1Price, i1id));
-		menu.addMenuItem(server.createDishMenuItem(i2Name, i2PorSize, i2ProCost, i2Price, i2id));
-		menu.addMenuItem(server.createDishMenuItem(i3Name, i3PorSize, i3ProCost, i3Price, i3id));
-		
-		so1 = o1id+"#20200809235959866#1#0:item1,2;item2,3;";
-		so2 = o2id+"#20200809235959866#1#0:item1,2;item2,3;item3,5;";
+		this.initDishMenuItems(server.getModel());
+		this.initDishMenu();
+		this.initOrders(client.getModel());
+		this.getPrivateFieldsFromModel(client.getModel());
+		so1 = orderDAO.serialiseValueObject(oData1);
+		so2 = orderDAO.serialiseValueObject(oData2);
 	}
 	
 	@AfterEach
@@ -148,7 +87,7 @@ class StandardExternalInteractionTest {
 		interaction.setServerMenu(menu);
 		
 		DishMenuData menuData = client.getMenuData();
-		while (menuData.getAllElements().length == 0) {
+		while (menuData.getAllElements().size() == 0) {
 			interaction.reSetServerMenu();
 			GeneralTestUtilityClass.performWait(waitTime);
 			menuData = client.getMenuData();
@@ -162,10 +101,10 @@ class StandardExternalInteractionTest {
 		interaction.addPendingSendOrderToClient(client, o1id, so1);
 		
 		Assertions.assertEquals(server.getAllUnconfirmedOrders().length, 1);
-		Assertions.assertTrue(server.getAllUnconfirmedOrders()[0].equals(server.deserialiseOrderData(so1)));
+		Assertions.assertTrue(this.ordersEqual(server.getAllUnconfirmedOrders()[0], server.deserialiseOrderData(so1)));
 		
 		Assertions.assertEquals(client.getAllSentOrders().length, 1);
-		Assertions.assertTrue(client.getAllSentOrders()[0].equals(client.deserialiseOrderData(so1)));
+		Assertions.assertTrue(this.ordersEqual(client.getAllSentOrders()[0], client.deserialiseOrderData(so1)));
 	}
 	
 	@Test
@@ -174,26 +113,26 @@ class StandardExternalInteractionTest {
 		interaction.addPendingSendOrderToClient(client, o1id, so1);
 		
 		Assertions.assertEquals(server.getAllUnconfirmedOrders().length, 1);
-		Assertions.assertTrue(server.getAllUnconfirmedOrders()[0].equals(server.deserialiseOrderData(so1)));
+		Assertions.assertTrue(this.ordersEqual(server.getAllUnconfirmedOrders()[0], server.deserialiseOrderData(so1)));
 		
 		Assertions.assertEquals(client.getAllSentOrders().length, 1);
-		Assertions.assertTrue(client.getAllSentOrders()[0].equals(client.deserialiseOrderData(so1)));
+		Assertions.assertTrue(this.ordersEqual(client.getAllSentOrders()[0], client.deserialiseOrderData(so1)));
 		
 		interaction.addPendingSendOrderToClient(client, o1id, so1);
 		
 		Assertions.assertEquals(server.getAllUnconfirmedOrders().length, 1);
-		Assertions.assertTrue(server.getAllUnconfirmedOrders()[0].equals(server.deserialiseOrderData(so1)));
+		Assertions.assertTrue(this.ordersEqual(server.getAllUnconfirmedOrders()[0], server.deserialiseOrderData(so1)));
 		
 		Assertions.assertEquals(client.getAllSentOrders().length, 1);
-		Assertions.assertTrue(client.getAllSentOrders()[0].equals(client.deserialiseOrderData(so1)));
+		Assertions.assertTrue(this.ordersEqual(client.getAllSentOrders()[0], client.deserialiseOrderData(so1)));
 		
 		interaction.addPendingSendOrderToClient(client, o2id, so2);
 		
 		Assertions.assertEquals(server.getAllUnconfirmedOrders().length, 2);
-		Assertions.assertTrue(server.getOrder(o2id).equals(server.deserialiseOrderData(so2)));
+		Assertions.assertTrue(this.ordersEqual(server.getOrder(o2id), server.deserialiseOrderData(so2)));
 		
 		Assertions.assertEquals(client.getAllSentOrders().length, 2);
-		Assertions.assertTrue(client.getOrder(o2id).equals(client.deserialiseOrderData(so2)));
+		Assertions.assertTrue(this.ordersEqual(client.getOrder(o2id), client.deserialiseOrderData(so2)));
 	}
 	
 	@Test
@@ -202,18 +141,18 @@ class StandardExternalInteractionTest {
 		Assertions.assertTrue(server.menuEqual(menu));
 		Assertions.assertTrue(client.menuDatasEqual(server));
 		
-		menu.removeMenuItem(i1id);
+		menu.removeElement(i1id);
 		interaction.broadcastMenu(menu);
 		Assertions.assertTrue(server.menuEqual(menu));
 		Assertions.assertTrue(client.menuDatasEqual(server));
 		
-		menu.removeMenuItem(i2id);
+		menu.removeElement(i2id);
 		interaction.broadcastMenu(menu);
 		Assertions.assertTrue(server.menuEqual(menu));
 		Assertions.assertTrue(client.menuDatasEqual(server));
 		
-		menu.addMenuItem(server.createDishMenuItem(i1Name, i1PorSize, i1ProCost, i1Price, i1Name));
-		menu.addMenuItem(server.createDishMenuItem(i2Name, i2PorSize, i2ProCost, i2Price, i2Name));
+		menu.addElement(iData1);
+		menu.addElement(iData2);
 		interaction.broadcastMenu(menu);
 		Assertions.assertTrue(server.menuEqual(menu));
 		Assertions.assertTrue(client.menuDatasEqual(server));

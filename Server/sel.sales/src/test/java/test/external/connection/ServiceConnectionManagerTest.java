@@ -75,7 +75,7 @@ class ServiceConnectionManagerTest {
 		manager.allowDevice(Device2Address);
 		manager.allowDevice(Device3Address);
 		controller = initController();
-		serviceConnectionManager = new DummyServiceConnectionManager(manager, controller, es);
+		serviceConnectionManager = new DummyServiceConnectionManager(manager, controller, es, 200, 100, 100, 3);
 		isOrderReceivedByController = false;
 	}
 	
@@ -277,7 +277,7 @@ class ServiceConnectionManagerTest {
 		
 		Collection<IConnectionManager> connectionManagers = serviceConnectionManager.getConnectionManagers();
 		
-		GeneralTestUtilityClass.performWait(DummyServiceConnectionManager.ESTIMATED_PP_TIMEOUT / 2);
+//		GeneralTestUtilityClass.performWait(DummyServiceConnectionManager.ESTIMATED_PP_TIMEOUT / 2);
 		IConnectionManager cm = connectionManagers.stream().findAny().get();
 		IPingPong pp = cm.getPingPong();
 		pp.receiveResponse(new Message(MessageContext.PINGPONG, null, null));
@@ -289,7 +289,7 @@ class ServiceConnectionManagerTest {
 			}
 		};
 		cm2.setDisconnectionListener(l);
-		GeneralTestUtilityClass.performWait(DummyServiceConnectionManager.ESTIMATED_PP_TIMEOUT / 2);
+		GeneralTestUtilityClass.performWait(this.serviceConnectionManager.getEstimatedPPCloseTime());
 		Assertions.assertTrue(isDisconnected);
 	}
 	

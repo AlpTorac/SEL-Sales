@@ -4,6 +4,7 @@ import client.view.composites.listener.CancelOrderListener;
 import client.view.composites.listener.EditOrderListener;
 import client.view.composites.listener.SendOrderListener;
 import controller.IController;
+import model.datamapper.order.OrderAttribute;
 import model.order.OrderData;
 import view.repository.IButton;
 import view.repository.IHBoxLayout;
@@ -130,6 +131,14 @@ public class PendingPaymentOrderEntry extends OrderEntry {
 			this.getHereRadioButton().setToggled(data.getIsHere());
 			this.getToGoRadioButton().setToggled(!data.getIsHere());
 		}
+	}
+	
+	@Override
+	public OrderData getCurrentOrder() {
+		OrderData data = super.getCurrentOrder();
+		data.setAttributeValue(OrderAttribute.IS_CASH, this.isCash());
+		data.setAttributeValue(OrderAttribute.IS_HERE, this.isHere());
+		return data;
 	}
 	
 	@Override

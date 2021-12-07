@@ -3,6 +3,7 @@ package server.external;
 import external.IConnectionUtility;
 import external.standard.StandardDeviceManager;
 import external.standard.StandardService;
+import model.settings.ISettings;
 import server.controller.IServerController;
 import server.model.IServerModel;
 
@@ -17,13 +18,13 @@ public class StandardServerExternal extends ServerExternal {
 
 	@Override
 	protected StandardDeviceManager initDeviceManager() {
-		return new StandardDeviceManager(es, this.getController(), this.connUtil);
+		return new StandardDeviceManager(this.getES(), this.getController(), this.connUtil);
 	}
 
 	@Override
 	protected StandardService initService() {
-		return new StandardService(this.initDeviceManager(), this.getController(), es, this.connUtil,
-				this.getPingPongTimeout(), this.getMinimalPingPongDelay(), this.getSendTimeout(), this.getResendLimit());
+		return new StandardService(this.initDeviceManager(), this.getController(), this.getES(), this.connUtil,
+				this.getPingPongTimeoutInMillis(), this.getMinimalPingPongDelay(), this.getSendTimeoutInMillis(), this.getPingPongResendLimit());
 	}
 
 	protected IConnectionUtility getConnectionUtility() {

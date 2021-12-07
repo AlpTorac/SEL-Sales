@@ -7,14 +7,6 @@ import external.device.IDeviceManager;
 import external.connection.Service;
 
 public class DummyService extends Service {
-
-	public final static long DEFAULT_PP_TIMEOUT = 200;
-	public final static long DEFAULT_PP_MINIMAL_TIMEOUT = 100;
-	public final static long SEND_TIMEOUT = 2000;
-	public final static int RESEND_LIMIT = 10;
-	
-	public final static long ESTIMATED_PP_TIMEOUT = DEFAULT_PP_TIMEOUT * (RESEND_LIMIT + 1);
-	
 	private boolean attemptToReconnect = false;
 	
 	public DummyService(String id, String name, IDeviceManager DeviceManager, IController controller, ExecutorService es,
@@ -29,11 +21,19 @@ public class DummyService extends Service {
 	}
 	
 	public DummyService(String id, String name, IDeviceManager DeviceManager, IController controller, ExecutorService es) {
-		this(id, name, DeviceManager, controller, es, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
+		this(id, name, DeviceManager, controller, es,
+				DummyConnectionSettings.DEFAULT_PP_TIMEOUT,
+				DummyConnectionSettings.DEFAULT_PP_MINIMAL_TIMEOUT,
+				DummyConnectionSettings.SEND_TIMEOUT,
+				DummyConnectionSettings.RESEND_LIMIT);
 	}
 	
 	public DummyService(String id, String name, IDeviceManager DeviceManager, IController controller, ExecutorService es, boolean attemptToReconnect) {
-		this(id, name, DeviceManager, controller, es, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
+		this(id, name, DeviceManager, controller, es,
+				DummyConnectionSettings.DEFAULT_PP_TIMEOUT,
+				DummyConnectionSettings.DEFAULT_PP_MINIMAL_TIMEOUT,
+				DummyConnectionSettings.SEND_TIMEOUT,
+				DummyConnectionSettings.RESEND_LIMIT);
 		this.attemptToReconnect = attemptToReconnect;
 	}
 

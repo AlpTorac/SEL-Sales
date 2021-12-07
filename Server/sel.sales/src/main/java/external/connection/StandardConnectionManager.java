@@ -22,18 +22,18 @@ public class StandardConnectionManager extends ConnectionManager {
 
 	@Override
 	protected ISendBuffer createSendBuffer(long timeoutInMillis) {
-		return new StandardSendBuffer(this.getConnection(), this.getExecutorService(), timeoutInMillis);
+		return new StandardSendBuffer(this.getConnection(), this.getES(), timeoutInMillis);
 	}
 
 	@Override
 	protected IMessageReceptionist createMessageReceptionist(ISendBuffer sb, IPingPong pingPong) {
 		return new MessageReceptionist(this.getConnection(),
 				controller,
-				sb, pingPong, this.getExecutorService());
+				sb, pingPong, this.getES());
 	}
 
 	@Override
 	protected IPingPong createPingPong(long minimalDelay, int resendLimit, long pingPongTimeout) {
-		return new StandardPingPong(this.getConnection(), this.getExecutorService(), minimalDelay, resendLimit, pingPongTimeout);
+		return new StandardPingPong(this.getConnection(), this.getES(), minimalDelay, resendLimit, pingPongTimeout);
 	}
 }

@@ -78,6 +78,7 @@ class StandardConnectionManagerTest {
 		conn = new DummyConnection(Device1Address);
 		es = Executors.newCachedThreadPool();
 		connManager = new StandardConnectionManager(controller, conn, es, 100, 2000, resendLimit, 0);
+		connManager.start();
 		sb = connManager.getSendBuffer();
 		pingPong = connManager.getPingPong();
 		pingPong.setDisconnectionListener(new DisconnectionListener(null) {

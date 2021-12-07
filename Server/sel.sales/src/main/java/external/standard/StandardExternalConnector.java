@@ -39,7 +39,7 @@ public class StandardExternalConnector extends ExternalConnector {
 	@Override
 	protected IConnectionManager createConnectionManager(IConnection conn, long pingPongTimeout, long sendTimeout,
 			int resendLimit, long minimalPingPongDelay) {
-		return new StandardConnectionManager(controller, conn, es, pingPongTimeout, sendTimeout, resendLimit, minimalPingPongDelay);
+		return new StandardConnectionManager(this.getController(), conn, this.getES(), pingPongTimeout, sendTimeout, resendLimit, minimalPingPongDelay);
 	}
 
 	@Override

@@ -8,6 +8,11 @@ import model.entity.id.EntityID;
 public interface IAggregate<A extends IAttribute, I extends IDOwner<A>> {
 	Collection<I> getAllElements();
 	boolean isEmpty();
+	default void addAllElements(Iterable<I> elements) {
+		for (I e : elements) {
+			this.addElement(e);
+		}
+	}
 	void addElement(I element);
 	I getElement(EntityID id);
 	IAggregate<A, I> getEmptyClone();

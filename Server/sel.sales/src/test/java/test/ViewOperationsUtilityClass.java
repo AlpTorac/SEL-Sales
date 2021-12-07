@@ -15,7 +15,7 @@ import view.repository.uiwrapper.UITabPane;
 
 public abstract class ViewOperationsUtilityClass {
 
-	protected long waitTime = 100;
+	protected long waitTime = 50;
 	private IModel model;
 	private IController controller;
 	private IView view;

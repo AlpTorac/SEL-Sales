@@ -28,6 +28,17 @@ public class PastOrderEntry extends OrderEntry {
 		super(controller, fac, notifyTarget, data);
 	}
 	
+	@Override
+	public void displayData(OrderData data) {
+		super.displayData(data);
+		if (data != null) {
+			this.getCashRadioButton().setToggled(data.getIsCash());
+			this.getCardRadioButton().setToggled(!data.getIsCash());
+			this.getHereRadioButton().setToggled(data.getIsHere());
+			this.getToGoRadioButton().setToggled(!data.getIsHere());
+		}
+	}
+	
 	protected void addBottomPart() {
 		super.addBottomPart();
 		

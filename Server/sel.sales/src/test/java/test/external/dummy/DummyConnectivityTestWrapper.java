@@ -8,12 +8,6 @@ import external.connection.pingpong.IPingPong;
 import external.message.IMessage;
 
 public class DummyConnectivityTestWrapper {
-	public final static long DEFAULT_PP_TIMEOUT = 200;
-	public final static long DEFAULT_PP_MINIMAL_TIMEOUT = 100;
-	public final static long SEND_TIMEOUT = 2000;
-	public final static int RESEND_LIMIT = 10;
-	
-	public final static long ESTIMATED_PP_TIMEOUT = DEFAULT_PP_TIMEOUT * (RESEND_LIMIT + 1);
 	
 	protected IController controllerServer;
 	protected IController controllerDevice;
@@ -76,7 +70,11 @@ public class DummyConnectivityTestWrapper {
 	}
 	
 	public DummyConnectivityTestWrapper(ExecutorService esServer, ExecutorService esDevice, String DeviceName, String DeviceAddress) {
-		this(esServer, esDevice, DeviceName, DeviceAddress, DEFAULT_PP_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT, DEFAULT_PP_MINIMAL_TIMEOUT);
+		this(esServer, esDevice, DeviceName, DeviceAddress, 
+				DummyConnectionSettings.DEFAULT_PP_TIMEOUT, 
+				DummyConnectionSettings.SEND_TIMEOUT, 
+				DummyConnectionSettings.RESEND_LIMIT, 
+				DummyConnectionSettings.DEFAULT_PP_MINIMAL_TIMEOUT);
 	}
 	
 	protected DummyDevice initDevice() {

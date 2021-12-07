@@ -1,9 +1,10 @@
-package server.external;
+package oldbluetooth.server;
 
-import external.bluetooth.BluetoothDeviceManager;
-import external.bluetooth.BluetoothService;
-import external.bluetooth.BluetoothServiceConnectionManager;
+import oldbluetooth.BluetoothDeviceManager;
+import oldbluetooth.BluetoothService;
+import oldbluetooth.BluetoothServiceConnectionManager;
 import server.controller.IServerController;
+import server.external.ServerExternal;
 import server.model.IServerModel;
 
 public class BluetoothServerExternal extends ServerExternal {
@@ -30,12 +31,12 @@ public class BluetoothServerExternal extends ServerExternal {
 	
 	@Override
 	protected BluetoothDeviceManager initDeviceManager() {
-		return new BluetoothDeviceManager(es, this.getController());
+		return new BluetoothDeviceManager(this.getES(), this.getController());
 	}
 	
 	@Override
 	protected BluetoothService initService() {
-		return new BluetoothServerService(this.initDeviceManager(), this.getController(), es, this.getPingPongTimeout(),
-				this.getMinimalPingPongDelay(), this.getSendTimeout(), this.getResendLimit());
+		return new BluetoothServerService(this.initDeviceManager(), this.getController(), this.getES(), this.getPingPongTimeoutInMillis(),
+				this.getMinimalPingPongDelay(), this.getSendTimeoutInMillis(), this.getPingPongResendLimit());
 	}
 }

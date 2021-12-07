@@ -6,8 +6,6 @@ import server.controller.IServerController;
 import server.external.ServerExternal;
 import server.model.IServerModel;
 
-import java.util.concurrent.ExecutorService;
-
 import external.connection.IConnection;
 import external.connection.IService;
 
@@ -28,18 +26,22 @@ public class DummyServerExternal extends ServerExternal implements IDummyExterna
 	}
 	
 	public DummyServerExternal(String id, String name, IServerController controller, IServerModel model) {
-		this(id, name, controller, model, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
+		this(id, name, controller, model,
+				DummyConnectionSettings.DEFAULT_PP_TIMEOUT,
+				DummyConnectionSettings.DEFAULT_PP_MINIMAL_TIMEOUT,
+				DummyConnectionSettings.SEND_TIMEOUT,
+				DummyConnectionSettings.RESEND_LIMIT);
 	}
 	
 	public DummyServerExternal(String id, String name, IServerController controller, IServerModel model, boolean attemptToReconnect) {
-		this(id, name, controller, model, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
+		this(id, name, controller, model,
+				DummyConnectionSettings.DEFAULT_PP_TIMEOUT,
+				DummyConnectionSettings.DEFAULT_PP_MINIMAL_TIMEOUT,
+				DummyConnectionSettings.SEND_TIMEOUT,
+				DummyConnectionSettings.RESEND_LIMIT);
 		this.attemptToReconnect = attemptToReconnect;
 		this.setService(this.initService());
 //		this.getService().publish();
-	}
-	
-	public ExecutorService getES() {
-		return this.es;
 	}
 	
 	public void setDiscoveryStrategy(DeviceDiscoveryStrategy cds) {
@@ -68,10 +70,10 @@ public class DummyServerExternal extends ServerExternal implements IDummyExterna
 				this.initDeviceManager(), 
 				this.getController(), 
 				this.getES(), 
-				this.getPingPongTimeout(), 
+				this.getPingPongTimeoutInMillis(), 
 				this.getMinimalPingPongDelay(), 
-				this.getSendTimeout(), 
-				this.getResendLimit(),
+				this.getSendTimeoutInMillis(), 
+				this.getPingPongResendLimit(),
 				this.attemptToReconnect);
 	}
 
@@ -83,5 +85,10 @@ public class DummyServerExternal extends ServerExternal implements IDummyExterna
 	public IConnection getConnection(String deviceAddress) {
 		return this.getService().getServiceConnectionManager().getConnection(deviceAddress);
 	}
-	
+
+	@Override
+	public void refreshOrders() {
+		// TODO Auto-generated method stub
+		
+	}
 }

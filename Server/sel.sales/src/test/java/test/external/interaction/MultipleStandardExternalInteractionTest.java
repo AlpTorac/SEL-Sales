@@ -1,9 +1,5 @@
-package test.interaction;
+package test.external.interaction;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.File;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -15,22 +11,18 @@ import org.junit.jupiter.api.Test;
 
 import model.connectivity.DeviceData;
 import model.connectivity.IDeviceData;
-import model.dish.DishMenu;
 import model.dish.DishMenuData;
 import model.order.OrderData;
+import test.FXTestTemplate;
 import test.GeneralTestUtilityClass;
 import test.external.dummy.DummyClient;
 import test.external.dummy.DummyConnectionUtility;
-import test.external.dummy.DummyInteraction;
-import test.external.dummy.DummyServer;
 import test.external.dummy.DummyStandardClient;
 import test.external.dummy.DummyStandardInteraction;
 import test.external.dummy.DummyStandardServer;
 
 @Disabled("Takes too long to finish")
-class MultipleStandardExternalInteractionTest {
-	private long waitTime = 100;
-	
+class MultipleStandardExternalInteractionTest extends FXTestTemplate {
 	private String client1Address = "client1Address";
 	private String client1Name = "client1Name";
 	
@@ -42,35 +34,6 @@ class MultipleStandardExternalInteractionTest {
 	
 	private String[] clientNames = new String[] {client1Name, client2Name, client3Name};
 	private String[] clientAddresses = new String[] {client1Address, client2Address, client3Address};
-	
-	private String serverAddress = "serverAddress";
-	private String serverName = "serverName";
-	
-	private String i1Name = "aaa";
-	private BigDecimal i1PorSize = BigDecimal.valueOf(2.34);
-	private BigDecimal i1Price = BigDecimal.valueOf(5);
-	private BigDecimal i1ProCost = BigDecimal.valueOf(4);
-	private BigDecimal i1Disc = BigDecimal.valueOf(0);
-	private String i1id = "item1";
-	
-	private String i2Name = "bbb";
-	private BigDecimal i2PorSize = BigDecimal.valueOf(5.67);
-	private BigDecimal i2Price = BigDecimal.valueOf(1);
-	private BigDecimal i2ProCost = BigDecimal.valueOf(0.5);
-	private BigDecimal i2Disc = BigDecimal.valueOf(0.1);
-	private String i2id = "item2";
-	
-	private String i3Name = "ccc";
-	private BigDecimal i3PorSize = BigDecimal.valueOf(3.34);
-	private BigDecimal i3Price = BigDecimal.valueOf(4);
-	private BigDecimal i3ProCost = BigDecimal.valueOf(3.5);
-	private BigDecimal i3Disc = BigDecimal.valueOf(1);
-	private String i3id = "item3";
-	
-	private BigDecimal o1a1 = BigDecimal.valueOf(2);
-	private BigDecimal o2a1 = BigDecimal.valueOf(2);
-	private BigDecimal o2a2 = BigDecimal.valueOf(3);
-	private BigDecimal o3a3 = BigDecimal.valueOf(5);
 	
 	private String o1id = "order1";
 	private String o2id = "order2";
@@ -86,13 +49,6 @@ class MultipleStandardExternalInteractionTest {
 	private String so2Body;
 	private String so3Body;
 	private String[] soBodys;
-	
-	private String testFolderAddress = "src"+File.separator+"test"+File.separator+"resources";
-	
-	private String serviceID = "serviceID";
-	private String serviceName = "serviceName";
-	
-	private DishMenu menu;
 	
 	private DummyStandardInteraction interaction;
 	
@@ -126,19 +82,19 @@ class MultipleStandardExternalInteractionTest {
 			interaction.connectPartakers(server, dc);
 		}
 		
-		menu = server.createDishMenu();
-		menu.addMenuItem(server.createDishMenuItem(i1Name, i1PorSize, i1ProCost, i1Price, i1id));
-		menu.addMenuItem(server.createDishMenuItem(i2Name, i2PorSize, i2ProCost, i2Price, i2id));
-		menu.addMenuItem(server.createDishMenuItem(i3Name, i3PorSize, i3ProCost, i3Price, i3id));
+		this.initDishMenuItems(server.getModel());
+		this.initDishMenu();
+		this.initOrders(client1.getModel());
+		this.getPrivateFieldsFromModel(client1.getModel());
 		
-		so1Body = "#20200809235959866#1#0:item1,2;item2,3;";
-		so2Body = "#20200809235959866#1#0:item1,2;item2,3;item3,5;";
-		so3Body = "#20200809235959866#1#0:item2,3;item3,5;";
+		so1Body = orderDAO.serialiseValueObject(oData1);
+		so2Body = orderDAO.serialiseValueObject(oData2);
+		so3Body = orderDAO.serialiseValueObject(oData3);
 		soBodys = new String[] {so1Body, so2Body, so3Body};
 		
-		so1 = o1id+so1Body;
-		so2 = o2id+so2Body;
-		so3 = o3id+so3Body;
+		so1 = so1Body;
+		so2 = so2Body;
+		so3 = so3Body;
 		sos = new String[] {so1, so2, so3};
 	}
 	
@@ -245,7 +201,7 @@ class MultipleStandardExternalInteractionTest {
 		
 		for (DummyClient client : clients) {
 			DishMenuData menuData = client.getMenuData();
-			while (menuData.getAllElements().length == 0) {
+			while (menuData.getAllElements().size() == 0) {
 				interaction.reSetServerMenu();
 				GeneralTestUtilityClass.performWait(waitTime);
 				menuData = client.getMenuData();
@@ -268,11 +224,11 @@ class MultipleStandardExternalInteractionTest {
 		for (int i = 0; i < clients.length; i++) {
 			uoExpected[i] = clients[i].deserialiseOrderData(sos[i]);
 			Assertions.assertEquals(clients[i].getAllSentOrders().length, 1);
-			Assertions.assertTrue(clients[i].getAllSentOrders()[0]
-					.equals(clients[i].deserialiseOrderData(sos[i])));
+			Assertions.assertTrue(this.ordersEqual(clients[i].getAllSentOrders()[0], clients[i].deserialiseOrderData(sos[i])));
 		}
 		
-		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(uoActual, uoExpected));
+		Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(uoActual, uoExpected,
+				(od1,od2)->this.ordersEqual(od1, od2)));
 	}
 	
 	@Test
@@ -284,7 +240,7 @@ class MultipleStandardExternalInteractionTest {
 			Assertions.assertTrue(client.menuDatasEqual(server));
 		}
 		
-		menu.removeMenuItem(i1id);
+		menu.removeElement(i1id);
 		interaction.broadcastMenu(menu);
 		Assertions.assertTrue(server.menuEqual(menu));
 		
@@ -292,7 +248,7 @@ class MultipleStandardExternalInteractionTest {
 			Assertions.assertTrue(client.menuDatasEqual(server));
 		}
 		
-		menu.removeMenuItem(i2id);
+		menu.removeElement(i2id);
 		interaction.broadcastMenu(menu);
 		Assertions.assertTrue(server.menuEqual(menu));
 		
@@ -300,8 +256,8 @@ class MultipleStandardExternalInteractionTest {
 			Assertions.assertTrue(client.menuDatasEqual(server));
 		}
 		
-		menu.addMenuItem(server.createDishMenuItem(i1Name, i1PorSize, i1ProCost, i1Price, i1Name));
-		menu.addMenuItem(server.createDishMenuItem(i2Name, i2PorSize, i2ProCost, i2Price, i2Name));
+		menu.addElement(iData1);
+		menu.addElement(iData2);
 		interaction.broadcastMenu(menu);
 		Assertions.assertTrue(server.menuEqual(menu));
 		
@@ -325,18 +281,19 @@ class MultipleStandardExternalInteractionTest {
 		for (int i = 0, a = 0; i < serialisedOrders.length; i++) {
 			for (int j = 0; j < serialisedOrders[i].length; j++, a++) {
 				String id = oids[i]+oids[j];
-				serialisedOrders[i][j] = id+soBodys[j];
+				serialisedOrders[i][j] = soBodys[j].replaceAll(oids[j], id);
+				System.out.println("Sending: " + serialisedOrders[i][j]);
 				interaction.addPendingSendOrderToClient(clients[j], id, serialisedOrders[i][j]);
 				clientOrders.get(j).add(serialisedOrders[i][j]);
 				Assertions.assertEquals(server.getAllUnconfirmedOrders().length, a+1);
 				DummyClient dc = clients[j];
 				Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(server.getAllUnconfirmedOrders(),
 						soCols.stream().map(so -> dc.deserialiseOrderData(so))
-						.toArray(OrderData[]::new)));
+						.toArray(OrderData[]::new),(od1,od2)->this.ordersEqual(od1,od2)));
 				
 				Assertions.assertTrue(GeneralTestUtilityClass.arrayContentEquals(dc.getAllSentOrders(),
 						clientOrders.get(j).stream().map(so -> dc.deserialiseOrderData(so))
-						.toArray(OrderData[]::new)));
+						.toArray(OrderData[]::new),(od1,od2)->this.ordersEqual(od1,od2)));
 			}
 			clientOrders.get(i).clear();
 		}

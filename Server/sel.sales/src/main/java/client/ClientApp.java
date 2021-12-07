@@ -11,7 +11,7 @@ import client.model.ClientModel;
 import client.model.IClientModel;
 import client.view.IClientView;
 import client.view.StandardClientView;
-import external.bluetooth.WindowsBluetoothConnectionUtility;
+import external.WindowsBluetoothConnectionUtility;
 
 public class ClientApp extends Application {
 	private static IClientModel model;

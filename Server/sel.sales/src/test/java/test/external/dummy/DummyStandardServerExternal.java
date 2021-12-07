@@ -1,7 +1,5 @@
 package test.external.dummy;
 
-import java.util.concurrent.ExecutorService;
-
 import external.IConnectionUtility;
 import external.connection.IConnection;
 import external.device.DeviceDiscoveryStrategy;
@@ -16,11 +14,11 @@ public class DummyStandardServerExternal extends StandardServerExternal implemen
 	}
 
 	public DummyStandardServerExternal(IServerController controller, IServerModel model, IConnectionUtility connUtil) {
-		this(controller, model, connUtil, DEFAULT_PP_TIMEOUT, DEFAULT_PP_MINIMAL_TIMEOUT, SEND_TIMEOUT, RESEND_LIMIT);
-	}
-	
-	public ExecutorService getES() {
-		return this.es;
+		this(controller, model, connUtil,
+				DummyConnectionSettings.DEFAULT_PP_TIMEOUT,
+				DummyConnectionSettings.DEFAULT_PP_MINIMAL_TIMEOUT,
+				DummyConnectionSettings.SEND_TIMEOUT,
+				DummyConnectionSettings.RESEND_LIMIT);
 	}
 	
 	public IConnection getConnection(String deviceAddress) {
@@ -35,6 +33,12 @@ public class DummyStandardServerExternal extends StandardServerExternal implemen
 	public void setDiscoveryStrategy(DeviceDiscoveryStrategy cds) {
 		System.out.println("Discovery strategy set");
 		this.getService().getDeviceManager().setDiscoveryStrategy(cds);
+	}
+
+	@Override
+	public void refreshOrders() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

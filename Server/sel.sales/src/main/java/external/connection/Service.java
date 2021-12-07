@@ -10,7 +10,7 @@ import model.settings.ISettings;
 
 public abstract class Service implements IService {
 	protected ExecutorService es;
-	protected IServiceConnectionManager scm;
+	protected ServiceConnectionManager scm;
 	private IDeviceManager deviceManager;
 	
 	private Object id;
@@ -57,7 +57,7 @@ public abstract class Service implements IService {
 	}
 
 	@Override
-	public IServiceConnectionManager getServiceConnectionManager() {
+	public ServiceConnectionManager getServiceConnectionManager() {
 		return this.scm;
 	}
 	

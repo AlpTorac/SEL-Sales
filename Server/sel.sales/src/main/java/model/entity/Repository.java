@@ -66,7 +66,7 @@ public abstract class Repository<A extends IAttribute, E extends Entity<A>, V ex
 		if (element == null) {
 			return null;
 		}
-		return this.getFactory().entityToValue(element);
+		return this.getValueObjectFor(element);
 	}
 	
 	public Object getAttributeValue(A attribute, EntityID id) {
@@ -90,6 +90,14 @@ public abstract class Repository<A extends IAttribute, E extends Entity<A>, V ex
 				.findFirst();
 		
 		return o.isPresent() ? o.get().getValue() : null;
+	}
+	
+	public E removeElement(String id) {
+		Optional<Entry<EntityID, E>> o = this.getEntityMap().entrySet().stream()
+				.filter(e -> e.getKey().equals(this.idFac.createID(id)))
+				.findFirst();
+		
+		return o.isPresent() ? this.getEntityMap().remove(o.get().getKey()) : null;
 	}
 	
 	public E removeElement(EntityID id) {

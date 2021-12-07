@@ -13,7 +13,8 @@ public abstract class Entity<A extends IAttribute> extends IDOwner<A> {
 		if (o == null || !(o instanceof Entity<?>) || !super.equals(o)) {
 			return false;
 		}
-		Entity<?> castedO = (Entity<?>) o;
-		return this.getID().equals(castedO.getID());
+		return true;
+//		Entity<?> castedO = (Entity<?>) o;
+//		return this.getID().equals(castedO.getID());
 	}
 }

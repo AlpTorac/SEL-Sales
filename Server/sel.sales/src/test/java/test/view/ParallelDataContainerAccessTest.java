@@ -1,32 +1,15 @@
 package test.view;
 
-import java.io.File;
-import java.math.BigDecimal;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.testfx.framework.junit5.ApplicationTest;
-
-import javafx.application.Platform;
-import javafx.stage.Stage;
 import model.order.OrderData;
 import server.controller.IServerController;
-import server.controller.StandardServerController;
 import server.model.IServerModel;
-import server.model.ServerModel;
-import server.view.IServerView;
 import server.view.StandardServerView;
 import test.FXTestTemplate;
-import test.StandardServerViewOperationsUtilityClass;
-import test.ViewOperationsUtilityClass;
-import view.IView;
-import view.repository.uifx.FXUIComponentFactory;
 
 //@Execution(value = ExecutionMode.SAME_THREAD)
 class ParallelDataContainerAccessTest extends FXTestTemplate {

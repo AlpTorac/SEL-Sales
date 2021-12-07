@@ -3,6 +3,7 @@ package client.model;
 import model.Model;
 import model.datamapper.order.OrderAttribute;
 import model.entity.id.EntityID;
+import model.order.Order;
 import model.order.OrderData;
 import model.order.OrderStatus;
 
@@ -23,12 +24,6 @@ public class ClientModel extends Model implements IClientModel {
 		this.addCookingOrder(data);
 	}
 	
-	@Override
-	public void removeAllOrders() {
-		this.getOrderCollector().clearAllElements();
-		this.ordersChanged();
-	}
-	
 	public void addCookingOrder(String serialisedOrder) {
 		this.addCookingOrder(this.getOrderDAO().parseValueObject(serialisedOrder));
 	}
@@ -43,7 +38,9 @@ public class ClientModel extends Model implements IClientModel {
 //				this.removeOrder(editOrderID);
 //				this.clearEditTarget();
 //			}
-			this.clearEditTarget();
+			if (this.editOrderID != null && orderID.equals(this.editOrderID)) {
+				this.clearEditTarget();
+			}
 //			this.getOrderCollector().addOrder(data, OrderStatus.COOKING);
 			this.getOrderCollector().addElement(data);
 			this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, orderID, OrderStatus.COOKING);
@@ -60,6 +57,7 @@ public class ClientModel extends Model implements IClientModel {
 //			this.cookingOrders.removeOrder(orderID);
 //			this.getOrderCollector().editOrderStatus(orderID, OrderStatus.PENDING_PAYMENT);
 			this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, orderID, OrderStatus.PENDING_PAYMENT);
+			this.writeOrder(orderID);
 			this.ordersChanged();
 		}
 	}
@@ -79,8 +77,10 @@ public class ClientModel extends Model implements IClientModel {
 //				this.removeOrder(formerID);
 //			}
 //			this.pendingPaymentOrders.removeOrder(data.getID().toString());
+			this.getOrderCollector().removeElement(orderID);
 			this.getOrderCollector().addElement(data);
 			this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, orderID, OrderStatus.PENDING_SEND);
+			this.writeOrder(orderID);
 			this.ordersChanged();
 		}
 	}
@@ -88,6 +88,7 @@ public class ClientModel extends Model implements IClientModel {
 	public void makeSentOrder(EntityID orderID) {
 		if (this.getPendingSendOrder(orderID) != null) {
 			this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, orderID, OrderStatus.SENT);
+			this.writeOrder(orderID);
 			this.ordersChanged();
 		}
 	}
@@ -160,15 +161,6 @@ public class ClientModel extends Model implements IClientModel {
 		return this.getSentOrder(this.createMinimalID(orderID));
 	}
 	
-	@Override
-	public void loadSaved() {
-//		this.getFileManager().loadSavedSettings();
-//		this.getFileManager().loadSavedDishMenu();
-//		this.getFileManager().loadSavedKnownDevices();
-		this.getFileManager().loadSaved();
-		this.ordersChanged();
-	}
-	
 	public void editOrder(EntityID orderID) {
 		if (orderID != null && this.getOrder(orderID) != null) {
 			this.editOrderID = orderID;
@@ -189,8 +181,11 @@ public class ClientModel extends Model implements IClientModel {
 	}
 
 	protected void clearEditTarget() {
-		this.editOrderID = null;
-		this.ordersChanged();
+		if (this.editOrderID != null) {
+			this.getOrderCollector().removeElement(this.editOrderID);
+			this.editOrderID = null;
+			this.ordersChanged();
+		}
 	}
 
 	@Override
@@ -200,10 +195,11 @@ public class ClientModel extends Model implements IClientModel {
 	
 	@Override
 	public void removeOrder(String orderID) {
-		if (this.editOrderID != null && this.editOrderID.equals(this.createMinimalID(orderID))) {
+		if (this.editOrderID != null && this.editOrderID.serialisedIDequals(orderID)) {
 			this.clearEditTarget();
+		} else {
+			super.removeOrder(orderID);
 		}
-		super.removeOrder(orderID);
 	}
 
 	@Override

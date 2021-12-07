@@ -6,8 +6,6 @@ import model.entity.ValueObject;
 import model.entity.id.EntityID;
 import model.entity.id.EntityIDFactory;
 import model.entity.id.MinimalIDFactory;
-import model.filewriter.FileAccess;
-import model.filewriter.StandardFileAccess;
 import model.util.IParser;
 import model.util.ISerialiser;
 
@@ -18,10 +16,6 @@ public abstract class AttributeDAO<A extends IAttribute, E extends Entity<A>, V 
 	
 	protected AttributeDAO() {
 		
-	}
-	
-	protected FileAccess initFileAccess(String fileAddress, String defaultFileName) {
-		return new StandardFileAccess(fileAddress, defaultFileName);
 	}
 	
 	public void setAttributeAlgorithm(C col, EntityID attributeOwnerID, String serialisedValue) {

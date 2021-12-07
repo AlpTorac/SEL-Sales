@@ -60,17 +60,22 @@ public class DishMenuItemData extends ValueObject<DishMenuItemAttribute> {
 		return this.getID().toString();
 	}
 	
+//	@Override
+//	public boolean equals(Object o) {
+//		if (o == null || !(o instanceof DishMenuItemData)) {
+//			return false;
+//		}
+//		DishMenuItemData castedO = (DishMenuItemData) o;
+//		
+//		return this.getDishName().equals(castedO.getDishName()) &&
+//				this.getID().equals(castedO.getID()) &&
+//				this.getPortionSize().compareTo(castedO.getPortionSize()) == 0 &&
+//				this.getGrossPrice().compareTo(castedO.getGrossPrice()) == 0 &&
+//				this.getProductionCost().compareTo(castedO.getProductionCost()) == 0;
+//	}
+
 	@Override
-	public boolean equals(Object o) {
-		if (o == null || !(o instanceof DishMenuItemData)) {
-			return false;
-		}
-		DishMenuItemData castedO = (DishMenuItemData) o;
-		
-		return this.getDishName().equals(castedO.getDishName()) &&
-				this.getID().equals(castedO.getID()) &&
-				this.getPortionSize().compareTo(castedO.getPortionSize()) == 0 &&
-				this.getGrossPrice().compareTo(castedO.getGrossPrice()) == 0 &&
-				this.getProductionCost().compareTo(castedO.getProductionCost()) == 0;
+	public DishMenuItemAttribute[] getAllAttributeEnumValues() {
+		return DishMenuItemAttribute.values();
 	}
 }

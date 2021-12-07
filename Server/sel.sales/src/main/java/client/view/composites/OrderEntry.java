@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import controller.IController;
+import model.datamapper.order.OrderAttribute;
 import model.dish.DishMenuData;
 import model.dish.DishMenuItemData;
 import model.entity.AccumulatingAggregateEntry;
@@ -288,6 +289,9 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		this.getEntries().stream()
 		.filter(mie -> mie.getSelectedMenuItem() != null && mie.getAmount().compareTo(BigDecimal.ZERO) != 0)
 		.forEach(mie -> data.addOrderItem(mie.getSelectedMenuItem(), mie.getAmount()));
+		
+		data.setAttributeValue(OrderAttribute.TABLE_NUMBER, this.getTableNumberSelection());
+		data.setAttributeValue(OrderAttribute.NOTE, this.getCurrentOrderNote());
 		
 		return data;
 	}
