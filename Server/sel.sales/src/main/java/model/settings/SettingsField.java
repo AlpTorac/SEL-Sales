@@ -3,6 +3,7 @@ package model.settings;
 public enum SettingsField {
 	ORDER_FOLDER("orderFolder"),
 	DISH_MENU_FOLDER("dishMenuFolder"),
+	EXPORT_FOLDER("exportFolder"),
 	PING_PONG_TIMEOUT("pingPongTimeout"),
 	PING_PONG_MINIMAL_DELAY("pingPongMinimalDelay"),
 	PING_PONG_RESEND_LIMIT("pingPongResendLimit"),

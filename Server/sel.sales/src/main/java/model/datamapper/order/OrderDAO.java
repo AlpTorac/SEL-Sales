@@ -17,8 +17,8 @@ import model.order.OrderFactory;
 public class OrderDAO extends EntityDAO<OrderAttribute, Order, OrderData, OrderCollector> {
 	private IDishMenuItemFinder finder;
 	
-	public OrderDAO(String address) {
-		super(address);
+	public OrderDAO() {
+		
 	}
 	
 	public void setFinder(IDishMenuItemFinder finder) {

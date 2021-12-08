@@ -3,13 +3,14 @@ package server.view.composites.listeners;
 import controller.IApplicationEvent;
 import controller.IApplicationEventShooter;
 import controller.IController;
+import server.controller.IServerController;
 import server.controller.ServerSpecificEvent;
 import view.repository.uiwrapper.ClickEventListener;
 
 public class ExportOrdersListener extends ClickEventListener implements IApplicationEventShooter {
 	private IController controller;
 	
-	public ExportOrdersListener(IController controller) {
+	public ExportOrdersListener(IServerController controller) {
 		this.controller = controller;
 	}
 	
@@ -25,7 +26,7 @@ public class ExportOrdersListener extends ClickEventListener implements IApplica
 
 	@Override
 	public IApplicationEvent getApplicationEvent() {
-		return ServerSpecificEvent.WRITE_ORDERS;
+		return ServerSpecificEvent.EXPORT_ORDERS;
 	}
 
 }

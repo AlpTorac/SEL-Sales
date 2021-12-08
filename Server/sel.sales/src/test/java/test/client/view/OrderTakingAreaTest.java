@@ -45,7 +45,7 @@ class OrderTakingAreaTest extends FXTestTemplate {
 			
 //			data = clientModel.getOrderHelper().deserialiseOrderData("order2#20200809235959866#1#0:item1,2;item1,2;item1,2;item1,2;item2,3;");
 			data = clientModel.getOrderFactory().constructData(o2id, clientModel.getDateSettings()
-					.parseDate(this.serialiseDate("20200809235959866")), true, false);
+					.parseDateWithoutSeparators(this.serialiseDate("20200809235959866",clientModel)), true, false);
 			data.addOrderItem(iData1, o1a1);
 			data.addOrderItem(iData1, o1a1);
 			data.addOrderItem(iData1, o1a1);

@@ -1,11 +1,16 @@
 package model.filewriter;
 
 public class StandardFileAccess extends FileAccess {
-	private final String defaultFileName;
+	private String defaultFileName;
 	
-	public StandardFileAccess(String address, String fileName) {
-		super(address);
+	public StandardFileAccess(String folderAddress, String fileName) {
+		super(folderAddress);
 		this.defaultFileName = fileName;
+		this.setAddress(folderAddress);
+	}
+	
+	public StandardFileAccess(String address) {
+		super(address);
 		this.setAddress(address);
 	}
 

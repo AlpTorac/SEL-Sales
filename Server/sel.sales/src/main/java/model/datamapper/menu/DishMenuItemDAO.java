@@ -14,8 +14,8 @@ import model.entity.IFactory;
 
 public class DishMenuItemDAO extends EntityDAO<DishMenuItemAttribute, DishMenuItem, DishMenuItemData, DishMenu> {
 
-	public DishMenuItemDAO(String address) {
-		super(address);
+	public DishMenuItemDAO() {
+		
 	}
 	
 	public AttributeDAO<DishMenuItemAttribute, DishMenuItem, DishMenuItemData, DishMenu> getDAO(String serialisedDesc) {

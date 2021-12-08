@@ -33,5 +33,5 @@ public interface IServerModel extends IModel {
 	boolean getAutoConfirmOrders();
 	boolean writeDishMenu();
 	void loadDishMenu(String fileAddress);
-	boolean writeOrders();
+	boolean exportOrders();
 }

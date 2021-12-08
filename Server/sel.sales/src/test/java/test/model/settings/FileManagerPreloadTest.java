@@ -156,7 +156,7 @@ class FileManagerPreloadTest extends FXTestTemplate {
 		this.addDishMenuToServerModel(model);
 		this.initOrders(model);
 		this.addOrdersToModel(model);
-		model.writeOrders();
+//		model.writeOrders();
 		model.close();
 		BufferedReader r = null;
 		try {

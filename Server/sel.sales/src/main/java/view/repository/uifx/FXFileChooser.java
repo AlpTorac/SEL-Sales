@@ -26,5 +26,20 @@ public class FXFileChooser implements IFileChooser {
 	public File showOpenDialog(IRootComponent rc) {
 		return this.fc.showOpenDialog((Window) rc);
 	}
+
+	@Override
+	public File showSaveDialog(IRootComponent rc) {
+		return this.fc.showSaveDialog((Window) rc);
+	}
+
+	@Override
+	public void setInitialDirectory(File f) {
+		this.fc.setInitialDirectory(f);
+	}
+
+	@Override
+	public void setInitialFileName(String name) {
+		this.fc.setInitialFileName(name);
+	}
 	
 }

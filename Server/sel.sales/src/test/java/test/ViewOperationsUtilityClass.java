@@ -182,7 +182,4 @@ public abstract class ViewOperationsUtilityClass {
 		this.tabPane.selectTab(this.settingsAreaTabName);
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
-
-	public abstract void inputTableNumberRanges(String tableNumberRanges);
-
 }

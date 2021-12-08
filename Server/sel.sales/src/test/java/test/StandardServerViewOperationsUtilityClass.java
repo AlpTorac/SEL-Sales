@@ -18,6 +18,7 @@ import server.view.composites.MainArea;
 import server.view.composites.MenuDesignArea;
 import server.view.composites.OrderInspectionArea;
 import server.view.composites.OrderTrackingArea;
+import server.view.composites.ServerSettingsArea;
 import test.model.order.OrderTestUtilityClass;
 import view.repository.HasText;
 import view.repository.IButton;
@@ -43,6 +44,7 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 	private IButton menuSaveButton;
 	
 	private HasText tableNumberInput;
+	private HasText exportAddressInput;
 	
 	public StandardServerViewOperationsUtilityClass(StandardServerView view, IServerController controller, IServerModel model) {
 		super(view, controller, model);
@@ -68,6 +70,7 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		menuSaveButton = mda.getSaveButton();
 		
 		tableNumberInput = GeneralTestUtilityClass.getPrivateFieldValue(sa, "tableNumberInput");
+		exportAddressInput = GeneralTestUtilityClass.getPrivateFieldValue(sa, "exportFolderAddressInput");
 	}
 	
 	protected IServerModel getModel() {
@@ -299,7 +302,7 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 	public void writeDishMenu() {
 //		GeneralTestUtilityClass.performWait(waitTime);
 		this.setMenuOrderTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.menuSaveButton.performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
@@ -308,11 +311,17 @@ public class StandardServerViewOperationsUtilityClass extends ViewOperationsUtil
 		this.tabPane.selectTab(this.menuOrderAreaTabName);
 	}
 
-	@Override
 	public void inputTableNumberRanges(String text) {
 		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.tableNumberInput.setCaption(text);
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void inputExportAddress(String text) {
+		this.setSettingsAreaTabActive();
+//		GeneralTestUtilityClass.performWait(waitTime);
+		this.exportAddressInput.setCaption(text);
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 }

@@ -47,7 +47,7 @@ class ParallelDataContainerAccessTest extends FXTestTemplate {
 			final int num = i;
 			
 			OrderData data = model.getOrderFactory().constructData("order"+num, model.getDateSettings()
-					.parseDate(this.serialiseDate("20200809112233343")), false, false);
+					.parseDateWithoutSeparators(this.serialiseDate("20200809112233343",model)), false, false);
 			data.addOrderItem(iData1, o1a1);
 			
 			es.submit(() -> {
@@ -71,7 +71,7 @@ class ParallelDataContainerAccessTest extends FXTestTemplate {
 			final int num = i;
 			
 			OrderData data = model.getOrderFactory().constructData("order"+num, model.getDateSettings()
-					.parseDate(this.serialiseDate("20200809112233343")), false, false);
+					.parseDateWithoutSeparators(this.serialiseDate("20200809112233343",model)), false, false);
 			data.addOrderItem(iData1, o1a1);
 			
 			es.submit(() -> {

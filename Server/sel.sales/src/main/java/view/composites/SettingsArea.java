@@ -9,7 +9,9 @@ import controller.GeneralEvent;
 import model.settings.ISettings;
 import model.settings.SettingsField;
 import view.repository.IButton;
+import view.repository.IIndexedLayout;
 import view.repository.ILabel;
+import view.repository.ILayout;
 import view.repository.IRootComponent;
 import view.repository.ISingleRowTextBox;
 import view.repository.IUIComponent;
@@ -118,12 +120,17 @@ public class SettingsArea extends UIVBoxLayout {
 	}
 	
 	protected abstract class SettingsGroupArea extends UILayout {
-		protected SettingsGroupArea(UILayout layout) {
-			super(layout.getComponent());
+		protected SettingsGroupArea(IIndexedLayout layout) {
+			super((ILayout) layout.getComponent());
 			this.initialSetup();
 			this.initComponents();
 		}
 		
+		public IIndexedLayout getComponent() {
+			return (IIndexedLayout) super.getComponent();
+		}
+		
+		protected abstract BasicSettingsInputArea createUI(String display, SettingsField setting);
 		protected abstract void initialSetup();
 		protected abstract void initComponents();
 	}
@@ -133,12 +140,11 @@ public class SettingsArea extends UIVBoxLayout {
 			super(fac.createVBoxLayout());
 		}
 		
-		
 		@Override
 		protected void initComponents() {
 			this.getComponent().addUIComponents(new IUIComponent[] {
-					menuFolderAddress = new FileAddressUI("Menu folder address", SettingsField.DISH_MENU_FOLDER),
-					orderFolderAddress = new FileAddressUI("Order folder address", SettingsField.ORDER_FOLDER)
+					menuFolderAddress = this.createUI("Menu folder address", SettingsField.DISH_MENU_FOLDER),
+					orderFolderAddress = this.createUI("Order folder address", SettingsField.ORDER_FOLDER)
 			});
 		}
 		
@@ -150,6 +156,11 @@ public class SettingsArea extends UIVBoxLayout {
 		@Override
 		protected void initialSetup() {
 			this.getComponent().setSpacing(5);
+		}
+
+		@Override
+		protected FileAddressUI createUI(String display, SettingsField setting) {
+			return new FileAddressUI(display, setting);
 		}
 	}
 	
@@ -171,11 +182,16 @@ public class SettingsArea extends UIVBoxLayout {
 		@Override
 		protected void initComponents() {
 			this.getComponent().addUIComponents(new IUIComponent[] {
-					ppTimeout = new ConnectivityUI("Ping-Pong timeout", SettingsField.PING_PONG_TIMEOUT),
-					ppMinimalDelay = new ConnectivityUI("Ping-Pong minimal delay", SettingsField.PING_PONG_MINIMAL_DELAY),
-					ppResendLimit = new ConnectivityUI("Ping-Pong resend limit", SettingsField.PING_PONG_RESEND_LIMIT),
-					sendTimeout = new ConnectivityUI("Send timeout", SettingsField.SEND_TIMEOUT)
+					ppTimeout = this.createUI("Ping-Pong timeout", SettingsField.PING_PONG_TIMEOUT),
+					ppMinimalDelay = this.createUI("Ping-Pong minimal delay", SettingsField.PING_PONG_MINIMAL_DELAY),
+					ppResendLimit = this.createUI("Ping-Pong resend limit", SettingsField.PING_PONG_RESEND_LIMIT),
+					sendTimeout = this.createUI("Send timeout", SettingsField.SEND_TIMEOUT)
 			});
+		}
+
+		@Override
+		protected ConnectivityUI createUI(String display, SettingsField setting) {
+			return new ConnectivityUI(display, setting);
 		}
 	}
 	

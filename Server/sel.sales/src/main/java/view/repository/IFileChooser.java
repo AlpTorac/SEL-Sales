@@ -11,4 +11,8 @@ public interface IFileChooser {
 		this.addExtensionFilter(description, "*", extension);
 	}
 	File showOpenDialog(IRootComponent rc);
+	File showSaveDialog(IRootComponent rc);
+	
+	void setInitialDirectory(File f);
+	void setInitialFileName(String name);
 }

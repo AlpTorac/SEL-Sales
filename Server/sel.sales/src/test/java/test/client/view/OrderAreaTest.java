@@ -50,25 +50,25 @@ class OrderAreaTest extends FXTestTemplate {
 		o5id = "order5";
 		
 		od1 = clientModel.getOrderFactory().constructData(o1id, clientModel.getDateSettings()
-				.parseDate(this.serialiseDate("20200809112233343")), false, false);
+				.parseDateWithoutSeparators(this.serialiseDate("20200809112233343",clientModel)), false, false);
 		od1.addOrderItem(iData1, o1a1);
 		
 		od2 = clientModel.getOrderFactory().constructData(o2id, clientModel.getDateSettings()
-				.parseDate(this.serialiseDate("20200809235959111")), true, false);
+				.parseDateWithoutSeparators(this.serialiseDate("20200809235959111",clientModel)), true, false);
 		od2.addOrderItem(iData1, o2a1);
 		od2.addOrderItem(iData2, o2a2);
 		
 		od3 = clientModel.getOrderFactory().constructData(o3id, clientModel.getDateSettings()
-				.parseDate(this.serialiseDate("20200809000000222")), true, true);
+				.parseDateWithoutSeparators(this.serialiseDate("20200809000000222",clientModel)), true, true);
 		od3.addOrderItem(iData3, o3a3);
 		
 		od4 = clientModel.getOrderFactory().constructData(o4id, clientModel.getDateSettings()
-				.parseDate(this.serialiseDate("20200809235959111")), true, false);
+				.parseDateWithoutSeparators(this.serialiseDate("20200809235959111",clientModel)), true, false);
 		od4.addOrderItem(iData1, o2a1);
 		od4.addOrderItem(iData3, o3a3);
 		
 		od5 = clientModel.getOrderFactory().constructData(o5id, clientModel.getDateSettings()
-				.parseDate(this.serialiseDate("20200809000000222")), true, true);
+				.parseDateWithoutSeparators(this.serialiseDate("20200809000000222",clientModel)), true, true);
 		od5.addOrderItem(iData3, o3a3);
 		od5.addOrderItem(iData2, o2a2);
 		od5.addOrderItem(iData1, o1a1);

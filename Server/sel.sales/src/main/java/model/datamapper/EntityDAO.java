@@ -3,6 +3,7 @@ package model.datamapper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Function;
 
 import model.entity.Entity;
 import model.entity.IFactory;
@@ -21,11 +22,9 @@ public abstract class EntityDAO<A extends IAttribute, E extends Entity<A>, V ext
 	private AttributeFormat attributeFormat = new AttributeFormat();
 	private EntityIDFactory idFac = new MinimalIDFactory();
 	
-	private String address;
 	private Map<A, AttributeDAO<A,E,V,C>> attributeToDAO;
 
-	public EntityDAO(String address) {
-		this.address = address;
+	public EntityDAO() {
 		this.attributeToDAO = this.initDAOMap();
 		this.fillDAOList();
 		this.fac = this.initFactory();
@@ -52,10 +51,6 @@ public abstract class EntityDAO<A extends IAttribute, E extends Entity<A>, V ext
 	 * This way, the format of the serialised orders stays the same
 	 */
 	protected abstract Map<A, AttributeDAO<A,E,V,C>> initDAOMap();
-
-	protected String getAddress() {
-		return this.address;
-	}
 
 	protected abstract void fillDAOList();
 
@@ -126,5 +121,4 @@ public abstract class EntityDAO<A extends IAttribute, E extends Entity<A>, V ext
 		}
 		return null;
 	}
-
 }

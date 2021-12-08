@@ -22,4 +22,5 @@ public interface IFileManager extends HasSettingsField {
 	void loadOrders(String fileAddress);
 	void setResourcesFolderAddress(String folderAddress);
 	void close();
+	boolean exportOrderDatas(String serialisedOrderDatas, String folderAddress);
 }

@@ -53,7 +53,7 @@ public class OrderInspectionArea extends UIVBoxLayout {
 	}
 
 	public LocalDateTime getDisplayedDate()  {
-		return this.model.getDateSettings().parseDate(this.getOrderDateLabel().getText()+this.getOrderTimeInDayLabel().getText());
+		return this.model.getDateSettings().parseDateWithSeparators(this.getOrderDateLabel().getText()+this.getOrderTimeInDayLabel().getText());
 	}
 	
 	public void clearOrderDisplay() {

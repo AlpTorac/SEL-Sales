@@ -3,6 +3,7 @@ package model.datamapper.order;
 import java.time.LocalDateTime;
 
 import model.DateSettings;
+import model.datamapper.AttributeDAO;
 
 public class OrderDateDAO extends OrderAttributeDAO {
 	private DateSettings ds;
@@ -14,12 +15,12 @@ public class OrderDateDAO extends OrderAttributeDAO {
 	
 	@Override
 	protected String serialiseNotNullValue(Object attributeValue) {
-		return this.ds.serialiseDate((LocalDateTime) attributeValue);
+		return this.ds.serialiseDateWithoutSeparators((LocalDateTime) attributeValue);
 	}
 
 	@Override
 	protected LocalDateTime parseNotNullSerialisedValue(String serialisedValue) {
-		return this.ds.parseDate(serialisedValue);
+		return this.ds.parseDateWithoutSeparators(serialisedValue);
 	}
 
 	@Override

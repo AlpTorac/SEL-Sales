@@ -9,6 +9,6 @@ public class ExportOrdersHandler extends ServerApplicationEventHandler {
 
 	@Override
 	public void handleApplicationEvent(Object[] args) {
-		this.getController().getModel().writeOrders();
+		this.getController().getModel().exportOrders();
 	}
 }

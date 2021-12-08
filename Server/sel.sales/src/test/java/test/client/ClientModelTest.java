@@ -214,7 +214,7 @@ class ClientModelTest extends FXTestTemplate {
 	@Test
 	void removeAllOrdersTest() {
 		OrderData data = this.clientModel.getOrderFactory().constructData("order4", clientModel.getDateSettings()
-				.parseDate(this.serialiseDate("20200809112233343")), false, false);
+				.parseDateWithoutSeparators(this.serialiseDate("20200809112233343",clientModel)), false, false);
 		data.addOrderItem(iData1, o1a1);
 		
 		clientModel.addCookingOrder(oData1);

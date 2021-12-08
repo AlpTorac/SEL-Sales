@@ -9,7 +9,7 @@ import model.entity.id.MinimalIDFactory;
 import model.util.IParser;
 import model.util.ISerialiser;
 
-public abstract class AttributeDAO<A extends IAttribute, E extends Entity<A>, V extends ValueObject<A>, C extends Repository<A, E, V>> implements IParser, ISerialiser {
+public abstract class AttributeDAO<A extends IAttribute, E extends Entity<A>, V extends ValueObject<A>, C extends Repository<A, E, V>> implements IParser, ISerialiser,Comparable<AttributeDAO<?,?,?,?>> {
 	private AttributeFormat attributeFormat = new AttributeFormat();
 	private AggregateFormat aggregateFormat = new AggregateFormat();
 	private EntityIDFactory idFac = new MinimalIDFactory();
@@ -104,5 +104,10 @@ public abstract class AttributeDAO<A extends IAttribute, E extends Entity<A>, V 
 	
 	protected EntityID parseID(String id) {
 		return this.idFac.createID(id);
+	}
+	
+	@Override
+	public int compareTo(AttributeDAO<?, ?, ?, ?> o) {
+		return this.getAssociatedAttribute().compareTo(o.getAssociatedAttribute());
 	}
 }

@@ -154,4 +154,12 @@ public class FileManager implements IFileManager {
 	public boolean writeOrderDatas(String orderDatas) {
 		return this.orderFile.remakeFile() && this.orderFile.writeToFile(orderDatas);
 	}
+	
+	@Override
+	public boolean exportOrderDatas(String serialisedOrderDatas, String address) {
+		IFileAccess exportFile = new StandardFileAccess(address);
+		boolean result = exportFile.writeToFile(serialisedOrderDatas);
+		exportFile.close();
+		return result;
+	}
 }

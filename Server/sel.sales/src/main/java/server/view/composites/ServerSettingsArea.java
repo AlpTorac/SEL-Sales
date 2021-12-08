@@ -8,6 +8,9 @@ import view.repository.ISingleRowTextBox;
 import view.repository.uiwrapper.UIComponentFactory;
 
 public class ServerSettingsArea extends SettingsArea {
+	private FileAddressUI exportFolderAddress;
+	private ISingleRowTextBox exportFolderAddressInput;
+	
 	private final String tableNumberLabelCaption = "Table Numbers";
 	
 	private ISingleRowTextBox tableNumberInput;
@@ -23,6 +26,20 @@ public class ServerSettingsArea extends SettingsArea {
 		this.addUIComponent(this.tnui = new TableNumberUI());
 	}
 	
+	protected FileAddressArea initFAA() {
+		return new ServerFileAddressArea();
+	}
+	
+	protected class ServerFileAddressArea extends FileAddressArea {
+		@Override
+		protected void initComponents() {
+			super.initComponents();
+			this.getComponent().addUIComponent(
+					exportFolderAddress = this.createUI("Export folder address", SettingsField.EXPORT_FOLDER));
+			exportFolderAddressInput = exportFolderAddress.getAddressBox();
+		}
+	}
+	
 	protected class TableNumberUI extends BasicSettingsInputArea {
 		protected TableNumberUI() {
 			super(tableNumberLabelCaption, SettingsField.TABLE_NUMBERS);
@@ -32,5 +49,9 @@ public class ServerSettingsArea extends SettingsArea {
 	
 	public ISingleRowTextBox getTableNumberRanges() {
 		return tableNumberInput;
+	}
+	
+	public ISingleRowTextBox getExportFolderAddressInput() {
+		return this.exportFolderAddressInput;
 	}
 }

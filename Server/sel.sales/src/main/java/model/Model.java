@@ -101,9 +101,9 @@ public abstract class Model implements IModel {
 		this.fileManager = new FileManager(this, this.resourceFolderAddress);
 		this.tnc = new TableNumberContainer(this);
 		
-		this.orderDAO = new OrderDAO(this.resourceFolderAddress);
+		this.orderDAO = new OrderDAO();
 		this.orderDAO.setFinder(this.finder);
-		this.menuDAO = new DishMenuItemDAO(this.resourceFolderAddress);
+		this.menuDAO = new DishMenuItemDAO();
 		
 		this.part.add(this.tnc);
 		this.part.add(this.fileManager);

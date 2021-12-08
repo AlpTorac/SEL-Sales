@@ -1,14 +1,19 @@
 package server.model;
 
+import java.io.File;
+
 import model.Model;
+import model.datamapper.ExportSerialiser;
+import model.datamapper.StandardExcelOrderExportSerialiser;
 import model.datamapper.order.OrderAttribute;
 import model.dish.DishMenuItemData;
 import model.entity.id.EntityID;
 import model.order.OrderData;
 import model.order.OrderStatus;
+import model.settings.SettingsField;
 
 public class ServerModel extends Model implements IServerModel {
-	
+	private ExportSerialiser<OrderAttribute, OrderData> orderExportSerialiser = new StandardExcelOrderExportSerialiser();
 	private volatile boolean autoConfirmOrders = false;
 	
 	public ServerModel() {
@@ -20,23 +25,6 @@ public class ServerModel extends Model implements IServerModel {
 		this.getFileManager().setResourcesFolderAddress(resourceFolder);
 	}
 	
-//	protected void makeUnconfirmedOrder(String id) {
-//		this.getOrderCollector().editOrderStatus(id, OrderStatus.UNCONFIRMED);
-//	}
-//	
-//	protected void makeConfirmedOrder(String id) {
-//		this.getOrderCollector().editOrderStatus(id, OrderStatus.CONFIRMED);
-//	}
-//	
-//	protected void makePastOrder(String id) {
-//		this.getOrderCollector().editOrderStatus(id, OrderStatus.PAST);
-//	}
-	
-//	protected void ordersChanged() {
-//		this.unconfirmedOrdersChanged();
-//		this.confirmedOrdersChanged();
-//	}
-	
 	@Override
 	public void addOrder(OrderData data) {
 		this.addUnconfirmedOrder(data);
@@ -45,30 +33,34 @@ public class ServerModel extends Model implements IServerModel {
 	protected void unconfirmedOrdersChanged() {
 		this.notifyUpdatableChange(u -> u instanceof OrderConfirmationStatusUpdatable,
 				u -> ((OrderConfirmationStatusUpdatable) u).refreshUnconfirmedOrders());
-//		this.updatables.stream().filter(u -> u instanceof OrderUpdatable).forEach(u -> ((OrderUpdatable) u).refreshUnconfirmedOrders());
 	}
 	
 	protected void confirmedOrdersChanged() {
 		this.notifyUpdatableChange(u -> u instanceof OrderConfirmationStatusUpdatable,
 				u -> ((OrderConfirmationStatusUpdatable) u).refreshConfirmedOrders());
-//		this.updatables.stream().filter(u -> u instanceof OrderUpdatable).forEach(u -> ((OrderUpdatable) u).refreshConfirmedOrders());
 	}
 	
 	protected void orderConfirmModeChanged() {
 		this.notifyUpdatableChange(u -> u instanceof OrderConfirmationStatusUpdatable,
 				u -> ((OrderConfirmationStatusUpdatable) u).refreshConfirmMode());
-//		this.updatables.stream().filter(u -> u instanceof OrderUpdatable).forEach(u -> ((OrderUpdatable) u).refreshConfirmMode());
 	}
 	
 	@Override
-	public boolean writeOrders() {
-		OrderData[] orders = this.getAllConfirmedOrders();
+	public boolean exportOrders() {
+		String exportFolderAddress = this.getSettings().getSetting(SettingsField.EXPORT_FOLDER);
+		String exportFileName = this.getDateSettings().serialiseDateForExportFileName();
 		
-		for (OrderData od : orders) {
-			this.writeOrder(od.getID().toString());
+		if (exportFolderAddress != null) {
+			return this.getFileManager().exportOrderDatas(
+					this.orderExportSerialiser.serialise(
+							this.getOrderCollector().getMatchingElementsAsValueObject(v -> {
+								OrderStatus status = (OrderStatus) v.getAttributeValue(OrderAttribute.STATUS);
+								return status.equals(OrderStatus.CONFIRMED);
+							}).toArray(OrderData[]::new)),
+					exportFolderAddress+File.separator+exportFileName+".txt");
 		}
 		
-		return true;
+		return false;
 	}
 	
 	public void addMenuItem(String serialisedItemData) {
@@ -98,14 +90,12 @@ public class ServerModel extends Model implements IServerModel {
 
 	@Override
 	public OrderData[] getAllUnconfirmedOrders() {
-//		return this.orderUnconfirmedCollector.getAllOrders();
 		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.UNCONFIRMED)).toArray(OrderData[]::new);
 	}
 
 	@Override
 	public void removeAllUnconfirmedOrders() {
 		this.getOrderCollector().removeAllElementsWithAttributeValue(OrderAttribute.STATUS, OrderStatus.UNCONFIRMED);
-//		this.orderUnconfirmedCollector.clearOrders();
 		this.unconfirmedOrdersChanged();
 	}
 
@@ -129,11 +119,9 @@ public class ServerModel extends Model implements IServerModel {
 	@Override
 	public OrderData[] getAllConfirmedOrders() {
 		return this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.CONFIRMED)).toArray(OrderData[]::new);
-//		return this.orderConfirmedCollector.getAllOrders();
 	}
 	
 	public void removeUnconfirmedOrder(EntityID id) {
-//		this.orderUnconfirmedCollector.removeOrder(id);
 		this.getOrderCollector().removeElementIfAttributeValueEquals(OrderAttribute.STATUS, id, OrderStatus.UNCONFIRMED);
 		this.unconfirmedOrdersChanged();
 	}
@@ -144,7 +132,6 @@ public class ServerModel extends Model implements IServerModel {
 	}
 	
 	public void removeConfirmedOrder(EntityID id) {
-//		this.orderConfirmedCollector.removeOrder(id);
 		this.getOrderCollector().removeElementIfAttributeValueEquals(OrderAttribute.STATUS, id, OrderStatus.CONFIRMED);
 		this.confirmedOrdersChanged();
 	}
@@ -156,7 +143,6 @@ public class ServerModel extends Model implements IServerModel {
 
 	@Override
 	public void removeAllConfirmedOrders() {
-//		this.orderConfirmedCollector.clearOrders();
 		this.getOrderCollector().removeAllElementsWithAttributeValue(OrderAttribute.STATUS, OrderStatus.CONFIRMED);
 		this.confirmedOrdersChanged();
 	}
@@ -169,11 +155,9 @@ public class ServerModel extends Model implements IServerModel {
 	@Override
 	public void confirmAllOrders() {
 		OrderData[] unconfirmedOrders = this.getOrderCollector().toValueObjectArray(this.getOrderCollector().getAllElementsByAttributeValue(OrderAttribute.STATUS, OrderStatus.UNCONFIRMED)).toArray(OrderData[]::new);
-//		OrderData[] unconfirmedOrders = this.orderUnconfirmedCollector.getAllOrders();
 		for (OrderData uco : unconfirmedOrders) {
 			this.confirmOrder(uco);
 		}
-//		this.orderUnconfirmedCollector.clearOrders();
 		this.ordersChanged();
 	}
 

@@ -141,7 +141,7 @@ public abstract class DummyInteractionPartaker implements Closeable {
 	}
 	
 	public OrderData deserialiseOrderData(String serialisedOrder) {
-		OrderDAO dao = new OrderDAO("");
+		OrderDAO dao = new OrderDAO();
 		return dao.parseValueObject(serialisedOrder);
 	}
 	

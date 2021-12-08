@@ -80,7 +80,7 @@ public class DummyClient extends DummyInteractionPartaker {
 	}
 	
 	public void makePendingSendOrder(String formerID, String serialisedOrder) {
-		OrderDAO dao = new OrderDAO("");
+		OrderDAO dao = new OrderDAO();
 		this.getModel().makePendingSendOrder(dao.parseValueObject(serialisedOrder));
 	}
 	

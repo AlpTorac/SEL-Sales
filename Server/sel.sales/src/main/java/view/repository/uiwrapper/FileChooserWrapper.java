@@ -21,4 +21,19 @@ public class FileChooserWrapper implements IFileChooser {
 	public File showOpenDialog(IRootComponent rc) {
 		return this.wrapee.showOpenDialog(rc);
 	}
+
+	@Override
+	public File showSaveDialog(IRootComponent rc) {
+		return this.wrapee.showSaveDialog(rc);
+	}
+
+	@Override
+	public void setInitialDirectory(File f) {
+		this.wrapee.setInitialDirectory(f);
+	}
+
+	@Override
+	public void setInitialFileName(String name) {
+		this.wrapee.setInitialFileName(name);
+	}
 }

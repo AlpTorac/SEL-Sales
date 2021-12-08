@@ -6,6 +6,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
+
 import model.datamapper.IAttribute;
 import model.entity.id.EntityID;
 import model.entity.id.EntityIDFactory;
@@ -58,6 +60,20 @@ public abstract class Repository<A extends IAttribute, E extends Entity<A>, V ex
 	public Collection<V> toValueObjectArray(Collection<E> entities) {
 		Collection<V> result = new CopyOnWriteArrayList<V>();
 		entities.forEach(e -> result.add(this.toValueObject(e)));
+		return result;
+	}
+	
+	public Collection<E> getMatchingElements(Predicate<? super E> p) {
+		Collection<E> result = new CopyOnWriteArrayList<E>();
+		this.getEntityMap().values().stream().filter(p)
+		.forEach(e -> result.add(e));
+		return result;
+	}
+	
+	public Collection<V> getMatchingElementsAsValueObject(Predicate<? super E> p) {
+		Collection<V> result = new CopyOnWriteArrayList<V>();
+		this.getEntityMap().values().stream().filter(p)
+		.map(e -> this.toValueObject(e)).forEach(v -> result.add(v));
 		return result;
 	}
 	

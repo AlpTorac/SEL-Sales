@@ -33,7 +33,7 @@ public abstract class ServerController extends Controller implements IServerCont
 		bem.addApplicationEventToHandlerMapping(ServerSpecificEvent.LOAD_DISH_MENU, new LoadDishMenuHandler(this));
 		bem.addApplicationEventToHandlerMapping(ServerSpecificEvent.CONFIRM_ORDER, new ConfirmOrderHandler(this));
 		bem.addApplicationEventToHandlerMapping(ServerSpecificEvent.CONFIRM_ALL_ORDERS, new ConfirmAllOrdersHandler(this));
-		bem.addApplicationEventToHandlerMapping(ServerSpecificEvent.WRITE_ORDERS, new ExportOrdersHandler(this));
+		bem.addApplicationEventToHandlerMapping(ServerSpecificEvent.EXPORT_ORDERS, new ExportOrdersHandler(this));
 		bem.addApplicationEventToHandlerMapping(ServerSpecificEvent.ORDER_CONFIRM_MODEL_CHANGED, new OrderConfirmModelChangedHandler(this));
 		return bem;
 	}

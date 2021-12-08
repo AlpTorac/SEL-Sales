@@ -43,7 +43,7 @@ class SettingsAreaTest extends ApplicationTest {
 	private StandardServerView view;
 	private DummyServerExternal external;
 	
-	private ViewOperationsUtilityClass opHelper;
+	private StandardServerViewOperationsUtilityClass opHelper;
 	
 	private DummyService service;
 	private DummyServiceConnectionManager dscm;
@@ -63,6 +63,7 @@ class SettingsAreaTest extends ApplicationTest {
 	
 	private String menuFolderAddress = "mfa";
 	private String orderFolderAddress = "ofa";
+	private String exportFolderAddress = "efa";
 	private String ppTimeout = "200";
 	private String ppMinimalDelay = "100";
 	private String ppResendLimit = "3";
@@ -166,6 +167,10 @@ class SettingsAreaTest extends ApplicationTest {
 		runFXAction(()->{
 			opHelper.inputOrderFolderAddress(orderFolderAddress);
 			s.addSetting(SettingsField.ORDER_FOLDER, orderFolderAddress);
+		});
+		runFXAction(()->{
+			opHelper.inputExportAddress(exportFolderAddress);
+			s.addSetting(SettingsField.EXPORT_FOLDER, exportFolderAddress);
 		});
 		runFXAction(()->{
 			opHelper.inputPPTimeout(ppTimeout);

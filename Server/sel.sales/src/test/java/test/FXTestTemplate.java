@@ -224,15 +224,16 @@ public abstract class FXTestTemplate extends ApplicationTest {
 		clientView.refreshMenu();
 	}
 	
-	public String serialiseDate(String date) {
-		String year = date.substring(0, 4);
-		String month = date.substring(4, 6);
-		String day = date.substring(6,8);
-		String hour = date.substring(8, 10);
-		String min = date.substring(10, 12);
-		String sec = date.substring(12, 14);
-		String ms = date.substring(14, 17);
-		return day+"/"+month+"/"+year+hour+":"+min+":"+sec+":"+ms;
+	public String serialiseDate(String date, IModel model) {
+//		String year = date.substring(0, 4);
+//		String month = date.substring(4, 6);
+//		String day = date.substring(6,8);
+//		String hour = date.substring(8, 10);
+//		String min = date.substring(10, 12);
+//		String sec = date.substring(12, 14);
+//		String ms = date.substring(14, 17);
+//		return day+"/"+month+"/"+year+hour+":"+min+":"+sec+":"+ms;
+		return model.getDateSettings().serialiseDateWithoutSeparators(model.getDateSettings().parseDateWithoutSeparators(date));
 	}
 	
 	public ExecutorService initExecutorService() {
@@ -241,16 +242,16 @@ public abstract class FXTestTemplate extends ApplicationTest {
 	
 	public void initOrders(IModel model) {
 		oData1 = model.getOrderFactory().constructData(o1id, model.getDateSettings()
-				.parseDate(this.serialiseDate("20200809112233343")), false, false);
+				.parseDateWithoutSeparators(this.serialiseDate("20200809112233343",model)), false, false);
 		oData1.addOrderItem(iData1, o1a1);
 		
 		oData2 = model.getOrderFactory().constructData(o2id, model.getDateSettings()
-				.parseDate(this.serialiseDate("20200809235959111")), true, false);
+				.parseDateWithoutSeparators(this.serialiseDate("20200809235959111", model)), true, false);
 		oData2.addOrderItem(iData1, o2a1);
 		oData2.addOrderItem(iData2, o2a2);
 		
 		oData3 = model.getOrderFactory().constructData(o3id, model.getDateSettings()
-				.parseDate(this.serialiseDate("20200809000000222")), true, true);
+				.parseDateWithoutSeparators(this.serialiseDate("20200809000000222", model)), true, true);
 		oData3.addOrderItem(iData3, o3a3);
 		
 		orderItem1 = oData1.getOrderedItem(iData1.getID());
@@ -268,17 +269,17 @@ public abstract class FXTestTemplate extends ApplicationTest {
 		this.addDiscDishMenuToServerModel(model);
 		
 		oData1 = model.getOrderFactory().constructData(o1id, model.getDateSettings()
-				.parseDate(this.serialiseDate("20200809112233343")), false, false);
+				.parseDateWithoutSeparators(this.serialiseDate("20200809112233343",model)), false, false);
 		oData1.addOrderItem(iData1, o1a1);
 		
 		oData2 = model.getOrderFactory().constructData(o2id, model.getDateSettings()
-				.parseDate(this.serialiseDate("20200809235959111")), true, false);
+				.parseDateWithoutSeparators(this.serialiseDate("20200809235959111",model)), true, false);
 		oData2.addOrderItem(iData1, o2a1);
 		oData2.addOrderItem(iData2, o2a2);
 		oData2.addOrderItem(discData, o2ad);
 		
 		oData3 = model.getOrderFactory().constructData(o3id, model.getDateSettings()
-				.parseDate(this.serialiseDate("20200809000000222")), true, true);
+				.parseDateWithoutSeparators(this.serialiseDate("20200809000000222",model)), true, true);
 		oData3.addOrderItem(iData3, o3a3);
 		oData3.addOrderItem(discData, o3ad);
 		
