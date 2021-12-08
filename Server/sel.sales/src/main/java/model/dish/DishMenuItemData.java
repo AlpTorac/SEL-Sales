@@ -29,21 +29,21 @@ public class DishMenuItemData extends ValueObject<DishMenuItemAttribute> {
 		return (BigDecimal) this.getAttributeValue(DishMenuItemAttribute.PORTION_SIZE);
 	}
 	
-	public void setDishName(String name) {
-		this.setAttributeValue(DishMenuItemAttribute.DISH_NAME, name);
-	}
-	
-	public void setProductionCost(BigDecimal prodCost) {
-		this.setAttributeValue(DishMenuItemAttribute.PRODUCTION_COST, prodCost);
-	}
-	
-	public void setGrossPrice(BigDecimal price) {
-		this.setAttributeValue(DishMenuItemAttribute.GROSS_PRICE, price);
-	}
-	
-	public void setPortionSize(BigDecimal porSize) {
-		this.setAttributeValue(DishMenuItemAttribute.PORTION_SIZE, porSize);
-	}
+//	public void setDishName(String name) {
+//		this.setAttributeValue(DishMenuItemAttribute.DISH_NAME, name);
+//	}
+//	
+//	public void setProductionCost(BigDecimal prodCost) {
+//		this.setAttributeValue(DishMenuItemAttribute.PRODUCTION_COST, prodCost);
+//	}
+//	
+//	public void setGrossPrice(BigDecimal price) {
+//		this.setAttributeValue(DishMenuItemAttribute.GROSS_PRICE, price);
+//	}
+//	
+//	public void setPortionSize(BigDecimal porSize) {
+//		this.setAttributeValue(DishMenuItemAttribute.PORTION_SIZE, porSize);
+//	}
 	
 	public DishMenuItem getAssociatedItem(IDishMenuItemFinder finder) {
 		return finder.getMenuItem(this.getID());

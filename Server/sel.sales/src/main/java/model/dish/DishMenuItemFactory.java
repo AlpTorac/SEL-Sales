@@ -45,12 +45,13 @@ public class DishMenuItemFactory implements IFactory<DishMenuItemAttribute, Dish
 	
 	public DishMenuItemData constructData(String dishName, String id, BigDecimal portionSize, BigDecimal price,
 			BigDecimal productionCost) {
-		DishMenuItemData data = new DishMenuItemData(this.idFac.createID(id));
-		data.setAttributeValue(DishMenuItemAttribute.DISH_NAME, dishName);
-		data.setAttributeValue(DishMenuItemAttribute.PORTION_SIZE, portionSize);
-		data.setAttributeValue(DishMenuItemAttribute.GROSS_PRICE, price);
-		data.setAttributeValue(DishMenuItemAttribute.PRODUCTION_COST, productionCost);
-		return data;
+		return this.constructData(dishName, portionSize, price, productionCost, this.idFac.createID(id));
+//		DishMenuItemData data = new DishMenuItemData(this.idFac.createID(id));
+//		data.setAttributeValue(DishMenuItemAttribute.DISH_NAME, dishName);
+//		data.setAttributeValue(DishMenuItemAttribute.PORTION_SIZE, portionSize);
+//		data.setAttributeValue(DishMenuItemAttribute.GROSS_PRICE, price);
+//		data.setAttributeValue(DishMenuItemAttribute.PRODUCTION_COST, productionCost);
+//		return data;
 	}
 
 	@Override

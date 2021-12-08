@@ -113,6 +113,7 @@ public class ServerModel extends Model implements IServerModel {
 		this.getOrderCollector().addElement(data);
 		this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, data.getID(), OrderStatus.CONFIRMED);
 		this.writeOrder(data.getID().toString());
+		this.confirmedOrdersChanged();
 		this.ordersChanged();
 	}
 
