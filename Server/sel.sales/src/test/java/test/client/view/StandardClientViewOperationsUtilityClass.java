@@ -102,14 +102,14 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	
 	public void orderTakingAreaNewEntry() {
 		this.setOrderTakingAreaTabActive();
-		GeneralTestUtilityClass.performWait(this.waitTime);
+//		GeneralTestUtilityClass.performWait(this.waitTime);
 		this.ota.getEntry().getAddMenuItemButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(this.waitTime);
 	}
 	
 	public void orderTakingAreaSetEntryItem(DishMenuItemData item, int pos) {
 		this.setOrderTakingAreaTabActive();
-		GeneralTestUtilityClass.performWait(this.waitTime);
+//		GeneralTestUtilityClass.performWait(this.waitTime);
 		EditableMenuItemEntry e = this.ota.getEntry().getEntry(pos);
 		GeneralTestUtilityClass.performWait(this.waitTime);
 		e.getMenuItemChoiceBox().artificiallySelectItem(item);
@@ -124,7 +124,7 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	
 	public void orderTakingAreaIncEntryAmount(int pos) {
 		this.setOrderTakingAreaTabActive();
-		GeneralTestUtilityClass.performWait(this.waitTime);
+//		GeneralTestUtilityClass.performWait(this.waitTime);
 		EditableMenuItemEntry e = this.ota.getEntry().getEntry(pos);
 		e.getAmountIncButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(this.waitTime);
@@ -132,7 +132,7 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	
 	public void orderTakingAreaDecEntryAmount(int pos) {
 		this.setOrderTakingAreaTabActive();
-		GeneralTestUtilityClass.performWait(this.waitTime);
+//		GeneralTestUtilityClass.performWait(this.waitTime);
 		EditableMenuItemEntry e = this.ota.getEntry().getEntry(pos);
 		e.getAmountDecButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(this.waitTime);
@@ -140,7 +140,7 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	
 	public void orderTakingAreaRemoveEntry(int pos) {
 		this.setOrderTakingAreaTabActive();
-		GeneralTestUtilityClass.performWait(this.waitTime);
+//		GeneralTestUtilityClass.performWait(this.waitTime);
 		EditableMenuItemEntry e = this.ota.getEntry().getEntry(pos);
 		e.getRemoveButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(this.waitTime);
@@ -148,7 +148,7 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	
 	public void orderTakingAreaNextTab() {
 		this.setOrderTakingAreaTabActive();
-		GeneralTestUtilityClass.performWait(this.waitTime);
+//		GeneralTestUtilityClass.performWait(this.waitTime);
 		this.ota.getEntry().getNextTabButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(this.waitTime);
 	}
@@ -250,7 +250,7 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	
 	public void addCookingOrder(String orderID) {
 		OrderTakingAreaOrderEntry e = this.ota.getEntry();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		while (this.getModel().getCookingOrder(orderID) == null) {
 			e.getNextTabButton().performArtificialClick();
 			GeneralTestUtilityClass.performWait(10);
@@ -262,7 +262,7 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	
 	public void addPendingPaymentOrder(String orderID) {
 		CookingOrderEntry e = ((CookingOrderEntry) this.coa.getOrderAccordion().getEntry(orderID));
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		while (this.getModel().getPendingPaymentOrder(orderID) == null) {
 			e.getNextTabButton().performArtificialClick();
 			GeneralTestUtilityClass.performWait(10);
@@ -273,7 +273,7 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	}
 	
 	public void addPendingSendOrder(String orderID, boolean isCash, boolean isHere) {
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		PendingPaymentOrderEntry e = ((PendingPaymentOrderEntry) this.uoa.getOrderAccordion().getEntry(orderID));
 		while (this.getModel().getPendingSendOrder(orderID) == null &&
 				this.getModel().getSentOrder(orderID) == null) {
@@ -288,32 +288,44 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	}
 	
 	public void selectTableNumber(Integer i) {
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.ota.getEntry().setTableNumber(i);
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
 	public void setOrderNote(String orderNote) {
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.ota.getEntry().setOrderNode(orderNote);
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
 	public void orderTakingAreaClear() {
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.ota.getEntry().getClearButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
 	public void cookingOrderAreaRemove(String orderID) {
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		((CookingOrderEntry) this.coa.getOrderAccordion().getEntry(orderID)).getRemoveButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
 	public void pendingPaymentOrderAreaRemove(String orderID) {
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		((PendingPaymentOrderEntry) this.uoa.getOrderAccordion().getEntry(orderID)).getRemoveButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void editCookingOrder(String orderID) {
+//		GeneralTestUtilityClass.performWait(waitTime);
+		((CookingOrderEntry) this.coa.getOrderAccordion().getEntry(orderID)).getEditButton().performArtificialClick();
+		GeneralTestUtilityClass.performWait(waitTime);
+	}
+	
+	public void editPendingPaymentOrder(String orderID) {
+//		GeneralTestUtilityClass.performWait(waitTime);
+		((PendingPaymentOrderEntry) this.uoa.getOrderAccordion().getEntry(orderID)).getEditButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 }

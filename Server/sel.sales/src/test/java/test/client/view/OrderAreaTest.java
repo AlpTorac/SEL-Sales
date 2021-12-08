@@ -13,7 +13,7 @@ import test.FXTestTemplate;
 import test.GeneralTestUtilityClass;
 
 class OrderAreaTest extends FXTestTemplate {
-	private String serialisedTableNumbers = "1-2,4,5,1-10,90,11";
+//	private String serialisedTableNumbers = "1-2,4,5,1-10,90,11";
 	
 	private IClientModel clientModel;
 	private IClientController clientController;
@@ -284,6 +284,111 @@ class OrderAreaTest extends FXTestTemplate {
 		}
 	}
 
+	private void displayOrder(Integer[] tableNumbers, String orderNote, int index, int tnIndex) {
+		runFXAction(()->{
+			clientOpHelper.orderTakingAreaDisplayOrder(ods[index]);
+			clientOpHelper.selectTableNumber(tableNumbers[tnIndex]);
+			clientOpHelper.setOrderNote(orderNote);
+		});
+		
+		OrderData d = clientOpHelper.getOrderTakingAreaCurrentOrder();
+		Assertions.assertTrue(this.orderDatasEqual(ods[index], d));
+		
+		Assertions.assertEquals(clientModel.getAllCookingOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllSentOrders().length, index);
+	}
+	
+	private void makeCookingOrder(Integer[] tableNumbers, String orderNote, int index, int tnIndex) {
+		runFXAction(()->{clientOpHelper.addCookingOrder(ods[index].getID().toString());});
+		
+		Assertions.assertTrue(this.orderDatasEqual(clientModel.getCookingOrder(ods[index].getID().toString()), ods[index]));
+		Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getNote(), orderNote);
+		Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getTableNumber(), tableNumbers[tnIndex]);
+		
+		GeneralTestUtilityClass.performWait(waitTime);
+		
+		Assertions.assertEquals(clientModel.getAllCookingOrders().length, 1);
+		Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllSentOrders().length, index);
+		Assertions.assertEquals(clientModel.getAllWrittenOrders().length, index+1);
+	}
+	
+	private void makePendingPaymentOrder(Integer[] tableNumbers, String orderNote, int index, int tnIndex) {
+		runFXAction(()->{clientOpHelper.addPendingPaymentOrder(ods[index].getID().toString());});
+		
+		Assertions.assertTrue(this.orderDatasEqual(clientModel.getPendingPaymentOrder(ods[index].getID().toString()), ods[index]));
+		Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getNote(), orderNote);
+		Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getTableNumber(), tableNumbers[tnIndex]);
+		
+		Assertions.assertEquals(clientModel.getAllCookingOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 1);
+		Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllSentOrders().length, index);
+		Assertions.assertEquals(clientModel.getAllWrittenOrders().length, index+1);
+	}
+	
+	private void makePendingSendOrder(Integer[] tableNumbers, String orderNote, int index, int tnIndex, boolean isCash, boolean isHere) {
+		runFXAction(()->{clientOpHelper.addPendingSendOrder(ods[index].getID().toString(), isCash, isHere);});
+		
+		Assertions.assertTrue(this.orderDatasEqual(clientModel.getPendingSendOrder(ods[index].getID().toString()), ods[index]));
+		Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getIsCash(), isCash);
+		Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getIsHere(), isHere);
+		Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getNote(), orderNote);
+		Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getTableNumber(), tableNumbers[tnIndex]);
+		
+		Assertions.assertEquals(clientModel.getAllCookingOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 1);
+		Assertions.assertEquals(clientModel.getAllSentOrders().length, index);
+		Assertions.assertEquals(clientModel.getAllWrittenOrders().length, index+1);
+	}
+	
+	private void makeSentOrder(Integer[] tableNumbers, String orderNote, int index, int tnIndex, boolean isCash, boolean isHere) {
+		clientModel.orderSentByID(ods[index].getID().toString());
+		
+		Assertions.assertTrue(this.orderDatasEqual(clientModel.getSentOrder(ods[index].getID().toString()), ods[index]));
+		Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getIsCash(), isCash);
+		Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getIsHere(), isHere);
+		Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getNote(), orderNote);
+		Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getTableNumber(), tableNumbers[tnIndex]);
+		
+		Assertions.assertEquals(clientModel.getAllCookingOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllSentOrders().length, index+1);
+		Assertions.assertEquals(clientModel.getAllWrittenOrders().length, index+1);
+	}
+	
+	private void editCookingOrder(int index) {
+		runFXAction(()->{clientOpHelper.editCookingOrder(ods[index].getID().toString());});
+		
+		OrderData d = clientOpHelper.getOrderTakingAreaCurrentOrder();
+		Assertions.assertTrue(this.orderDatasEqual(ods[index], d));
+		Assertions.assertTrue(this.orderDatasEqual(clientModel.getEditTarget(), d));
+		
+		Assertions.assertEquals(clientModel.getAllCookingOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllSentOrders().length, index);
+		Assertions.assertEquals(clientModel.getAllWrittenOrders().length, index+1);
+	}
+	
+	private void editPendingPaymentOrder(int index) {
+		runFXAction(()->{clientOpHelper.editPendingPaymentOrder(ods[index].getID().toString());});
+		
+		OrderData d = clientOpHelper.getOrderTakingAreaCurrentOrder();
+		Assertions.assertTrue(this.orderDatasEqual(ods[index], d));
+		
+		Assertions.assertEquals(clientModel.getAllCookingOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 0);
+		Assertions.assertEquals(clientModel.getAllSentOrders().length, index);
+		Assertions.assertEquals(clientModel.getAllWrittenOrders().length, index+1);
+	}
+	
 	@Test
 	void orderCycleTest() {
 		Integer[] tableNumbers = clientModel.getTableNumbers().toArray(Integer[]::new);
@@ -295,91 +400,59 @@ class OrderAreaTest extends FXTestTemplate {
 			final int tnIndex = GeneralTestUtilityClass.generateRandomNumber(0, tableNumbers.length - 1);
 			final String orderNote = GeneralTestUtilityClass.generateRandomWord(5);
 			
-			runFXAction(()->{
-				clientOpHelper.orderTakingAreaDisplayOrder(ods[index]);
-				clientOpHelper.selectTableNumber(tableNumbers[tnIndex]);
-				clientOpHelper.setOrderNote(orderNote);
-			});
-//			GeneralTestUtilityClass.performWait(100);
-			OrderData d = clientOpHelper.getOrderTakingAreaCurrentOrder();
-			Assertions.assertTrue(this.orderDatasEqual(ods[index], d));
+			this.displayOrder(tableNumbers, orderNote, index, tnIndex);
+			Assertions.assertEquals(clientModel.getAllWrittenOrders().length, index);
 			
-			Assertions.assertEquals(clientModel.getAllCookingOrders().length, 0);
-			Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 0);
-			Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 0);
-			Assertions.assertEquals(clientModel.getAllSentOrders().length, index);
-			Assertions.assertEquals(clientModel.getAllWrittenOrders().length, i);
+			this.makeCookingOrder(tableNumbers, orderNote, index, tnIndex);
+			this.makePendingPaymentOrder(tableNumbers, orderNote, index, tnIndex);
+			this.makePendingSendOrder(tableNumbers, orderNote, index, tnIndex, isCash, isHere);
+			this.makeSentOrder(tableNumbers, orderNote, index, tnIndex, isCash, isHere);
+		}
+	}
+	
+	@Test
+	void orderCycleWithEditTest() {
+		Integer[] tableNumbers = clientModel.getTableNumbers().toArray(Integer[]::new);
+		
+		int index;
+		boolean isCash;
+		boolean isHere;
+		int tnIndex;
+		String orderNote;
+		
+		for (int i = 0; i < ods.length; i++) {
+			index = i;
+			isCash = GeneralTestUtilityClass.generateRandomBoolean();
+			isHere = GeneralTestUtilityClass.generateRandomBoolean();
+			tnIndex = GeneralTestUtilityClass.generateRandomNumber(0, tableNumbers.length - 1);
+			orderNote = GeneralTestUtilityClass.generateRandomWord(5);
 			
-			runFXAction(()->{clientOpHelper.addCookingOrder(ods[index].getID().toString());});
+			this.displayOrder(tableNumbers, orderNote, index, tnIndex);
+			Assertions.assertEquals(clientModel.getAllWrittenOrders().length, index);
 			
-//			while (clientOpHelper.getCookingOrders().size() < index + 1) {
-//				
-//			}
-//			Assertions.assertTrue(clientOpHelper.getCookingOrders().stream()
-//					.anyMatch(ordData -> this.orderDatasEqual(ordData, ods[index])));
-//			GeneralTestUtilityClass.performWait(100);
-			Assertions.assertTrue(this.orderDatasEqual(clientModel.getCookingOrder(ods[index].getID().toString()), ods[index]));
-			Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getNote(), orderNote);
-			Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getTableNumber(), tableNumbers[tnIndex]);
+			this.makeCookingOrder(tableNumbers, orderNote, index, tnIndex);
+			this.editCookingOrder(index);
 			
-//			while (!clientModel.isOrderWritten(ods[index].getID().toString())) {
-//				
-//			}
-			GeneralTestUtilityClass.performWait(waitTime);
+			tnIndex = GeneralTestUtilityClass.generateRandomNumber(0, tableNumbers.length - 1);
+			orderNote = GeneralTestUtilityClass.generateRandomWord(5);
 			
-			Assertions.assertEquals(clientModel.getAllCookingOrders().length, 1);
-			Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 0);
-			Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 0);
-			Assertions.assertEquals(clientModel.getAllSentOrders().length, index);
-			Assertions.assertEquals(clientModel.getAllWrittenOrders().length, i+1);
+			this.displayOrder(tableNumbers, orderNote, index, tnIndex);
+			Assertions.assertEquals(clientModel.getAllWrittenOrders().length, index+1);
 			
-			runFXAction(()->{clientOpHelper.addPendingPaymentOrder(ods[index].getID().toString());});
+			this.makeCookingOrder(tableNumbers, orderNote, index, tnIndex);
+			this.makePendingPaymentOrder(tableNumbers, orderNote, index, tnIndex);
+			this.editPendingPaymentOrder(index);
 			
-//			while (clientOpHelper.getPendingPaymentOrders().size() < index + 1) {
-//				
-//			}
-//			Assertions.assertTrue(clientOpHelper.getPendingPaymentOrders().stream()
-//					.anyMatch(ordData -> this.orderDatasEqual(ordData, ods[index])));
-//			GeneralTestUtilityClass.performWait(100);
-			Assertions.assertTrue(this.orderDatasEqual(clientModel.getPendingPaymentOrder(ods[index].getID().toString()), ods[index]));
-			Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getNote(), orderNote);
-			Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getTableNumber(), tableNumbers[tnIndex]);
+			tnIndex = GeneralTestUtilityClass.generateRandomNumber(0, tableNumbers.length - 1);
+			orderNote = GeneralTestUtilityClass.generateRandomWord(5);
 			
-			Assertions.assertEquals(clientModel.getAllCookingOrders().length, 0);
-			Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 1);
-			Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 0);
-			Assertions.assertEquals(clientModel.getAllSentOrders().length, index);
-			Assertions.assertEquals(clientModel.getAllWrittenOrders().length, i+1);
+			this.displayOrder(tableNumbers, orderNote, index, tnIndex);
+			Assertions.assertEquals(clientModel.getAllWrittenOrders().length, index+1);
 			
-			runFXAction(()->{clientOpHelper.addPendingSendOrder(ods[index].getID().toString(), isCash, isHere);});
-			
-//			while (clientOpHelper.getPendingSendOrders().size() < index + 1) {
-//				
-//			}
-//			Assertions.assertTrue(clientOpHelper.getPendingSendOrders().stream()
-//					.anyMatch(ordData -> this.orderDatasEqual(ordData, ods[index])));
-//			GeneralTestUtilityClass.performWait(100);
-			Assertions.assertTrue(this.orderDatasEqual(clientModel.getPendingSendOrder(ods[index].getID().toString()), ods[index]));
-			Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getNote(), orderNote);
-			Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getTableNumber(), tableNumbers[tnIndex]);
-			
-			Assertions.assertEquals(clientModel.getAllCookingOrders().length, 0);
-			Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 0);
-			Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 1);
-			Assertions.assertEquals(clientModel.getAllSentOrders().length, index);
-			Assertions.assertEquals(clientModel.getAllWrittenOrders().length, i+1);
-			
-			clientModel.orderSentByID(ods[index].getID().toString());
-			
-			Assertions.assertTrue(this.orderDatasEqual(clientModel.getSentOrder(ods[index].getID().toString()), ods[index]));
-			Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getNote(), orderNote);
-			Assertions.assertEquals(clientModel.getOrder(ods[index].getID().toString()).getTableNumber(), tableNumbers[tnIndex]);
-			
-			Assertions.assertEquals(clientModel.getAllCookingOrders().length, 0);
-			Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 0);
-			Assertions.assertEquals(clientModel.getAllPendingSendOrders().length, 0);
-			Assertions.assertEquals(clientModel.getAllSentOrders().length, index+1);
-			Assertions.assertEquals(clientModel.getAllWrittenOrders().length, i+1);
+			this.makeCookingOrder(tableNumbers, orderNote, index, tnIndex);
+			this.makePendingPaymentOrder(tableNumbers, orderNote, index, tnIndex);
+			this.makePendingSendOrder(tableNumbers, orderNote, index, tnIndex, isCash, isHere);
+			this.makeSentOrder(tableNumbers, orderNote, index, tnIndex, isCash, isHere);
 		}
 	}
 }

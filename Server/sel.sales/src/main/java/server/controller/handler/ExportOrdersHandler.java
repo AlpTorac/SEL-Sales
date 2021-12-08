@@ -2,8 +2,8 @@ package server.controller.handler;
 
 import server.controller.IServerController;
 
-public class WriteOrdersHandler extends ServerApplicationEventHandler {
-	public WriteOrdersHandler(IServerController controller) {
+public class ExportOrdersHandler extends ServerApplicationEventHandler {
+	public ExportOrdersHandler(IServerController controller) {
 		super(controller);
 	}
 

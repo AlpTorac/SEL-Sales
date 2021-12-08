@@ -13,7 +13,7 @@ import server.view.composites.listeners.OrderInspectionListener;
 import server.view.composites.listeners.RemoveDishListener;
 import server.view.composites.listeners.RemoveOrderListener;
 import server.view.composites.listeners.WriteDishMenuListener;
-import server.view.composites.listeners.WriteOrdersListener;
+import server.view.composites.listeners.ExportOrdersListener;
 import view.repository.ILayout;
 import view.repository.uiwrapper.ChangeEventListener;
 import view.repository.uiwrapper.ClickEventListener;
@@ -22,7 +22,6 @@ import view.repository.uiwrapper.UIHBoxLayout;
 
 public class MainArea extends UIHBoxLayout {
 	private UIComponentFactory fac;
-	private DateSettings ds;
 	
 	private MenuDesignArea mda;
 	private OrderTrackingArea ota;
@@ -35,7 +34,6 @@ public class MainArea extends UIHBoxLayout {
 		super(fac.createHBoxLayout().getComponent());
 		this.controller = controller;
 		this.model = model;
-		this.ds = new DateSettings();
 		this.fac = fac;
 		this.init();
 	}
@@ -75,8 +73,8 @@ public class MainArea extends UIHBoxLayout {
 //		ItemChangeListener unconfirmedOrderListener = new UnconfirmedOrderListener(ota, oia);
 //		ota.getUnconfirmedOrderList().addItemChangeListener(unconfirmedOrderListener);
 		
-		ClickEventListener writeOrdersListener = new WriteOrdersListener(controller);
-		ota.getWriteButton().addClickListener(writeOrdersListener);
+		ClickEventListener writeOrdersListener = new ExportOrdersListener(controller);
+		ota.getExportButton().addClickListener(writeOrdersListener);
 		
 		ClickEventListener writeDishMenuListener = new WriteDishMenuListener(controller);
 		mda.getSaveButton().addClickListener(writeDishMenuListener);
@@ -134,7 +132,7 @@ public class MainArea extends UIHBoxLayout {
 	}
 	
 	protected OrderInspectionArea initOrderInspectionArea() {
-		return new OrderInspectionArea(this.fac, this.ds);
+		return new OrderInspectionArea(this.fac, this.model);
 	}
 
 	public OrderInspectionArea getOrderInspectionArea() {

@@ -6,10 +6,10 @@ import controller.IController;
 import server.controller.ServerSpecificEvent;
 import view.repository.uiwrapper.ClickEventListener;
 
-public class WriteOrdersListener extends ClickEventListener implements IApplicationEventShooter {
+public class ExportOrdersListener extends ClickEventListener implements IApplicationEventShooter {
 	private IController controller;
 	
-	public WriteOrdersListener(IController controller) {
+	public ExportOrdersListener(IController controller) {
 		this.controller = controller;
 	}
 	

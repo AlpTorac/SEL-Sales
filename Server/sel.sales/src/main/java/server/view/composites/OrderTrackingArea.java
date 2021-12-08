@@ -16,7 +16,7 @@ public class OrderTrackingArea extends UIVBoxLayout {
 	private IRadioButton auto;
 	private IRadioButton manual;
 	private IToggleGroup group;
-	private IButton writeButton;
+	private IButton exportButton;
 	
 	private UIComponentFactory fac;
 	
@@ -38,13 +38,13 @@ public class OrderTrackingArea extends UIVBoxLayout {
 				this.getUnconfirmedOrderList(),
 				this.initConfirmationSettings(),
 				this.getConfirmedOrderList(),
-				this.writeButton = this.initWriteButton()
+				this.exportButton = this.initExportButton()
 		});
 	}
 	
-	protected IButton initWriteButton() {
+	protected IButton initExportButton() {
 		IButton button = fac.createButton();
-		button.setCaption("Write Orders");
+		button.setCaption("Export Orders");
 		return button;
 	}
 	
@@ -131,7 +131,7 @@ public class OrderTrackingArea extends UIVBoxLayout {
 		}
 	}
 	
-	public IButton getWriteButton() {
-		return this.writeButton;
+	public IButton getExportButton() {
+		return this.exportButton;
 	}
 }

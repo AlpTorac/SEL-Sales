@@ -33,16 +33,14 @@ public class ClientModel extends Model implements IClientModel {
 		EntityID orderID = data.getID();
 		if (!this.getOrderCollector().contains(orderID) ||
 				this.getOrderCollector().attributeValueEquals(OrderAttribute.STATUS, orderID, OrderStatus.EDITING)) {
-//		if (this.getOrder(orderID) == null || this.getOrderCollector().orderStatusEquals(orderID, OrderStatus.EDITING)) {
-//			if (this.editOrderID != null) {
-//				this.removeOrder(editOrderID);
-//				this.clearEditTarget();
-//			}
+			
 			if (this.editOrderID != null && orderID.equals(this.editOrderID)) {
+				this.getOrderCollector().getElement(orderID).setAttributesSameAs(data);
 				this.clearEditTarget();
+			} else {
+				this.getOrderCollector().addElement(data);
 			}
-//			this.getOrderCollector().addOrder(data, OrderStatus.COOKING);
-			this.getOrderCollector().addElement(data);
+			
 			this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, orderID, OrderStatus.COOKING);
 			this.writeOrder(orderID);
 			this.ordersChanged();
@@ -50,12 +48,7 @@ public class ClientModel extends Model implements IClientModel {
 	}
 	
 	public void makePendingPaymentOrder(EntityID orderID) {
-//		OrderData data;
 		if (this.getCookingOrder(orderID) != null) {
-//		if ((data = this.getCookingOrder(orderID)) != null) {
-//			this.pendingPaymentOrders.addOrder(data);
-//			this.cookingOrders.removeOrder(orderID);
-//			this.getOrderCollector().editOrderStatus(orderID, OrderStatus.PENDING_PAYMENT);
 			this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, orderID, OrderStatus.PENDING_PAYMENT);
 			this.writeOrder(orderID);
 			this.ordersChanged();
@@ -72,13 +65,7 @@ public class ClientModel extends Model implements IClientModel {
 		System.out.println("pending send order isCash: " + data.getIsCash() + " , isHere: " + data.getIsHere());
 		EntityID orderID = data.getID();
 		if (data != null && this.getPendingPaymentOrder(orderID) != null) {
-//			this.pendingSendOrders.addOrder(data);
-//			if (!formerID.equals(data.getID().toString())) {
-//				this.removeOrder(formerID);
-//			}
-//			this.pendingPaymentOrders.removeOrder(data.getID().toString());
-			this.getOrderCollector().removeElement(orderID);
-			this.getOrderCollector().addElement(data);
+			this.getOrderCollector().getElement(orderID).setAttributesSameAs(data);
 			this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, orderID, OrderStatus.PENDING_SEND);
 			this.writeOrder(orderID);
 			this.ordersChanged();
@@ -165,7 +152,9 @@ public class ClientModel extends Model implements IClientModel {
 		if (orderID != null && this.getOrder(orderID) != null) {
 			this.editOrderID = orderID;
 //			this.getOrderCollector().editOrderStatus(editOrderID, OrderStatus.EDITING);
+			System.out.println("Edit orderID: " + orderID + " , Status: " + this.getOrderCollector().getAttributeValue(OrderAttribute.STATUS, orderID));
 			this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, this.editOrderID, OrderStatus.EDITING);
+			System.out.println("Edit orderID: " + orderID + " , Status: " + this.getOrderCollector().getAttributeValue(OrderAttribute.STATUS, orderID));
 			this.ordersChanged();
 		}
 	}
@@ -182,7 +171,7 @@ public class ClientModel extends Model implements IClientModel {
 
 	protected void clearEditTarget() {
 		if (this.editOrderID != null) {
-			this.getOrderCollector().removeElement(this.editOrderID);
+//			this.getOrderCollector().removeElement(this.editOrderID);
 			this.editOrderID = null;
 			this.ordersChanged();
 		}

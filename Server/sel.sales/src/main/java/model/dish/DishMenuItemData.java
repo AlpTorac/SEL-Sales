@@ -9,8 +9,6 @@ import model.entity.ValueObject;
 import model.entity.id.EntityID;
 
 public class DishMenuItemData extends ValueObject<DishMenuItemAttribute> {
-	public static final MathContext mc = new MathContext(2, RoundingMode.HALF_UP);
-	
 	DishMenuItemData(EntityID id) {
 		super(id);
 	}
@@ -47,10 +45,6 @@ public class DishMenuItemData extends ValueObject<DishMenuItemAttribute> {
 		this.setAttributeValue(DishMenuItemAttribute.PORTION_SIZE, porSize);
 	}
 	
-	public BigDecimal getGrossPricePerPortion() {
-		return this.getGrossPrice().divide(this.getPortionSize(), mc);
-	}
-	
 	public DishMenuItem getAssociatedItem(IDishMenuItemFinder finder) {
 		return finder.getMenuItem(this.getID());
 	}
@@ -59,20 +53,6 @@ public class DishMenuItemData extends ValueObject<DishMenuItemAttribute> {
 	public String toString() {
 		return this.getID().toString();
 	}
-	
-//	@Override
-//	public boolean equals(Object o) {
-//		if (o == null || !(o instanceof DishMenuItemData)) {
-//			return false;
-//		}
-//		DishMenuItemData castedO = (DishMenuItemData) o;
-//		
-//		return this.getDishName().equals(castedO.getDishName()) &&
-//				this.getID().equals(castedO.getID()) &&
-//				this.getPortionSize().compareTo(castedO.getPortionSize()) == 0 &&
-//				this.getGrossPrice().compareTo(castedO.getGrossPrice()) == 0 &&
-//				this.getProductionCost().compareTo(castedO.getProductionCost()) == 0;
-//	}
 
 	@Override
 	public DishMenuItemAttribute[] getAllAttributeEnumValues() {

@@ -2,7 +2,7 @@ package server.view.composites;
 
 import java.time.LocalDateTime;
 
-import model.DateSettings;
+import model.IModel;
 import model.dish.DishMenuItemData;
 import model.entity.AccumulatingAggregateEntry;
 import model.order.OrderData;
@@ -19,7 +19,7 @@ import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIVBoxLayout;
 
 public class OrderInspectionArea extends UIVBoxLayout {
-	private DateSettings ds;
+	private IModel model;
 
 	private ILabel orderIDLabel;
 	private ILabel orderTimeInDayLabel;
@@ -41,21 +41,19 @@ public class OrderInspectionArea extends UIVBoxLayout {
 	
 	private IButton addConfirmButton;
 	private IButton removeButton;
-	private IButton editButton;
-	private IButton createNewOrderButton;
 	private IButton confirmAllButton;
 	
 	private UIComponentFactory fac;
 	
-	public OrderInspectionArea(UIComponentFactory fac, DateSettings ds) {
+	public OrderInspectionArea(UIComponentFactory fac, IModel model) {
 		super(fac.createVBoxLayout().getComponent());
-		this.ds = ds;
+		this.model = model;
 		this.fac = fac;
 		this.init();
 	}
 
 	public LocalDateTime getDisplayedDate()  {
-		return this.ds.parseDate(this.getOrderDateLabel().getText()+this.getOrderTimeInDayLabel().getText());
+		return this.model.getDateSettings().parseDate(this.getOrderDateLabel().getText()+this.getOrderTimeInDayLabel().getText());
 	}
 	
 	public void clearOrderDisplay() {
@@ -70,7 +68,6 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		this.getDiscountDisplay().clearText();
 		this.getAddConfirmButton().setEnabled(false);
 		this.getRemoveButton().setEnabled(false);
-		this.getEditButton().setEnabled(false);
 	}
 	
 	public void displayOrder(OrderData data) {
@@ -82,7 +79,6 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		this.displayOrderPriceDetails(data);
 		this.getAddConfirmButton().setEnabled(true);
 		this.getRemoveButton().setEnabled(true);
-		this.getEditButton().setEnabled(true);
 	}
 	
 	private void displayOrderID(OrderData data) {
@@ -90,9 +86,12 @@ public class OrderInspectionArea extends UIVBoxLayout {
 	}
 	
 	private void displayOrderPriceDetails(OrderData data) {
-		this.getGrossSumDisplay().setCaption(data.getGrossSum().toPlainString());
-		this.getDiscountDisplay().setCaption(data.getOrderDiscount().toPlainString());
-		this.getNetSumDisplay().setCaption(data.getNetSum().toPlainString());
+		this.getGrossSumDisplay().setCaption(this.model.getNumberDisplaySettings()
+				.format(data.getGrossSum()).toPlainString());
+		this.getDiscountDisplay().setCaption(this.model.getNumberDisplaySettings()
+				.format(data.getOrderDiscount()).toPlainString());
+		this.getNetSumDisplay().setCaption(this.model.getNumberDisplaySettings()
+				.format(data.getNetSum()).toPlainString());
 	}
 	
 	private void displayOrderedItems(OrderData data) {
@@ -102,8 +101,8 @@ public class OrderInspectionArea extends UIVBoxLayout {
 	
 	private void displayOrderDate(OrderData data) {
 		LocalDateTime orderDate = data.getDate();
-		this.getOrderTimeInDayLabel().setCaption(this.ds.getTimeInDay(orderDate));
-		this.getOrderDateLabel().setCaption(this.ds.getDateInYear(orderDate));
+		this.getOrderTimeInDayLabel().setCaption(this.model.getDateSettings().getTimeInDay(orderDate));
+		this.getOrderDateLabel().setCaption(this.model.getDateSettings().getDateInYear(orderDate));
 	}
 	
 	private void displayIsCash(OrderData data) {
@@ -201,7 +200,9 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		table.addColumn("Menu Item", "Item");
 		table.addColumn("Amount", "Amount");
 		table.addColumn("Gross Price", (e) -> {
-			return e.getItem().getGrossPrice().multiply(e.getAmount()).toPlainString();
+			return this.model.getNumberDisplaySettings()
+					.format(e.getItem().getGrossPrice().multiply(e.getAmount()))
+					.toPlainString();
 		});
 		return table;
 	}
@@ -316,25 +317,29 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		return area;
 	}
 	
-	protected IGridLayout initOrderOperationsLayout() {
-		IGridLayout layout = this.fac.createGridLayout();
-		layout.setMarigins(10, 0, 0, 0);
-		layout.setHSpacing(50);
-		layout.setVSpacing(10);
+	protected IVBoxLayout initOrderOperationsLayout() {
+		IVBoxLayout mainLayout = this.fac.createVBoxLayout();
+		mainLayout.setMarigins(10, 0, 0, 0);
+		mainLayout.setSpacing(10);
+		
+		IHBoxLayout addRemoveLayout = this.fac.createHBoxLayout();
+		addRemoveLayout.setSpacing(50);
+		
+		IHBoxLayout confirmAllLayout = this.fac.createHBoxLayout();
+		addRemoveLayout.setSpacing(50);
 		
 		this.addConfirmButton = this.initOrderAddConfirmButton();
 		this.removeButton = this.initOrderRemoveButton();
-		this.editButton = this.initOrderEditButton();
-		this.createNewOrderButton = this.initOrderNewButton();
 		this.confirmAllButton = this.initOrderConfirmAllButton();
 		
-		layout.addUIComponent(this.getAddConfirmButton(),			0, 0, 1, 1);
-		layout.addUIComponent(this.getRemoveButton(), 				3, 0, 1, 1);
-		layout.addUIComponent(this.getEditButton(), 				0, 1, 1, 1);
-		layout.addUIComponent(this.getCreateNewOrderButton(), 		3, 1, 1, 1);
-		layout.addUIComponent(this.getConfirmAllButton(),			0, 2, 3, 1);
+		addRemoveLayout.addUIComponent(this.getAddConfirmButton());
+		addRemoveLayout.addUIComponent(this.getRemoveButton());
 		
-		return layout;
+		confirmAllLayout.addUIComponent(this.getConfirmAllButton());
+		
+		mainLayout.addUIComponents(addRemoveLayout, confirmAllLayout);
+		
+		return mainLayout;
 	}
 	
 	protected IButton initOrderAddConfirmButton() {
@@ -424,14 +429,6 @@ public class OrderInspectionArea extends UIVBoxLayout {
 
 	public IButton getRemoveButton() {
 		return removeButton;
-	}
-
-	public IButton getEditButton() {
-		return editButton;
-	}
-
-	public IButton getCreateNewOrderButton() {
-		return createNewOrderButton;
 	}
 
 	public IButton getConfirmAllButton() {

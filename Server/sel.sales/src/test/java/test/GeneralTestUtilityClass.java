@@ -100,7 +100,7 @@ public final class GeneralTestUtilityClass {
 		} else {
 			byte[] bytes = new byte[length];
 			for (int i = 0; i < bytes.length; i++) {
-				while (!new String(new byte[] {bytes[i]}).matches("\\w")) {
+				while (!new String(new byte[] {bytes[i]}).matches("[a-zA-Z0-9]")) {
 					bytes[i] = generateRandomByte();
 				}
 			}

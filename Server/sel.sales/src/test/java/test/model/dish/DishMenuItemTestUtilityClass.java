@@ -10,7 +10,7 @@ import model.dish.DishMenuItem;
 import model.dish.DishMenuItemData;
 
 public final class DishMenuItemTestUtilityClass {
-	public static final MathContext mc = new MathContext(2, RoundingMode.HALF_UP);
+//	public static final MathContext mc = new MathContext(2, RoundingMode.HALF_UP);
 	public static void assertMenuItemDataEqual(DishMenuItemData data, String dishName, String id, BigDecimal portionSize, BigDecimal price, BigDecimal productionCost) {
 		Assertions.assertEquals(data.getDishName(), dishName);
 		Assertions.assertEquals(data.getID().toString(), id);
@@ -27,7 +27,7 @@ public final class DishMenuItemTestUtilityClass {
 	}
 	public static void assertMenuItemDataPricesEqual(DishMenuItemData data, BigDecimal portionSize, BigDecimal grossPrice) {
 		Assertions.assertEquals(data.getGrossPrice().compareTo(grossPrice), 0);
-		Assertions.assertEquals(data.getGrossPricePerPortion().compareTo(grossPrice.divide(portionSize, mc)), 0);
+//		Assertions.assertEquals(data.getGrossPricePerPortion().compareTo(grossPrice.divide(portionSize, mc)), 0);
 	}
 	public static void assertMenuItemAndDataEqual(DishMenuItem item, DishMenuItemData data) {
 		Assertions.assertEquals(item.getDishName(), data.getDishName());

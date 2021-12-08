@@ -64,26 +64,9 @@ public class ServerModel extends Model implements IServerModel {
 	public boolean writeOrders() {
 		OrderData[] orders = this.getAllConfirmedOrders();
 		
-//		Collection<OrderData> ordersToBeWritten = new ArrayList<OrderData>();
-//		for (OrderData od : orders) {
-//			if (!this.isOrderWritten(od.getID().toString())) {
-//				ordersToBeWritten.add(od);
-//			}
-//		}
-//		boolean allWritten = true;
-//		boolean current = false;
 		for (OrderData od : orders) {
 			this.writeOrder(od.getID().toString());
 		}
-		
-//		OrderData[] array = ordersToBeWritten.toArray(OrderData[]::new);
-//		boolean allWritten = this.getFileManager().writeOrderData(this.getOrderHelper().serialiseForFile(array));
-//		if (allWritten) {
-//			for (OrderData od : array) {
-//				this.getOrderCollector().editWritten(od.getID().toString(), true);
-////				this.writtenOrderCollector.addOrder(od);
-//			}
-//		}
 		
 		return true;
 	}

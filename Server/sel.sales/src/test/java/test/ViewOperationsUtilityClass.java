@@ -71,7 +71,7 @@ public abstract class ViewOperationsUtilityClass {
 	
 	public void clickOnDiscoverDevices() {
 		this.setConnAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.ca.getRefreshButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
@@ -88,7 +88,7 @@ public abstract class ViewOperationsUtilityClass {
 
 	public void addKnownDevice(int index) {
 		this.setConnAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.ca.getDiscoveredDevices().artificiallySelectItem(index);
 		GeneralTestUtilityClass.performWait(waitTime);
 		System.out.println("discovered Device size: " + ca.getDiscoveredDevices().getSize());
@@ -99,7 +99,7 @@ public abstract class ViewOperationsUtilityClass {
 
 	public void removeKnownDevice(int index) {
 		this.setConnAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.ca.getKnownDevices().artificiallySelectItem(index);
 		GeneralTestUtilityClass.performWait(waitTime);
 		this.ca.getRemoveKnownDeviceButton().performArtificialClick();
@@ -108,7 +108,7 @@ public abstract class ViewOperationsUtilityClass {
 
 	public void allowKnownDevice(int index) {
 		this.setConnAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.ca.getKnownDevices().artificiallySelectItem(index);
 		GeneralTestUtilityClass.performWait(waitTime);
 		this.ca.getAllowDeviceButton().performArtificialClick();
@@ -117,7 +117,7 @@ public abstract class ViewOperationsUtilityClass {
 
 	public void blockKnownDevice(int index) {
 		this.setConnAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.ca.getKnownDevices().artificiallySelectItem(index);
 		GeneralTestUtilityClass.performWait(waitTime);
 		this.ca.getBlockDeviceButton().performArtificialClick();
@@ -126,49 +126,49 @@ public abstract class ViewOperationsUtilityClass {
 
 	public void inputMenuFolderAddress(String text) {
 		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.menuFolderAddress.setCaption(text);
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 
 	public void inputOrderFolderAddress(String text) {
 		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.orderFolderAddress.setCaption(text);
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 
 	public void inputPPMinimalDelay(String text) {
 		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.ppMinimalDelay.setCaption(text);
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 
 	public void inputPPResendLimit(String text) {
 		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.ppResendLimit.setCaption(text);
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 
 	public void inputPPTimeout(String text) {
 		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.ppTimeout.setCaption(text);
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 
 	public void inputSendTimeout(String text) {
 		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.sendTimeout.setCaption(text);
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 
 	public void applySettings() {
 		this.setSettingsAreaTabActive();
-		GeneralTestUtilityClass.performWait(waitTime);
+//		GeneralTestUtilityClass.performWait(waitTime);
 		this.applySettingsButton.performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}

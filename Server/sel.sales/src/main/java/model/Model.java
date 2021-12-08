@@ -60,6 +60,7 @@ public abstract class Model implements IModel {
 	private FileDeviceDataParser deviceDataParser;
 	private FileDeviceDataSerialiser deviceDataSerialiser;
 
+	private NumberDisplaySettings nds;
 	private DateSettings ds;
 	
 	private OrderCollector orderCollector;
@@ -79,6 +80,7 @@ public abstract class Model implements IModel {
 		this.updatables = new ArrayList<Updatable>();
 		this.part = new ArrayList<HasSettingsField>();
 		
+		this.nds = new NumberDisplaySettings();
 		this.ds = new DateSettings();
 		this.orderFac = new OrderFactory();
 		this.menuItemFac = new DishMenuItemFactory();
@@ -481,6 +483,11 @@ public abstract class Model implements IModel {
 		this.ordersChanged();
 //		this.getOrderCollector().setAttributeValue(OrderAttribute.STATUS, data.getID(), OrderStatus.PAST);
 //		this.getOrderCollector().setAttributeValue(OrderAttribute.IS_WRITTEN, data.getID(), true);
+	}
+	
+	@Override
+	public NumberDisplaySettings getNumberDisplaySettings() {
+		return this.nds;
 	}
 	
 	@Override

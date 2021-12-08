@@ -56,6 +56,7 @@ public interface IModel extends Closeable {
 	DishMenuItemFinder getActiveDishMenuItemFinder();
 	boolean isOrderWritten(String orderID);
 	DateSettings getDateSettings();
+	NumberDisplaySettings getNumberDisplaySettings();
 	Collection<Integer> getTableNumbers();
 	boolean tableExists(int tableNumber);
 	/**
