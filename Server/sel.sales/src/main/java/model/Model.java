@@ -310,6 +310,7 @@ public abstract class Model implements IModel {
 	public void deviceConnected(String deviceAddress) {
 		this.connManager.deviceConnected(deviceAddress);
 		this.knownDevicesChanged();
+		this.ordersChanged();
 	}
 
 	@Override

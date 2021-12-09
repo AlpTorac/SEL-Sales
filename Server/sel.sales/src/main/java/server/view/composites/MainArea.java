@@ -39,8 +39,8 @@ public class MainArea extends UIHBoxLayout {
 	}
 	
 	private void init() {
-		this.setSpacing(100);
-		this.getComponent().setMarigins(100, 100, 100, 100);
+		this.setSpacing(50);
+		this.getComponent().setMarigins(50, 50, 50, 50);
 		this.initAreas();
 		this.initListeners();
 	}
