@@ -2,6 +2,7 @@ package server;
 
 import java.math.BigDecimal;
 
+import external.IConnectionUtility;
 import external.WindowsBluetoothConnectionUtility;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -20,6 +21,7 @@ public class ServerApp extends Application {
 	private static IServerController controller;
 	private static IServerView view;
 	private static IServerExternal external;
+	private static IConnectionUtility connUtil;
 	
 	private static volatile long pingPongTimeout = 10000;
 	private static volatile long minimalPingPongDelay = 5000;
@@ -33,6 +35,8 @@ public class ServerApp extends Application {
 	public static void close() {
 		external.close();
 		view.close();
+		model.close();
+		connUtil.close();
 	}
 	
 	@Override
@@ -41,7 +45,8 @@ public class ServerApp extends Application {
 		controller = new StandardServerController(model);
 		view = new StandardServerView(new FXUIComponentFactory(), controller, model);
 //		external = new BluetoothServerExternal(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
-		external = new StandardServerExternal(controller, model, new WindowsBluetoothConnectionUtility(), pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
+		connUtil = new WindowsBluetoothConnectionUtility();
+		external = new StandardServerExternal(controller, model, connUtil, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		view.startUp();
 		view.show();
 		model.loadSaved();
@@ -80,6 +85,9 @@ public class ServerApp extends Application {
 				BigDecimal.valueOf(-1),
 				BigDecimal.valueOf(0)
 				));
+		
+		connUtil.init();
+		connUtil.start();
 		
 //		model.addUnconfirmedOrder("order1#20200820112233000#0#0:item1,2;");
 //		model.addUnconfirmedOrder("order2#20200110235959153#1#0:item1,2;item2,3;");

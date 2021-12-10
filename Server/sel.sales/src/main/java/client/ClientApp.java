@@ -11,6 +11,7 @@ import client.model.ClientModel;
 import client.model.IClientModel;
 import client.view.IClientView;
 import client.view.StandardClientView;
+import external.IConnectionUtility;
 import external.WindowsBluetoothConnectionUtility;
 
 public class ClientApp extends Application {
@@ -18,6 +19,7 @@ public class ClientApp extends Application {
 	private static IClientController controller;
 	private static IClientView view;
 	private static IClientExternal external;
+	private static IConnectionUtility connUtil;
 	
 	private static volatile long pingPongTimeout = 10000;
 	private static volatile long minimalPingPongDelay = 5000;
@@ -31,6 +33,8 @@ public class ClientApp extends Application {
 	public static void close() {
 		external.close();
 		view.close();
+		model.close();
+		connUtil.close();
 	}
 	
 	@Override
@@ -39,10 +43,13 @@ public class ClientApp extends Application {
 		controller = new StandardClientController(model);
 		view = new StandardClientView(new FXUIComponentFactory(), controller, model);
 //		external = new BluetoothClientExternal(controller, model, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
-		external = new StandardClientExternal(controller, model, new WindowsBluetoothConnectionUtility(), pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
+		connUtil = new WindowsBluetoothConnectionUtility();
+		external = new StandardClientExternal(controller, model, connUtil, pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		view.startUp();
 		view.show();
 		model.loadSaved();
+		connUtil.init();
+		connUtil.start();
 		
 		primaryStage.setOnCloseRequest(e -> {
 			close();

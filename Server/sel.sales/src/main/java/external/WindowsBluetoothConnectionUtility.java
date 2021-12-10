@@ -286,4 +286,30 @@ public class WindowsBluetoothConnectionUtility implements IConnectionUtility {
 	public IServiceInfo getServiceInfo() {
 		return new ServiceInfo(this.serviceID, this.serviceName);
 	}
+
+	/**
+	 * Since Bluecove package manages the bluetooth stack, no other action is required
+	 */
+	@Override
+	public void start() {
+		
+	}
+
+	/**
+	 * Since Bluecove package manages the bluetooth stack, no other action is required
+	 */
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * Since Bluecove package manages the bluetooth stack, no other action is required
+	 */
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -178,4 +178,22 @@ public class DummyConnectionUtility implements IConnectionUtility {
 		Optional<DummyConnection> o = this.coToStreams.values().stream().filter(dc -> dc.getTargetDeviceAddress().equals(deviceAddress)).findFirst();
 		return o.isPresent() ? o.get() : null;
 	}
+
+	@Override
+	public void start() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
 }
