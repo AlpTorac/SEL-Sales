@@ -4,8 +4,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>sel.sales.server</groupId>
 	<artifactId>sel.sales</artifactId>
+	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>SELServer</name>
+
+	<properties>
+        <mainClass>client.ClientApp</mainClass>
+    </properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.openjfx</groupId>
@@ -17,6 +23,7 @@
 			<artifactId>javafx-fxml</artifactId>
 			<version>16</version>
 		</dependency>
+
 		<!-- <dependency> -->
 		<!-- <groupId>org.openjfx</groupId> -->
 		<!-- <artifactId>javafx-controls</artifactId> -->
@@ -53,5 +60,74 @@
 			<artifactId>bluecove</artifactId>
 			<version>2.1.1</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>LATEST</version>
+		</dependency>
 	</dependencies>
+
+ <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>2.5.1</version>
+            <configuration>
+                <source>12</source>
+                <target>12</target>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>1.7.1</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <shadedArtifactAttached>true</shadedArtifactAttached>
+                <shadedClassifierName>shaded</shadedClassifierName>
+                <transformers>
+                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                        <mainClass>${mainClass}</mainClass>
+                    </transformer>
+                </transformers>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>com.akathist.maven.plugins.launch4j</groupId>
+            <artifactId>launch4j-maven-plugin</artifactId>
+            <version>1.5.1</version>
+            <executions>
+                <execution>
+                    <id>l4j-clui</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>launch4j</goal>
+                    </goals>
+                    <configuration>
+                        <headerType>gui</headerType>
+                        <jar>${project.build.directory}/${project.artifactId}-${project.version}-shaded.jar</jar>
+                        <outfile>${project.build.directory}/ClientApp.exe</outfile>
+							<classPath>
+                                <mainClass>${mainClass}</mainClass>
+                            </classPath>
+                        <jre>
+                            <minVersion>1.5.0</minVersion>
+                  			<initialHeapSize>128</initialHeapSize>
+                            <maxHeapSize>1024</maxHeapSize>
+                        </jre>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+
 </project>
