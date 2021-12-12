@@ -4,7 +4,7 @@ import view.repository.IEventShooterOnClickUIComponent;
 
 public abstract class EventShooterUIComponent extends UIComponent implements IEventShooterOnClickUIComponent {
 
-	EventShooterUIComponent(IEventShooterOnClickUIComponent component) {
+	protected EventShooterUIComponent(IEventShooterOnClickUIComponent component) {
 		super(component);
 	}
 

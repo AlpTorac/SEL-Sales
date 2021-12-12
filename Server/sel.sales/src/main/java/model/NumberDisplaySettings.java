@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 public class NumberDisplaySettings {
 	private MathContext mc;
 	
-	NumberDisplaySettings() {
+	public NumberDisplaySettings() {
 		this.mc = this.initMathContext();
 	}
 

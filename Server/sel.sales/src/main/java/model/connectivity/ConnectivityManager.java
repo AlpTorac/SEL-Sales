@@ -8,10 +8,10 @@ public class ConnectivityManager implements IConnectivityManager {
 	private Map<String, ConnectivityManagerEntry> discoveredDevices;
 	private Map<String, ConnectivityManagerEntry> knownDevices;
 	
-	private boolean rediscover;
+	private volatile boolean rediscover;
 	
 	public ConnectivityManager() {
-		rediscover = true;
+		this.rediscover = true;
 		this.discoveredDevices = new ConcurrentHashMap<String, ConnectivityManagerEntry>();
 		this.knownDevices = new ConcurrentHashMap<String, ConnectivityManagerEntry>();
 	}

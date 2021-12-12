@@ -6,7 +6,7 @@ public abstract class MessageFormat {
 	private String messageEnd;
 	private String messageStart;
 	
-	MessageFormat(String dataFieldSeparator, String dataFieldElementSeparator, String messageStart, String messageEnd) {
+	protected MessageFormat(String dataFieldSeparator, String dataFieldElementSeparator, String messageStart, String messageEnd) {
 		this.dataFieldSeparator = dataFieldSeparator;
 		this.dataFieldElementSeparator = dataFieldElementSeparator;
 		this.messageStart = messageStart;

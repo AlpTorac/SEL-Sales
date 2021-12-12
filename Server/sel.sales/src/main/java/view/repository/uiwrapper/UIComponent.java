@@ -9,7 +9,7 @@ public abstract class UIComponent implements IUIComponent {
 	private List<EditPart> editors = new ArrayList<EditPart>();
 	private IUIComponent component;
 	
-	UIComponent(IUIComponent component) {
+	protected UIComponent(IUIComponent component) {
 		this.component = component;
 	}
 

@@ -4,7 +4,7 @@ public abstract class DeviceDataParser implements IDeviceDataParser {
 
 	private IDeviceDataFormat format;
 	
-	DeviceDataParser(IDeviceDataFormat format) {
+	protected DeviceDataParser(IDeviceDataFormat format) {
 		this.format = format;
 	}
 	

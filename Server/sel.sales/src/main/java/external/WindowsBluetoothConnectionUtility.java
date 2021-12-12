@@ -30,6 +30,10 @@ public class WindowsBluetoothConnectionUtility implements IConnectionUtility {
 	private final UUID serviceID = new UUID(0x1111);
 	private final String serviceName = "SEL_Service";
 	
+	public WindowsBluetoothConnectionUtility() {
+		
+	}
+	
 //	private final int serviceIDEntryID = 0x0003;
 //	
 //	@Override

@@ -1,7 +1,7 @@
 package view.repository.uiwrapper;
 
 public abstract class EditPart {
-	EditPart() {
+	protected EditPart() {
 	}
 	
 //	public abstract void action();

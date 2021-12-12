@@ -4,7 +4,7 @@ public abstract class DeviceDataSerialiser implements IDeviceDataSerialiser {
 
 	private IDeviceDataFormat format;
 	
-	DeviceDataSerialiser(IDeviceDataFormat format) {
+	protected DeviceDataSerialiser(IDeviceDataFormat format) {
 		this.format = format;
 	}
 	

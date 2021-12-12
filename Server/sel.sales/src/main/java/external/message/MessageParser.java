@@ -3,7 +3,7 @@ package external.message;
 public abstract class MessageParser implements IMessageParser {
 	private MessageFormat format;
 	
-	MessageParser(MessageFormat format) {
+	protected MessageParser(MessageFormat format) {
 		this.format = format;
 	}
 	

@@ -1,7 +1,7 @@
 package model.connectivity;
 
 public class FileDeviceDataFormat extends DeviceDataFormat {
-	FileDeviceDataFormat() {
+	public FileDeviceDataFormat() {
 		super("",",", ";"+System.lineSeparator(),"");
 	}
 }

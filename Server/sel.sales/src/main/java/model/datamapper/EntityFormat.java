@@ -14,6 +14,10 @@ public class EntityFormat implements IFormat {
 	
 	private Pattern pattern = Pattern.compile(entityStart + "[^" + entityStart + entityEnd + "]*" + entityEnd);
 	
+	public EntityFormat() {
+		
+	}
+	
 	public String getEntityStart() {
 		return this.entityStart;
 	}

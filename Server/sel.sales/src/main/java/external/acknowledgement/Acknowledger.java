@@ -10,7 +10,7 @@ public abstract class Acknowledger implements IAcknowledger {
 	private IMessageSendingStrategy mss;
 	private IConnection conn;
 	
-	Acknowledger(IConnection conn, IAcknowledgementStrategy ackStrategy, IMessageSendingStrategy mss) {
+	protected Acknowledger(IConnection conn, IAcknowledgementStrategy ackStrategy, IMessageSendingStrategy mss) {
 		this.conn = conn;
 		this.ackStrategy = ackStrategy;
 		this.mss = mss;

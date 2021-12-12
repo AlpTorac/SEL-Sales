@@ -13,7 +13,7 @@ public abstract class DeviceDataFormat implements IDeviceDataFormat {
 	 */
 	private String endIndicator;
 	
-	DeviceDataFormat(String startIndicator, String dataFieldSeparator, String dataFieldEnd, String endIndicator) {
+	protected DeviceDataFormat(String startIndicator, String dataFieldSeparator, String dataFieldEnd, String endIndicator) {
 		this.startIndicator = startIndicator;
 		this.dataFieldSeparator = dataFieldSeparator;
 		this.dataFieldEnd = dataFieldEnd;

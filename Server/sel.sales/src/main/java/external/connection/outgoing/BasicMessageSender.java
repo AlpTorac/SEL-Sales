@@ -14,6 +14,10 @@ import external.message.StandardMessageFormat;
 public class BasicMessageSender implements IMessageSendingStrategy {
 	private IMessageSerialiser messageSerialiser = new MessageSerialiser(new StandardMessageFormat());
 	
+	public BasicMessageSender() {
+		
+	}
+	
 	@Override
 	public boolean sendMessage(IConnection conn, IMessage message) {
 		DataOutputStream os = new DataOutputStream(conn.getOutputStream());
