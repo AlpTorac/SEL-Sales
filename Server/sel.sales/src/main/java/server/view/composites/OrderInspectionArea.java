@@ -354,17 +354,17 @@ public class OrderInspectionArea extends UIVBoxLayout {
 		button.setEnabled(false);
 		return button;
 	}
-	protected IButton initOrderEditButton() {
-		IButton button = this.fac.createButton();
-		button.setCaption("Edit");
-		button.setEnabled(false);
-		return button;
-	}
-	protected IButton initOrderNewButton() {
-		IButton button = this.fac.createButton();
-		button.setCaption("New Order");
-		return button;
-	}
+//	protected IButton initOrderEditButton() {
+//		IButton button = this.fac.createButton();
+//		button.setCaption("Edit");
+//		button.setEnabled(false);
+//		return button;
+//	}
+//	protected IButton initOrderNewButton() {
+//		IButton button = this.fac.createButton();
+//		button.setCaption("New Order");
+//		return button;
+//	}
 	protected IButton initOrderConfirmAllButton() {
 		IButton button = this.fac.createButton();
 		button.setCaption("Confirm All");
