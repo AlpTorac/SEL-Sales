@@ -115,8 +115,8 @@ public class OrderArea extends UIVBoxLayout {
 	}
 	
 	protected void setEditAvailability(boolean editEnabled) {
-		this.coa.getOrderAccordion().setEditAvailability(editEnabled);
-		this.uoa.getOrderAccordion().setEditAvailability(editEnabled);
+		this.coa.getOrderDisplay().setEditAvailability(editEnabled);
+		this.uoa.getOrderDisplay().setEditAvailability(editEnabled);
 	}
 
 	public void refreshTableNumbers(Collection<Integer> tableNumbers) {

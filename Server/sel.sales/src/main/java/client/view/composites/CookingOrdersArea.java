@@ -3,34 +3,42 @@ package client.view.composites;
 import controller.IController;
 import model.order.OrderData;
 import view.repository.uiwrapper.UIComponentFactory;
-import view.repository.uiwrapper.UIVBoxLayout;
 
-public class CookingOrdersArea extends UIVBoxLayout {
+public class CookingOrdersArea extends OrderAreaTab {
 	private IController controller;
 	private UIComponentFactory fac;
 	
-	private CookingOrderAccordion accordion;
+	private CookingOrderDisplay orderDisplay;
+	private OrderEntryDisplay orderEntryDisplay;
 	
 	protected CookingOrdersArea(IController controller, UIComponentFactory fac) {
-		super(fac.createVBoxLayout().getComponent());
+		super(fac.createHBoxLayout().getComponent());
+		this.setSpacing(10);
 		this.controller = controller;
 		this.fac = fac;
 		this.initOrderAccordion();
+		this.initOrderEntryDisplay();
+		this.getOrderDisplay().addClickListener(new OrderEntryDisplayListener(this.orderEntryDisplay));
 	}
 
+	protected void initOrderEntryDisplay() {
+		this.orderEntryDisplay = new OrderEntryDisplay(this.fac);
+		this.addUIComponent(this.orderEntryDisplay.getComponent());
+	}
+	
 	protected void initOrderAccordion() {
-		this.accordion = new CookingOrderAccordion(this.controller, this.fac);
-		this.addUIComponent(this.accordion);
+		this.orderDisplay = new CookingOrderDisplay(this.controller, this.fac);
+		this.addUIComponent(this.getOrderDisplay().getComponent());
 	}
 	
 	public void refreshDisplayedOrders(OrderData[] datas) {
-		this.accordion.removeAllTabs();
+		this.getOrderDisplay().clear();
 		for (OrderData data : datas) {
-			this.accordion.addOrderData(data);
+			this.getOrderDisplay().addOrderData(data);
 		}
 	}
 	
-	public CookingOrderAccordion getOrderAccordion() {
-		return this.accordion;
+	public CookingOrderDisplay getOrderDisplay() {
+		return this.orderDisplay;
 	}
 }

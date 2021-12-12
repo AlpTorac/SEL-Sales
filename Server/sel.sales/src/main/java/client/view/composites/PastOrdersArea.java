@@ -3,32 +3,40 @@ package client.view.composites;
 import controller.IController;
 import model.order.OrderData;
 import view.repository.uiwrapper.UIComponentFactory;
-import view.repository.uiwrapper.UIVBoxLayout;
 
-public class PastOrdersArea extends UIVBoxLayout {
+public class PastOrdersArea extends OrderAreaTab {
 	private IController controller;
 	private UIComponentFactory fac;
 	
-	private PastOrderAccordion pendingSendAccordion;
-	private PastOrderAccordion sentAccordion;
+	private PastOrderDisplay pendingSendDisplay;
+	private PastOrderDisplay sentDisplay;
+	private OrderEntryDisplay orderEntryDisplay;
 	
 	protected PastOrdersArea(IController controller, UIComponentFactory fac) {
-		super(fac.createVBoxLayout().getComponent());
-		this.setSpacing(50);
+		super(fac.createHBoxLayout().getComponent());
+		this.setSpacing(10);
 		this.controller = controller;
 		this.fac = fac;
 		this.initPendingSendOrderAccordion();
 		this.initSentOrderAccordion();
+		this.initOrderEntryDisplay();
+		this.getPendingSendOrderDisplay().addClickListener(new OrderEntryDisplayListener(this.orderEntryDisplay));
+		this.getSentOrderDisplay().addClickListener(new OrderEntryDisplayListener(this.orderEntryDisplay));
 	}
 
 	protected void initSentOrderAccordion() {
-		this.sentAccordion = new PastOrderAccordion(this.controller, this.fac);
-		this.addUIComponent(this.sentAccordion);
+		this.sentDisplay = new PastOrderDisplay(this.controller, this.fac);
+		this.addUIComponent(this.sentDisplay.getComponent());
 	}
 
 	protected void initPendingSendOrderAccordion() {
-		this.pendingSendAccordion = new PastOrderAccordion(this.controller, this.fac);
-		this.addUIComponent(this.pendingSendAccordion);
+		this.pendingSendDisplay = new PastOrderDisplay(this.controller, this.fac);
+		this.addUIComponent(this.pendingSendDisplay.getComponent());
+	}
+	
+	protected void initOrderEntryDisplay() {
+		this.orderEntryDisplay = new OrderEntryDisplay(this.fac);
+		this.addUIComponent(this.orderEntryDisplay.getComponent());
 	}
 	
 	public void refreshPastOrdersTab(OrderData[] pendingSendOrders, OrderData[] sentOrders) {
@@ -37,24 +45,24 @@ public class PastOrdersArea extends UIVBoxLayout {
 	}
 	
 	protected void refreshPendingSendOrders(OrderData[] pendingSendOrders) {
-		this.pendingSendAccordion.removeAllTabs();
+		this.pendingSendDisplay.clear();
 		for (OrderData data : pendingSendOrders) {
-			this.pendingSendAccordion.addOrderData(data);
+			this.pendingSendDisplay.addOrderData(data);
 		}
 	}
 	
 	protected void refreshSentOrders(OrderData[] sentOrders) {
-		this.sentAccordion.removeAllTabs();
+		this.sentDisplay.clear();
 		for (OrderData data : sentOrders) {
-			this.sentAccordion.addOrderData(data);
+			this.sentDisplay.addOrderData(data);
 		}
 	}
 	
-	public PastOrderAccordion getPendingSendOrderAccordion() {
-		return this.pendingSendAccordion;
+	public PastOrderDisplay getPendingSendOrderDisplay() {
+		return this.pendingSendDisplay;
 	}
 	
-	public PastOrderAccordion getSentOrderAccordion() {
-		return this.sentAccordion;
+	public PastOrderDisplay getSentOrderDisplay() {
+		return this.sentDisplay;
 	}
 }

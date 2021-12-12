@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import client.controller.IClientController;
 import client.model.IClientModel;
-import client.view.composites.OrderAccordion;
+import client.view.composites.OrderList;
 import client.view.composites.OrderEntry;
 import model.order.OrderData;
 import server.model.IServerModel;
@@ -17,12 +17,12 @@ import test.FXTestTemplate;
 import view.repository.uifx.FXUIComponentFactory;
 import view.repository.uiwrapper.UIComponentFactory;
 //@Execution(value = ExecutionMode.SAME_THREAD)
-class OrderAccordionTest extends FXTestTemplate {
+class OrderDisplayTest extends FXTestTemplate {
 	private IClientModel clientModel;
 	private IServerModel serverModel;
 	private IClientController controller;
 	
-	private OrderAccordion accordion;
+	private OrderList accordion;
 	
 	private ArrayList<OrderEntry> createdEntries;
 	
@@ -44,7 +44,7 @@ class OrderAccordionTest extends FXTestTemplate {
 		clientModel.addOrder(oData2);
 		clientModel.addOrder(oData3);
 		
-		accordion = new OrderAccordion(controller, fac) {
+		accordion = new OrderList(controller, fac) {
 			@Override
 			protected OrderEntry createOrderEntry(OrderData data) {
 				OrderEntry e = new OrderEntry(controller, fac, accordion, data);

@@ -174,23 +174,23 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	}
 	
 	public Collection<OrderData> getCookingOrders() {
-		return this.coa.getOrderAccordion().getDisplayedOrders();
+		return this.coa.getOrderDisplay().getDisplayedOrders();
 	}
 	
 	public Collection<OrderData> getPendingPaymentOrders() {
-		return this.uoa.getOrderAccordion().getDisplayedOrders();
+		return this.uoa.getOrderDisplay().getDisplayedOrders();
 	}
 	
 	public Collection<OrderData> getPendingSendOrders() {
-		return this.poa.getPendingSendOrderAccordion().getDisplayedOrders();
+		return this.poa.getPendingSendOrderDisplay().getDisplayedOrders();
 	}
 	
 	public Collection<OrderData> getSentOrders() {
-		return this.poa.getSentOrderAccordion().getDisplayedOrders();
+		return this.poa.getSentOrderDisplay().getDisplayedOrders();
 	}
 	
 	public void ppoaSetPaymentOption(String orderID, boolean isCash) {
-		PendingPaymentOrderEntry e = this.uoa.getOrderAccordion().getEntry(orderID);
+		PendingPaymentOrderEntry e = this.uoa.getOrderDisplay().getEntry(orderID);
 		while (e.getCashRadioButton().isToggled() != isCash) {
 			e.getCashRadioButton().setToggled(isCash);
 			e.getCardRadioButton().setToggled(!isCash);
@@ -199,7 +199,7 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	}
 	
 	public void ppoaSetPlaceOption(String orderID, boolean isHere) {
-		PendingPaymentOrderEntry e = this.uoa.getOrderAccordion().getEntry(orderID);
+		PendingPaymentOrderEntry e = this.uoa.getOrderDisplay().getEntry(orderID);
 		while (e.getHereRadioButton().isToggled() != isHere) {
 			e.getHereRadioButton().setToggled(isHere);
 			e.getToGoRadioButton().setToggled(!isHere);
@@ -208,15 +208,15 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	}
 	
 	public boolean ppoaGetIsCash(String orderID) {
-		return this.uoa.getOrderAccordion().getEntry(orderID).getCashRadioButton().isToggled();
+		return this.uoa.getOrderDisplay().getEntry(orderID).getCashRadioButton().isToggled();
 	}
 	
 	public boolean ppoaGetIsHere(String orderID) {
-		return this.uoa.getOrderAccordion().getEntry(orderID).getHereRadioButton().isToggled();
+		return this.uoa.getOrderDisplay().getEntry(orderID).getHereRadioButton().isToggled();
 	}
 	
 	public String ppoaGetSerialisedOrder(String formerID) {
-		return this.getModel().serialiseOrder(this.uoa.getOrderAccordion().getEntry(formerID).getCurrentOrder());
+		return this.getModel().serialiseOrder(this.uoa.getOrderDisplay().getEntry(formerID).getCurrentOrder());
 	}
 	
 	protected void setOrderAreaTabActive() {
@@ -256,7 +256,7 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	}
 	
 	public void addPendingPaymentOrder(String orderID) {
-		CookingOrderEntry e = ((CookingOrderEntry) this.coa.getOrderAccordion().getEntry(orderID));
+		CookingOrderEntry e = ((CookingOrderEntry) this.coa.getOrderDisplay().getEntry(orderID));
 //		GeneralTestUtilityClass.performWait(waitTime);
 		while (this.getModel().getPendingPaymentOrder(orderID) == null) {
 			e.getNextTabButton().performArtificialClick();
@@ -269,7 +269,7 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	
 	public void addPendingSendOrder(String orderID, boolean isCash, boolean isHere) {
 //		GeneralTestUtilityClass.performWait(waitTime);
-		PendingPaymentOrderEntry e = ((PendingPaymentOrderEntry) this.uoa.getOrderAccordion().getEntry(orderID));
+		PendingPaymentOrderEntry e = ((PendingPaymentOrderEntry) this.uoa.getOrderDisplay().getEntry(orderID));
 		while (this.getModel().getPendingSendOrder(orderID) == null &&
 				this.getModel().getSentOrder(orderID) == null) {
 			this.ppoaSetPaymentOption(orderID, isCash);
@@ -302,25 +302,25 @@ public class StandardClientViewOperationsUtilityClass extends ViewOperationsUtil
 	
 	public void cookingOrderAreaRemove(String orderID) {
 //		GeneralTestUtilityClass.performWait(waitTime);
-		((CookingOrderEntry) this.coa.getOrderAccordion().getEntry(orderID)).getRemoveButton().performArtificialClick();
+		((CookingOrderEntry) this.coa.getOrderDisplay().getEntry(orderID)).getRemoveButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
 	public void pendingPaymentOrderAreaRemove(String orderID) {
 //		GeneralTestUtilityClass.performWait(waitTime);
-		((PendingPaymentOrderEntry) this.uoa.getOrderAccordion().getEntry(orderID)).getRemoveButton().performArtificialClick();
+		((PendingPaymentOrderEntry) this.uoa.getOrderDisplay().getEntry(orderID)).getRemoveButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
 	public void editCookingOrder(String orderID) {
 //		GeneralTestUtilityClass.performWait(waitTime);
-		((CookingOrderEntry) this.coa.getOrderAccordion().getEntry(orderID)).getEditButton().performArtificialClick();
+		((CookingOrderEntry) this.coa.getOrderDisplay().getEntry(orderID)).getEditButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 	
 	public void editPendingPaymentOrder(String orderID) {
 //		GeneralTestUtilityClass.performWait(waitTime);
-		((PendingPaymentOrderEntry) this.uoa.getOrderAccordion().getEntry(orderID)).getEditButton().performArtificialClick();
+		((PendingPaymentOrderEntry) this.uoa.getOrderDisplay().getEntry(orderID)).getEditButton().performArtificialClick();
 		GeneralTestUtilityClass.performWait(waitTime);
 	}
 }

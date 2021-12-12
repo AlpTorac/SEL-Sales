@@ -61,9 +61,10 @@ class PendingPaymentOrdersAreaTest extends FXTestTemplate {
 	void displayedOrdersTest() {
 		Assertions.assertEquals(clientModel.getAllPendingPaymentOrders().length, 3);
 		
-		while (clientOpHelper.getPendingPaymentOrders().toArray(OrderData[]::new).length < clientModel.getAllPendingPaymentOrders().length) {
-			clientView.refreshOrders();
-		}
+//		while (clientOpHelper.getPendingPaymentOrders().size() < clientModel.getAllPendingPaymentOrders().length) {
+//			clientView.refreshOrders();
+//		}
+		GeneralTestUtilityClass.performWait(waitTime);
 		
 		Assertions.assertEquals(clientOpHelper.getPendingPaymentOrders().toArray(OrderData[]::new).length, 3);
 		

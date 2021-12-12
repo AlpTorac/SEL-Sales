@@ -74,6 +74,7 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 //			}
 		});
 		this.choiceBoxInitExtra(choiceBox);
+		choiceBox.setPrefWidth(100);
 		return choiceBox;
 	}
 	
@@ -82,6 +83,7 @@ public class MenuItemEntry extends UIHBoxLayout implements Cloneable {
 		tb.setCaption("1");
 		tb.setEnabled(false);
 		tb.setOpacity(1);
+		tb.setPrefWidth(40);
 		return tb;
 	}
 	

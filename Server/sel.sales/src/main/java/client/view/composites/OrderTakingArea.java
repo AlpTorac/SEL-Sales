@@ -8,7 +8,7 @@ import model.order.OrderData;
 import view.repository.uiwrapper.UIComponentFactory;
 import view.repository.uiwrapper.UIVBoxLayout;
 
-public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<OrderEntry> {
+public class OrderTakingArea extends OrderAreaTab implements PriceUpdateTarget<OrderEntry> {
 	private IController controller;
 	private UIComponentFactory fac;
 	
@@ -19,7 +19,7 @@ public class OrderTakingArea extends UIVBoxLayout implements PriceUpdateTarget<O
 	private DishMenuData activeMenu;
 	
 	public OrderTakingArea(IController controller, UIComponentFactory fac) {
-		super(fac.createVBoxLayout().getComponent());
+		super(fac.createHBoxLayout().getComponent());
 //		this.menuItemEntries = new CopyOnWriteArrayList<MenuItemEntry>();
 		
 		this.controller = controller;

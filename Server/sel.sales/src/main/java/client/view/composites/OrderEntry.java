@@ -56,9 +56,10 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		this.notifyTarget = notifyTarget;
 		this.orderItemArea = this.fac.createVBoxLayout().getComponent();
 		this.orderItemArea.setSpacing(10);
-		this.setMarigins(10, 0, 0, 10);
+		this.setMarigins(10, 0, 0, 0);
 		this.setSpacing(10);
 		this.addUIComponent(this.orderItemArea);
+		this.addComponentsVertically(this.priceDisplay = this.initPriceDisplay());
 		this.addTableNumberArea();
 		this.addBottomPart();
 		this.addUIComponent(this.noteBox = this.initNoteBox());
@@ -73,6 +74,7 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		ITextBox tb = this.getUIFactory().createTextBox();
 		tb.setWrapText(true);
 		tb.setPlaceholderText("Order Note");
+		tb.setPrefWidth(200);
 		return tb;
 	}
 
@@ -177,10 +179,7 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 	}
 	
 	protected IIndexedLayout initBottomPart() {
-		IIndexedLayout bottom = this.fac.createHBoxLayout();
-		
-		bottom.addUIComponent(this.priceDisplay = this.initPriceDisplay());
-		
+		IIndexedLayout bottom = this.fac.createHBoxLayout();		
 		return bottom;
 	}
 
@@ -327,6 +326,7 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 		return new OrderEntry(this.getController(), this.getUIFactory(), this.getNotifyTarget());
 	}
 	
+	@Override
 	public OrderEntry clone() {
 		OrderEntry clone = this.constructClone();
 		clone.refreshMenu(this.getActiveMenu());
@@ -352,5 +352,28 @@ public class OrderEntry extends UIHBoxLayout implements PriceUpdateTarget<MenuIt
 	
 	protected ITextBox getOrderNoteBox() {
 		return this.noteBox;
+	}
+	
+	@Override
+	public String toString() {
+		if (this.getActiveData() != null) {
+			return this.getActiveData().toString();
+		} else {
+			return super.toString();
+		}
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof OrderEntry)) {
+			return false;
+		}
+		OrderEntry castedO = (OrderEntry) o;
+		OrderData adOD = castedO.getActiveData();
+		OrderData thisOD = this.getActiveData();
+		if (adOD == null ^ thisOD == null) {
+			return false;
+		}
+		return thisOD.equals(adOD);
 	}
 }

@@ -4,8 +4,8 @@ import controller.IController;
 import model.order.OrderData;
 import view.repository.uiwrapper.UIComponentFactory;
 
-public class PendingPaymentOrderAccordion extends OrderAccordion {
-	public PendingPaymentOrderAccordion(IController controller, UIComponentFactory fac) {
+public class PendingPaymentOrderDisplay extends OrderList {
+	public PendingPaymentOrderDisplay(IController controller, UIComponentFactory fac) {
 		super(controller, fac);
 	}
 	
@@ -18,7 +18,7 @@ public class PendingPaymentOrderAccordion extends OrderAccordion {
 		return (PendingPaymentOrderEntry) super.getEntry(orderID);
 	}
 	public void setEditAvailability(boolean editEnabled) {
-		this.getEntriesFromMap().forEach(e -> {
+		this.getEntryCollection().forEach(e -> {
 			((PendingPaymentOrderEntry) e).getEditButton().setEnabled(editEnabled);
 		});
 	}

@@ -41,7 +41,7 @@ public interface FXDataCollectingUIComponent<T> extends IDataCollectingUICompone
 	}
 	
 	default public boolean contains(T item) {
-		return this.getItemList().contains(item);
+		return this.getItemList().stream().anyMatch(i -> i.equals(item));
 	}
 	
 	@SuppressWarnings("unchecked")

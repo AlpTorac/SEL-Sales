@@ -4,8 +4,8 @@ import controller.IController;
 import model.order.OrderData;
 import view.repository.uiwrapper.UIComponentFactory;
 
-public class CookingOrderAccordion extends OrderAccordion {
-	public CookingOrderAccordion(IController controller, UIComponentFactory fac) {
+public class CookingOrderDisplay extends OrderList {
+	public CookingOrderDisplay(IController controller, UIComponentFactory fac) {
 		super(controller, fac);
 	}
 	@Override
@@ -13,7 +13,7 @@ public class CookingOrderAccordion extends OrderAccordion {
 		return new CookingOrderEntry(this.getController(), this.getUIFactory(), this, data);
 	}
 	public void setEditAvailability(boolean editEnabled) {
-		this.getEntriesFromMap().forEach(e -> {
+		this.getEntryCollection().forEach(e -> {
 			((CookingOrderEntry) e).getEditButton().setEnabled(editEnabled);
 		});
 	}

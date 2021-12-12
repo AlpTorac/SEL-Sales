@@ -4,8 +4,8 @@ import controller.IController;
 import model.order.OrderData;
 import view.repository.uiwrapper.UIComponentFactory;
 
-public class PastOrderAccordion extends OrderAccordion {
-	public PastOrderAccordion(IController controller, UIComponentFactory fac) {
+public class PastOrderDisplay extends OrderList {
+	public PastOrderDisplay(IController controller, UIComponentFactory fac) {
 		super(controller, fac);
 	}
 	@Override

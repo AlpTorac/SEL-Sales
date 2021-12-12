@@ -20,6 +20,7 @@ public class EditOrderListener extends ClickEventListener implements IApplicatio
 	
 	@Override
 	public void clickAction() {
+		this.oe.removeFromParent();
 		this.fireApplicationEvent(this.controller);
 	}
 	
