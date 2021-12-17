@@ -112,18 +112,11 @@ public class MenuDesignArea extends UIVBoxLayout {
 	protected ITable<DishMenuItemData> initMenuItemTable() {
 		ITable<DishMenuItemData> table = this.fac.createTable();
 		
-		table.addColumn("Dish Name", "DishName");
-		table.addColumn("ID", "ID");
-		table.addColumn("Portion Size", "PortionSize");
-		table.addColumn("Production Cost", "ProductionCost");
-		table.addColumn("Gross Price", "GrossPrice");
-//		table.addColumns(new String[] {
-//				"Dish Name",
-//				"ID",
-//				"Portion",
-//				"Production Cost",
-//				"Price"
-//		});
+		table.addColumn("Dish Name", (d)->{return d.getDishName();});
+		table.addColumn("ID", (d)->{return d.getID().toString();});
+		table.addColumn("Portion Size", (d)->{return d.getPortionSize().toPlainString();});
+		table.addColumn("Production Cost", (d)->{return d.getProductionCost().toPlainString();});
+		table.addColumn("Gross Price", (d)->{return d.getGrossPrice();});
 		return table;
 	}
 	

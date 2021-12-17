@@ -18,21 +18,9 @@ public class FXTable<T> extends TableView<T> implements FXHasText, ITable<T>, FX
 		super();
 		super.setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 	}
-
-	@Override
-	public <O> void addColumn(String title, String fieldName) {
-		super.getColumns().add(this.makePropertyValueColumn(title, fieldName));
-	}
-
 	@Override
 	public <O> void addColumn(String title, Function<T, O> f) {
 		super.getColumns().add(this.makeSimpleValueColumn(title, f));
-	}
-	
-	protected <O> TableColumn<T, O> makePropertyValueColumn(String title, String fieldName) {
-		TableColumn<T, O> col = new TableColumn<>(title);
-		col.setCellValueFactory(new PropertyValueFactory<T, O>(fieldName));
-		return col;
 	}
 	
 	protected <O> TableColumn<T, O> makeSimpleValueColumn(String title, Function<T, O> f) {
@@ -47,41 +35,6 @@ public class FXTable<T> extends TableView<T> implements FXHasText, ITable<T>, FX
 		});
 		return col;
 	}
-	
-//	@Override
-//	public void addItem(T item) {
-//		super.getItems().add(item);
-//	}
-//	
-//	@Override
-//	public void clear() {
-//		super.getItems().clear();
-//	}
-//	
-//	@Override
-//	public void removeItem(T item) {
-//		super.getItems().remove(item);
-//	}
-//	
-//	@Override
-//	public Collection<T> getItems(int beginIndex, int endIndex) {
-//		return super.getItems().subList(beginIndex, endIndex);
-//	}
-//	
-//	@Override
-//	public T getItem(int index) {
-//		return super.getItems().get(index);
-//	}
-//	
-//	@Override
-//	public int getSize() {
-//		return super.getItems().size();
-//	}
-//	
-//	@Override
-//	public boolean contains(T item) {
-//		return super.getItems().stream().anyMatch(t -> t.equals(item));
-//	}
 	
 	@Override
 	public ObservableList<T> getItemList() {

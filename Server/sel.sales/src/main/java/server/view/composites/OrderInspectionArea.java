@@ -197,8 +197,9 @@ public class OrderInspectionArea extends UIVBoxLayout {
 	
 	protected ITable<AccumulatingAggregateEntry<DishMenuItemData>> initOrderDetailsTable() {
 		ITable<AccumulatingAggregateEntry<DishMenuItemData>> table = this.fac.createTable();
-		table.addColumn("Menu Item", "Item");
-		table.addColumn("Amount", "Amount");
+		table.addColumn("Menu Item", (d)->{return d.getItem();});
+		table.addColumn("Amount", (d)->{return this.model.getNumberDisplaySettings()
+				.format(d.getAmount()).toPlainString();});
 		table.addColumn("Gross Price", (e) -> {
 			return this.model.getNumberDisplaySettings()
 					.format(e.getItem().getGrossPrice().multiply(e.getAmount()))

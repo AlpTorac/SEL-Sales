@@ -84,8 +84,8 @@ public class ConnectionArea extends UIHBoxLayout {
 	
 	private ITable<IDeviceData> initDiscoveredDevices() {
 		ITable<IDeviceData> dc = this.fac.createTable();
-		dc.addColumn("Name", "DeviceName");
-		dc.addColumn("address", "DeviceAddress");
+		dc.addColumn("Name", (d)->{return d.getDeviceName();});
+		dc.addColumn("Address", (d)->{return d.getDeviceAddress();});
 		return dc;
 	}
 	
@@ -122,10 +122,10 @@ public class ConnectionArea extends UIHBoxLayout {
 	private ITable<IDeviceData> initKnownDevices() {
 		ITable<IDeviceData> kc = this.fac.createTable();
 		//"Allowed to Connect", "isAllowedToConnect", "Connection Status", "isConnected"
-		kc.addColumn("Device Name", "DeviceName");
-		kc.addColumn("Device Address", "DeviceAddress");
-		kc.addColumn("Allowed to Connect", "IsAllowedToConnect");
-		kc.addColumn("Connection Status", "isConnected");
+		kc.addColumn("Device Name", (d)->{return d.getDeviceName();});
+		kc.addColumn("Device Address", (d)->{return d.getDeviceAddress();});
+		kc.addColumn("Allowed to Connect", (d)->{return d.getIsAllowedToConnect();});
+		kc.addColumn("Connection Status", (d)->{return d.getIsConnected();});
 		return kc;
 	}
 	
