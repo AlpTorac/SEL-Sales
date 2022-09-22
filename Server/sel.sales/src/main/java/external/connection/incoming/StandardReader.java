@@ -1,6 +1,7 @@
 package external.connection.incoming;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,7 +30,7 @@ public class StandardReader implements IMessageReadingStrategy {
 	@Override
 	public String[] readMessages(InputStream is) {
 		String[] result = null;
-		BufferedReader r = new BufferedReader(new InputStreamReader(is));
+		BufferedReader r = new BufferedReader(new InputStreamReader(new DataInputStream(is)));
 		if (this.checkReadCondition(r)) {
 		     result = r.lines().filter(l -> l != "" && l.charAt(0) != 0).toArray(String[]::new);
 		}

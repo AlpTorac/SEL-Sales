@@ -17,6 +17,8 @@ public abstract class ConnectionManager implements IConnectionManager {
 	private IPingPong pingPong;
 	protected IController controller;
 	
+	private boolean isClosed = false;
+	
 	private ConnectionListener connListener;
 	private DisconnectionListener disconListener;
 	
@@ -77,7 +79,7 @@ public abstract class ConnectionManager implements IConnectionManager {
 		return new Runnable() {
 			@Override
 			public void run() {
-				while (!getConnection().isClosed()) {
+				while (!isClosed && !conn.isClosed()) {
 					getIncomingMessageListener().checkForMessages();
 				}
 			}
@@ -88,7 +90,7 @@ public abstract class ConnectionManager implements IConnectionManager {
 		return new Runnable() {
 			@Override
 			public void run() {
-				while (!getConnection().isClosed()) {
+				while (!isClosed && !conn.isClosed()) {
 					if (!getSendBuffer().isBlocked() && !getSendBuffer().isEmpty()) {
 						getSendBuffer().sendMessage();
 					}
@@ -102,7 +104,7 @@ public abstract class ConnectionManager implements IConnectionManager {
 			@Override
 			public void run() {
 				getPingPong().start();
-				while (!getConnection().isClosed() && getPingPong().isRunning()) {
+				while (!isClosed && !conn.isClosed() && pingPong.isRunning()) {
 					
 				}
 				disconListener.connectionLost(conn.getTargetClientAddress());
@@ -133,6 +135,7 @@ public abstract class ConnectionManager implements IConnectionManager {
 	
 	@Override
 	public void close() {
+		isClosed = true;
 		try {
 			getSendBuffer().close();
 			getConnection().close();

@@ -1,7 +1,12 @@
 package external.connection.outgoing;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 import external.connection.IConnection;
 import external.message.IMessage;
@@ -14,16 +19,16 @@ public class BasicMessageSender implements IMessageSendingStrategy {
 	
 	@Override
 	public boolean sendMessage(IConnection conn, IMessage message) {
-		OutputStream os = conn.getOutputStream();
+		DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));
 		try {
-			os.write(messageSerialiser.serialise(message).getBytes());
-			os.flush();
-			conn.refreshOutputStream();
-			return true;
+			writer.write(messageSerialiser.serialise(message));
+			writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return false;
 		}
+		conn.refreshOutputStream();
+		return true;
 	}
 
 }
