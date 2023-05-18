@@ -16,11 +16,16 @@ public class ClientMain {
 	private static volatile int resendLimit = 3;
 	
 	public static void main(String[] args) {
+		
+		if (args.length == 0) {
+			throw new IllegalArgumentException("No server name was provided");
+		}
+		
 		model = new ClientModel();
 		controller = new ClientController(model);
 		view = new ClientView(controller, model);
 		view.startUp();
-		external = new ClientExternal(controller, model, "DESKTOP-4CPH3L2", pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
+		external = new ClientExternal(controller, model, args[0], pingPongTimeout, minimalPingPongDelay, sendTimeout, resendLimit);
 		external.connectToService();
 		int i = 4;
 		while (true) {
