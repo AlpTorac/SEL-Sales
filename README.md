@@ -1,6 +1,6 @@
 # Introduction
 
-SEL-Sales was a Java project I have worked on alone in my free time to improve my programming skills. As of writing this, it is the second largest software project I have worked on, the first one being [GELF](https://github.com/AlpTorac/PSE-Report), where I have worked with 4 other collaborators.
+SEL-Sales was a Java project I have worked on alone in my free time to improve my programming skills.
 
 This project's purpose was to help cafés/restaurants manage menus, take orders and to save them in a centralised server. To this end, the personnel would use the client application and connect it to the server application via bluetooth connections. Bluetooth connections are established with the help of [BlueCove](https://github.com/hcarver/bluecove/tree/master) library and the UI is implemented with [JavaFX](https://openjfx.io).
 
